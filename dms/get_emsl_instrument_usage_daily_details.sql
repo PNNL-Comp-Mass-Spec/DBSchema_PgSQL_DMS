@@ -286,38 +286,38 @@ BEGIN
                        THEN format('%s ...', Substring(GroupQ.Comment, 1, 4090))
                        ELSE GroupQ.Comment
                   END
-    FROM ( SELECT DistinctQ.EMSL_Inst_ID,
-                  DistinctQ.DMS_Instrument,
-                  DistinctQ.Type,
-                  DistinctQ.Proposal,
-                  DistinctQ.Usage,
-                  DistinctQ.Users,
-                  DistinctQ.Year,
-                  DistinctQ.Month,
-                  DistinctQ.Day,
-                  string_agg(DistinctQ.Comment, ',' ORDER BY DistinctQ.Comment) AS Comment
-           FROM (SELECT DISTINCT Src.EMSL_Inst_ID,
-                                 Src.DMS_Instrument,
-                                 Src.Type,
-                                 Src.Proposal,
-                                 Src.Usage,
-                                 Src.Users,
-                                 Src.Year,
-                                 Src.Month,
-                                 Src.Day,
-                                 Src.Comment
-                FROM Tmp_T_Report_Accumulation Src
-                WHERE Src.Usage IN ('AVAILABLE', 'BROKEN', 'MAINTENANCE')) AS DistinctQ
-           GROUP BY DistinctQ.EMSL_Inst_ID,
-                    DistinctQ.DMS_Instrument,
-                    DistinctQ.Type,
-                    DistinctQ.Proposal,
-                    DistinctQ.Usage,
-                    DistinctQ.Users,
-                    DistinctQ.Year,
-                    DistinctQ.Month,
-                    DistinctQ.Day
-           ) AS GroupQ
+    FROM (SELECT DistinctQ.EMSL_Inst_ID,
+                 DistinctQ.DMS_Instrument,
+                 DistinctQ.Type,
+                 DistinctQ.Proposal,
+                 DistinctQ.Usage,
+                 DistinctQ.Users,
+                 DistinctQ.Year,
+                 DistinctQ.Month,
+                 DistinctQ.Day,
+                 string_agg(DistinctQ.Comment, ',' ORDER BY DistinctQ.Comment) AS Comment
+          FROM (SELECT DISTINCT Src.EMSL_Inst_ID,
+                                Src.DMS_Instrument,
+                                Src.Type,
+                                Src.Proposal,
+                                Src.Usage,
+                                Src.Users,
+                                Src.Year,
+                                Src.Month,
+                                Src.Day,
+                                Src.Comment
+               FROM Tmp_T_Report_Accumulation Src
+               WHERE Src.Usage IN ('AVAILABLE', 'BROKEN', 'MAINTENANCE')) AS DistinctQ
+          GROUP BY DistinctQ.EMSL_Inst_ID,
+                   DistinctQ.DMS_Instrument,
+                   DistinctQ.Type,
+                   DistinctQ.Proposal,
+                   DistinctQ.Usage,
+                   DistinctQ.Users,
+                   DistinctQ.Year,
+                   DistinctQ.Month,
+                   DistinctQ.Day
+         ) AS GroupQ
         WHERE Tmp_T_Report_Accumulation.EMSL_Inst_ID = GroupQ.EMSL_Inst_ID AND
               Tmp_T_Report_Accumulation.DMS_Instrument = GroupQ.DMS_Instrument AND
               Tmp_T_Report_Accumulation.Type = GroupQ.Type AND
@@ -332,38 +332,38 @@ BEGIN
 
     UPDATE Tmp_T_Report_Accumulation
     SET Operator = GroupQ.Operator
-    FROM ( SELECT DistinctQ.EMSL_Inst_ID,
-                  DistinctQ.DMS_Instrument,
-                  DistinctQ.Type,
-                  DistinctQ.Proposal,
-                  DistinctQ.Usage,
-                  DistinctQ.Users,
-                  DistinctQ.Year,
-                  DistinctQ.Month,
-                  DistinctQ.Day,
-                  string_agg(DistinctQ.Operator, ',' ORDER BY DistinctQ.Operator) AS Operator
-           FROM (SELECT DISTINCT Src.EMSL_Inst_ID,
-                                 Src.DMS_Instrument,
-                                 Src.Type,
-                                 Src.Proposal,
-                                 Src.Usage,
-                                 Src.Users,
-                                 Src.Year,
-                                 Src.Month,
-                                 Src.Day,
-                                 Src.Operator
-                FROM Tmp_T_Report_Accumulation Src
-                WHERE Src.Usage IN ('AVAILABLE', 'BROKEN', 'MAINTENANCE')) AS DistinctQ
-           GROUP BY DistinctQ.EMSL_Inst_ID,
-                    DistinctQ.DMS_Instrument,
-                    DistinctQ.Type,
-                    DistinctQ.Proposal,
-                    DistinctQ.Usage,
-                    DistinctQ.Users,
-                    DistinctQ.Year,
-                    DistinctQ.Month,
-                    DistinctQ.Day
-           ) AS GroupQ
+    FROM (SELECT DistinctQ.EMSL_Inst_ID,
+                 DistinctQ.DMS_Instrument,
+                 DistinctQ.Type,
+                 DistinctQ.Proposal,
+                 DistinctQ.Usage,
+                 DistinctQ.Users,
+                 DistinctQ.Year,
+                 DistinctQ.Month,
+                 DistinctQ.Day,
+                 string_agg(DistinctQ.Operator, ',' ORDER BY DistinctQ.Operator) AS Operator
+          FROM (SELECT DISTINCT Src.EMSL_Inst_ID,
+                                Src.DMS_Instrument,
+                                Src.Type,
+                                Src.Proposal,
+                                Src.Usage,
+                                Src.Users,
+                                Src.Year,
+                                Src.Month,
+                                Src.Day,
+                                Src.Operator
+               FROM Tmp_T_Report_Accumulation Src
+               WHERE Src.Usage IN ('AVAILABLE', 'BROKEN', 'MAINTENANCE')) AS DistinctQ
+          GROUP BY DistinctQ.EMSL_Inst_ID,
+                   DistinctQ.DMS_Instrument,
+                   DistinctQ.Type,
+                   DistinctQ.Proposal,
+                   DistinctQ.Usage,
+                   DistinctQ.Users,
+                   DistinctQ.Year,
+                   DistinctQ.Month,
+                   DistinctQ.Day
+         ) AS GroupQ
     WHERE Tmp_T_Report_Accumulation.EMSL_Inst_ID = GroupQ.EMSL_Inst_ID AND
           Tmp_T_Report_Accumulation.DMS_Instrument = GroupQ.DMS_Instrument AND
           Tmp_T_Report_Accumulation.Type = GroupQ.Type AND

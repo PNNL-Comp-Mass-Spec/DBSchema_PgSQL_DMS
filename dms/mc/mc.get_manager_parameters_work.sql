@@ -148,22 +148,23 @@ BEGIN
                END AS parent_param_pointer_state,
                ValuesToAppend.source
         FROM Tmp_Mgr_Params Target
-             RIGHT OUTER JOIN ( SELECT FilterQ.mgr_name,
-                                       PV.param_name,
-                                       PV.entry_id,
-                                       PV.param_type_id,
-                                       PV.value,
-                                       PV.mgr_id,
-                                       PV.comment,
-                                       PV.last_affected,
-                                       PV.entered_by,
-                                       PV.mgr_type_id,
-                                       PV.mgr_name AS source
-                                FROM mc.v_param_value PV
-                                     INNER JOIN ( SELECT mgr_name,
-                                                         Group_Name
-                                                  FROM Tmp_Manager_Group_Info ) FilterQ
-                                       ON PV.mgr_name::citext = FilterQ.Group_Name::citext ) ValuesToAppend
+             RIGHT OUTER JOIN (SELECT FilterQ.mgr_name,
+                                      PV.param_name,
+                                      PV.entry_id,
+                                      PV.param_type_id,
+                                      PV.value,
+                                      PV.mgr_id,
+                                      PV.comment,
+                                      PV.last_affected,
+                                      PV.entered_by,
+                                      PV.mgr_type_id,
+                                      PV.mgr_name AS source
+                               FROM mc.v_param_value PV
+                                    INNER JOIN (SELECT mgr_name,
+                                                       Group_Name
+                                                FROM Tmp_Manager_Group_Info) FilterQ
+                                      ON PV.mgr_name::citext = FilterQ.Group_Name::citext
+                              ) ValuesToAppend
                ON Target.mgr_name = ValuesToAppend.mgr_name AND
                   Target.param_type_id = ValuesToAppend.param_type_id
         WHERE Target.param_type_id IS NULL OR

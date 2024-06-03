@@ -187,7 +187,7 @@ BEGIN
         ---------------------------------------------------
 
         INSERT INTO Tmp_BatchIDs (Entry_ID, Batch_ID_Text)
-        SELECT Min(Entry_ID), Value
+        SELECT MIN(Entry_ID), Value
         FROM public.parse_delimited_list_ordered(_requestedRunBatchList)
         GROUP BY Value;
 
@@ -245,9 +245,9 @@ BEGIN
 
         UPDATE Tmp_BatchIDs
         SET Batch_Group_Order = RankQ.Batch_Group_Order
-        FROM ( SELECT Batch_ID,
-                      Row_Number() OVER (ORDER BY Entry_ID) AS Batch_Group_Order
-               FROM Tmp_BatchIDs ) RankQ
+        FROM (SELECT Batch_ID,
+                     Row_Number() OVER (ORDER BY Entry_ID) AS Batch_Group_Order
+              FROM Tmp_BatchIDs) RankQ
         WHERE Tmp_BatchIDs.Batch_ID = RankQ.Batch_ID;
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
@@ -325,7 +325,7 @@ BEGIN
                 UPDATE t_requested_run_batches
                 SET Batch_Group_ID = null
                 WHERE Batch_Group_ID = _id AND
-                      NOT t_requested_run_batches.Batch_Group_ID IN ( SELECT Batch_ID
+                      NOT t_requested_run_batches.Batch_Group_ID IN (SELECT Batch_ID
                                                                      FROM Tmp_BatchIDs );
             End If;
 

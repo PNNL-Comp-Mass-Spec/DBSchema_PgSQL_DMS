@@ -103,8 +103,8 @@ BEGIN
                   sw.t_job_step_dependencies.target_step = JS_Target.step
         WHERE JS.state >= 2 AND
               NOT JS.state IN (3, 7) AND
-              JS.job IN ( SELECT job
-                          FROM Tmp_Jobs ) AND
+              JS.job IN (SELECT job
+                         FROM Tmp_Jobs) AND
               (JS_Target.state IN (0, 1, 2, 4, 9) OR
                JS_Target.start > JS.finish);
 

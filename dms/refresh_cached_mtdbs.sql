@@ -65,12 +65,12 @@ BEGIN
         FROM t_mts_mt_dbs_cached;
 
         MERGE INTO t_mts_mt_dbs_cached AS target
-        USING ( SELECT server_name, mt_db_id, mt_db_name,
-                       state_id, state, description,
-                       organism, campaign,
-                       peptide_db, peptide_db_count,
-                       last_affected
-                FROM mts.V_MTS_MT_DBs AS MTSDBInfo
+        USING (SELECT server_name, mt_db_id, mt_db_name,
+                      state_id, state, description,
+                      organism, campaign,
+                      peptide_db, peptide_db_count,
+                      last_affected
+               FROM mts.V_MTS_MT_DBs AS MTSDBInfo
               ) AS Source
         ON (target.mt_db_id = source.mt_db_id)
         WHEN MATCHED AND

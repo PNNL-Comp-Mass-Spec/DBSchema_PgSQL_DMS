@@ -918,7 +918,7 @@ BEGIN
                       InstUsage.year = _year AND
                       InstUsage.month = _month AND
                       InstName.instrument = _instrument AND
-                      NOT InstUsage.dataset_id IN ( SELECT dataset_id FROM t_run_interval )
+                      NOT InstUsage.dataset_id IN (SELECT dataset_id FROM t_run_interval)
             LOOP
                 _infoData := format(_formatSpecifier,
                                     _previewData.EMSL_Inst_ID,
@@ -1194,8 +1194,8 @@ BEGIN
         If Not _infoOnly Then
 
             DELETE FROM t_emsl_instrument_usage_report
-            WHERE dataset_id IN ( SELECT dataset_id
-                                  FROM Tmp_Staging ) AND
+            WHERE dataset_id IN (SELECT dataset_id
+                                 FROM Tmp_Staging) AND
                   type = 'Interval' AND
                   minutes < _maxNormalInterval;
 
@@ -1226,7 +1226,7 @@ BEGIN
                        InstUsage.Month,
                        InstUsage.Dataset_ID
                 FROM t_emsl_instrument_usage_report InstUsage
-                WHERE InstUsage.dataset_id IN ( SELECT dataset_id FROM Tmp_Staging ) AND
+                WHERE InstUsage.dataset_id IN (SELECT dataset_id FROM Tmp_Staging) AND
                       InstUsage.type = 'Interval' AND
                       InstUsage.minutes < _maxNormalInterval
             LOOP
@@ -1275,7 +1275,7 @@ BEGIN
                               InstUsage.Year = _year AND
                               InstUsage.Month = _month AND
                               InstName.instrument = _instrument AND
-                              NOT InstUsage.Dataset_ID IN ( SELECT dataset_id FROM t_run_interval ) AND
+                              NOT InstUsage.Dataset_ID IN (SELECT dataset_id FROM t_run_interval) AND
                               target.seq = InstUsage.seq
                       );
 
@@ -1312,7 +1312,7 @@ BEGIN
                       InstUsage.Year = _year AND
                       InstUsage.Month = _month AND
                       InstName.instrument = _instrument AND
-                      NOT InstUsage.Dataset_ID IN ( SELECT dataset_id FROM t_run_interval )
+                      NOT InstUsage.Dataset_ID IN (SELECT dataset_id FROM t_run_interval)
             LOOP
                 _infoData := format(_formatSpecifierInstUsage,
                                     _previewData.Action,

@@ -135,16 +135,16 @@ BEGIN
 
     INSERT INTO mc.t_param_value (mgr_id, param_type_id, value)
     SELECT A.mgr_id, _paramTypeID, '0'
-    FROM ( SELECT MgrListA.mgr_id
-           FROM Tmp_ManagerList MgrListA
+    FROM (SELECT MgrListA.mgr_id
+          FROM Tmp_ManagerList MgrListA
          ) A
          LEFT OUTER JOIN
-          ( SELECT MgrListB.mgr_id
-            FROM Tmp_ManagerList MgrListB
-                 INNER JOIN mc.t_param_value PV
-                   ON MgrListB.mgr_id = PV.mgr_id
-            WHERE PV.param_type_id = _paramTypeID
-         ) B
+             (SELECT MgrListB.mgr_id
+              FROM Tmp_ManagerList MgrListB
+                   INNER JOIN mc.t_param_value PV
+                     ON MgrListB.mgr_id = PV.mgr_id
+              WHERE PV.param_type_id = _paramTypeID
+             ) B
            ON A.mgr_id = B.mgr_id
     WHERE B.mgr_id IS NULL;
     --

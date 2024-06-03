@@ -130,7 +130,7 @@ BEGIN
     UPDATE t_requested_run
     SET cart_id = _cartID,
         cart_config_id = _cartConfigID
-    WHERE request_id IN ( SELECT requestID FROM Tmp_Requests );
+    WHERE request_id IN (SELECT requestID FROM Tmp_Requests);
 
     DROP TABLE Tmp_Requests;
 END

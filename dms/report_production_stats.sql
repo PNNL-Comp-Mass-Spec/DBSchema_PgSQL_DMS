@@ -312,8 +312,8 @@ BEGIN
                    ON RR.eus_proposal_id = EUP.proposal_id
             WHERE Coalesce(DS.acq_time_start, DS.created) BETWEEN _stDate AND _eDate
                   AND
-                  RR.eus_usage_type_id IN ( SELECT Usage_ID
-                                            FROM Tmp_EUSUsageFilter );
+                  RR.eus_usage_type_id IN (SELECT Usage_ID
+                                           FROM Tmp_EUSUsageFilter);
 
         Else
             -- Note that this query uses a left outer join against t_requested_run

@@ -87,14 +87,14 @@ BEGIN
         UPDATE Tmp_ProteinCollectionList Target
         SET ProteinCollectionName = MatchQ.collection_name,
             Valid = true
-        FROM ( SELECT CastQ.Unique_ID,
-                      PC.collection_name
-               FROM ( SELECT Unique_ID,
-                             public.try_cast(ProteinCollectionName, null::int) AS Protein_Collection_ID
-                      FROM Tmp_ProteinCollectionList
-                    ) CastQ
-                    INNER JOIN pc.t_protein_collections PC
-                      ON CastQ.Protein_Collection_ID = PC.protein_collection_id
+        FROM (SELECT CastQ.Unique_ID,
+                     PC.collection_name
+              FROM (SELECT Unique_ID,
+                           public.try_cast(ProteinCollectionName, null::int) AS Protein_Collection_ID
+                    FROM Tmp_ProteinCollectionList
+                   ) CastQ
+                   INNER JOIN pc.t_protein_collections PC
+                     ON CastQ.Protein_Collection_ID = PC.protein_collection_id
              ) MatchQ
         WHERE Target.Unique_ID = MatchQ.Unique_ID;
 
@@ -172,14 +172,14 @@ BEGIN
     FROM pc.t_archived_output_file_collections_xref AOFC INNER JOIN
          pc.t_archived_output_files AOF ON AOFC.archived_file_id = AOF.archived_file_id
     WHERE AOF.archived_file_id IN
-            ( SELECT AOF.archived_file_id
-              FROM pc.t_archived_output_file_collections_xref AOFC
-                   INNER JOIN pc.t_archived_output_files AOF ON
-                     AOFC.archived_file_id = AOF.archived_file_id
-                   INNER JOIN pc.t_protein_collections PC ON
-                     AOFC.protein_collection_id = PC.protein_collection_id
-              WHERE PC.collection_name = _proteinCollectionName AND
-                    AOF.creation_options = _creationOptions::citext
+            (SELECT AOF.archived_file_id
+             FROM pc.t_archived_output_file_collections_xref AOFC
+                  INNER JOIN pc.t_archived_output_files AOF ON
+                    AOFC.archived_file_id = AOF.archived_file_id
+                  INNER JOIN pc.t_protein_collections PC ON
+                    AOFC.protein_collection_id = PC.protein_collection_id
+             WHERE PC.collection_name = _proteinCollectionName AND
+                   AOF.creation_options = _creationOptions::citext
             )
     GROUP BY AOF.archived_file_id
     HAVING COUNT(*) = _proteinCollectionCount;

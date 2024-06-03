@@ -291,13 +291,13 @@ BEGIN
 
                     SELECT string_agg(InstGroup, ', ' ORDER BY InstGroup)
                     INTO _instrumentGroups
-                    FROM ( SELECT DISTINCT RR.instrument_group AS InstGroup
-                           FROM t_requested_run RR
-                                LEFT OUTER JOIN Tmp_RequestIDs
-                                  ON Tmp_RequestIDs.RequestID = RR.request_id
-                           WHERE RR.batch_id = _batchID AND
-                                 RR.state_name = 'Active' AND
-                                 Tmp_RequestIDs.RequestID IS NULL
+                    FROM (SELECT DISTINCT RR.instrument_group AS InstGroup
+                          FROM t_requested_run RR
+                               LEFT OUTER JOIN Tmp_RequestIDs
+                                 ON Tmp_RequestIDs.RequestID = RR.request_id
+                          WHERE RR.batch_id = _batchID AND
+                                RR.state_name = 'Active' AND
+                                Tmp_RequestIDs.RequestID IS NULL
                          ) DistinctQ;
 
                     SELECT string_agg(RR.request_id::text, ', ' ORDER BY RR.request_id)

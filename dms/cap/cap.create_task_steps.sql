@@ -397,7 +397,7 @@ BEGIN
                 SELECT Trim(xmltable.section) AS section,
                        Trim(xmltable.name)    AS name,
                        Trim(xmltable.value)   AS value
-                FROM ( SELECT ('<params>' || _xmlParameters || '</params>')::xml AS rooted_xml
+                FROM (SELECT ('<params>' || _xmlParameters || '</params>')::xml AS rooted_xml
                      ) Src,
                      XMLTABLE('//params/Param'
                               PASSING Src.rooted_xml

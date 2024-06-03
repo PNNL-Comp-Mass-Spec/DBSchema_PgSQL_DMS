@@ -83,7 +83,7 @@ BEGIN
     INSERT INTO Tmp_UserOperations (User_Operation)
     SELECT value
     FROM public.parse_delimited_list(_operationsList)
-    WHERE value::citext IN ( SELECT Operation FROM t_user_operations );
+    WHERE value::citext IN (SELECT Operation FROM t_user_operations);
 
     ---------------------------------------------------
     -- Add missing associations between operations and user
@@ -105,11 +105,11 @@ BEGIN
 
     DELETE FROM t_user_operations_permissions UOP
     WHERE UOP.user_id = _userID AND
-          NOT EXISTS ( SELECT UO.operation_id
-                       FROM Tmp_UserOperations NewOps
-                            INNER JOIN t_user_operations UO
-                              ON NewOps.User_Operation = UO.operation
-                       WHERE UOP.operation_id = UO.operation_id);
+          NOT EXISTS (SELECT UO.operation_id
+                      FROM Tmp_UserOperations NewOps
+                           INNER JOIN t_user_operations UO
+                             ON NewOps.User_Operation = UO.operation
+                      WHERE UOP.operation_id = UO.operation_id);
 
     DROP TABLE Tmp_UserOperations;
 END

@@ -204,7 +204,7 @@ BEGIN
     SELECT Trim(XmlQ.Identifier), Trim(XmlQ.Factor), Trim(XmlQ.Value), XmlQ.DatasetID, 0
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT _xml AS rooted_xml
+        FROM (SELECT _xml AS rooted_xml
              ) Src,
              XMLTABLE('//root/r'
                       PASSING Src.rooted_xml
@@ -380,9 +380,9 @@ BEGIN
     SELECT COUNT(*),
            SUM(CASE WHEN RequestID IS NULL THEN 1 ELSE 0 END)
     INTO _matchCount, _invalidCount
-    FROM ( SELECT DISTINCT Identifier,
-                           RequestID
-           FROM Tmp_FactorInfo
+    FROM (SELECT DISTINCT Identifier,
+                          RequestID
+          FROM Tmp_FactorInfo
          ) InnerQ;
 
     If _invalidCount > 0 Then
@@ -413,9 +413,9 @@ BEGIN
 
     SELECT string_agg(Factor, ', ' ORDER BY Factor)
     INTO _badFactorNames
-    FROM ( SELECT DISTINCT Factor
-           FROM Tmp_FactorInfo
-           WHERE NOT Factor IN ('Dataset ID')      -- Note that factors named 'Dataset ID' and 'Dataset_ID' are removed later in this procedure
+    FROM (SELECT DISTINCT Factor
+          FROM Tmp_FactorInfo
+          WHERE NOT Factor IN ('Dataset ID')      -- Note that factors named 'Dataset ID' and 'Dataset_ID' are removed later in this procedure
           ) LookupQ
     WHERE Factor SIMILAR TO '%[^0-9A-Za-z_.]%';
 
@@ -523,9 +523,9 @@ BEGIN
 
     SELECT string_agg(Factor, ', ' ORDER BY Factor)
     INTO _badFactorNames
-    FROM ( SELECT DISTINCT Factor
-           FROM Tmp_FactorInfo
-           WHERE Factor IN ('Block', 'Run_Order', 'Run Order', 'Type')
+    FROM (SELECT DISTINCT Factor
+          FROM Tmp_FactorInfo
+          WHERE Factor IN ('Block', 'Run_Order', 'Run Order', 'Type')
          ) LookupQ;
 
     If Coalesce(_badFactorNames, '') <> '' Then
@@ -693,12 +693,12 @@ BEGIN
     UPDATE Tmp_FactorInfo
     SET UpdateSkipCode = 1
     WHERE UpdateSkipCode = 0 AND
-          EXISTS ( SELECT 1
-                   FROM t_factor
-                   WHERE t_factor.type = 'Run_Request' AND
-                         Tmp_FactorInfo.RequestID = t_factor.target_id AND
-                         Tmp_FactorInfo.Factor    = t_factor.name AND
-                         Tmp_FactorInfo.Value     = t_factor.value );
+          EXISTS (SELECT 1
+                  FROM t_factor
+                  WHERE t_factor.type = 'Run_Request' AND
+                        Tmp_FactorInfo.RequestID = t_factor.target_id AND
+                        Tmp_FactorInfo.Factor    = t_factor.name AND
+                        Tmp_FactorInfo.Value     = t_factor.value);
 
     If _infoOnly Then
 
@@ -745,12 +745,12 @@ BEGIN
 
     DELETE FROM t_factor
     WHERE t_factor.type = 'Run_Request' AND
-          EXISTS ( SELECT 1
-                   FROM Tmp_FactorInfo
-                   WHERE UpdateSkipCode = 0 AND
-                         Tmp_FactorInfo.RequestID   = t_factor.target_id AND
-                         Tmp_FactorInfo.Factor      = t_factor.name AND
-                         Trim(Tmp_FactorInfo.Value) = '' );
+          EXISTS (SELECT 1
+                  FROM Tmp_FactorInfo
+                  WHERE UpdateSkipCode = 0 AND
+                        Tmp_FactorInfo.RequestID   = t_factor.target_id AND
+                        Tmp_FactorInfo.Factor      = t_factor.name AND
+                        Trim(Tmp_FactorInfo.Value) = '');
 
     -----------------------------------------------------------
     -- Update existing items in factors tables
@@ -785,11 +785,11 @@ BEGIN
     FROM Tmp_FactorInfo
     WHERE UpdateSkipCode = 0 AND
           Trim(Tmp_FactorInfo.Value) <> '' AND
-          NOT EXISTS ( SELECT 1
-                       FROM t_factor
-                       WHERE Tmp_FactorInfo.RequestID = t_factor.target_id AND
-                             Tmp_FactorInfo.Factor    = t_factor.name AND
-                             t_factor.type            = 'Run_Request' );
+          NOT EXISTS (SELECT 1
+                      FROM t_factor
+                      WHERE Tmp_FactorInfo.RequestID = t_factor.target_id AND
+                            Tmp_FactorInfo.Factor    = t_factor.name AND
+                            t_factor.type            = 'Run_Request');
 
     -----------------------------------------------------------
     -- Convert changed items to XML for logging

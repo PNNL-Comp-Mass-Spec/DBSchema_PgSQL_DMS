@@ -125,9 +125,9 @@ BEGIN
         End If;
 
         DELETE FROM Tmp_ProteinCollections
-        WHERE NOT RowNumberID IN ( SELECT Min(RowNumberID) AS IDToKeep
-                                   FROM Tmp_ProteinCollections
-                                   GROUP BY Protein_Collection_Name );
+        WHERE NOT RowNumberID IN (SELECT MIN(RowNumberID) AS IDToKeep
+                                  FROM Tmp_ProteinCollections
+                                  GROUP BY Protein_Collection_Name );
 
     End If;
 
@@ -165,20 +165,20 @@ BEGIN
                     Dataset_Count,
                     Experiment_Count,
                     Enzyme_Contaminant_Collection
-    FROM ( SELECT -1 AS Internal_Std_Mix_ID,
-                  Coalesce(Enz.protein_collection_name, '') AS Protein_Collection_Name,
-                  COUNT(DISTINCT DS.dataset) AS Dataset_Count,
-                  COUNT(DISTINCT E.exp_id) AS Experiment_Count,
-                  true AS Enzyme_Contaminant_Collection
-            FROM Tmp_Datasets
-                INNER JOIN t_dataset DS
-                    ON Tmp_Datasets.Dataset = DS.dataset
-                INNER JOIN t_experiments E
-                    ON DS.exp_id = E.exp_id
-                INNER JOIN t_enzymes Enz
-                    ON E.enzyme_id = Enz.enzyme_id
-            GROUP BY Coalesce(Enz.protein_collection_name, '')
-            ) LookupQ
+    FROM (SELECT -1 AS Internal_Std_Mix_ID,
+                 Coalesce(Enz.protein_collection_name, '') AS Protein_Collection_Name,
+                 COUNT(DISTINCT DS.dataset) AS Dataset_Count,
+                 COUNT(DISTINCT E.exp_id) AS Experiment_Count,
+                 true AS Enzyme_Contaminant_Collection
+          FROM Tmp_Datasets
+               INNER JOIN t_dataset DS
+                 ON Tmp_Datasets.Dataset = DS.dataset
+               INNER JOIN t_experiments E
+                 ON DS.exp_id = E.exp_id
+               INNER JOIN t_enzymes Enz
+                 ON E.enzyme_id = Enz.enzyme_id
+          GROUP BY Coalesce(Enz.protein_collection_name, '')
+         ) LookupQ
     WHERE protein_collection_name <> '';
 
     If _showDebug Then
@@ -290,12 +290,12 @@ BEGIN
     -- remove 'HumanContam' from Tmp_IntStds since every protein in 'HumanContam' is also in 'Tryp_Pig_Bov'
     --------------------------------------------------------------
 
-    If Exists ( SELECT *
-                FROM Tmp_ProteinCollections
-                WHERE Protein_Collection_Name = 'Tryp_Pig_Bov' ) AND
-       Exists ( SELECT *
-                FROM Tmp_IntStds
-                WHERE Protein_Collection_Name = 'HumanContam' ) Then
+    If Exists (SELECT *
+               FROM Tmp_ProteinCollections
+               WHERE Protein_Collection_Name = 'Tryp_Pig_Bov') AND
+       Exists (SELECT *
+               FROM Tmp_IntStds
+               WHERE Protein_Collection_Name = 'HumanContam') Then
 
         DELETE FROM Tmp_IntStds
         WHERE Protein_Collection_Name = 'HumanContam';

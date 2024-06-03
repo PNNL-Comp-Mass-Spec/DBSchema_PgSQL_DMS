@@ -86,8 +86,8 @@ BEGIN
                COUNT(RR.request_id) AS RequestIDCount,
                MIN(RR.request_id) AS RequestIDFirst,
                MAX(RR.request_id) AS RequestIDFirst
-        FROM ( SELECT Distinct value AS request_id
-               FROM public.parse_delimited_integer_list ( _reqRunIDList )
+        FROM (SELECT Distinct value AS request_id
+              FROM public.parse_delimited_integer_list ( _reqRunIDList )
              ) AS RequestQ
              INNER JOIN T_Requested_Run RR
                ON RequestQ.request_id = RR.request_id
@@ -121,10 +121,10 @@ BEGIN
             -- Verify that dataset type is valid for given instrument group
             ---------------------------------------------------
 
-            If Not Exists ( SELECT instrument_group
-                            FROM t_instrument_group_allowed_ds_type
-                            WHERE instrument_group = _instrumentGroup::citext AND
-                                  dataset_type = _requestInfo.DatasetTypeName
+            If Not Exists (SELECT instrument_group
+                           FROM t_instrument_group_allowed_ds_type
+                           WHERE instrument_group = _instrumentGroup::citext AND
+                                 dataset_type = _requestInfo.DatasetTypeName
                           ) Then
 
                 _allowedDatasetTypes := public.get_instrument_group_dataset_type_list(_instrumentGroup::citext, ', ');
@@ -148,9 +148,9 @@ BEGIN
         END LOOP;
 
         If _returnCode = '' Then
-            SELECT Sum(RequestIDCount) AS RequestIDCount,
-                   Min(RequestIDFirst) AS RequestIDFirst,
-                   Min(RequestIDLast) AS RequestIDLast
+            SELECT SUM(RequestIDCount) AS RequestIDCount,
+                   MIN(RequestIDFirst) AS RequestIDFirst,
+                   MIN(RequestIDLast) AS RequestIDLast
             INTO _requestInfo
             FROM Tmp_DatasetTypeList;
 

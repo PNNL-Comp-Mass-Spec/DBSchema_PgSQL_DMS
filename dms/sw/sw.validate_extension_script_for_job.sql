@@ -133,21 +133,21 @@ BEGIN
 
     SELECT COUNT(*)
     INTO _overlapCount
-    FROM ( SELECT xmltable.step_number
-           FROM ( SELECT _currentScriptXML AS rooted_xml
-                ) Src,
-                XMLTABLE('//JobScript/Step'
-                         PASSING Src.rooted_xml
-                         COLUMNS step_number int PATH '@Number')
+    FROM (SELECT xmltable.step_number
+          FROM (SELECT _currentScriptXML AS rooted_xml
+               ) Src,
+               XMLTABLE('//JobScript/Step'
+                        PASSING Src.rooted_xml
+                        COLUMNS step_number int PATH '@Number')
          ) C
          INNER JOIN
-         ( SELECT xmltable.step_number
-           FROM ( SELECT _extensionScriptXML AS rooted_xml
-                ) Src,
-                XMLTABLE('//JobScript/Step'
-                         PASSING Src.rooted_xml
-                         COLUMNS step_number int PATH '@Number')
-         ) E ON C.step_number = E.step_number;
+             (SELECT xmltable.step_number
+              FROM (SELECT _extensionScriptXML AS rooted_xml
+                   ) Src,
+                   XMLTABLE('//JobScript/Step'
+                            PASSING Src.rooted_xml
+                            COLUMNS step_number int PATH '@Number')
+             ) E ON C.step_number = E.step_number;
 
     If _overlapCount > 0 Then
 
@@ -176,54 +176,54 @@ BEGIN
 
         FOR _previewData IN
             WITH ConflictQ (step_number)
-            AS ( SELECT C.step_number
-                 FROM ( SELECT xmltable.step_number
-                        FROM ( SELECT _currentScriptXML AS rooted_xml
-                             ) Src,
-                             XMLTABLE('//JobScript/Step'
-                                      PASSING Src.rooted_xml
-                                      COLUMNS step_number int PATH '@Number')
-                      ) C
-                      INNER JOIN
-                      ( SELECT xmltable.step_number
-                        FROM ( SELECT _extensionScriptXML AS rooted_xml
-                             ) Src,
-                             XMLTABLE('//JobScript/Step'
-                                      PASSING Src.rooted_xml
-                                      COLUMNS step_number int PATH '@Number')
-                      ) E ON C.step_number = E.step_number
+            AS (SELECT C.step_number
+                FROM (SELECT xmltable.step_number
+                      FROM (SELECT _currentScriptXML AS rooted_xml
+                           ) Src,
+                           XMLTABLE('//JobScript/Step'
+                                    PASSING Src.rooted_xml
+                                    COLUMNS step_number int PATH '@Number')
+                     ) C
+                     INNER JOIN
+                         (SELECT xmltable.step_number
+                          FROM (SELECT _extensionScriptXML AS rooted_xml
+                               ) Src,
+                               XMLTABLE('//JobScript/Step'
+                                        PASSING Src.rooted_xml
+                                        COLUMNS step_number int PATH '@Number')
+                         ) E ON C.step_number = E.step_number
             )
             SELECT ScriptSteps.Script,
                    ScriptSteps.Step_Number,
                    ScriptSteps.Step_Tool,
                    CASE WHEN ConflictQ.Step_Number IS NULL THEN 0 ELSE 1 END AS Conflict
-            FROM (
-                    SELECT _currentScript AS Script,
-                           xmltable.step_number,
-                           xmltable.step_tool
-                    FROM ( SELECT _currentScriptXML AS rooted_xml
-                         ) Src,
-                         XMLTABLE('//JobScript/Step'
-                                  PASSING Src.rooted_xml
-                                  COLUMNS step_number int  PATH '@Number',
-                                          step_tool   text PATH '@Tool')
+            FROM (SELECT _currentScript AS Script,
+                         xmltable.step_number,
+                         xmltable.step_tool
+                  FROM (SELECT _currentScriptXML AS rooted_xml
+                       ) Src,
+                       XMLTABLE('//JobScript/Step'
+                                PASSING Src.rooted_xml
+                                COLUMNS step_number int  PATH '@Number',
+                                        step_tool   text PATH '@Tool')
                 ) ScriptSteps LEFT OUTER JOIN ConflictQ ON ScriptSteps.step_number = ConflictQ.step_number
             UNION
             SELECT ScriptSteps.Script,
                    ScriptSteps.Step_Number,
                    ScriptSteps.Step_Tool,
                    CASE WHEN ConflictQ.Step_Number IS NULL THEN 0 ELSE 1 END AS Conflict
-            FROM (
-                    SELECT _extensionScriptName AS Script,
-                           xmltable.step_number,
-                           xmltable.step_tool
-                    FROM ( SELECT _extensionScriptXML AS rooted_xml
-                         ) Src,
-                         XMLTABLE('//JobScript/Step'
-                                  PASSING Src.rooted_xml
-                                  COLUMNS step_number int   PATH '@Number',
-                                          step_tool   text PATH '@Tool')
-                ) ScriptSteps LEFT OUTER JOIN ConflictQ ON ScriptSteps.Step_Number = ConflictQ.Step_Number
+            FROM (SELECT _extensionScriptName AS Script,
+                         xmltable.step_number,
+                         xmltable.step_tool
+                  FROM (SELECT _extensionScriptXML AS rooted_xml
+                       ) Src,
+                       XMLTABLE('//JobScript/Step'
+                                PASSING Src.rooted_xml
+                                COLUMNS step_number int   PATH '@Number',
+                                        step_tool   text PATH '@Tool')
+                ) ScriptSteps
+                LEFT OUTER JOIN
+                    ConflictQ ON ScriptSteps.Step_Number = ConflictQ.Step_Number
             ORDER BY Script, Step_Number
         LOOP
             _infoData := format(_formatSpecifier,

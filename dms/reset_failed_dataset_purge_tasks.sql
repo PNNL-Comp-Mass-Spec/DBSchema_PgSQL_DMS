@@ -136,11 +136,11 @@ BEGIN
 
         UPDATE t_dataset_archive target
         SET archive_state_id = 3
-        WHERE dataset_id IN ( SELECT DA.dataset_id
-                              FROM t_dataset_archive DA
-                              WHERE DA.archive_state_id = 8 AND
-                                    DA.archive_state_last_affected < CURRENT_TIMESTAMP - make_interval(hours => _hours, mins => _minutes)
-                              LIMIT _maxTasksToReset
+        WHERE dataset_id IN (SELECT DA.dataset_id
+                             FROM t_dataset_archive DA
+                             WHERE DA.archive_state_id = 8 AND
+                                   DA.archive_state_last_affected < CURRENT_TIMESTAMP - make_interval(hours => _hours, mins => _minutes)
+                             LIMIT _maxTasksToReset
                             );
         --
         GET DIAGNOSTICS _resetCount = ROW_COUNT;

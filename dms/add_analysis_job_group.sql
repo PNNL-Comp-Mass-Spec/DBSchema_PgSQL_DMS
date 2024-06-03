@@ -612,9 +612,9 @@ BEGIN
                 SELECT Trim(XmlQ.section), Trim(XmlQ.name), Trim(XmlQ.value)
                 FROM (
                     SELECT xmltable.*
-                    FROM ( SELECT contents AS settings
-                           FROM t_settings_files
-                           WHERE file_name = _settingsFileName::citext AND analysis_tool = _toolName::citext
+                    FROM (SELECT contents AS settings
+                          FROM t_settings_files
+                          WHERE file_name = _settingsFileName::citext AND analysis_tool = _toolName::citext
                          ) Src,
                          XMLTABLE('//sections/section/item'
                                   PASSING Src.settings
@@ -902,9 +902,9 @@ BEGIN
             -- The JobQ subquery uses Row_Number() and _jobIDStart to define the new job numbers for each entry in Tmp_DatasetInfo
             UPDATE Tmp_DatasetInfo
             SET Job = JobQ.ID
-            FROM ( SELECT Dataset_ID,
-                          Row_Number() OVER (ORDER BY Dataset_ID) + _jobIDStart - 1 AS ID
-                   FROM Tmp_DatasetInfo
+            FROM (SELECT Dataset_ID,
+                         Row_Number() OVER (ORDER BY Dataset_ID) + _jobIDStart - 1 AS ID
+                  FROM Tmp_DatasetInfo
                  ) JobQ
             WHERE Tmp_DatasetInfo.Dataset_ID = JobQ.Dataset_ID;
 
@@ -995,23 +995,23 @@ BEGIN
 
                 UPDATE t_analysis_job_request target
                 SET job_count = StatQ.JobCount
-                FROM ( SELECT AJR.request_id,
-                              SUM(CASE WHEN AJ.job IS NULL
-                                       THEN 0
-                                       ELSE 1
-                                  END) AS JobCount
-                       FROM t_analysis_job_request AJR
-                           INNER JOIN t_users U
-                               ON AJR.user_id = U.user_id
-                           INNER JOIN t_analysis_job_request_state AJRS
-                               ON AJR.request_state_id = AJRS.request_state_id
-                           INNER JOIN t_organisms Org
-                               ON AJR.organism_id = Org.organism_id
-                           LEFT OUTER JOIN t_analysis_job AJ
-                               ON AJR.request_id = AJ.request_id
-                       WHERE AJR.request_id = _requestID
-                       GROUP BY AJR.request_id
-                       ) StatQ
+                FROM (SELECT AJR.request_id,
+                             SUM(CASE WHEN AJ.job IS NULL
+                                      THEN 0
+                                      ELSE 1
+                                 END) AS JobCount
+                      FROM t_analysis_job_request AJR
+                          INNER JOIN t_users U
+                              ON AJR.user_id = U.user_id
+                          INNER JOIN t_analysis_job_request_state AJRS
+                              ON AJR.request_state_id = AJRS.request_state_id
+                          INNER JOIN t_organisms Org
+                              ON AJR.organism_id = Org.organism_id
+                          LEFT OUTER JOIN t_analysis_job AJ
+                              ON AJR.request_id = AJ.request_id
+                      WHERE AJR.request_id = _requestID
+                      GROUP BY AJR.request_id
+                     ) StatQ
                 WHERE target.request_id = StatQ.request_id;
 
                 CALL public.update_cached_job_request_existing_jobs (

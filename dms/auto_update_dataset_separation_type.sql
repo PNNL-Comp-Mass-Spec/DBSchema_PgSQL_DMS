@@ -139,10 +139,10 @@ BEGIN
 
     UPDATE Tmp_UpdateStats
     SET SortID = SortQ.SortID
-    FROM ( SELECT SeparationType,
-                  UpdatedSeparationType,
-                  Row_Number() OVER (ORDER BY SeparationType, UpdatedSeparationType) AS SortID
-           FROM Tmp_UpdateStats
+    FROM (SELECT SeparationType,
+                 UpdatedSeparationType,
+                 Row_Number() OVER (ORDER BY SeparationType, UpdatedSeparationType) AS SortID
+          FROM Tmp_UpdateStats
          ) SortQ
     WHERE Tmp_UpdateStats.SeparationType = SortQ.SeparationType AND
           Tmp_UpdateStats.UpdatedSeparationType = SortQ.UpdatedSeparationType;

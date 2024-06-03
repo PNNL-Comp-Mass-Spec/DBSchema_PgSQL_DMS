@@ -148,7 +148,7 @@ BEGIN
         SELECT XmlQ.RequestID, Trim(XmlQ.FactorType), Trim(XmlQ.FactorName), Trim(XmlQ.FactorValue), false AS ValidFactor
         FROM (
             SELECT xmltable.*
-            FROM ( SELECT ('<factors>' || _xml || '</factors>')::xml AS rooted_xml
+            FROM (SELECT ('<factors>' || _xml || '</factors>')::xml AS rooted_xml
                  ) Src,
                  XMLTABLE('//factors/r'
                           PASSING Src.rooted_xml
@@ -187,11 +187,11 @@ BEGIN
 
         -- Merge the changes into Tmp_FactorLastUpdated
         MERGE INTO Tmp_FactorLastUpdated AS t
-        USING ( SELECT RequestID, FactorName
-                FROM Tmp_FactorUpdates
-                WHERE ValidFactor
+        USING (SELECT RequestID, FactorName
+               FROM Tmp_FactorUpdates
+               WHERE ValidFactor
               ) AS s
-        ON (t.RequestID = s.RequestID And t.FactorName = s.FactorName)
+        ON (t.RequestID = s.RequestID AND t.FactorName = s.FactorName)
         WHEN MATCHED THEN
             UPDATE SET Last_Updated = _changeDate
         WHEN NOT MATCHED THEN

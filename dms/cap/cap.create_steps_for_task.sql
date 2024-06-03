@@ -52,13 +52,13 @@ BEGIN
 
     SELECT string_agg(XmlQ.tool, ', ' ORDER BY XmlQ.tool)
     INTO _missingTools
-    FROM ( SELECT Trim(xmltable.tool)::citext AS Tool
-           FROM ( SELECT _scriptXML AS ScriptXML ) Src,
-                XMLTABLE('//JobScript/Step'
-                         PASSING Src.ScriptXML
-                         COLUMNS step                 int  PATH '@Number',
-                                 tool                 text PATH '@Tool',
-                                 special_instructions text PATH '@Special')
+    FROM (SELECT Trim(xmltable.tool)::citext AS Tool
+          FROM (SELECT _scriptXML AS ScriptXML) Src,
+               XMLTABLE('//JobScript/Step'
+                        PASSING Src.ScriptXML
+                        COLUMNS step                 int  PATH '@Number',
+                                tool                 text PATH '@Tool',
+                                special_instructions text PATH '@Special')
          ) XmlQ
     WHERE NOT XmlQ.tool IN (SELECT ST.step_tool FROM cap.t_step_tools ST);
 
@@ -96,7 +96,7 @@ BEGIN
            ST.number_of_retries
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT _scriptXML AS ScriptXML ) Src,
+        FROM (SELECT _scriptXML AS ScriptXML) Src,
              XMLTABLE('//JobScript/Step'
                       PASSING Src.ScriptXML
                       COLUMNS step                 int  PATH '@Number',
@@ -129,7 +129,7 @@ BEGIN
         _job AS Job
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT _scriptXML AS ScriptXML ) Src,
+        FROM (SELECT _scriptXML AS ScriptXML) Src,
              XMLTABLE('//JobScript/Step/Depends_On'
                       PASSING Src.ScriptXML
                       COLUMNS step           int  PATH '../@Number',

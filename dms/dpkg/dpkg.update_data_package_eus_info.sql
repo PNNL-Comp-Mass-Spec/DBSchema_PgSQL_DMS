@@ -97,8 +97,8 @@ BEGIN
         INSERT INTO Tmp_DataPackagesToUpdate (data_pkg_id)
         SELECT data_pkg_id
         FROM dpkg.t_data_package
-        WHERE data_pkg_id IN ( SELECT Value
-                               FROM public.parse_delimited_integer_list(_dataPackageList)
+        WHERE data_pkg_id IN (SELECT Value
+                              FROM public.parse_delimited_integer_list(_dataPackageList)
                              );
     End If;
 
@@ -133,7 +133,7 @@ BEGIN
     UPDATE dpkg.t_data_package DP
     SET eus_person_id = EUSUser.eus_person_id
     FROM public.V_EUS_User_ID_Lookup EUSUser
-    WHERE DP.data_pkg_id IN ( SELECT Data_Pkg_ID FROM Tmp_DataPackagesToUpdate) AND
+    WHERE DP.data_pkg_id IN (SELECT Data_Pkg_ID FROM Tmp_DataPackagesToUpdate) AND
           DP.owner_username = EUSUser.Username AND
           DP.EUS_Person_ID IS DISTINCT FROM EUSUser.EUS_Person_ID;
     --
@@ -153,27 +153,27 @@ BEGIN
 
     UPDATE Tmp_DataPackagesToUpdate Target
     SET Best_EUS_Proposal_ID = FilterQ.EUS_Proposal_ID
-    FROM ( SELECT RankQ.data_pkg_id,
-                  RankQ.EUS_Proposal_ID
-           FROM ( SELECT data_pkg_id,
-                         EUS_Proposal_ID,
-                         Proposal_Count,
-                         Row_Number() OVER (PARTITION BY SourceQ.data_pkg_id ORDER BY Proposal_Count DESC) AS CountRank
-                  FROM ( SELECT DPD.data_pkg_id,
-                                RR.EUS_Proposal_ID,           -- EUS Proposal ID (stored as text since typically an integer, but could be 'EPR56820')
-                                COUNT(RR.EUS_Proposal_ID) AS Proposal_Count
-                         FROM dpkg.t_data_package_datasets DPD
-                              INNER JOIN Tmp_DataPackagesToUpdate Src
-                                ON DPD.data_pkg_id = Src.Data_Pkg_ID
-                              INNER JOIN public.t_dataset DS
-                                ON DPD.dataset_id = DS.dataset_id
-                              LEFT OUTER JOIN public.t_requested_run RR
-                                ON DS.dataset_id = RR.dataset_id
-                         WHERE NOT RR.EUS_Proposal_ID IS NULL AND NOT RR.EUS_Proposal_ID LIKE 'EPR%'
-                         GROUP BY DPD.data_pkg_id, RR.EUS_Proposal_ID
-                       ) SourceQ
-                ) RankQ
-           WHERE RankQ.CountRank = 1
+    FROM (SELECT RankQ.data_pkg_id,
+                 RankQ.EUS_Proposal_ID
+          FROM (SELECT data_pkg_id,
+                       EUS_Proposal_ID,
+                       Proposal_Count,
+                       Row_Number() OVER (PARTITION BY SourceQ.data_pkg_id ORDER BY Proposal_Count DESC) AS CountRank
+                FROM (SELECT DPD.data_pkg_id,
+                             RR.EUS_Proposal_ID,           -- EUS Proposal ID (stored as text since typically an integer, but could be 'EPR56820')
+                             COUNT(RR.EUS_Proposal_ID) AS Proposal_Count
+                      FROM dpkg.t_data_package_datasets DPD
+                           INNER JOIN Tmp_DataPackagesToUpdate Src
+                             ON DPD.data_pkg_id = Src.Data_Pkg_ID
+                           INNER JOIN public.t_dataset DS
+                             ON DPD.dataset_id = DS.dataset_id
+                           LEFT OUTER JOIN public.t_requested_run RR
+                             ON DS.dataset_id = RR.dataset_id
+                      WHERE NOT RR.EUS_Proposal_ID IS NULL AND NOT RR.EUS_Proposal_ID LIKE 'EPR%'
+                      GROUP BY DPD.data_pkg_id, RR.EUS_Proposal_ID
+                     ) SourceQ
+               ) RankQ
+          WHERE RankQ.CountRank = 1
          ) FilterQ
     WHERE Target.Data_Pkg_ID = FilterQ.data_pkg_id;
 
@@ -184,18 +184,18 @@ BEGIN
 
     UPDATE Tmp_DataPackagesToUpdate Target
     SET Best_EUS_Proposal_ID = FilterQ.Proposal_ID
-    FROM ( SELECT data_pkg_id,
-                  proposal_id
-           FROM ( SELECT data_pkg_id,
-                         proposal_id,
-                         item_added,
-                         Row_Number() OVER (PARTITION BY data_pkg_id ORDER BY item_added DESC) AS IdRank
-                  FROM dpkg.t_data_package_eus_proposals
-                  WHERE data_pkg_id IN ( SELECT Data_Pkg_ID
-                                         FROM Tmp_DataPackagesToUpdate
-                                         WHERE Best_EUS_Proposal_ID IS NULL )
-                ) RankQ
-           WHERE RankQ.IdRank = 1
+    FROM (SELECT data_pkg_id,
+                 proposal_id
+          FROM (SELECT data_pkg_id,
+                       proposal_id,
+                       item_added,
+                       Row_Number() OVER (PARTITION BY data_pkg_id ORDER BY item_added DESC) AS IdRank
+                FROM dpkg.t_data_package_eus_proposals
+                WHERE data_pkg_id IN (SELECT Data_Pkg_ID
+                                      FROM Tmp_DataPackagesToUpdate
+                                      WHERE Best_EUS_Proposal_ID IS NULL )
+               ) RankQ
+          WHERE RankQ.IdRank = 1
          ) FilterQ
     WHERE Target.Data_Pkg_ID = FilterQ.data_pkg_id;
 
@@ -205,27 +205,27 @@ BEGIN
 
     UPDATE Tmp_DataPackagesToUpdate Target
     SET Best_Instrument_Name = FilterQ.Instrument
-    FROM ( SELECT RankQ.data_pkg_id,
-                  RankQ.instrument
-           FROM ( SELECT data_pkg_id,
-                         instrument,
-                         InstrumentCount,
-                         Row_Number() OVER (PARTITION BY SourceQ.data_pkg_id ORDER BY InstrumentCount DESC) AS CountRank
-                  FROM ( SELECT DPD.data_pkg_id,
-                                InstName.Instrument AS Instrument,
-                                COUNT(InstName.Instrument) AS InstrumentCount
-                         FROM dpkg.t_data_package_datasets DPD
-                              INNER JOIN public.t_dataset DS
-                                ON DPD.Dataset_ID = DS.Dataset_ID
-                              INNER JOIN public.t_instrument_name InstName
-                                ON DS.instrument_id = InstName.instrument_id
-                              INNER JOIN Tmp_DataPackagesToUpdate Src
-                                ON DPD.data_pkg_id = Src.Data_Pkg_ID
-                         WHERE NOT InstName.Instrument IS NULL
-                         GROUP BY DPD.data_pkg_id, InstName.Instrument
-                       ) SourceQ
-                ) RankQ
-           WHERE RankQ.CountRank = 1
+    FROM (SELECT RankQ.data_pkg_id,
+                 RankQ.instrument
+          FROM (SELECT data_pkg_id,
+                       instrument,
+                       InstrumentCount,
+                       Row_Number() OVER (PARTITION BY SourceQ.data_pkg_id ORDER BY InstrumentCount DESC) AS CountRank
+                FROM (SELECT DPD.data_pkg_id,
+                             InstName.Instrument AS Instrument,
+                             COUNT(InstName.Instrument) AS InstrumentCount
+                      FROM dpkg.t_data_package_datasets DPD
+                           INNER JOIN public.t_dataset DS
+                             ON DPD.Dataset_ID = DS.Dataset_ID
+                           INNER JOIN public.t_instrument_name InstName
+                             ON DS.instrument_id = InstName.instrument_id
+                           INNER JOIN Tmp_DataPackagesToUpdate Src
+                             ON DPD.data_pkg_id = Src.Data_Pkg_ID
+                      WHERE NOT InstName.Instrument IS NULL
+                      GROUP BY DPD.data_pkg_id, InstName.Instrument
+                     ) SourceQ
+               ) RankQ
+          WHERE RankQ.CountRank = 1
          ) FilterQ
     WHERE Target.Data_Pkg_ID = FilterQ.data_pkg_id;
 

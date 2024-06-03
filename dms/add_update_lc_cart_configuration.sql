@@ -237,14 +237,14 @@ BEGIN
         End If;
 
         If _state::citext = 'Override' Then
-            If Exists ( SELECT U.user_id
-                        FROM t_users U
-                             INNER JOIN t_user_operations_permissions OpsPerms
-                               ON U.user_id = OpsPerms.user_id
-                             INNER JOIN t_user_operations UserOps
-                               ON OpsPerms.operation_id = UserOps.operation_id
-                         WHERE U.username = _callingUser::citext AND
-                               UserOps.operation = 'DMS_Infrastructure_Administration')
+            If Exists (SELECT U.user_id
+                       FROM t_users U
+                            INNER JOIN t_user_operations_permissions OpsPerms
+                              ON U.user_id = OpsPerms.user_id
+                            INNER JOIN t_user_operations UserOps
+                              ON OpsPerms.operation_id = UserOps.operation_id
+                        WHERE U.username = _callingUser::citext AND
+                              UserOps.operation = 'DMS_Infrastructure_Administration')
             Then
                 -- Admin user is updating details for an LC cart config that is already associated with datasets
                 -- Use the existing state

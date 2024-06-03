@@ -119,8 +119,8 @@ BEGIN
         End If;
 
         MERGE INTO t_analysis_job_request_existing_jobs AS target
-        USING ( SELECT DISTINCT _requestID AS Request_ID, Job
-                FROM public.get_existing_jobs_matching_job_request(_requestID)
+        USING (SELECT DISTINCT _requestID AS Request_ID, Job
+               FROM public.get_existing_jobs_matching_job_request(_requestID)
               ) AS source
         ON (target.request_id = source.request_id AND target.job = source.job)
         -- Note: all of the columns in table t_analysis_job_request_existing_jobs are primary keys or identity columns; there are no updatable columns
@@ -247,8 +247,8 @@ BEGIN
         LOOP
 
             MERGE INTO t_analysis_job_request_existing_jobs AS target
-            USING ( SELECT DISTINCT _currentRequestId AS Request_ID, Job
-                    FROM public.get_existing_jobs_matching_job_request(_currentRequestId)
+            USING (SELECT DISTINCT _currentRequestId AS Request_ID, Job
+                   FROM public.get_existing_jobs_matching_job_request(_currentRequestId)
                   ) AS source
             ON (target.request_id = source.request_id AND target.job = source.job)
             WHEN NOT MATCHED THEN
@@ -343,18 +343,18 @@ BEGIN
         INSERT INTO t_analysis_job_request_existing_jobs (request_id, job)
         SELECT DISTINCT LookupQ.request_id,
                         RequestJobs.job
-        FROM ( SELECT AJR.request_id AS Request_ID
-               FROM t_analysis_job_request AJR
-                    LEFT OUTER JOIN t_analysis_job_request_existing_jobs CachedJobs
-                      ON AJR.request_id = CachedJobs.request_id
-               WHERE AJR.request_id > 1 AND
-                     AJR.created > CURRENT_TIMESTAMP - make_interval(days => _modeZeroSearchDays) AND
-                     CachedJobs.request_id IS NULL
+        FROM (SELECT AJR.request_id AS Request_ID
+              FROM t_analysis_job_request AJR
+                   LEFT OUTER JOIN t_analysis_job_request_existing_jobs CachedJobs
+                     ON AJR.request_id = CachedJobs.request_id
+              WHERE AJR.request_id > 1 AND
+                    AJR.created > CURRENT_TIMESTAMP - make_interval(days => _modeZeroSearchDays) AND
+                    CachedJobs.request_id IS NULL
              ) LookupQ
              JOIN LATERAL (
                 SELECT job
                 FROM public.get_existing_jobs_matching_job_request(LookupQ.Request_ID)
-                ) AS RequestJobs On true
+               ) AS RequestJobs On true
         ORDER BY LookupQ.request_id, RequestJobs.job;
         --
         GET DIAGNOSTICS _matchCount = ROW_COUNT;
@@ -451,13 +451,13 @@ BEGIN
             -- Add new rows to t_analysis_job_request_existing_jobs
 
             MERGE INTO t_analysis_job_request_existing_jobs AS target
-            USING ( SELECT DISTINCT AJR.request_id AS Request_ID, MatchingJobs.Job
-                    FROM t_analysis_job_request AJR
-                         JOIN LATERAL (
-                            SELECT job
-                            FROM public.get_existing_jobs_matching_job_request(AJR.Request_ID)
-                            ) AS MatchingJobs On true
-                    WHERE AJR.request_id BETWEEN _requestIdStart AND _requestIdEnd
+            USING (SELECT DISTINCT AJR.request_id AS Request_ID, MatchingJobs.Job
+                   FROM t_analysis_job_request AJR
+                        JOIN LATERAL (
+                           SELECT job
+                           FROM public.get_existing_jobs_matching_job_request(AJR.Request_ID)
+                          ) AS MatchingJobs On true
+                   WHERE AJR.request_id BETWEEN _requestIdStart AND _requestIdEnd
                   ) AS source
             ON (target.request_id = source.request_id AND target.job = source.job)
             WHEN NOT MATCHED THEN
@@ -474,13 +474,13 @@ BEGIN
             DELETE FROM t_analysis_job_request_existing_jobs target
             WHERE target.request_id BETWEEN _requestIdStart AND _requestIdEnd
                   AND NOT EXISTS (SELECT source.Job
-                                  FROM ( SELECT DISTINCT AJR.request_id AS Request_ID, MatchingJobs.Job
-                                         FROM t_analysis_job_request AJR
-                                              JOIN LATERAL (
-                                                 SELECT job
-                                                 FROM public.get_existing_jobs_matching_job_request(AJR.Request_ID)
-                                                 ) AS MatchingJobs On true
-                                         WHERE AJR.request_id BETWEEN _requestIdStart AND _requestIdEnd
+                                  FROM (SELECT DISTINCT AJR.request_id AS Request_ID, MatchingJobs.Job
+                                        FROM t_analysis_job_request AJR
+                                             JOIN LATERAL (
+                                                SELECT job
+                                                FROM public.get_existing_jobs_matching_job_request(AJR.Request_ID)
+                                               ) AS MatchingJobs On true
+                                        WHERE AJR.request_id BETWEEN _requestIdStart AND _requestIdEnd
                                        ) AS source
                                   WHERE target.request_id = source.request_id AND target.job = source.job);
         End If;

@@ -92,16 +92,16 @@ BEGIN
         SELECT A.dataset_id,
                A.Dataset,
                '' AS Reset_Comment
-        FROM ( SELECT dataset_id,
-                      dataset
-               FROM t_dataset
-               WHERE dataset_state_id = 5 AND
-                     (comment ILIKE '%Exception validating constant%' OR
-                      comment ILIKE '%File size changed%' OR
-                      comment ILIKE '%Folder size changed%' OR
-                      comment ILIKE '%Error running OpenChrom%') AND
-                      last_affected < CURRENT_TIMESTAMP - make_interval(hours => _resetHoldoffHours)
-               LIMIT _maxDatasetsToReset
+        FROM (SELECT dataset_id,
+                     dataset
+              FROM t_dataset
+              WHERE dataset_state_id = 5 AND
+                    (comment ILIKE '%Exception validating constant%' OR
+                     comment ILIKE '%File size changed%' OR
+                     comment ILIKE '%Folder size changed%' OR
+                     comment ILIKE '%Error running OpenChrom%') AND
+                     last_affected < CURRENT_TIMESTAMP - make_interval(hours => _resetHoldoffHours)
+              LIMIT _maxDatasetsToReset
              ) A
         UNION
         SELECT dataset_id,
@@ -130,17 +130,17 @@ BEGIN
 
         UPDATE Tmp_Datasets
         SET Reset_Comment = 'Capture of dataset has been attempted 5 times; will not reset'
-        WHERE Dataset_ID IN ( SELECT DS.Dataset_ID
-                              FROM t_event_target ET
-                                   INNER JOIN t_event_log EL
-                                     ON ET.target_type_id = EL.target_type
-                                   INNER JOIN Tmp_Datasets DS
-                                     ON EL.target_id = DS.Dataset_ID
-                              WHERE ET.target_type = 'Dataset' AND
-                                    EL.target_state = 1 AND
-                                    EL.prev_target_state = 5
-                              GROUP BY DS.Dataset_ID
-                              HAVING (COUNT(DS.Dataset_ID) > 4)
+        WHERE Dataset_ID IN (SELECT DS.Dataset_ID
+                             FROM t_event_target ET
+                                  INNER JOIN t_event_log EL
+                                    ON ET.target_type_id = EL.target_type
+                                  INNER JOIN Tmp_Datasets DS
+                                    ON EL.target_id = DS.Dataset_ID
+                             WHERE ET.target_type = 'Dataset' AND
+                                   EL.target_state = 1 AND
+                                   EL.prev_target_state = 5
+                             GROUP BY DS.Dataset_ID
+                             HAVING (COUNT(DS.Dataset_ID) > 4)
                             );
 
         If _infoOnly Then

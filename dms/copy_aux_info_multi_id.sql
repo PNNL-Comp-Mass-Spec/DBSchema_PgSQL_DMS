@@ -116,8 +116,8 @@ BEGIN
 
     INSERT INTO Tmp_TargetEntities (EntityID, Valid)
     SELECT LookupQ.value, false AS Valid
-    FROM ( SELECT DISTINCT public.try_cast(value, null::int) AS value
-           FROM public.parse_delimited_list(_targetEntityIDList)
+    FROM (SELECT DISTINCT public.try_cast(value, null::int) AS value
+          FROM public.parse_delimited_list(_targetEntityIDList)
          ) LookupQ
     WHERE NOT LookupQ.Value IS NULL;
 
@@ -197,11 +197,11 @@ BEGIN
         -- Delete any existing values
 
         DELETE FROM t_aux_info_value
-        WHERE target_id IN ( SELECT EntityID FROM Tmp_TargetEntities ) AND
-              aux_description_id IN ( SELECT Item_ID
-                                      FROM V_Aux_Info_Definition
-                                      WHERE Target = _targetName AND
-                                            Category = _categoryName );
+        WHERE target_id IN (SELECT EntityID FROM Tmp_TargetEntities) AND
+              aux_description_id IN (SELECT Item_ID
+                                     FROM V_Aux_Info_Definition
+                                     WHERE Target = _targetName AND
+                                           Category = _categoryName);
 
         -- Insert new values
 
@@ -214,10 +214,10 @@ BEGIN
         FROM t_aux_info_value AI
              CROSS JOIN Tmp_TargetEntities TE
         WHERE AI.target_id = _sourceEntityID AND
-              AI.aux_description_id IN ( SELECT Item_ID
-                                         FROM V_Aux_Info_Definition
-                                         WHERE Target = _targetName AND
-                                               Category = _categoryName );
+              AI.aux_description_id IN (SELECT Item_ID
+                                        FROM V_Aux_Info_Definition
+                                        WHERE Target = _targetName AND
+                                              Category = _categoryName);
     End If;
 
     ---------------------------------------------------
@@ -232,13 +232,13 @@ BEGIN
         -- Delete any existing values
 
         DELETE FROM t_aux_info_value
-        WHERE target_id IN ( SELECT EntityID
-                             FROM Tmp_TargetEntities ) AND
-              aux_description_id IN ( SELECT Item_ID
-                                      FROM V_Aux_Info_Definition
-                                      WHERE Target = _targetName AND
-                                            Category = _categoryName AND
-                                            Subcategory = _subCategoryName );
+        WHERE target_id IN (SELECT EntityID
+                            FROM Tmp_TargetEntities) AND
+              aux_description_id IN (SELECT Item_ID
+                                     FROM V_Aux_Info_Definition
+                                     WHERE Target = _targetName AND
+                                           Category = _categoryName AND
+                                           Subcategory = _subCategoryName);
 
         -- Insert new values
 
@@ -251,11 +251,11 @@ BEGIN
         FROM t_aux_info_value AI
              CROSS JOIN Tmp_TargetEntities TE
         WHERE AI.target_id = _sourceEntityID AND
-              AI.aux_description_id IN ( SELECT Item_ID
-                                         FROM V_Aux_Info_Definition
-                                         WHERE Target = _targetName AND
-                                               Category = _categoryName AND
-                                               Subcategory = _subCategoryName );
+              AI.aux_description_id IN (SELECT Item_ID
+                                        FROM V_Aux_Info_Definition
+                                        WHERE Target = _targetName AND
+                                              Category = _categoryName AND
+                                              Subcategory = _subCategoryName);
     End If;
 
     ---------------------------------------------------
@@ -270,11 +270,11 @@ BEGIN
         -- Delete any existing values
 
         DELETE FROM t_aux_info_value
-        WHERE target_id IN ( SELECT EntityID
-                              FROM Tmp_TargetEntities ) AND
-              aux_description_id IN ( SELECT Item_ID
-                                      FROM V_Aux_Info_Definition
-                                      WHERE Target = _targetName );
+        WHERE target_id IN (SELECT EntityID
+                            FROM Tmp_TargetEntities) AND
+              aux_description_id IN (SELECT Item_ID
+                                     FROM V_Aux_Info_Definition
+                                     WHERE Target = _targetName);
 
         INSERT INTO t_aux_info_value (target_id,
                                       aux_description_id,
@@ -285,9 +285,9 @@ BEGIN
         FROM t_aux_info_value AI
              CROSS JOIN Tmp_TargetEntities TE
         WHERE AI.target_id = _sourceEntityID AND
-              AI.aux_description_id IN ( SELECT Item_ID
-                                         FROM V_Aux_Info_Definition
-                                         WHERE Target = _targetName );
+              AI.aux_description_id IN (SELECT Item_ID
+                                        FROM V_Aux_Info_Definition
+                                        WHERE Target = _targetName);
     End If;
 
     DROP TABLE Tmp_TargetEntities;

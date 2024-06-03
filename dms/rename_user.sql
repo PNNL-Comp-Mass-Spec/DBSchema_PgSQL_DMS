@@ -209,55 +209,55 @@ BEGIN
 
         FOR _previewData IN
             WITH owned_entities (Entity, Entity_ID, Entity_Name, Role, Username, Sort, ItemRank) AS
-            (   SELECT 'Dataset' AS Entity,
-                       Dataset_ID AS Entity_ID,
-                       Dataset AS Entity_Name,
-                       'Operator' AS Role,
-                       operator_username AS Username,
-                       1 AS Sort,
-                       Row_Number() OVER (ORDER BY Dataset_ID DESC) AS ItemRank
-                FROM t_dataset
-                WHERE operator_username IN (_oldUserName::citext, _newUserName::citext)
-                UNION
-                SELECT 'Experiment' AS Entity,
-                       Exp_ID AS Entity_ID,
-                       Experiment AS Entity_Name,
-                       'Researcher' AS Role,
-                       researcher_username AS Username,
-                       2 AS Sort,
-                       Row_Number() OVER (ORDER BY Exp_ID DESC) AS ItemRank
-                FROM t_experiments
-                WHERE researcher_username IN (_oldUserName::citext, _newUserName::citext)
-                UNION
-                SELECT 'Requested Run' AS Entity,
-                       Request_ID AS Entity_ID,
-                       Request_Name AS Entity_Name,
-                       'Requester' AS Role,
-                       requester_username AS Username,
-                       3 AS Sort,
-                       Row_Number() OVER (ORDER BY Request_ID DESC) AS ItemRank
-                FROM t_requested_run
-                WHERE requester_username IN (_oldUserName::citext, _newUserName::citext)
-                UNION
-                SELECT 'Data Package Owner' AS Entity,
-                       data_pkg_id AS Entity_ID,
-                       package_name AS Entity_Name,
-                       'Owner' AS Role,
-                       owner_username AS Username,
-                       4 AS Sort,
-                       Row_Number() OVER (ORDER BY data_pkg_id DESC) AS ItemRank
-                FROM dpkg.t_data_package
-                WHERE owner_username IN (_oldUserName::citext, _newUserName::citext)
-                UNION
-                SELECT 'Data Package Requester' AS Entity,
-                       data_pkg_id AS Entity_ID,
-                       package_name AS Entity_Name,
-                       'Requester' AS Role,
-                       Requester AS Username,
-                       5 AS Sort,
-                       Row_Number() OVER (ORDER BY data_pkg_id DESC) AS ItemRank
-                FROM dpkg.t_data_package
-                WHERE requester IN (_oldUserName::citext, _newUserName::citext)
+            (SELECT 'Dataset' AS Entity,
+                    Dataset_ID AS Entity_ID,
+                    Dataset AS Entity_Name,
+                    'Operator' AS Role,
+                    operator_username AS Username,
+                    1 AS Sort,
+                    Row_Number() OVER (ORDER BY Dataset_ID DESC) AS ItemRank
+             FROM t_dataset
+             WHERE operator_username IN (_oldUserName::citext, _newUserName::citext)
+             UNION
+             SELECT 'Experiment' AS Entity,
+                    Exp_ID AS Entity_ID,
+                    Experiment AS Entity_Name,
+                    'Researcher' AS Role,
+                    researcher_username AS Username,
+                    2 AS Sort,
+                    Row_Number() OVER (ORDER BY Exp_ID DESC) AS ItemRank
+             FROM t_experiments
+             WHERE researcher_username IN (_oldUserName::citext, _newUserName::citext)
+             UNION
+             SELECT 'Requested Run' AS Entity,
+                    Request_ID AS Entity_ID,
+                    Request_Name AS Entity_Name,
+                    'Requester' AS Role,
+                    requester_username AS Username,
+                    3 AS Sort,
+                    Row_Number() OVER (ORDER BY Request_ID DESC) AS ItemRank
+             FROM t_requested_run
+             WHERE requester_username IN (_oldUserName::citext, _newUserName::citext)
+             UNION
+             SELECT 'Data Package Owner' AS Entity,
+                    data_pkg_id AS Entity_ID,
+                    package_name AS Entity_Name,
+                    'Owner' AS Role,
+                    owner_username AS Username,
+                    4 AS Sort,
+                    Row_Number() OVER (ORDER BY data_pkg_id DESC) AS ItemRank
+             FROM dpkg.t_data_package
+             WHERE owner_username IN (_oldUserName::citext, _newUserName::citext)
+             UNION
+             SELECT 'Data Package Requester' AS Entity,
+                    data_pkg_id AS Entity_ID,
+                    package_name AS Entity_Name,
+                    'Requester' AS Role,
+                    Requester AS Username,
+                    5 AS Sort,
+                    Row_Number() OVER (ORDER BY data_pkg_id DESC) AS ItemRank
+             FROM dpkg.t_data_package
+             WHERE requester IN (_oldUserName::citext, _newUserName::citext)
             )
             SELECT Src.Entity,
                    Src.Entity_ID,
@@ -265,10 +265,10 @@ BEGIN
                    Src.Username,
                    StatsQ.Total_Items
             FROM owned_entities Src
-                 INNER JOIN ( SELECT Src.Entity,
-                                     Max(Src.ItemRank) AS Total_Items
-                              FROM owned_entities Src
-                              GROUP BY Src.Entity, Src.Username ) StatsQ
+                 INNER JOIN (SELECT Src.Entity,
+                                    MAX(Src.ItemRank) AS Total_Items
+                             FROM owned_entities Src
+                             GROUP BY Src.Entity, Src.Username ) StatsQ
                    ON Src.Entity = StatsQ.Entity
             WHERE Src.ItemRank <= 25
             ORDER BY Src.Sort, Src.Entity_Name

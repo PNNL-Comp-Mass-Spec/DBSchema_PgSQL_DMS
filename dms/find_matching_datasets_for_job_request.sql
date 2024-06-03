@@ -149,8 +149,8 @@ BEGIN
            0 AS Failed,
            0 AS Holding
     FROM Tmp_RequestDatasets RD
-    WHERE NOT RD.Dataset IN ( SELECT M.dataset
-                              FROM Tmp_MatchingJobDatasets M);
+    WHERE NOT RD.Dataset IN (SELECT M.dataset
+                             FROM Tmp_MatchingJobDatasets M);
 
     DROP TABLE Tmp_RequestDatasets;
     DROP TABLE Tmp_MatchingJobDatasets;

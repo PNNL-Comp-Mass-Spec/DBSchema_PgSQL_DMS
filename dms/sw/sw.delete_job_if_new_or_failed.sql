@@ -85,11 +85,11 @@ BEGIN
                    FROM sw.t_jobs
                    WHERE job = _job AND
                          state IN (1, 5, 8) AND
-                         job IN ( SELECT JS.job
-                                  FROM sw.t_job_steps JS
-                                  WHERE JS.job = _job AND
-                                        JS.state IN (4, 9) AND
-                                        JS.start >= CURRENT_TIMESTAMP - INTERVAL '7 days')
+                         job IN (SELECT JS.job
+                                 FROM sw.t_job_steps JS
+                                 WHERE JS.job = _job AND
+                                       JS.state IN (4, 9) AND
+                                       JS.start >= CURRENT_TIMESTAMP - INTERVAL '7 days')
                   ) Then
 
             ---------------------------------------------------
@@ -98,15 +98,15 @@ BEGIN
 
             _skipMessage := 'Job will not be deleted from sw.t_jobs; it has a running job step';
 
-        ElsIf Exists ( SELECT job
-                       FROM sw.t_jobs
-                       WHERE job = _job AND
-                             state IN (1, 5, 8) AND
-                             NOT job IN ( SELECT JS.job
-                                          FROM sw.t_job_steps JS
-                                          WHERE JS.job = _job AND
-                                                JS.state IN (4, 9) AND
-                                                JS.start >= CURRENT_TIMESTAMP - INTERVAL '7 days')
+        ElsIf Exists (SELECT job
+                      FROM sw.t_jobs
+                      WHERE job = _job AND
+                            state IN (1, 5, 8) AND
+                            NOT job IN (SELECT JS.job
+                                        FROM sw.t_job_steps JS
+                                        WHERE JS.job = _job AND
+                                              JS.state IN (4, 9) AND
+                                              JS.start >= CURRENT_TIMESTAMP - INTERVAL '7 days')
                      ) Then
 
             ---------------------------------------------------
@@ -159,11 +159,11 @@ BEGIN
     DELETE FROM sw.t_jobs
     WHERE job = _job AND
           state IN (1, 5, 8) AND
-          NOT job IN ( SELECT JS.job
-                       FROM sw.t_job_steps JS
-                       WHERE JS.job = _job AND
-                             JS.state IN (4, 9) AND
-                             JS.start >= CURRENT_TIMESTAMP - INTERVAL '7 days' );
+          NOT job IN (SELECT JS.job
+                      FROM sw.t_job_steps JS
+                      WHERE JS.job = _job AND
+                            JS.state IN (4, 9) AND
+                            JS.start >= CURRENT_TIMESTAMP - INTERVAL '7 days');
 
     If FOUND Then
         _message := format('Deleted analysis %s from sw.t_jobs', _jobText);
@@ -176,11 +176,11 @@ BEGIN
         RETURN;
     End If;
 
-    If _jobState In (2,3,9) Or Exists ( SELECT JS.job
-                                        FROM sw.t_job_steps JS
-                                        WHERE JS.job = _job AND
-                                              JS.state IN (4, 9) AND
-                                              JS.start >= CURRENT_TIMESTAMP - INTERVAL '7 days')
+    If _jobState In (2,3,9) Or Exists (SELECT JS.job
+                                       FROM sw.t_job_steps JS
+                                       WHERE JS.job = _job AND
+                                             JS.state IN (4, 9) AND
+                                             JS.start >= CURRENT_TIMESTAMP - INTERVAL '7 days')
     Then
         RAISE WARNING 'Pipeline % not deleted; job is in progress', _jobText;
     ElsIf _jobState IN (4,7,14) Then

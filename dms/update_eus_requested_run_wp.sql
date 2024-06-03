@@ -107,20 +107,20 @@ BEGIN
                Work_Package,
                Requests,
                Row_Number() OVER (PARTITION BY proposal_id ORDER BY Requests DESC) AS Usage_Rank
-        FROM ( SELECT EUSPro.proposal_id,
-                      RR.work_package,
-                      COUNT(RR.request_id) AS Requests
-               FROM t_dataset DS
-                    INNER JOIN t_requested_run RR
-                      ON DS.dataset_id = RR.dataset_id
-                    INNER JOIN t_eus_usage_type EUSUsage
-                      ON RR.eus_usage_type_id = EUSUsage.eus_usage_type_id
-                    INNER JOIN t_eus_proposals EUSPro
-                      ON RR.eus_proposal_id = EUSPro.proposal_id
-               WHERE DS.created BETWEEN _startDate AND CURRENT_TIMESTAMP AND
-                     NOT EUSPro.proposal_type IN ('Proprietary', 'Proprietary Public', 'Proprietary_Public', 'Resource Owner') AND
-                     NOT Coalesce(RR.work_package, '') IN ('none', 'na', 'n/a', '')
-               GROUP BY EUSPro.proposal_id, work_package
+        FROM (SELECT EUSPro.proposal_id,
+                     RR.work_package,
+                     COUNT(RR.request_id) AS Requests
+              FROM t_dataset DS
+                   INNER JOIN t_requested_run RR
+                     ON DS.dataset_id = RR.dataset_id
+                   INNER JOIN t_eus_usage_type EUSUsage
+                     ON RR.eus_usage_type_id = EUSUsage.eus_usage_type_id
+                   INNER JOIN t_eus_proposals EUSPro
+                     ON RR.eus_proposal_id = EUSPro.proposal_id
+              WHERE DS.created BETWEEN _startDate AND CURRENT_TIMESTAMP AND
+                    NOT EUSPro.proposal_type IN ('Proprietary', 'Proprietary Public', 'Proprietary_Public', 'Resource Owner') AND
+                    NOT Coalesce(RR.work_package, '') IN ('none', 'na', 'n/a', '')
+              GROUP BY EUSPro.proposal_id, work_package
              ) LookupQ;
 
         If _infoOnly Then

@@ -66,14 +66,14 @@ BEGIN
     UPDATE sw.t_jobs
     SET archive_busy = 0
     WHERE archive_busy = 1 AND
-          NOT EXISTS ( SELECT AB.Job
-                       FROM public.v_get_analysis_jobs_for_archive_busy AB
-                       WHERE AB.Job = sw.t_jobs.job );
+          NOT EXISTS (SELECT AB.Job
+                      FROM public.v_get_analysis_jobs_for_archive_busy AB
+                      WHERE AB.Job = sw.t_jobs.job);
 
     UPDATE sw.t_jobs target
     SET archive_busy = 1
-    FROM ( SELECT AB.Job
-           FROM public.v_get_analysis_jobs_for_archive_busy AB ) BusyQ
+    FROM (SELECT AB.Job
+          FROM public.v_get_analysis_jobs_for_archive_busy AB) BusyQ
     WHERE target.job = BusyQ.Job AND archive_busy = 0;
 
     ---------------------------------------------------
@@ -110,12 +110,12 @@ BEGIN
     -- Use a merge statement to synchronize sw.t_local_job_processors with v_get_pipeline_job_processors
 
     MERGE INTO sw.t_local_job_processors AS target
-    USING ( SELECT job, processor, general_processing
-            FROM public.v_get_pipeline_job_processors AS VGP
-            WHERE job IN ( SELECT job
-                           FROM sw.t_jobs
-                           WHERE NOT state IN (4, 7, 14)        -- 4=Complete, 7=No Intermediate Files Created, 14=No Export
-                         )
+    USING (SELECT job, processor, general_processing
+           FROM public.v_get_pipeline_job_processors AS VGP
+           WHERE job IN (SELECT job
+                          FROM sw.t_jobs
+                          WHERE NOT state IN (4, 7, 14)        -- 4=Complete, 7=No Intermediate Files Created, 14=No Export
+                        )
           ) AS Source
     ON (target.job = source.job AND
         target.processor = source.processor)
@@ -138,16 +138,16 @@ BEGIN
     -- Delete rows in t_local_job_processors that are not in v_get_pipeline_job_processors
 
     DELETE FROM sw.t_local_job_processors target
-    WHERE NOT EXISTS (  SELECT source.job
-                        FROM ( SELECT job, processor
-                               FROM public.v_get_pipeline_job_processors AS VGP
-                               WHERE job IN ( SELECT job
-                                              FROM sw.t_jobs
-                                              WHERE Not state IN (4, 7, 14)        -- 4=Complete, 7=No Intermediate Files Created, 14=No Export
-                                            )
-                              ) AS Source
-                        WHERE target.job = source.job AND
-                              target.processor = source.processor
+    WHERE NOT EXISTS (SELECT source.job
+                      FROM (SELECT job, processor
+                            FROM public.v_get_pipeline_job_processors AS VGP
+                            WHERE job IN (SELECT job
+                                          FROM sw.t_jobs
+                                          WHERE Not state IN (4, 7, 14)        -- 4=Complete, 7=No Intermediate Files Created, 14=No Export
+                                         )
+                            ) AS Source
+                      WHERE target.job = source.job AND
+                            target.processor = source.processor
                      );
 
     GET DIAGNOSTICS _mergeDeleteCount = ROW_COUNT;

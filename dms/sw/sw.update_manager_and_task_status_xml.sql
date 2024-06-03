@@ -214,65 +214,65 @@ BEGIN
                TaskDetailQ.Task_Detail_Status, TaskDetailQ.Job, TaskDetailQ.Job_Step, TaskDetailQ.Dataset,
                TaskDetailQ.Most_Recent_Log_Message, TaskDetailQ.Most_Recent_Job_Info, TaskDetailQ.Spectrum_Count,
                true AS IsNew
-        FROM ( SELECT xmltable.*
-               FROM Src,
-                    XMLTABLE('//StatusInfo/Root/Manager'
-                              PASSING Src.StatusXML
-                              COLUMNS Processor_Name         citext PATH 'MgrName',
-                                      Remote_Manager         text   PATH 'RemoteMgrName',
-                                      Mgr_Status             text   PATH 'MgrStatus',
-                                      Status_Date            text   PATH 'LastUpdate',
-                                      Last_Start_Time        text   PATH 'LastStartTime',
-                                      CPU_Utilization        text   PATH 'CPUUtilization',
-                                      Free_Memory_MB         text   PATH 'FreeMemoryMB',
-                                      Process_ID             text   PATH 'ProcessID',
-                                      Prog_Runner_Process_ID text   PATH 'ProgRunnerProcessID',
-                                      Prog_Runner_Core_Usage text   PATH 'ProgRunnerCoreUsage'
-                            )
+        FROM (SELECT xmltable.*
+              FROM Src,
+                   XMLTABLE('//StatusInfo/Root/Manager'
+                             PASSING Src.StatusXML
+                             COLUMNS Processor_Name         citext PATH 'MgrName',
+                                     Remote_Manager         text   PATH 'RemoteMgrName',
+                                     Mgr_Status             text   PATH 'MgrStatus',
+                                     Status_Date            text   PATH 'LastUpdate',
+                                     Last_Start_Time        text   PATH 'LastStartTime',
+                                     CPU_Utilization        text   PATH 'CPUUtilization',
+                                     Free_Memory_MB         text   PATH 'FreeMemoryMB',
+                                     Process_ID             text   PATH 'ProcessID',
+                                     Prog_Runner_Process_ID text   PATH 'ProgRunnerProcessID',
+                                     Prog_Runner_Core_Usage text   PATH 'ProgRunnerCoreUsage'
+                           )
              ) ManagerInfoQ
              LEFT OUTER JOIN
-                 ( SELECT xmltable.*
-                   FROM Src,
-                        XMLTABLE('//StatusInfo/Root/Manager/RecentErrorMessages'
-                                 PASSING Src.StatusXML
-                                 COLUMNS Processor_Name            citext PATH '../MgrName',
-                                         Status_Date               text   PATH '../LastUpdate',
-                                         Most_Recent_Error_Message text   PATH 'ErrMsg[1]'      -- If there are multiple recent error messages, only select the first one
-                                )
+                 (SELECT xmltable.*
+                  FROM Src,
+                       XMLTABLE('//StatusInfo/Root/Manager/RecentErrorMessages'
+                                PASSING Src.StatusXML
+                                COLUMNS Processor_Name            citext PATH '../MgrName',
+                                        Status_Date               text   PATH '../LastUpdate',
+                                        Most_Recent_Error_Message text   PATH 'ErrMsg[1]'      -- If there are multiple recent error messages, only select the first one
+                               )
                  ) RecentErrorMessageQ
                  ON ManagerInfoQ.Processor_Name = RecentErrorMessageQ.Processor_Name AND
                     ManagerInfoQ.Status_Date = RecentErrorMessageQ.Status_Date
              LEFT OUTER JOIN
-                 ( SELECT xmltable.*
-                   FROM Src,
-                     XMLTABLE('//StatusInfo/Root/Task'
-                              PASSING Src.StatusXML
-                              COLUMNS Processor_Name    citext PATH '../Manager/MgrName',
-                                      Status_Date       text   PATH '../Manager/LastUpdate',
-                                      Step_Tool         text   PATH 'Tool',
-                                      Task_Status       text   PATH 'Status',
-                                      Duration_Minutes  text   PATH 'DurationMinutes',
-                                      Progress          text   PATH 'Progress',
-                                      Current_Operation text   PATH 'CurrentOperation'
-                             )
+                 (SELECT xmltable.*
+                  FROM Src,
+                    XMLTABLE('//StatusInfo/Root/Task'
+                             PASSING Src.StatusXML
+                             COLUMNS Processor_Name    citext PATH '../Manager/MgrName',
+                                     Status_Date       text   PATH '../Manager/LastUpdate',
+                                     Step_Tool         text   PATH 'Tool',
+                                     Task_Status       text   PATH 'Status',
+                                     Duration_Minutes  text   PATH 'DurationMinutes',
+                                     Progress          text   PATH 'Progress',
+                                     Current_Operation text   PATH 'CurrentOperation'
+                            )
                  ) TaskQ
                  ON ManagerInfoQ.Processor_Name = TaskQ.Processor_Name AND
                     ManagerInfoQ.Status_Date = TaskQ.Status_Date
             LEFT OUTER JOIN
-                 ( SELECT xmltable.*
-                   FROM Src,
-                     XMLTABLE('//StatusInfo/Root/Task/TaskDetails'
-                              PASSING Src.StatusXML
-                              COLUMNS Processor_Name            citext PATH '../../Manager/MgrName',
-                                      Status_Date               text   PATH '../../Manager/LastUpdate',
-                                      Task_Detail_Status        text   PATH 'Status',
-                                      Job                       text   PATH 'Job',
-                                      Job_Step                  text   PATH 'Step',
-                                      Dataset                   text   PATH 'Dataset',
-                                      Most_Recent_Log_Message   text   PATH 'MostRecentLogMessage',
-                                      Most_Recent_Job_Info      text   PATH 'MostRecentJobInfo',
-                                      Spectrum_Count            text   PATH 'SpectrumCount'
-                              )
+                 (SELECT xmltable.*
+                  FROM Src,
+                    XMLTABLE('//StatusInfo/Root/Task/TaskDetails'
+                             PASSING Src.StatusXML
+                             COLUMNS Processor_Name            citext PATH '../../Manager/MgrName',
+                                     Status_Date               text   PATH '../../Manager/LastUpdate',
+                                     Task_Detail_Status        text   PATH 'Status',
+                                     Job                       text   PATH 'Job',
+                                     Job_Step                  text   PATH 'Step',
+                                     Dataset                   text   PATH 'Dataset',
+                                     Most_Recent_Log_Message   text   PATH 'MostRecentLogMessage',
+                                     Most_Recent_Job_Info      text   PATH 'MostRecentJobInfo',
+                                     Spectrum_Count            text   PATH 'SpectrumCount'
+                             )
                  ) TaskDetailQ
                 ON ManagerInfoQ.Processor_Name = TaskDetailQ.Processor_Name AND
                    ManagerInfoQ.Status_Date = TaskDetailQ.Status_Date

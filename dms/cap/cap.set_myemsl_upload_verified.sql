@@ -220,7 +220,7 @@ BEGIN
         UPDATE cap.t_myemsl_uploads
         SET ingest_steps_completed = _ingestStepsCompleted
         WHERE verified = 1 AND
-              entry_id IN ( SELECT entry_id FROM Tmp_StatusEntryIDsTable ) AND
+              entry_id IN (SELECT entry_id FROM Tmp_StatusEntryIDsTable) AND
               (ingest_steps_completed IS NULL OR ingest_steps_completed < _ingestStepsCompleted);
 
         -- Now update newly verified steps
@@ -229,7 +229,7 @@ BEGIN
         SET verified = 1,
             ingest_steps_completed = _ingestStepsCompleted
         WHERE verified = 0 AND
-              entry_id IN ( SELECT entry_id FROM Tmp_StatusEntryIDsTable );
+              entry_id IN (SELECT entry_id FROM Tmp_StatusEntryIDsTable);
 
         DROP TABLE Tmp_StatusNumListTable;
         DROP TABLE Tmp_StatusURIListTable;

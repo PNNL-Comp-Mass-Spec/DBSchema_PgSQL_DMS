@@ -824,13 +824,13 @@ BEGIN
         _currentLocation := 'Synchronize t_analysis_job with back-filled jobs from sw.t_jobs';
 
         MERGE INTO t_analysis_job AS target
-        USING ( SELECT PJ.job,
-                       PJ.priority,
-                       PJ.State,
-                       PJ.start,
-                       PJ.finish,
-                       PJ.processing_time_minutes
-                FROM sw.V_Pipeline_Jobs_Backfill PJ
+        USING (SELECT PJ.job,
+                      PJ.priority,
+                      PJ.State,
+                      PJ.start,
+                      PJ.finish,
+                      PJ.processing_time_minutes
+               FROM sw.V_Pipeline_Jobs_Backfill PJ
               ) AS Source
         ON (target.job = source.job)
         WHEN MATCHED AND

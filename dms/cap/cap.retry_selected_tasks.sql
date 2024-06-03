@@ -44,7 +44,7 @@ BEGIN
     FROM cap.t_step_tools ST
     WHERE Target.Tool = ST.step_tool AND
           Target.State IN (6, 7) AND        -- 6=Failed, 7=Holding
-          Target.Job IN ( SELECT Job FROM Tmp_Selected_Jobs );
+          Target.Job IN (SELECT Job FROM Tmp_Selected_Jobs);
 
     ---------------------------------------------------
     -- Reset the entries in cap.t_task_step_dependencies for any steps with state 1
@@ -57,7 +57,7 @@ BEGIN
     WHERE TSD.Job = TS.Job AND
           TSD.Step = TS.Step AND
           TS.State = 1 AND                  -- 1=Waiting
-          TS.Job IN ( SELECT Job FROM Tmp_Selected_Jobs );
+          TS.Job IN (SELECT Job FROM Tmp_Selected_Jobs);
 
     ---------------------------------------------------
     -- Set capture task job state to 'new'
@@ -65,7 +65,7 @@ BEGIN
 
     UPDATE cap.t_tasks
     SET State = 1                           -- 1=New
-    WHERE Job IN ( SELECT Job FROM Tmp_Selected_Jobs );
+    WHERE Job IN (SELECT Job FROM Tmp_Selected_Jobs);
 
 END
 $$;

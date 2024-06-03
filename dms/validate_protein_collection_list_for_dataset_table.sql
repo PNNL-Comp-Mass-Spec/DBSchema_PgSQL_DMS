@@ -134,9 +134,9 @@ BEGIN
         RAISE INFO 'There were duplicate names in the protein collections list, will auto remove: %', _dups;
 
         DELETE FROM Tmp_ProteinCollections
-        WHERE NOT Entry_ID IN ( SELECT MIN(Entry_ID) AS IDToKeep
-                                FROM Tmp_ProteinCollections
-                                GROUP BY Protein_Collection_Name );
+        WHERE NOT Entry_ID IN (SELECT MIN(Entry_ID) AS IDToKeep
+                               FROM Tmp_ProteinCollections
+                               GROUP BY Protein_Collection_Name);
 
     End If;
 
@@ -205,20 +205,20 @@ BEGIN
                     Dataset_Count,
                     Experiment_Count,
                     Enzyme_Contaminant_Collection
-    FROM ( SELECT -1 AS Internal_Std_Mix_ID,
-                  Coalesce(Enz.protein_collection_name, '') AS Protein_Collection_Name,
-                  COUNT(DISTINCT DS.dataset) AS Dataset_Count,
-                  COUNT(DISTINCT E.exp_id) AS Experiment_Count,
-                  1 AS Enzyme_Contaminant_Collection
-            FROM Tmp_DatasetList
-                INNER JOIN t_dataset DS
-                    ON Tmp_DatasetList.Dataset_Name = DS.dataset
-                INNER JOIN t_experiments E
-                    ON DS.exp_id = E.exp_id
-                INNER JOIN t_enzymes Enz
-                    ON E.enzyme_id = Enz.enzyme_id
-            GROUP BY Coalesce(Enz.protein_collection_name, '')
-            ) LookupQ
+    FROM (SELECT -1 AS Internal_Std_Mix_ID,
+                 Coalesce(Enz.protein_collection_name, '') AS Protein_Collection_Name,
+                 COUNT(DISTINCT DS.dataset) AS Dataset_Count,
+                 COUNT(DISTINCT E.exp_id) AS Experiment_Count,
+                 1 AS Enzyme_Contaminant_Collection
+          FROM Tmp_DatasetList
+               INNER JOIN t_dataset DS
+                 ON Tmp_DatasetList.Dataset_Name = DS.dataset
+               INNER JOIN t_experiments E
+                 ON DS.exp_id = E.exp_id
+               INNER JOIN t_enzymes Enz
+                 ON E.enzyme_id = Enz.enzyme_id
+          GROUP BY Coalesce(Enz.protein_collection_name, '')
+         ) LookupQ
     WHERE protein_collection_name <> '';
 
     _formatSpecifierIntStds := '%-30s %-19s %-80s %-13s %-16s %-30s %-30s';
@@ -413,12 +413,12 @@ BEGIN
     -- remove 'HumanContam' from Tmp_IntStds since every protein in 'HumanContam' is also in 'Tryp_Pig_Bov'
     --------------------------------------------------------------
 
-    If Exists ( SELECT Entry_ID
-                FROM Tmp_ProteinCollections
-                WHERE Protein_Collection_Name = 'Tryp_Pig_Bov' ) AND
-       Exists ( SELECT Internal_Std_Mix_ID
-                FROM Tmp_IntStds
-                WHERE Protein_Collection_Name = 'HumanContam' ) Then
+    If Exists (SELECT Entry_ID
+               FROM Tmp_ProteinCollections
+               WHERE Protein_Collection_Name = 'Tryp_Pig_Bov' ) AND
+       Exists (SELECT Internal_Std_Mix_ID
+               FROM Tmp_IntStds
+               WHERE Protein_Collection_Name = 'HumanContam' ) Then
 
         DELETE FROM Tmp_IntStds
         WHERE Protein_Collection_Name = 'HumanContam';

@@ -491,8 +491,8 @@ BEGIN
 
     INSERT INTO T_Tmp_Experiment_Plex_Members (plex_exp_id, channel, exp_id, channel_type_id, comment, mapping_defined)
     SELECT _experimentID, RankQ.RowNum - 1, RankQ.experiment_id, 1, 'Unit test plex', false
-    FROM ( SELECT experiment_id, Row_Number() OVER (ORDER BY experiment_id) AS RowNum
-           FROM T_Tmp_Experiments) RankQ
+    FROM (SELECT experiment_id, Row_Number() OVER (ORDER BY experiment_id) AS RowNum
+          FROM T_Tmp_Experiments) RankQ
     WHERE RankQ.RowNum > 1
     ORDER BY RankQ.experiment_id;
 
@@ -625,13 +625,13 @@ BEGIN
         If _plexMappingFoundOrCreated Then
             DELETE FROM t_experiment_plex_members target
             WHERE EXISTS
-                ( SELECT 1
-                  FROM t_experiment_plex_members PM
-                       INNER JOIN T_Tmp_Experiment_Plex_Members TPM
-                         ON PM.plex_exp_id = TPM.plex_exp_id AND
-                            PM.exp_id      = TPM.exp_id
-                  WHERE target.plex_exp_id = PM.plex_exp_id AND
-                        target.exp_id = PM.exp_id
+                (SELECT 1
+                 FROM t_experiment_plex_members PM
+                      INNER JOIN T_Tmp_Experiment_Plex_Members TPM
+                        ON PM.plex_exp_id = TPM.plex_exp_id AND
+                           PM.exp_id      = TPM.exp_id
+                 WHERE target.plex_exp_id = PM.plex_exp_id AND
+                       target.exp_id = PM.exp_id
                 );
 
             If FOUND Then
@@ -678,17 +678,17 @@ BEGIN
 
                 If FOUND Then
                     INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-                    SELECT 'Job', 'Delete items', 0, 'Logged deletion of ' || _myRowCount::text || ' jobs to t_event_log (IDs ' || Min(job)::text || ' to ' || Max(job) || ')'
+                    SELECT 'Job', 'Delete items', 0, 'Logged deletion of ' || _myRowCount::text || ' jobs to t_event_log (IDs ' || MIN(job)::text || ' to ' || MAX(job) || ')'
                     FROM T_Tmp_Jobs;
                 Else
                     INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
-                    SELECT 'Job', 'Delete items', 0, 'Error: did not log deletion of jobs to t_event_log (IDs ' || Min(job)::text || ' to ' || Max(job) || ')'
+                    SELECT 'Job', 'Delete items', 0, 'Error: did not log deletion of jobs to t_event_log (IDs ' || MIN(job)::text || ' to ' || MAX(job) || ')'
                     FROM T_Tmp_Jobs;
                 End If;
 
             Else
                 INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-                SELECT 'Job', 'Delete items', 0, 'Nothing to delete: jobs ' || Min(job)::text || ' to ' || Max(job) || ' not found in t_analysis_job'
+                SELECT 'Job', 'Delete items', 0, 'Nothing to delete: jobs ' || MIN(job)::text || ' to ' || MAX(job) || ' not found in t_analysis_job'
                 FROM T_Tmp_Jobs;
             End If;
 
@@ -710,17 +710,17 @@ BEGIN
 
                 If FOUND Then
                     INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-                    SELECT 'Dataset', 'Delete items', 0, 'Logged deletion of ' || _myRowCount::text || ' datasets to t_event_log (IDs ' || Min(dataset_id)::text || ' to ' || Max(dataset_id) || ')'
+                    SELECT 'Dataset', 'Delete items', 0, 'Logged deletion of ' || _myRowCount::text || ' datasets to t_event_log (IDs ' || MIN(dataset_id)::text || ' to ' || MAX(dataset_id) || ')'
                     FROM T_Tmp_Datasets;
                 Else
                     INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
-                    SELECT 'Dataset', 'Delete items', 0, 'Error: did not log deletion of datasets to t_event_log (IDs ' || Min(dataset_id)::text || ' to ' || Max(dataset_id) || ')'
+                    SELECT 'Dataset', 'Delete items', 0, 'Error: did not log deletion of datasets to t_event_log (IDs ' || MIN(dataset_id)::text || ' to ' || MAX(dataset_id) || ')'
                     FROM T_Tmp_Datasets;
                 End If;
 
             Else
                 INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-                SELECT 'Dataset', 'Delete items', 0, 'Nothing to delete: dataset IDs ' || Min(dataset_id)::text || ' to ' || Max(dataset_id) || ' not found in t_dataset'
+                SELECT 'Dataset', 'Delete items', 0, 'Nothing to delete: dataset IDs ' || MIN(dataset_id)::text || ' to ' || MAX(dataset_id) || ' not found in t_dataset'
                 FROM T_Tmp_Datasets;
             End If;
 
@@ -742,17 +742,17 @@ BEGIN
 
                 If FOUND Then
                     INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-                    SELECT 'Experiment', 'Delete items', 0, 'Logged deletion of ' || _myRowCount::text || ' experiments to t_event_log (IDs ' || Min(experiment_id)::text || ' to ' || Max(experiment_id) || ')'
+                    SELECT 'Experiment', 'Delete items', 0, 'Logged deletion of ' || _myRowCount::text || ' experiments to t_event_log (IDs ' || MIN(experiment_id)::text || ' to ' || MAX(experiment_id) || ')'
                     FROM T_Tmp_Experiments;
                 Else
                     INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
-                    SELECT 'Experiment', 'Delete items', 0, 'Error: did not log deletion of experiments to t_event_log (IDs ' || Min(experiment_id)::text || ' to ' || Max(experiment_id) || ')'
+                    SELECT 'Experiment', 'Delete items', 0, 'Error: did not log deletion of experiments to t_event_log (IDs ' || MIN(experiment_id)::text || ' to ' || MAX(experiment_id) || ')'
                     FROM T_Tmp_Experiments;
                 End If;
 
             Else
                 INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-                SELECT 'Experiment', 'Delete items', 0, 'Nothing to delete: experiment IDs ' || Min(experiment_id)::text || ' to ' || Max(experiment_id) || ' not found in t_experiments'
+                SELECT 'Experiment', 'Delete items', 0, 'Nothing to delete: experiment IDs ' || MIN(experiment_id)::text || ' to ' || MAX(experiment_id) || ' not found in t_experiments'
                 FROM T_Tmp_Experiments;
             End If;
 
@@ -774,17 +774,17 @@ BEGIN
 
                 If FOUND Then
                     INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-                    SELECT 'Campaign', 'Delete items', 0, 'Logged deletion of ' || _myRowCount::text || ' campaigns to t_event_log (IDs ' || Min(campaign_id)::text || ' to ' || Max(campaign_id) || ')'
+                    SELECT 'Campaign', 'Delete items', 0, 'Logged deletion of ' || _myRowCount::text || ' campaigns to t_event_log (IDs ' || MIN(campaign_id)::text || ' to ' || MAX(campaign_id) || ')'
                     FROM T_Tmp_Campaigns;
                 Else
                     INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
-                    SELECT 'Campaign', 'Delete items', 0, 'Error: did not log deletion of campaigns to t_event_log (IDs ' || Min(campaign_id)::text || ' to ' || Max(campaign_id) || ')'
+                    SELECT 'Campaign', 'Delete items', 0, 'Error: did not log deletion of campaigns to t_event_log (IDs ' || MIN(campaign_id)::text || ' to ' || MAX(campaign_id) || ')'
                     FROM T_Tmp_Campaigns;
                 End If;
 
             Else
                 INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-                SELECT 'Campaign', 'Delete items', 0, 'Nothing to delete: campaign IDs ' || Min(campaign_id)::text || ' to ' || Max(campaign_id) || ' not found in t_campaign'
+                SELECT 'Campaign', 'Delete items', 0, 'Nothing to delete: campaign IDs ' || MIN(campaign_id)::text || ' to ' || MAX(campaign_id) || ' not found in t_campaign'
                 FROM T_Tmp_Campaigns;
             End If;
         End If;
@@ -1022,15 +1022,15 @@ BEGIN
 
     INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
     SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
-    FROM (  SELECT L.entry_id,
-                   'Rename log: ' || L.target_type AS item_type,
-                   L.type_name AS item_name,
-                   L.target_id AS item_id,
-                   'Rename to ' || new_name AS action,
-                   'from || ' || old_name || ' at ' || public.timestamp_text(L.entered) AS comment,
-                   Row_Number() OVER (PARTITION BY L.target_type, L.target_id ORDER BY L.entry_id DESC) AS EventLogRank
-            FROM v_entity_rename_log L
-            WHERE entered >= _today) RankQ
+    FROM (SELECT L.entry_id,
+                 'Rename log: ' || L.target_type AS item_type,
+                 L.type_name AS item_name,
+                 L.target_id AS item_id,
+                 'Rename to ' || new_name AS action,
+                 'from || ' || old_name || ' at ' || public.timestamp_text(L.entered) AS comment,
+                 Row_Number() OVER (PARTITION BY L.target_type, L.target_id ORDER BY L.entry_id DESC) AS EventLogRank
+          FROM v_entity_rename_log L
+          WHERE entered >= _today) RankQ
     WHERE RankQ.EventLogRank <= 2
     ORDER BY RankQ.entry_id;
 

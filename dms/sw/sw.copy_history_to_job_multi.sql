@@ -133,13 +133,14 @@ BEGIN
 
     UPDATE Tmp_JobsToCopy
     SET DateStamp = DateQ.MostRecentDate
-    FROM ( SELECT JH.job,
-                  MAX(JH.saved) AS MostRecentDate
-           FROM sw.t_jobs_history JH
-                INNER JOIN Tmp_JobsToCopy Src
-                  ON JH.job = Src.job
-           WHERE state = 4
-           GROUP BY JH.job ) DateQ
+    FROM (SELECT JH.job,
+                 MAX(JH.saved) AS MostRecentDate
+          FROM sw.t_jobs_history JH
+               INNER JOIN Tmp_JobsToCopy Src
+                 ON JH.job = Src.job
+          WHERE state = 4
+          GROUP BY JH.job
+         ) DateQ
     WHERE Tmp_JobsToCopy.job = DateQ.job;
 
     ---------------------------------------------------
@@ -335,22 +336,22 @@ BEGIN
 
         DELETE FROM sw.t_job_step_dependencies target
         WHERE EXISTS
-            (  SELECT 1
-               FROM sw.t_job_step_dependencies TSD
-                    INNER JOIN ( SELECT JSD.Job,
-                                        JSD.Step
-                                 FROM sw.t_job_step_dependencies JSD
-                                      LEFT OUTER JOIN sw.t_job_step_dependencies_history H
-                                        ON JSD.Job = H.Job AND
-                                           JSD.Step = H.Step AND
-                                           JSD.Target_Step = H.Target_Step
-                                 WHERE JSD.Job IN ( SELECT job FROM Tmp_JobsToCopy ) AND
-                                       H.Job IS NULL
-                                ) DeleteQ
-                      ON TSD.Job = DeleteQ.Job AND
-                         TSD.Step = DeleteQ.Step
-                WHERE target.job = TSD.job AND
-                      target.step = TSD.step
+            (SELECT 1
+             FROM sw.t_job_step_dependencies TSD
+                  INNER JOIN (SELECT JSD.Job,
+                                     JSD.Step
+                              FROM sw.t_job_step_dependencies JSD
+                                   LEFT OUTER JOIN sw.t_job_step_dependencies_history H
+                                     ON JSD.Job = H.Job AND
+                                        JSD.Step = H.Step AND
+                                        JSD.Target_Step = H.Target_Step
+                              WHERE JSD.Job IN (SELECT job FROM Tmp_JobsToCopy) AND
+                                    H.Job IS NULL
+                             ) DeleteQ
+                    ON TSD.Job = DeleteQ.Job AND
+                       TSD.Step = DeleteQ.Step
+             WHERE target.job = TSD.job AND
+                   target.step = TSD.step
             );
 
         If _debugMode Then
@@ -369,7 +370,7 @@ BEGIN
                triggered,
                enable_only
         FROM sw.t_job_step_dependencies_history
-        WHERE job IN ( SELECT job FROM Tmp_JobsToCopy )
+        WHERE job IN (SELECT job FROM Tmp_JobsToCopy)
         ON CONFLICT (job, step, target_step)
         DO UPDATE SET
                 condition_test = EXCLUDED.condition_test,
@@ -409,23 +410,23 @@ BEGIN
 
             UPDATE Tmp_JobsMissingDependencies Target
             SET SimilarJob = Source.SimilarJob
-            FROM ( SELECT Job,
-                          SimilarJob,
-                          Script
-                   FROM ( SELECT MD.Job,
-                                 JobsWithDependencies.Job AS SimilarJob,
-                                 JobsWithDependencies.Script,
-                                 Row_Number() OVER (PARTITION BY MD.Job
-                                                    ORDER BY JobsWithDependencies.Job) AS SimilarJobRank
-                          FROM Tmp_JobsMissingDependencies MD
-                               INNER JOIN ( SELECT JH.job, JH.script
-                                            FROM sw.t_jobs_history JH INNER JOIN
-                                                 sw.t_job_step_dependencies_history JSD ON JH.job = JSD.job
-                                          ) AS JobsWithDependencies
-                                 ON MD.script = JobsWithDependencies.script AND
-                                    JobsWithDependencies.job > MD.job
-                       ) AS MatchQ
-                   WHERE SimilarJobRank = 1
+            FROM (SELECT Job,
+                         SimilarJob,
+                         Script
+                  FROM (SELECT MD.Job,
+                               JobsWithDependencies.Job AS SimilarJob,
+                               JobsWithDependencies.Script,
+                               Row_Number() OVER (PARTITION BY MD.Job
+                                                  ORDER BY JobsWithDependencies.Job) AS SimilarJobRank
+                        FROM Tmp_JobsMissingDependencies MD
+                             INNER JOIN (SELECT JH.job, JH.script
+                                         FROM sw.t_jobs_history JH INNER JOIN
+                                              sw.t_job_step_dependencies_history JSD ON JH.job = JSD.job
+                                        )AS JobsWithDependencies
+                               ON MD.script = JobsWithDependencies.script AND
+                                  JobsWithDependencies.job > MD.job
+                      ) AS MatchQ
+                  WHERE SimilarJobRank = 1
                  ) AS source
             WHERE Target.job = Source.job;
 
@@ -501,11 +502,11 @@ BEGIN
 
             UPDATE sw.t_job_steps target
             SET dependencies = CountQ.dependencies
-            FROM ( SELECT step,
-                          COUNT(target_step) AS dependencies
-                   FROM sw.t_job_step_dependencies
-                   WHERE job = _job
-                   GROUP BY step
+            FROM (SELECT step,
+                         COUNT(target_step) AS dependencies
+                  FROM sw.t_job_step_dependencies
+                  WHERE job = _job
+                  GROUP BY step
                  ) CountQ
             WHERE target.Job = _job AND
                   CountQ.Step = target.Step AND

@@ -160,15 +160,15 @@ BEGIN
             _stateComment := '';
         End If;
 
-        If Exists ( SELECT U.username
-                    FROM t_users U
-                         INNER JOIN t_user_operations_permissions UOP
-                           ON U.user_id = UOP.user_id
-                         INNER JOIN t_user_operations UO
-                           ON UOP.operation_id = UO.operation_id
-                    WHERE U.Status = 'Active' AND
-                          UO.operation = 'DMS_Data_Analysis_Request' AND
-                          Username = _callingUser::citext
+        If Exists (SELECT U.username
+                   FROM t_users U
+                        INNER JOIN t_user_operations_permissions UOP
+                          ON U.user_id = UOP.user_id
+                        INNER JOIN t_user_operations UO
+                          ON UOP.operation_id = UO.operation_id
+                   WHERE U.Status = 'Active' AND
+                         UO.operation = 'DMS_Data_Analysis_Request' AND
+                         Username = _callingUser::citext
                   ) Then
 
               _allowUpdateEstimatedAnalysisTime := true;
@@ -309,13 +309,13 @@ BEGIN
 
             SELECT work_package
             INTO _workPackage
-            FROM ( SELECT work_package AS Work_Package,
-                          COUNT(RR.request_id) AS Requests
-                   FROM t_requested_run RR
-                        INNER JOIN Tmp_BatchIDs
-                          ON RR.batch_id = Tmp_BatchIDs.batch_id
-                   WHERE NOT Coalesce(work_package, '')::citext IN ('', 'na', 'none')
-                   GROUP BY work_package ) StatsQ
+            FROM (SELECT work_package AS Work_Package,
+                         COUNT(RR.request_id) AS Requests
+                  FROM t_requested_run RR
+                       INNER JOIN Tmp_BatchIDs
+                         ON RR.batch_id = Tmp_BatchIDs.batch_id
+                  WHERE NOT Coalesce(work_package, '')::citext IN ('', 'na', 'none')
+                  GROUP BY work_package ) StatsQ
             ORDER BY Requests DESC
             LIMIT 1;
 
@@ -475,131 +475,134 @@ BEGIN
 
             SELECT campaign
             INTO _campaign
-            FROM ( SELECT C.campaign AS Campaign,
-                          COUNT(E.exp_id) AS Experiments
-                   FROM t_requested_run RR
-                        INNER JOIN t_experiments E
-                          ON RR.exp_id = E.exp_id
-                        INNER JOIN t_campaign C
-                          ON E.campaign_id = C.campaign_id
-                   WHERE RR.batch_id = _representativeBatchID
-                   GROUP BY C.campaign ) StatsQ
+            FROM (SELECT C.campaign AS Campaign,
+                         COUNT(E.exp_id) AS Experiments
+                  FROM t_requested_run RR
+                       INNER JOIN t_experiments E
+                         ON RR.exp_id = E.exp_id
+                       INNER JOIN t_campaign C
+                         ON E.campaign_id = C.campaign_id
+                  WHERE RR.batch_id = _representativeBatchID
+                  GROUP BY C.campaign ) StatsQ
             ORDER BY StatsQ.Experiments DESC
             LIMIT 1;
 
             SELECT organism
             INTO _organism
-            FROM ( SELECT Org.organism AS Organism,
-                          COUNT(RR.request_id) AS Organisms
-                   FROM t_requested_run RR
-                        INNER JOIN t_experiments E
-                          ON RR.exp_id = E.exp_id
-                        INNER JOIN t_organisms Org
-                          ON E.organism_id = Org.organism_id
-                   WHERE RR.batch_id = _representativeBatchID
-                   GROUP BY Org.organism ) StatsQ
+            FROM (SELECT Org.organism AS Organism,
+                         COUNT(RR.request_id) AS Organisms
+                  FROM t_requested_run RR
+                       INNER JOIN t_experiments E
+                         ON RR.exp_id = E.exp_id
+                       INNER JOIN t_organisms Org
+                         ON E.organism_id = Org.organism_id
+                  WHERE RR.batch_id = _representativeBatchID
+                  GROUP BY Org.organism ) StatsQ
             ORDER BY StatsQ.Organisms DESC
             LIMIT 1;
 
             SELECT eus_proposal_id
             INTO _eusProposalID
-            FROM ( SELECT RR.eus_proposal_id AS EUS_Proposal_ID,
-                          COUNT(RR.request_id) AS Requests
-                   FROM t_requested_run RR
-                   WHERE RR.batch_id = _representativeBatchID
-                   GROUP BY RR.eus_proposal_id ) StatsQ
+            FROM (SELECT RR.eus_proposal_id AS EUS_Proposal_ID,
+                         COUNT(RR.request_id) AS Requests
+                  FROM t_requested_run RR
+                  WHERE RR.batch_id = _representativeBatchID
+                  GROUP BY RR.eus_proposal_id ) StatsQ
             ORDER BY StatsQ.Requests DESC
             LIMIT 1;
 
         ElsIf _preferredContainer = 'Data Package' Then
             SELECT campaign
             INTO _campaign
-            FROM ( SELECT C.campaign AS Campaign,
-                          COUNT(E.exp_id) AS Experiments
-                   FROM dpkg.t_data_package_datasets DPD
-                        INNER JOIN t_dataset DS
-                          ON DPD.dataset_id = DS.dataset_id
-                        INNER JOIN t_experiments E
-                          ON DS.exp_id = E.exp_id
-                        INNER JOIN t_campaign C
-                          ON E.campaign_id = C.campaign_id
-                   WHERE DPD.data_pkg_id = _dataPackageID
-                   GROUP BY C.campaign ) StatsQ
+            FROM (SELECT C.campaign AS Campaign,
+                         COUNT(E.exp_id) AS Experiments
+                  FROM dpkg.t_data_package_datasets DPD
+                       INNER JOIN t_dataset DS
+                         ON DPD.dataset_id = DS.dataset_id
+                       INNER JOIN t_experiments E
+                         ON DS.exp_id = E.exp_id
+                       INNER JOIN t_campaign C
+                         ON E.campaign_id = C.campaign_id
+                  WHERE DPD.data_pkg_id = _dataPackageID
+                  GROUP BY C.campaign ) StatsQ
             ORDER BY StatsQ.Experiments DESC
             LIMIT 1;
 
             SELECT organism
             INTO _organism
-            FROM ( SELECT Org.organism AS Organism,
-                          COUNT(E.organism_id ) AS Organisms
-                   FROM dpkg.t_data_package_datasets DPD
-                        INNER JOIN t_dataset DS
-                          ON DPD.dataset_id = DS.dataset_id
-                        INNER JOIN t_experiments E
-                          ON DS.exp_id = E.exp_id
-                        INNER JOIN t_organisms Org
-                          ON E.organism_id = Org.organism_id
-                   WHERE DPD.data_pkg_id = _dataPackageID
-                   GROUP BY Org.organism ) StatsQ
+            FROM (SELECT Org.organism AS Organism,
+                         COUNT(E.organism_id ) AS Organisms
+                  FROM dpkg.t_data_package_datasets DPD
+                       INNER JOIN t_dataset DS
+                         ON DPD.dataset_id = DS.dataset_id
+                       INNER JOIN t_experiments E
+                         ON DS.exp_id = E.exp_id
+                       INNER JOIN t_organisms Org
+                         ON E.organism_id = Org.organism_id
+                  WHERE DPD.data_pkg_id = _dataPackageID
+                  GROUP BY Org.organism ) StatsQ
             ORDER BY StatsQ.Organisms DESC
             LIMIT 1;
 
             SELECT eus_proposal_id
             INTO _eusProposalID
-            FROM ( SELECT RR.eus_proposal_id AS EUS_Proposal_ID,
-                          COUNT(RR.request_id) AS Requests
-                   FROM dpkg.t_data_package_datasets DPD
-                        INNER JOIN t_dataset DS
-                          ON DPD.dataset_id = DS.dataset_id
-                        INNER JOIN t_requested_run RR
-                          ON DS.dataset_id = RR.dataset_id
-                   WHERE DPD.data_pkg_id = _dataPackageID
-                   GROUP BY RR.eus_proposal_id ) StatsQ
+            FROM (SELECT RR.eus_proposal_id AS EUS_Proposal_ID,
+                         COUNT(RR.request_id) AS Requests
+                  FROM dpkg.t_data_package_datasets DPD
+                       INNER JOIN t_dataset DS
+                         ON DPD.dataset_id = DS.dataset_id
+                       INNER JOIN t_requested_run RR
+                         ON DS.dataset_id = RR.dataset_id
+                  WHERE DPD.data_pkg_id = _dataPackageID
+                  GROUP BY RR.eus_proposal_id ) StatsQ
             ORDER BY StatsQ.Requests DESC
             LIMIT 1;
 
         ElsIf _preferredContainer = 'Experiment Group' Then
             SELECT campaign
             INTO _campaign
-            FROM ( SELECT C.campaign AS Campaign,
-                          COUNT(E.exp_id) AS Experiments
-                   FROM t_experiment_group_members EG
-                        INNER JOIN t_experiments E
-                          ON EG.exp_id = E.exp_id
-                        INNER JOIN t_campaign C
-                          ON E.campaign_id = C.campaign_id
-                   WHERE EG.group_id = _experimentGroupID
-                   GROUP BY C.campaign ) StatsQ
+            FROM (SELECT C.campaign AS Campaign,
+                         COUNT(E.exp_id) AS Experiments
+                  FROM t_experiment_group_members EG
+                       INNER JOIN t_experiments E
+                         ON EG.exp_id = E.exp_id
+                       INNER JOIN t_campaign C
+                         ON E.campaign_id = C.campaign_id
+                  WHERE EG.group_id = _experimentGroupID
+                  GROUP BY C.campaign
+                 ) StatsQ
             ORDER BY StatsQ.Experiments DESC
             LIMIT 1;
 
             SELECT organism
             INTO _organism
-            FROM ( SELECT Org.organism AS Organism,
-                          COUNT(E.organism_id) AS Organisms
-                   FROM t_experiment_group_members EG
-                        INNER JOIN t_experiments E
-                          ON EG.exp_id = E.exp_id
-                        INNER JOIN t_organisms Org
-                          ON E.organism_id = Org.organism_id
-                   WHERE EG.group_id = _experimentGroupID
-                   GROUP BY Org.organism ) StatsQ
+            FROM (SELECT Org.organism AS Organism,
+                         COUNT(E.organism_id) AS Organisms
+                  FROM t_experiment_group_members EG
+                       INNER JOIN t_experiments E
+                         ON EG.exp_id = E.exp_id
+                       INNER JOIN t_organisms Org
+                         ON E.organism_id = Org.organism_id
+                  WHERE EG.group_id = _experimentGroupID
+                  GROUP BY Org.organism
+                 ) StatsQ
             ORDER BY StatsQ.Organisms DESC
             LIMIT 1;
 
             SELECT eus_proposal_id
             INTO _eusProposalID
-            FROM ( SELECT RR.eus_proposal_id AS EUS_Proposal_ID,
-                          COUNT(RR.request_id) AS Requests
-                   FROM t_experiment_group_members EG
-                        INNER JOIN t_experiments E
-                          ON EG.exp_id = E.exp_id
-                        INNER JOIN t_dataset DS
-                          ON E.exp_id = DS.dataset_id
-                        INNER JOIN t_requested_run RR
-                          ON DS.dataset_id = RR.dataset_id
-                   WHERE EG.group_id = _experimentGroupID
-                   GROUP BY RR.eus_proposal_id ) StatsQ
+            FROM (SELECT RR.eus_proposal_id AS EUS_Proposal_ID,
+                         COUNT(RR.request_id) AS Requests
+                  FROM t_experiment_group_members EG
+                       INNER JOIN t_experiments E
+                         ON EG.exp_id = E.exp_id
+                       INNER JOIN t_dataset DS
+                         ON E.exp_id = DS.dataset_id
+                       INNER JOIN t_requested_run RR
+                         ON DS.dataset_id = RR.dataset_id
+                  WHERE EG.group_id = _experimentGroupID
+                  GROUP BY RR.eus_proposal_id
+                 ) StatsQ
             ORDER BY StatsQ.Requests DESC
             LIMIT 1;
 
@@ -617,12 +620,13 @@ BEGIN
 
             SELECT batch_id
             INTO _representativeBatchID
-            FROM ( SELECT RR.batch_id AS Batch_ID,
-                          COUNT(RR.request_id) AS Requests
-                   FROM t_requested_run RR
-                        INNER JOIN Tmp_BatchIDs
-                          ON RR.batch_id = Tmp_BatchIDs.batch_id
-                   GROUP BY RR.batch_id ) StatsQ
+            FROM (SELECT RR.batch_id AS Batch_ID,
+                         COUNT(RR.request_id) AS Requests
+                  FROM t_requested_run RR
+                       INNER JOIN Tmp_BatchIDs
+                         ON RR.batch_id = Tmp_BatchIDs.batch_id
+                  GROUP BY RR.batch_id
+                 ) StatsQ
             ORDER BY Requests DESC
             LIMIT 1;
 
@@ -830,8 +834,8 @@ BEGIN
 
             If _batchDefined Then
                 MERGE INTO t_data_analysis_request_batch_ids AS t
-                USING ( SELECT _id AS Request_ID, Batch_ID
-                        FROM Tmp_BatchIDs
+                USING (SELECT _id AS Request_ID, Batch_ID
+                       FROM Tmp_BatchIDs
                       ) AS s
                 ON (t.batch_id = s.batch_id AND t.request_id = s.request_id)
                 WHEN NOT MATCHED THEN

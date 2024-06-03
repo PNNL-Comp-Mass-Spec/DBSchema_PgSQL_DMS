@@ -371,11 +371,12 @@ BEGIN
 
         UPDATE Tmp_Job_Steps
         SET Dependencies = T.dependencies
-        FROM ( SELECT Step,
-                      COUNT(*) AS dependencies
+        FROM (SELECT Step,
+                     COUNT(*) AS dependencies
               FROM Tmp_Job_Step_Dependencies
               WHERE Job = _job
-              GROUP BY Step ) AS T
+              GROUP BY Step
+             ) AS T
         WHERE T.Step = Tmp_Job_Steps.Step AND
               Tmp_Job_Steps.Job = _job;
 

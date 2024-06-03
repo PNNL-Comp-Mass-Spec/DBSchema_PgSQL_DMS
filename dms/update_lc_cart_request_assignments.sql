@@ -130,7 +130,7 @@ BEGIN
         SELECT XmlQ.request_id, Trim(XmlQ.cart), Trim(XmlQ.cart_config), Trim(XmlQ.cart_column)
         FROM (
             SELECT xmltable.*
-            FROM ( SELECT _xml AS rooted_xml
+            FROM (SELECT _xml AS rooted_xml
                  ) Src,
                  XMLTABLE('//root/r'
                           PASSING Src.rooted_xml
@@ -253,13 +253,13 @@ BEGIN
         -----------------------------------------------------------
 
         DELETE FROM Tmp_BlockingInfo
-        WHERE request_id IN ( SELECT BI.request_id
-                              FROM Tmp_BlockingInfo BI
-                                   INNER JOIN t_requested_run AS RR
-                                     ON BI.request_id                      = RR.request_id AND
-                                        BI.cart_id                         = RR.cart_id AND
-                                        Coalesce(BI.cart_config_id, 0)     = Coalesce(RR.cart_config_id, 0) AND
-                                        public.try_cast(BI.cart_column, 0) = Coalesce(RR.cart_column, 0)
+        WHERE request_id IN (SELECT BI.request_id
+                             FROM Tmp_BlockingInfo BI
+                                  INNER JOIN t_requested_run AS RR
+                                    ON BI.request_id                      = RR.request_id AND
+                                       BI.cart_id                         = RR.cart_id AND
+                                       Coalesce(BI.cart_config_id, 0)     = Coalesce(RR.cart_config_id, 0) AND
+                                       public.try_cast(BI.cart_column, 0) = Coalesce(RR.cart_column, 0)
                             );
         --
         GET DIAGNOSTICS _deleteCount = ROW_COUNT;

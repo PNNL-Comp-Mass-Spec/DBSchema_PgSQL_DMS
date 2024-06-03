@@ -218,17 +218,21 @@ BEGIN
         INSERT INTO Tmp_InvalidTermNames (identifier, term_name)
         SELECT UniqueQTarget.identifier,
                UniqueQTarget.term_name AS Invalid_Term_Name_to_Delete
-        FROM ( SELECT DISTINCT t.identifier, t.term_name FROM ont.t_cv_envo t GROUP BY t.identifier, t.term_name ) UniqueQTarget
+        FROM (SELECT DISTINCT t.identifier, t.term_name
+              FROM ont.t_cv_envo t
+              GROUP BY t.identifier, t.term_name) UniqueQTarget
              LEFT OUTER JOIN
-             ( SELECT DISTINCT Tmp_SourceData.identifier, Tmp_SourceData.term_name FROM Tmp_SourceData ) UniqueQSource
+                 (SELECT DISTINCT Tmp_SourceData.identifier, Tmp_SourceData.term_name
+                  FROM Tmp_SourceData
+                 ) UniqueQSource
                ON UniqueQTarget.identifier = UniqueQSource.identifier AND
                   UniqueQTarget.term_name = UniqueQSource.term_name
-        WHERE UniqueQTarget.identifier IN ( SELECT LookupQ.identifier
-                                            FROM ( SELECT DISTINCT cvenvo.identifier, cvenvo.term_name
-                                                   FROM ont.t_cv_envo cvenvo
-                                                   GROUP BY cvenvo.identifier, cvenvo.term_name ) LookupQ
-                                            GROUP BY LookupQ.identifier
-                                            HAVING (COUNT(*) > 1) ) AND
+        WHERE UniqueQTarget.identifier IN (SELECT LookupQ.identifier
+                                           FROM (SELECT DISTINCT cvenvo.identifier, cvenvo.term_name
+                                                 FROM ont.t_cv_envo cvenvo
+                                                 GROUP BY cvenvo.identifier, cvenvo.term_name) LookupQ
+                                           GROUP BY LookupQ.identifier
+                                           HAVING (COUNT(*) > 1)) AND
               UniqueQSource.identifier IS NULL;
         --
         GET DIAGNOSTICS _insertCount = ROW_COUNT;
@@ -280,8 +284,8 @@ BEGIN
                        t.entered::timestamp,
                        t.updated::timestamp
                 FROM ont.t_cv_envo t
-                WHERE t.entry_id IN ( SELECT s.entry_id
-                                      FROM Tmp_IDsToDelete s);
+                WHERE t.entry_id IN (SELECT s.entry_id
+                                     FROM Tmp_IDsToDelete s);
 
             Else
 
@@ -334,9 +338,9 @@ BEGIN
 
         UPDATE ont.t_cv_envo t
         SET children = StatsQ.children
-        FROM ( SELECT s.parent_term_id, COUNT(s.entry_id) AS children
-               FROM ont.t_cv_envo s
-               GROUP BY s.parent_term_ID ) StatsQ
+        FROM (SELECT s.parent_term_id, COUNT(s.entry_id) AS children
+              FROM ont.t_cv_envo s
+              GROUP BY s.parent_term_ID) StatsQ
         WHERE StatsQ.parent_term_id = t.identifier AND
               Coalesce(t.Children, 0) <> StatsQ.Children;
 

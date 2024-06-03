@@ -57,16 +57,18 @@ BEGIN
     SELECT EUP.proposal_id,
            RankQ.proposal_id AS newest_id
     FROM t_eus_proposals EUP
-         INNER JOIN ( SELECT title,
-                             COUNT(proposal_id) AS Entries
-                      FROM t_eus_proposals
-                      GROUP BY title
-                      HAVING (COUNT(proposal_id) > 1) ) DuplicateQ
+         INNER JOIN (SELECT title,
+                            COUNT(proposal_id) AS Entries
+                     FROM t_eus_proposals
+                     GROUP BY title
+                     HAVING (COUNT(proposal_id) > 1)
+                    ) DuplicateQ
            ON EUP.title = DuplicateQ.title
-         INNER JOIN ( SELECT title,
-                             proposal_id,
-                             Row_Number() OVER (PARTITION BY title ORDER BY proposal_start_date DESC) AS StartRank
-                      FROM t_eus_proposals ) RankQ
+         INNER JOIN (SELECT title,
+                            proposal_id,
+                            Row_Number() OVER (PARTITION BY title ORDER BY proposal_start_date DESC) AS StartRank
+                     FROM t_eus_proposals
+                    ) RankQ
            ON EUP.title = RankQ.title AND
               RankQ.StartRank = 1 AND
               EUP.proposal_id <> RankQ.proposal_id

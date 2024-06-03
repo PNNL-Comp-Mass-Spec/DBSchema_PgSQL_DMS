@@ -97,7 +97,7 @@ BEGIN
         ---------------------------------------------------
 
         INSERT INTO Tmp_NewUsers (Payroll, HID, Charge_Code_First, Charge_Code_Last)
-        SELECT CC.resp_username, MAX(CC.resp_hid), Min(CC.Charge_Code) AS Charge_Code_First, Max(CC.Charge_Code) AS Charge_Code_Last
+        SELECT CC.resp_username, MAX(CC.resp_hid), MIN(CC.Charge_Code) AS Charge_Code_First, MAX(CC.Charge_Code) AS Charge_Code_Last
         FROM t_charge_code CC
              LEFT OUTER JOIN V_Charge_Code_Owner_DMS_User_Map UMap
                ON CC.charge_code = UMap.charge_code
@@ -121,7 +121,7 @@ BEGIN
         ---------------------------------------------------
 
         INSERT INTO Tmp_NewUsersByHID (HID, Charge_Code_First, Charge_Code_Last)
-        SELECT CC.resp_hid, Min(CC.Charge_Code) AS Charge_Code_First, Max(CC.Charge_Code) AS Charge_Code_Last
+        SELECT CC.resp_hid, MIN(CC.Charge_Code) AS Charge_Code_First, MAX(CC.Charge_Code) AS Charge_Code_Last
         FROM t_charge_code CC
              LEFT OUTER JOIN V_Charge_Code_Owner_DMS_User_Map UMap
                ON CC.charge_code = UMap.charge_code

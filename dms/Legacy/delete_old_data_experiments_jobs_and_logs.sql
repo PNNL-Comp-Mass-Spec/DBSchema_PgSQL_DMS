@@ -199,13 +199,13 @@ BEGIN
         FROM t_dataset
         WHERE created < _deleteThreshold AND
               NOT dataset SIMILAR TO 'DataPackage_[0-9]%' AND
-              NOT dataset IN ( SELECT Value
-                               FROM public.parse_delimited_list ( _datasetSkipList, ',')
+              NOT dataset IN (SELECT Value
+                              FROM public.parse_delimited_list ( _datasetSkipList, ',')
                              ) AND
-              NOT dataset IN ( SELECT DISTINCT DS.dataset
-                               FROM t_dataset DS INNER JOIN
-                                    t_analysis_job AJ ON DS.dataset_id = AJ.dataset_id
-                               WHERE created >= _jobKeepThreshold
+              NOT dataset IN (SELECT DISTINCT DS.dataset
+                              FROM t_dataset DS INNER JOIN
+                                   t_analysis_job AJ ON DS.dataset_id = AJ.dataset_id
+                              WHERE created >= _jobKeepThreshold
                              )
         ORDER BY created
         LIMIT _maxItemsToProcess;
@@ -224,15 +224,15 @@ BEGIN
         FROM t_experiments E
         WHERE NOT E.experiment IN ('Placeholder', 'DMS_Pipeline_Data') AND
               E.created < _deleteThreshold AND
-              NOT experiment IN ( SELECT Value
-                                  FROM public.parse_delimited_list ( _experimentSkipList, ',')) AND
-              NOT experiment IN ( SELECT E.experiment
-                                  FROM t_dataset DS
-                                      INNER JOIN t_experiments E
-                                          ON DS.exp_id = E.exp_id
-                                      LEFT OUTER JOIN Tmp_DatasetsToDelete DSDelete
-                                          ON DS.dataset_id = DSDelete.dataset_id
-                                  WHERE DSDelete.dataset_id IS NULL)
+              NOT experiment IN (SELECT Value
+                                 FROM public.parse_delimited_list ( _experimentSkipList, ',')) AND
+              NOT experiment IN (SELECT E.experiment
+                                 FROM t_dataset DS
+                                     INNER JOIN t_experiments E
+                                         ON DS.exp_id = E.exp_id
+                                     LEFT OUTER JOIN Tmp_DatasetsToDelete DSDelete
+                                         ON DS.dataset_id = DSDelete.dataset_id
+                                 WHERE DSDelete.dataset_id IS NULL)
         GROUP BY E.exp_id,
                 E.experiment,
                 E.created
@@ -287,7 +287,7 @@ BEGIN
         -- ToDo: Update this to use RAISE INFO
 
         -- Preview all of the datasets and experiments that would be deleted
-        SELECT Dataset_ID, Dataset As Dataset_to_Delete, Created
+        SELECT Dataset_ID, Dataset AS Dataset_to_Delete, Created
         FROM Tmp_DatasetsToDelete
         ORDER BY Dataset_ID DESC
 
@@ -435,11 +435,11 @@ BEGIN
             _currentLocation := 'DELETE t_analysis_job_request';
 
             DELETE FROM t_analysis_job_request
-            WHERE request_id IN ( SELECT AJR.request_id
-                                  FROM t_analysis_job_request AJR
-                                       LEFT OUTER JOIN t_analysis_job AJ
-                                         ON AJR.request_id = AJ.request_id
-                                  WHERE AJ.request_id IS NULL AND AJR.created < _deleteThreshold
+            WHERE request_id IN (SELECT AJR.request_id
+                                 FROM t_analysis_job_request AJR
+                                      LEFT OUTER JOIN t_analysis_job AJ
+                                        ON AJR.request_id = AJ.request_id
+                                 WHERE AJ.request_id IS NULL AND AJR.created < _deleteThreshold
                                 );
             --
             GET DIAGNOSTICS _deleteCount = ROW_COUNT;

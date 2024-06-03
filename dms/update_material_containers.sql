@@ -115,8 +115,8 @@ BEGIN
            Status,
            Type
     FROM V_Material_Container_Item_Stats
-    WHERE container_id IN ( SELECT Value
-                            FROM public.parse_delimited_integer_list(_containerList) );
+    WHERE container_id IN (SELECT Value
+                           FROM public.parse_delimited_integer_list(_containerList));
     --
     GET DIAGNOSTICS _numContainers = ROW_COUNT;
 

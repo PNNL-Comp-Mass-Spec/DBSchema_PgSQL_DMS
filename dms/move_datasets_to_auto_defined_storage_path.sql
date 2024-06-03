@@ -188,14 +188,14 @@ BEGIN
 
                 SELECT format('%s %s', OldStorage.Path, NewStorage.Path)
                 INTO _oldAndNewPaths
-                FROM ( SELECT format('\\%s\%s$\%s%s', machine_name, Substring(vol_name_server, 1, 1), storage_path, _datasetInfo.Dataset) AS Path
-                       FROM t_storage_path
-                       WHERE storage_path_id = _datasetInfo.StoragePathID
+                FROM (SELECT format('\\%s\%s$\%s%s', machine_name, Substring(vol_name_server, 1, 1), storage_path, _datasetInfo.Dataset) AS Path
+                      FROM t_storage_path
+                      WHERE storage_path_id = _datasetInfo.StoragePathID
                      ) OldStorage
                      CROSS JOIN
-                     ( SELECT format('\\%s\%s$\%s%s', machine_name, Substring(vol_name_server, 1, 1), storage_path, _datasetInfo.Dataset) AS Path
-                       FROM t_storage_path
-                       WHERE storage_path_id = _storagePathIDNew
+                     (SELECT format('\\%s\%s$\%s%s', machine_name, Substring(vol_name_server, 1, 1), storage_path, _datasetInfo.Dataset) AS Path
+                      FROM t_storage_path
+                      WHERE storage_path_id = _storagePathIDNew
                      ) NewStorage;
 
                 If _infoOnly Then
@@ -249,14 +249,14 @@ BEGIN
 
             SELECT format('%s %s', OldArchive.Path, NewArchive.Path)
             INTO _oldAndNewPaths
-            FROM ( SELECT format('%s\%s', network_share_path, _datasetInfo.Dataset) AS Path
-                   FROM t_archive_path
-                   WHERE archive_path_id = _archivePathID
+            FROM (SELECT format('%s\%s', network_share_path, _datasetInfo.Dataset) AS Path
+                  FROM t_archive_path
+                  WHERE archive_path_id = _archivePathID
                  ) OldArchive
                  CROSS JOIN
-                 ( SELECT format('%s\%s', network_share_path, _datasetInfo.Dataset) AS Path
-                   FROM t_archive_path
-                   WHERE archive_path_id = _archivePathIDNew
+                 (SELECT format('%s\%s', network_share_path, _datasetInfo.Dataset) AS Path
+                  FROM t_archive_path
+                  WHERE archive_path_id = _archivePathIDNew
                  ) NewArchive;
 
             If _infoOnly Then

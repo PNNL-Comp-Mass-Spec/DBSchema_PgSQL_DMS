@@ -109,8 +109,8 @@ BEGIN
                   TSD.Target_Step = JS_Target.Step
         WHERE TS.State >= 2 AND
               TS.State <> 3 AND
-              TS.Job IN ( SELECT Job
-                          FROM Tmp_Jobs ) AND
+              TS.Job IN (SELECT Job
+                         FROM Tmp_Jobs) AND
               (JS_Target.State IN (0, 1, 2, 4) OR
                JS_Target.Start > TS.Finish);
 

@@ -256,10 +256,10 @@ BEGIN
             FROM t_charge_code;
 
             MERGE INTO t_charge_code AS Target
-            USING ( SELECT charge_code, resp_username, resp_hid, wbs_title, charge_code_title,
-                           sub_account, sub_account_title, setup_date, sub_account_effective_date,
-                           inactive_date, sub_account_inactive_date, deactivated, auth_amt, auth_username, auth_hid
-                    FROM Tmp_ChargeCode
+            USING (SELECT charge_code, resp_username, resp_hid, wbs_title, charge_code_title,
+                          sub_account, sub_account_title, setup_date, sub_account_effective_date,
+                          inactive_date, sub_account_inactive_date, deactivated, auth_amt, auth_username, auth_hid
+                   FROM Tmp_ChargeCode
                   ) AS Source
             ON (target.charge_code = source.charge_code)
             WHEN MATCHED AND
@@ -294,22 +294,22 @@ BEGIN
                     auth_hid                   = source.auth_hid,
                     last_affected              = CURRENT_TIMESTAMP
             WHEN NOT MATCHED
-                THEN INSERT  (
+                THEN INSERT (
                          charge_code, resp_username, resp_hid, wbs_title, charge_code_title,
                          sub_account, sub_account_title, setup_date, sub_account_effective_date,
                          inactive_date, sub_account_inactive_date, deactivated, auth_amt, auth_username, auth_hid,
                          auto_defined, charge_code_state, activation_state, last_affected
                     ) VALUES
-                    ( source.charge_code, source.resp_username, source.resp_hid, source.wbs_title, source.charge_code_title,
-                      source.sub_account, source.sub_account_title, source.setup_date, source.sub_account_effective_date,
-                      source.inactive_date, source.sub_account_inactive_date, source.deactivated, source.auth_amt, source.auth_username, source.auth_hid,
-                      1,        -- auto_defined=1
-                      1,        -- charge_code_state = 1 (Interest Unknown)
-                      public.charge_code_activation_state(_deactivated       => source.deactivated,
-                                                          _chargeCodeState   => 1,
-                                                          _usageSamplePrep   => 0,
-                                                          _usageRequestedRun => 0),
-                      CURRENT_TIMESTAMP
+                    (source.charge_code, source.resp_username, source.resp_hid, source.wbs_title, source.charge_code_title,
+                     source.sub_account, source.sub_account_title, source.setup_date, source.sub_account_effective_date,
+                     source.inactive_date, source.sub_account_inactive_date, source.deactivated, source.auth_amt, source.auth_username, source.auth_hid,
+                     1,        -- auto_defined=1
+                     1,        -- charge_code_state = 1 (Interest Unknown)
+                     public.charge_code_activation_state(_deactivated       => source.deactivated,
+                                                         _chargeCodeState   => 1,
+                                                         _usageSamplePrep   => 0,
+                                                         _usageRequestedRun => 0),
+                     CURRENT_TIMESTAMP
                     );
 
             GET DIAGNOSTICS _mergeCount = ROW_COUNT;
@@ -356,17 +356,17 @@ BEGIN
 
             UPDATE t_charge_code Target
             SET inactive_date_most_recent = OuterQ.inactive_date_most_recent
-            FROM ( SELECT Charge_Code,
-                          Inactive1,
-                          Inactive2,
-                          CASE WHEN Inactive1 >= COALESCE(Inactive2, Inactive1) THEN Inactive1
-                               ELSE Inactive2
-                          END AS Inactive_Date_Most_Recent
-                   FROM ( SELECT charge_code,
-                                 COALESCE(inactive_date, sub_account_inactive_date, inactive_date_most_recent) AS Inactive1,
-                                 COALESCE(sub_account_inactive_date, inactive_date, inactive_date_most_recent) AS Inactive2
-                          FROM t_charge_code
-                        ) InnerQ
+            FROM (SELECT Charge_Code,
+                         Inactive1,
+                         Inactive2,
+                         CASE WHEN Inactive1 >= COALESCE(Inactive2, Inactive1) THEN Inactive1
+                              ELSE Inactive2
+                         END AS Inactive_Date_Most_Recent
+                  FROM (SELECT charge_code,
+                               COALESCE(inactive_date, sub_account_inactive_date, inactive_date_most_recent) AS Inactive1,
+                               COALESCE(sub_account_inactive_date, inactive_date, inactive_date_most_recent) AS Inactive2
+                        FROM t_charge_code
+                       ) InnerQ
                  ) OuterQ
             WHERE target.Charge_Code = OuterQ.Charge_Code AND
                   NOT OuterQ.Inactive_Date_Most_Recent IS NULL AND
@@ -420,27 +420,27 @@ BEGIN
 
             INSERT INTO Tmp_CCsInUseLast3Years (Charge_Code, Most_Recent_Usage)
             SELECT Charge_Code, MAX(Most_Recent_Usage)
-            FROM ( SELECT A.Charge_Code,
-                          CASE WHEN A.Most_Recent_SPR >= Coalesce(B.Most_Recent_RR, A.Most_Recent_SPR)
-                               THEN A.Most_Recent_SPR
-                               ELSE B.Most_Recent_RR
-                          END AS Most_Recent_Usage
-                   FROM ( SELECT CC.charge_code,
-                                 MAX(SPR.created) AS Most_Recent_SPR
-                          FROM t_charge_code CC
-                               INNER JOIN t_sample_prep_request SPR
-                                 ON CC.charge_code = SPR.work_package
-                          GROUP BY CC.charge_code
-                        ) A
-                        INNER JOIN
-                        ( SELECT CC.charge_code,
-                                 MAX(RR.created) AS Most_Recent_RR
-                          FROM t_requested_run RR
-                               INNER JOIN t_charge_code CC
-                                 ON RR.work_package = CC.charge_code
-                          GROUP BY CC.charge_code
-                        ) B
-                        ON A.charge_code = B.charge_code
+            FROM (SELECT A.Charge_Code,
+                         CASE WHEN A.Most_Recent_SPR >= Coalesce(B.Most_Recent_RR, A.Most_Recent_SPR)
+                              THEN A.Most_Recent_SPR
+                              ELSE B.Most_Recent_RR
+                         END AS Most_Recent_Usage
+                  FROM (SELECT CC.charge_code,
+                               MAX(SPR.created) AS Most_Recent_SPR
+                        FROM t_charge_code CC
+                             INNER JOIN t_sample_prep_request SPR
+                               ON CC.charge_code = SPR.work_package
+                        GROUP BY CC.charge_code
+                       ) A
+                       INNER JOIN
+                           (SELECT CC.charge_code,
+                                   MAX(RR.created) AS Most_Recent_RR
+                            FROM t_requested_run RR
+                                 INNER JOIN t_charge_code CC
+                                   ON RR.work_package = CC.charge_code
+                            GROUP BY CC.charge_code
+                           ) B
+                       ON A.charge_code = B.charge_code
                  ) UsageQ
             WHERE Most_Recent_Usage >= CURRENT_TIMESTAMP - INTERVAL '3 years'
             GROUP BY charge_code;
@@ -466,9 +466,9 @@ BEGIN
             SET charge_code_state = 0
             WHERE charge_code_state IN (1, 2) AND
                   inactive_date_most_recent < CURRENT_TIMESTAMP - INTERVAL '1 year' AND
-                  NOT charge_code IN ( SELECT charge_code
-                                       FROM Tmp_CCsInUseLast3Years
-                                       WHERE Most_Recent_Usage >= CURRENT_TIMESTAMP - INTERVAL '1 year' );
+                  NOT charge_code IN (SELECT charge_code
+                                      FROM Tmp_CCsInUseLast3Years
+                                      WHERE Most_Recent_Usage >= CURRENT_TIMESTAMP - INTERVAL '1 year');
 
             ----------------------------------------------------------
             -- Auto-mark Inactive charge codes that were created at least 3 years ago
@@ -480,8 +480,8 @@ BEGIN
             SET charge_code_state = 0
             WHERE charge_code_state IN (1, 2) AND
                   setup_date < CURRENT_TIMESTAMP - INTERVAL '3 years' AND
-                  NOT charge_code IN ( SELECT charge_code
-                                       FROM Tmp_CCsInUseLast3Years );
+                  NOT charge_code IN (SELECT charge_code
+                                      FROM Tmp_CCsInUseLast3Years);
 
             ----------------------------------------------------------
             -- Add new users as DMS_Guest users

@@ -185,13 +185,14 @@ BEGIN
           NOT E.experiment in ('tracking') AND
           DS.created BETWEEN CURRENT_TIMESTAMP - make_interval(days => _dayCountForRecentDatasets) AND
                              CURRENT_TIMESTAMP - INTERVAL '12 hours' AND
-          InstName.instrument_class IN ( SELECT DISTINCT InstClass.instrument_class
-                                         FROM t_predefined_analysis PA
-                                              INNER JOIN t_instrument_class InstClass
-                                                ON PA.instrument_class_criteria = InstClass.instrument_class
-                                         WHERE PA.enabled <> 0 AND
-                                               (_analysisToolNameFilter = '' OR
-                                                PA.analysis_tool_name ILIKE _analysisToolNameFilter) )
+          InstName.instrument_class IN (SELECT DISTINCT InstClass.instrument_class
+                                        FROM t_predefined_analysis PA
+                                             INNER JOIN t_instrument_class InstClass
+                                               ON PA.instrument_class_criteria = InstClass.instrument_class
+                                        WHERE PA.enabled <> 0 AND
+                                              (_analysisToolNameFilter = '' OR
+                                               PA.analysis_tool_name ILIKE _analysisToolNameFilter)
+                                       )
     ORDER BY DS.dataset_id;
 
     _formatSpecifier := '%-15s %-25s %-10s %-20s %-8s %-9s %-7s %-80s %-80s %-60s';

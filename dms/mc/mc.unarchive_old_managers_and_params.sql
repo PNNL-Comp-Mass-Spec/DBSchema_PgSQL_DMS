@@ -266,11 +266,11 @@ BEGIN
            PV.last_affected,
            PV.entered_by
     FROM mc.t_param_value_old_managers PV
-    WHERE PV.entry_id IN ( SELECT Max(PV.entry_ID)
-                           FROM mc.t_param_value_old_managers PV
-                                INNER JOIN Tmp_ManagerList Src
-                                  ON PV.mgr_id = Src.mgr_id
-                           GROUP BY PV.mgr_id, PV.param_type_id
+    WHERE PV.entry_id IN (SELECT MAX(PV.entry_ID)
+                          FROM mc.t_param_value_old_managers PV
+                               INNER JOIN Tmp_ManagerList Src
+                                 ON PV.mgr_id = Src.mgr_id
+                          GROUP BY PV.mgr_id, PV.param_type_id
                          );
 
     -- Set the entry_id sequence's current value to the maximum entry_id

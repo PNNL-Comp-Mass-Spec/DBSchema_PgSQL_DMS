@@ -90,30 +90,30 @@ BEGIN
         FROM t_mts_peak_matching_tasks_cached;
 
         MERGE INTO t_mts_peak_matching_tasks_cached AS target
-        USING ( SELECT tool_name, mts_job_id, job_start, Job_Finish, Comment,
-                       state_id, task_server, task_database, Task_ID,
-                       assigned_processor_name, tool_version, dms_job_count,
-                       dms_job, output_folder_path, results_url,
-                       amt_count_1pct_fdr, amt_count_5pct_fdr,
-                       amt_count_10pct_fdr, amt_count_25pct_fdr,
-                       amt_count_50pct_fdr, refine_mass_cal_ppm_shift,
-                       md_id, qid,
-                       ini_file_name, comparison_mass_tag_count, md_state
-                FROM ( SELECT tool_name, mts_job_id, job_start, Job_Finish, Comment,
-                              state_id, task_server, task_database, Task_ID,
-                              assigned_processor_name, tool_version, dms_job_count,
-                              dms_job, output_folder_path, results_url,
-                              amt_count_1pct_fdr, amt_count_5pct_fdr,
-                              amt_count_10pct_fdr, amt_count_25pct_fdr,
-                              amt_count_50pct_fdr, refine_mass_cal_ppm_shift,
-                              md_id, qid,
-                              ini_file_name, comparison_mass_tag_count, md_state,
-                              RANK() OVER ( PARTITION BY tool_name, task_server, task_database, task_id
-                                            ORDER BY mts_job_id DESC ) AS TaskStartRank
-                      FROM mts.t_peak_matching_tasks AS PMT
-                      WHERE mts_job_id >= _jobMinimum AND
-                            mts_job_id <= _jobMaximum ) SourceQ
-                WHERE TaskStartRank = 1
+        USING (SELECT tool_name, mts_job_id, job_start, Job_Finish, Comment,
+                      state_id, task_server, task_database, Task_ID,
+                      assigned_processor_name, tool_version, dms_job_count,
+                      dms_job, output_folder_path, results_url,
+                      amt_count_1pct_fdr, amt_count_5pct_fdr,
+                      amt_count_10pct_fdr, amt_count_25pct_fdr,
+                      amt_count_50pct_fdr, refine_mass_cal_ppm_shift,
+                      md_id, qid,
+                      ini_file_name, comparison_mass_tag_count, md_state
+               FROM (SELECT tool_name, mts_job_id, job_start, Job_Finish, Comment,
+                            state_id, task_server, task_database, Task_ID,
+                            assigned_processor_name, tool_version, dms_job_count,
+                            dms_job, output_folder_path, results_url,
+                            amt_count_1pct_fdr, amt_count_5pct_fdr,
+                            amt_count_10pct_fdr, amt_count_25pct_fdr,
+                            amt_count_50pct_fdr, refine_mass_cal_ppm_shift,
+                            md_id, qid,
+                            ini_file_name, comparison_mass_tag_count, md_state,
+                            RANK() OVER (PARTITION BY tool_name, task_server, task_database, task_id
+                                         ORDER BY mts_job_id DESC ) AS TaskStartRank
+                     FROM mts.t_peak_matching_tasks AS PMT
+                     WHERE mts_job_id >= _jobMinimum AND
+                           mts_job_id <= _jobMaximum) SourceQ
+               WHERE TaskStartRank = 1
               ) AS Source
         ON (target.mts_job_id = source.mts_job_id AND target.dms_job = source.dms_job)
         WHEN MATCHED AND

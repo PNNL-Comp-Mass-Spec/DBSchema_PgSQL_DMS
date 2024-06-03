@@ -133,9 +133,9 @@ BEGIN
 
         SELECT string_agg(ItemType, ', ' ORDER BY ItemType)
         INTO _badItemTypes
-        FROM ( SELECT DISTINCT ItemType
-               FROM Tmp_DataPackageItems
-               WHERE NOT ItemType IN ('Job', 'Dataset', 'Experiment', 'Biomaterial', 'EUSProposal')
+        FROM (SELECT DISTINCT ItemType
+              FROM Tmp_DataPackageItems
+              WHERE NOT ItemType IN ('Job', 'Dataset', 'Experiment', 'Biomaterial', 'EUSProposal')
              ) FilterQ;
 
         If _badItemTypes <> '' Then
@@ -161,7 +161,7 @@ BEGIN
 
         -- If working with analysis jobs, populate Tmp_JobsToAddOrDelete with all numeric job entries
 
-        If Exists ( SELECT DataPackageID FROM Tmp_DataPackageItems WHERE ItemType = 'Job' ) Then
+        If Exists (SELECT DataPackageID FROM Tmp_DataPackageItems WHERE ItemType = 'Job') Then
             DELETE FROM Tmp_DataPackageItems
             WHERE Trim(Coalesce(Identifier, '')) = '' OR public.try_cast(Identifier, null::int) IS NULL;
             --
@@ -177,15 +177,15 @@ BEGIN
             )
             SELECT DataPackageID,
                    Job
-            FROM ( SELECT DataPackageID,
-                          public.try_cast(Identifier, null::int) AS Job
-                   FROM Tmp_DataPackageItems
-                   WHERE ItemType = 'Job' AND
-                         NOT DataPackageID IS NULL ) SourceQ
+            FROM (SELECT DataPackageID,
+                         public.try_cast(Identifier, null::int) AS Job
+                  FROM Tmp_DataPackageItems
+                  WHERE ItemType = 'Job' AND
+                        NOT DataPackageID IS NULL) SourceQ
             WHERE NOT Job IS NULL;
         End If;
 
-        If Exists ( SELECT DataPackageID FROM Tmp_DataPackageItems WHERE ItemType = 'Dataset' ) Then
+        If Exists (SELECT DataPackageID FROM Tmp_DataPackageItems WHERE ItemType = 'Dataset') Then
             -- Auto-remove .raw and .d from the end of dataset names
             UPDATE Tmp_DataPackageItems
             SET Identifier = Substring(Identifier, 1, char_length(Identifier) - 4)
@@ -203,11 +203,11 @@ BEGIN
             )
             SELECT DataPackageID,
                    DatasetID
-            FROM ( SELECT DataPackageID,
-                          public.try_cast(Identifier, null::int) AS DatasetID
-                   FROM Tmp_DataPackageItems
-                   WHERE ItemType = 'Dataset' AND
-                         NOT DataPackageID IS NULL ) SourceQ
+            FROM (SELECT DataPackageID,
+                         public.try_cast(Identifier, null::int) AS DatasetID
+                  FROM Tmp_DataPackageItems
+                  WHERE ItemType = 'Dataset' AND
+                        NOT DataPackageID IS NULL) SourceQ
             WHERE NOT DatasetID IS NULL;
 
             If Exists (SELECT DataPackageID FROM Tmp_DatasetIDsToAdd) Then
@@ -223,9 +223,9 @@ BEGIN
                 FROM Tmp_DatasetIDsToAdd Source
                      INNER JOIN public.t_dataset DS
                        ON Source.DatasetID = DS.dataset_id
-                WHERE NOT EXISTS ( SELECT 1
-                                   FROM Tmp_DataPackageItems PkgItems
-                                   WHERE PkgItems.Identifier = DS.Dataset);
+                WHERE NOT EXISTS (SELECT 1
+                                  FROM Tmp_DataPackageItems PkgItems
+                                  WHERE PkgItems.Identifier = DS.Dataset);
 
                 -- Update the Type of the Dataset IDs so that they will be ignored
                 UPDATE Tmp_DataPackageItems
@@ -276,11 +276,11 @@ BEGIN
                    ON TJ.Job = AJ.Job
                  INNER JOIN public.t_dataset DS
                    ON AJ.dataset_id = DS.dataset_ID
-            WHERE NOT EXISTS ( SELECT DataPackageID
-                               FROM Tmp_DataPackageItems PkgItems
-                               WHERE PkgItems.ItemType = 'Dataset' AND
-                                     PkgItems.Identifier = DS.Dataset AND
-                                     PkgItems.DataPackageID = TJ.DataPackageID ) AND
+            WHERE NOT EXISTS (SELECT DataPackageID
+                              FROM Tmp_DataPackageItems PkgItems
+                              WHERE PkgItems.ItemType = 'Dataset' AND
+                                    PkgItems.Identifier = DS.Dataset AND
+                                    PkgItems.DataPackageID = TJ.DataPackageID) AND
                   NOT DS.Dataset SIMILAR TO 'DataPackage[_][0-9][0-9]%';
 
             -- Add experiments to list that are parents of datasets in the list
@@ -299,11 +299,11 @@ BEGIN
                  INNER JOIN public.t_experiments E
                    ON DS.exp_id = E.exp_id
             WHERE TP.ItemType = 'Dataset' AND
-                  NOT EXISTS ( SELECT DataPackageID
-                               FROM Tmp_DataPackageItems PkgItems
-                               WHERE PkgItems.ItemType = 'Experiment' AND
-                                     PkgItems.Identifier = E.Experiment AND
-                                     PkgItems.DataPackageID = TP.DataPackageID );
+                  NOT EXISTS (SELECT DataPackageID
+                              FROM Tmp_DataPackageItems PkgItems
+                              WHERE PkgItems.ItemType = 'Experiment' AND
+                                    PkgItems.Identifier = E.Experiment AND
+                                    PkgItems.DataPackageID = TP.DataPackageID);
 
             -- Add EUS Proposals to list that are parents of datasets in the list
             -- (and are not already in the list)
@@ -322,11 +322,11 @@ BEGIN
                    ON ds.dataset_id = rr.dataset_id
             WHERE TP.ItemType = 'Dataset' AND
                   Trim(Coalesce(RR.eus_proposal_id, '')) <> '' AND
-                  NOT EXISTS ( SELECT DataPackageID
-                               FROM Tmp_DataPackageItems PkgItems
-                               WHERE PkgItems.ItemType = 'EUSProposal' AND
-                                     PkgItems.Identifier = RR.eus_proposal_id AND
-                                     PkgItems.DataPackageID = TP.DataPackageID );
+                  NOT EXISTS (SELECT DataPackageID
+                              FROM Tmp_DataPackageItems PkgItems
+                              WHERE PkgItems.ItemType = 'EUSProposal' AND
+                                    PkgItems.Identifier = RR.eus_proposal_id AND
+                                    PkgItems.DataPackageID = TP.DataPackageID);
 
             -- Add biomaterial items to list that are associated with experiments in the list
             -- (and are not already in the list)
@@ -343,11 +343,11 @@ BEGIN
                    ON TP.Identifier = EB.Experiment
             WHERE TP.ItemType = 'Experiment' AND
                   NOT EB.Biomaterial_Name IN ('(none)') AND
-                  NOT EXISTS ( SELECT DataPackageID
-                               FROM Tmp_DataPackageItems PkgItems
-                               WHERE PkgItems.ItemType = 'Biomaterial' AND
-                                     PkgItems.Identifier = EB.Biomaterial_Name AND
-                                     PkgItems.DataPackageID = TP.DataPackageID );
+                  NOT EXISTS (SELECT DataPackageID
+                              FROM Tmp_DataPackageItems PkgItems
+                              WHERE PkgItems.ItemType = 'Biomaterial' AND
+                                    PkgItems.Identifier = EB.Biomaterial_Name AND
+                                    PkgItems.DataPackageID = TP.DataPackageID);
 
         End If;
 
@@ -623,13 +623,13 @@ BEGIN
             Else
                 DELETE FROM dpkg.t_data_package_biomaterial Target
                 WHERE EXISTS
-                    ( SELECT 1
-                      FROM Tmp_DataPackageItems PkgItems
-                           INNER JOIN public.t_biomaterial B
-                             ON Target.biomaterial_id = B.biomaterial_id
-                      WHERE PkgItems.DataPackageID = Target.data_pkg_id AND
-                            PkgItems.Identifier = B.biomaterial_name AND
-                            PkgItems.ItemType = 'Biomaterial'
+                    (SELECT 1
+                     FROM Tmp_DataPackageItems PkgItems
+                          INNER JOIN public.t_biomaterial B
+                            ON Target.biomaterial_id = B.biomaterial_id
+                     WHERE PkgItems.DataPackageID = Target.data_pkg_id AND
+                           PkgItems.Identifier = B.biomaterial_name AND
+                           PkgItems.ItemType = 'Biomaterial'
                     );
                 --
                 GET DIAGNOSTICS _deleteCount = ROW_COUNT;
@@ -728,17 +728,17 @@ BEGIN
             -- Delete extras
             DELETE FROM Tmp_DataPackageItems Target
             WHERE EXISTS
-                ( SELECT 1
-                  FROM dpkg.t_data_package_biomaterial DPB
-                       INNER JOIN public.t_biomaterial B
-                         ON DPB.biomaterial_id = B.biomaterial_id
-                       INNER JOIN Tmp_DataPackageItems PkgItems
-                         ON PkgItems.DataPackageID = DPB.Data_Pkg_ID AND
-                            PkgItems.Identifier = B.biomaterial_name AND
-                            PkgItems.ItemType = 'Biomaterial'
-                  WHERE Target.DataPackageID = PkgItems.DataPackageID AND
-                        Target.Identifier = PkgItems.Identifier AND
-                        Target.ItemType = PkgItems.ItemType
+                (SELECT 1
+                 FROM dpkg.t_data_package_biomaterial DPB
+                      INNER JOIN public.t_biomaterial B
+                        ON DPB.biomaterial_id = B.biomaterial_id
+                      INNER JOIN Tmp_DataPackageItems PkgItems
+                        ON PkgItems.DataPackageID = DPB.Data_Pkg_ID AND
+                           PkgItems.Identifier = B.biomaterial_name AND
+                           PkgItems.ItemType = 'Biomaterial'
+                 WHERE Target.DataPackageID = PkgItems.DataPackageID AND
+                       Target.Identifier = PkgItems.Identifier AND
+                       Target.ItemType = PkgItems.ItemType
                 );
 
             If _infoOnly Then
@@ -884,11 +884,11 @@ BEGIN
             Else
                 DELETE FROM dpkg.t_data_package_eus_proposals Target
                 WHERE EXISTS
-                    ( SELECT 1
-                      FROM Tmp_DataPackageItems PkgItems
-                      WHERE PkgItems.ItemType = 'EUSProposal' AND
-                            PkgItems.DataPackageID = Target.data_pkg_id AND
-                            PkgItems.Identifier = Target.proposal_id
+                    (SELECT 1
+                     FROM Tmp_DataPackageItems PkgItems
+                     WHERE PkgItems.ItemType = 'EUSProposal' AND
+                           PkgItems.DataPackageID = Target.data_pkg_id AND
+                           PkgItems.Identifier = Target.proposal_id
                     );
                 --
                 GET DIAGNOSTICS _deleteCount = ROW_COUNT;
@@ -973,15 +973,15 @@ BEGIN
             -- Delete extras
             DELETE FROM Tmp_DataPackageItems Target
             WHERE EXISTS
-                ( SELECT 1
-                  FROM Tmp_DataPackageItems PkgItems
-                       INNER JOIN dpkg.t_data_package_eus_proposals DPP
-                         ON PkgItems.DataPackageID = DPP.data_pkg_id AND
-                            PkgItems.Identifier = DPP.proposal_id AND
-                            PkgItems.ItemType = 'EUSProposal'
-                  WHERE Target.DataPackageID = PkgItems.DataPackageID AND
-                        Target.Identifier = PkgItems.Identifier AND
-                        Target.ItemType = PkgItems.ItemType
+                (SELECT 1
+                 FROM Tmp_DataPackageItems PkgItems
+                      INNER JOIN dpkg.t_data_package_eus_proposals DPP
+                        ON PkgItems.DataPackageID = DPP.data_pkg_id AND
+                           PkgItems.Identifier = DPP.proposal_id AND
+                           PkgItems.ItemType = 'EUSProposal'
+                 WHERE Target.DataPackageID = PkgItems.DataPackageID AND
+                       Target.Identifier = PkgItems.Identifier AND
+                       Target.ItemType = PkgItems.ItemType
                 );
 
             If _infoOnly Then
@@ -1112,13 +1112,13 @@ BEGIN
             Else
                 DELETE FROM dpkg.t_data_package_experiments Target
                 WHERE EXISTS
-                    ( SELECT 1
-                      FROM Tmp_DataPackageItems PkgItems
-                           INNER JOIN public.t_experiments E
-                             ON Target.experiment_id = E.exp_id
-                      WHERE PkgItems.DataPackageID = Target.data_pkg_id AND
-                            PkgItems.Identifier = E.experiment AND
-                            PkgItems.ItemType = 'Experiment'
+                    (SELECT 1
+                     FROM Tmp_DataPackageItems PkgItems
+                          INNER JOIN public.t_experiments E
+                            ON Target.experiment_id = E.exp_id
+                     WHERE PkgItems.DataPackageID = Target.data_pkg_id AND
+                           PkgItems.Identifier = E.experiment AND
+                           PkgItems.ItemType = 'Experiment'
                     );
                 --
                 GET DIAGNOSTICS _deleteCount = ROW_COUNT;
@@ -1211,17 +1211,17 @@ BEGIN
             -- Delete extras
             DELETE FROM Tmp_DataPackageItems Target
             WHERE EXISTS
-                ( SELECT 1
-                  FROM dpkg.t_data_package_experiments DPE
-                       INNER JOIN public.t_experiments E
-                         ON DPE.experiment_id = E.exp_id
-                       INNER JOIN Tmp_DataPackageItems PkgItems
-                         ON PkgItems.DataPackageID = DPE.data_pkg_id AND
-                            PkgItems.Identifier = E.experiment AND
-                            PkgItems.ItemType = 'Experiment'
-                  WHERE Target.DataPackageID = PkgItems.DataPackageID AND
-                        Target.Identifier = PkgItems.Identifier AND
-                        Target.ItemType = PkgItems.ItemType
+                (SELECT 1
+                 FROM dpkg.t_data_package_experiments DPE
+                      INNER JOIN public.t_experiments E
+                        ON DPE.experiment_id = E.exp_id
+                      INNER JOIN Tmp_DataPackageItems PkgItems
+                        ON PkgItems.DataPackageID = DPE.data_pkg_id AND
+                           PkgItems.Identifier = E.experiment AND
+                           PkgItems.ItemType = 'Experiment'
+                 WHERE Target.DataPackageID = PkgItems.DataPackageID AND
+                       Target.Identifier = PkgItems.Identifier AND
+                       Target.ItemType = PkgItems.ItemType
                 );
 
             If _infoOnly Then
@@ -1363,13 +1363,13 @@ BEGIN
             Else
                 DELETE FROM dpkg.t_data_package_datasets Target
                 WHERE EXISTS
-                    ( SELECT 1
-                      FROM Tmp_DataPackageItems PkgItems
-                           INNER JOIN public.t_dataset DS
-                             ON Target.dataset_id = DS.dataset_id
-                      WHERE PkgItems.DataPackageID = Target.data_pkg_id AND
-                            PkgItems.Identifier = DS.dataset AND
-                            PkgItems.ItemType = 'Dataset'
+                    (SELECT 1
+                     FROM Tmp_DataPackageItems PkgItems
+                          INNER JOIN public.t_dataset DS
+                            ON Target.dataset_id = DS.dataset_id
+                     WHERE PkgItems.DataPackageID = Target.data_pkg_id AND
+                           PkgItems.Identifier = DS.dataset AND
+                           PkgItems.ItemType = 'Dataset'
                     );
                 --
                 GET DIAGNOSTICS _deleteCount = ROW_COUNT;
@@ -1462,17 +1462,17 @@ BEGIN
             -- Delete extras
             DELETE FROM Tmp_DataPackageItems Target
             WHERE EXISTS
-                ( SELECT 1
-                  FROM dpkg.t_data_package_datasets DPD
-                       INNER JOIN public.t_dataset DS
-                         ON DPD.dataset_id = DS.dataset_id
-                       INNER JOIN Tmp_DataPackageItems PkgItems
-                         ON PkgItems.DataPackageID = DPD.data_pkg_id AND
-                            PkgItems.Identifier = DS.dataset AND
-                            PkgItems.ItemType = 'Dataset'
-                  WHERE Target.DataPackageID = PkgItems.DataPackageID AND
-                        Target.Identifier = PkgItems.Identifier AND
-                        Target.ItemType = PkgItems.ItemType
+                (SELECT 1
+                 FROM dpkg.t_data_package_datasets DPD
+                      INNER JOIN public.t_dataset DS
+                        ON DPD.dataset_id = DS.dataset_id
+                      INNER JOIN Tmp_DataPackageItems PkgItems
+                        ON PkgItems.DataPackageID = DPD.data_pkg_id AND
+                           PkgItems.Identifier = DS.dataset AND
+                           PkgItems.ItemType = 'Dataset'
+                 WHERE Target.DataPackageID = PkgItems.DataPackageID AND
+                       Target.Identifier = PkgItems.Identifier AND
+                       Target.ItemType = PkgItems.ItemType
                 );
 
             If _infoOnly Then
@@ -1642,10 +1642,10 @@ BEGIN
             Else
                 DELETE FROM dpkg.t_data_package_analysis_jobs Target
                 WHERE EXISTS
-                    ( SELECT 1
-                      FROM Tmp_JobsToAddOrDelete ItemsQ
-                      WHERE ItemsQ.DataPackageID = Target.data_pkg_id AND
-                            ItemsQ.job = Target.job
+                    (SELECT 1
+                     FROM Tmp_JobsToAddOrDelete ItemsQ
+                     WHERE ItemsQ.DataPackageID = Target.data_pkg_id AND
+                           ItemsQ.job = Target.job
                     );
                 --
                 GET DIAGNOSTICS _deleteCount = ROW_COUNT;
@@ -1740,13 +1740,13 @@ BEGIN
             -- Delete extras
             DELETE FROM Tmp_JobsToAddOrDelete Target
             WHERE EXISTS
-                ( SELECT 1
-                  FROM Tmp_JobsToAddOrDelete PkgJobs
-                       INNER JOIN dpkg.t_data_package_analysis_jobs DPJ
-                         ON PkgJobs.DataPackageID = DPJ.data_pkg_id AND
-                            PkgJobs.job = DPJ.job
-                  WHERE Target.DataPackageID = PkgJobs.DataPackageID AND
-                        Target.job = PkgJobs.job
+                (SELECT 1
+                 FROM Tmp_JobsToAddOrDelete PkgJobs
+                      INNER JOIN dpkg.t_data_package_analysis_jobs DPJ
+                        ON PkgJobs.DataPackageID = DPJ.data_pkg_id AND
+                           PkgJobs.job = DPJ.job
+                 WHERE Target.DataPackageID = PkgJobs.DataPackageID AND
+                       Target.job = PkgJobs.job
                 );
 
             If _infoOnly Then
@@ -1876,8 +1876,8 @@ BEGIN
 
             SELECT string_agg(DataPackageID::text, ',' ORDER BY DataPackageID)
             INTO _dataPackageList
-            FROM ( SELECT DISTINCT DataPackageID
-                   FROM Tmp_DataPackageItems ) AS ListQ;
+            FROM (SELECT DISTINCT DataPackageID
+                  FROM Tmp_DataPackageItems ) AS ListQ;
 
             CALL dpkg.update_data_package_eus_info (
                         _dataPackageList,
@@ -1892,7 +1892,7 @@ BEGIN
         If _itemCountChanged > 0 Then
             UPDATE dpkg.t_data_package
             SET last_modified = CURRENT_TIMESTAMP
-            WHERE data_pkg_id IN ( SELECT DISTINCT DataPackageID FROM Tmp_DataPackageItems );
+            WHERE data_pkg_id IN (SELECT DISTINCT DataPackageID FROM Tmp_DataPackageItems);
         End If;
 
         If _message = '' And Not _infoOnly Then

@@ -248,12 +248,13 @@ BEGIN
         SELECT param_file_name,
                NumJobs
         INTO _mostCommonParamFile, _jobCountCompare
-        FROM ( SELECT J.param_file_name AS param_file_name,
-                      COUNT(J.job) AS NumJobs
-               FROM Tmp_SourceJobs
-                    INNER JOIN t_analysis_job J
-                      ON Tmp_SourceJobs.JobID = J.job
-               GROUP BY J.param_file_name ) StatsQ
+        FROM (SELECT J.param_file_name AS param_file_name,
+                     COUNT(J.job) AS NumJobs
+              FROM Tmp_SourceJobs
+                   INNER JOIN t_analysis_job J
+                     ON Tmp_SourceJobs.JobID = J.job
+              GROUP BY J.param_file_name
+             ) StatsQ
         ORDER BY NumJobs DESC
         LIMIT 1;
 
@@ -321,12 +322,13 @@ BEGIN
         SELECT settings_file_name,
                NumJobs
         INTO _mostCommonSettingsFile, _jobCountCompare
-        FROM ( SELECT J.settings_file_name AS settings_file_name,
-                      COUNT(J.job) AS NumJobs
-               FROM Tmp_SourceJobs
-                    INNER JOIN t_analysis_job J
-                      ON Tmp_SourceJobs.JobID = J.job
-               GROUP BY J.settings_file_name ) StatsQ
+        FROM (SELECT J.settings_file_name AS settings_file_name,
+                     COUNT(J.job) AS NumJobs
+              FROM Tmp_SourceJobs
+                   INNER JOIN t_analysis_job J
+                     ON Tmp_SourceJobs.JobID = J.job
+              GROUP BY J.settings_file_name
+             ) StatsQ
         ORDER BY NumJobs DESC
         LIMIT 1;
 
@@ -393,11 +395,11 @@ BEGIN
         -----------------------------------------
 
         If _newProteinCollectionList <> '' Then
-            If Exists ( SELECT J.job
-                        FROM Tmp_SourceJobs
-                             INNER JOIN t_analysis_job J
-                               ON Tmp_SourceJobs.JobID = J.job
-                        WHERE J.protein_collection_list = _newProteinCollectionList::citext ) Then
+            If Exists (SELECT J.job
+                       FROM Tmp_SourceJobs
+                            INNER JOIN t_analysis_job J
+                              ON Tmp_SourceJobs.JobID = J.job
+                       WHERE J.protein_collection_list = _newProteinCollectionList::citext) Then
 
                 _message := format('The new Protein Collection List was used by one or more of the existing jobs; not cloning the jobs: %s', _newProteinCollectionList);
 

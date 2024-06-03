@@ -89,19 +89,19 @@ BEGIN
 
     SELECT string_agg(format('%I', GroupQ.name), ', ' ORDER BY GroupQ.name)
     INTO _factorNameList
-    FROM ( SELECT Src.name
-           FROM t_factor Src
-                INNER JOIN Tmp_Factors I
-                  ON Src.factor_id = I.FactorID
-           GROUP BY Src.name) GroupQ;
+    FROM (SELECT Src.name
+          FROM t_factor Src
+               INNER JOIN Tmp_Factors I
+                 ON Src.factor_id = I.FactorID
+          GROUP BY Src.name) GroupQ;
 
     SELECT string_agg(format('%I text', GroupQ.name), ', ' ORDER BY GroupQ.name)
     INTO _factorNameAndTypeList
-    FROM ( SELECT Src.name
-           FROM t_factor Src
-                INNER JOIN Tmp_Factors I
-                  ON Src.factor_id = I.FactorID
-           GROUP BY Src.name) GroupQ;
+    FROM (SELECT Src.name
+          FROM t_factor Src
+               INNER JOIN Tmp_Factors I
+                 ON Src.factor_id = I.FactorID
+          GROUP BY Src.name) GroupQ;
 
     -- This will have a comma-separated list of factor names, for example: 'BioRep, Sample, Time'
     _factorNameList := Trim(Coalesce(_factorNameList, ''));
@@ -172,7 +172,7 @@ BEGIN
         _sql := format('%s, %s', _sql, _factorNameList);
     End If;
 
-    _sql := format('%s FROM ( SELECT Src.* FROM %s Src WHERE Src.Request IN (SELECT Request FROM Tmp_RequestIDs)) UQ', _sql, _viewName);
+    _sql := format('%s FROM (SELECT Src.* FROM %s Src WHERE Src.Request IN (SELECT Request FROM Tmp_RequestIDs)) UQ', _sql, _viewName);
 
     If _factorNameList <> '' Then
         _sql := format('%s LEFT OUTER JOIN (%s) CrosstabQ ON UQ.Request = CrossTabQ.Target_ID', _sql, _crossTabSql);
@@ -181,7 +181,7 @@ BEGIN
     -- Example contents of _sql
 
     -- SELECT 'x' AS sel, batch_id, name, status, dataset_id, request, block, run_order, "BioRep", "Sample", "Time"
-    -- FROM ( SELECT Src.*
+    -- FROM (SELECT Src.*
     --       FROM V_Requested_Run_Unified_List Src
     --       WHERE Src.Request IN (SELECT Request FROM Tmp_RequestIDs)
     --     ) UQ

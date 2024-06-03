@@ -144,14 +144,14 @@ BEGIN
 
         -- Verify that _organismDBName is defined in t_organism_db_file and that the organism matches up
 
-        If Not Exists ( SELECT org_db_file_id
-                        FROM t_organism_db_file ODB
-                             INNER JOIN t_organisms O
-                               ON ODB.organism_id = O.organism_id
-                        WHERE ODB.file_name = _organismDBName::citext AND
-                              O.organism = _organismName::citext AND
-                              O.active > 0 AND
-                              ODB.valid > 0) Then
+        If Not Exists (SELECT org_db_file_id
+                       FROM t_organism_db_file ODB
+                            INNER JOIN t_organisms O
+                              ON ODB.organism_id = O.organism_id
+                       WHERE ODB.file_name = _organismDBName::citext AND
+                             O.organism = _organismName::citext AND
+                             O.active > 0 AND
+                             ODB.valid > 0) Then
 
             -- Match not found; try matching the name but not the organism
 
@@ -171,11 +171,11 @@ BEGIN
             Else
                 -- Match still not found; check if it is disabled
 
-                If Exists ( SELECT org_db_file_id
-                            FROM t_organism_db_file ODB INNER JOIN
-                                 t_organisms O ON ODB.organism_id = O.organism_id
-                            WHERE ODB.file_name = _organismDBName::citext AND
-                                  (O.active = 0 OR ODB.valid = 0)) Then
+                If Exists (SELECT org_db_file_id
+                           FROM t_organism_db_file ODB INNER JOIN
+                                t_organisms O ON ODB.organism_id = O.organism_id
+                           WHERE ODB.file_name = _organismDBName::citext AND
+                                 (O.active = 0 OR ODB.valid = 0)) Then
 
                     _message := format('Legacy FASTA file "%s" is disabled and cannot be used (see t_organism_db_file)', _organismDBName);
                     _returnCode := 'U5321';

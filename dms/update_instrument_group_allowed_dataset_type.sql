@@ -88,11 +88,11 @@ BEGIN
         -- Validate InstrumentGroup and DatasetType
         ---------------------------------------------------
 
-        If Not Exists ( SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _instrumentGroup::citext ) Then
+        If Not Exists (SELECT instrument_group FROM t_instrument_group WHERE instrument_group = _instrumentGroup::citext) Then
             RAISE EXCEPTION 'Invalid instrument group: %', _instrumentGroup;
         End If;
 
-        If Not Exists ( SELECT dataset_type FROM t_dataset_type_name WHERE dataset_type = _datasetType::citext ) Then
+        If Not Exists (SELECT dataset_type FROM t_dataset_type_name WHERE dataset_type = _datasetType::citext) Then
             RAISE EXCEPTION 'Invalid dataset type: %', _datasetType;
         End If;
 

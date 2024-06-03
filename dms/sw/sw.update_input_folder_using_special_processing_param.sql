@@ -126,12 +126,12 @@ BEGIN
         SELECT _job, Step
         FROM (
             SELECT xmltable.*
-            FROM ( SELECT _scriptXML AS ScriptXML ) Src,
-                   XMLTABLE('//JobScript/Step'
-                          PASSING Src.ScriptXML
-                          COLUMNS step                 int    PATH '@Number',
-                                  tool                 text   PATH '@Tool',
-                                  special_instructions citext PATH '@Special')
+            FROM (SELECT _scriptXML AS ScriptXML ) Src,
+                  XMLTABLE('//JobScript/Step'
+                         PASSING Src.ScriptXML
+                         COLUMNS step                 int    PATH '@Number',
+                                 tool                 text   PATH '@Tool',
+                                 special_instructions citext PATH '@Special')
              ) XmlQ
         WHERE Special_Instructions = 'ExtractSourceJobFromComment';
 

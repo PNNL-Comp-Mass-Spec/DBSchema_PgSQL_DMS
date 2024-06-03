@@ -103,12 +103,12 @@ BEGIN
         FROM t_instrument_name InstName
              INNER JOIN t_emsl_dms_instrument_mapping InstMapping
                ON InstName.instrument_id = InstMapping.dms_instrument_id
-             INNER JOIN ( SELECT eus_instrument_id
-                          FROM t_instrument_name InstName
-                               INNER JOIN t_emsl_dms_instrument_mapping InstMapping
-                                 ON InstName.instrument_id = InstMapping.dms_instrument_id
-                          GROUP BY eus_instrument_id
-                          HAVING COUNT(InstMapping.dms_instrument_id) > 1
+             INNER JOIN (SELECT eus_instrument_id
+                         FROM t_instrument_name InstName
+                              INNER JOIN t_emsl_dms_instrument_mapping InstMapping
+                                ON InstName.instrument_id = InstMapping.dms_instrument_id
+                         GROUP BY eus_instrument_id
+                         HAVING COUNT(InstMapping.dms_instrument_id) > 1
                         ) LookupQ
                ON InstMapping.eus_instrument_id = LookupQ.eus_instrument_id
         WHERE InstName.status = 'Active' AND
@@ -123,8 +123,8 @@ BEGIN
         FROM t_instrument_name
         WHERE status = 'Active' AND
               operations_role = 'Production' AND
-              NOT instrument IN ( SELECT instrument
-                                  FROM Tmp_InstrumentsToProcessByID );
+              NOT instrument IN (SELECT instrument
+                                 FROM Tmp_InstrumentsToProcessByID);
 
         If _infoOnly Then
             RAISE INFO '';

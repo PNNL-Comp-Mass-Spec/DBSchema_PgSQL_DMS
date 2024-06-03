@@ -38,10 +38,10 @@ BEGIN
         INSERT INTO ont.t_cv_bto_cached_names (identifier, term_name)
         SELECT s.identifier,
                s.term_name
-        FROM ( SELECT cvbto.identifier AS identifier,
-                      Min(cvbto.term_name) AS term_name
-               FROM ont.t_cv_bto cvbto
-               GROUP BY cvbto.identifier ) AS s
+        FROM (SELECT cvbto.identifier AS identifier,
+                     MIN(cvbto.term_name) AS term_name
+              FROM ont.t_cv_bto cvbto
+              GROUP BY cvbto.identifier) AS s
              LEFT OUTER JOIN ont.t_cv_bto_cached_names t
                ON t.identifier = s.identifier AND
                   t.term_name = s.term_name
@@ -57,15 +57,15 @@ BEGIN
         End If;
 
         DELETE FROM ont.t_cv_bto_cached_names
-        WHERE entry_id IN ( SELECT t.entry_id
-                            FROM ont.t_cv_bto_cached_names t
-                                 LEFT OUTER JOIN ( SELECT cvbto.identifier AS identifier,
-                                                          Min(cvbto.term_name) AS term_name
-                                                   FROM ont.t_cv_bto cvbto
-                                                   GROUP BY cvbto.identifier ) AS s
-                                   ON t.identifier = s.identifier AND
-                                      t.term_name = s.term_name
-                            WHERE s.identifier IS NULL );
+        WHERE entry_id IN (SELECT t.entry_id
+                           FROM ont.t_cv_bto_cached_names t
+                                LEFT OUTER JOIN (SELECT cvbto.identifier AS identifier,
+                                                        MIN(cvbto.term_name) AS term_name
+                                                 FROM ont.t_cv_bto cvbto
+                                                 GROUP BY cvbto.identifier) AS s
+                                  ON t.identifier = s.identifier AND
+                                     t.term_name = s.term_name
+                           WHERE s.identifier IS NULL);
 
         GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -106,10 +106,10 @@ BEGIN
                target.identifier,
                target.term_name
         FROM ont.t_cv_bto_cached_names target
-             LEFT OUTER JOIN ( SELECT cvbto.identifier AS identifier,
-                                      MIN(cvbto.term_name) AS term_name
-                               FROM ont.t_cv_bto cvbto
-                               GROUP BY cvbto.identifier ) source
+             LEFT OUTER JOIN (SELECT cvbto.identifier AS identifier,
+                                     MIN(cvbto.term_name) AS term_name
+                              FROM ont.t_cv_bto cvbto
+                              GROUP BY cvbto.identifier) source
                ON target.identifier = source.identifier AND
                   target.term_name = source.term_name
         WHERE source.identifier IS NULL
@@ -118,10 +118,10 @@ BEGIN
                source.identifier,
                source.term_name
         FROM ont.t_cv_bto_cached_names target
-             RIGHT OUTER JOIN ( SELECT cvbto.identifier AS identifier,
-                                       MIN(cvbto.term_name) AS term_name
-                                FROM ont.t_cv_bto cvbto
-                                GROUP BY cvbto.identifier ) source
+             RIGHT OUTER JOIN (SELECT cvbto.identifier AS identifier,
+                                      MIN(cvbto.term_name) AS term_name
+                               FROM ont.t_cv_bto cvbto
+                               GROUP BY cvbto.identifier) source
                ON target.identifier = source.identifier AND
                   target.term_name = source.term_name
         WHERE target.identifier IS NULL

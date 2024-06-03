@@ -858,10 +858,10 @@ BEGIN
             If _instrumentGroupCount > 1 Then
                 SELECT string_agg(InstGroup, ', ' ORDER BY InstGroup)
                 INTO _instrumentGroups
-                FROM ( SELECT DISTINCT RR.instrument_group AS InstGroup
-                       FROM T_Requested_Run RR
-                       WHERE RR.batch_id = _batch AND
-                             RR.state_name = 'Active'
+                FROM (SELECT DISTINCT RR.instrument_group AS InstGroup
+                      FROM T_Requested_Run RR
+                      WHERE RR.batch_id = _batch AND
+                            RR.state_name = 'Active'
                      ) DistinctQ;
 
                 If _mode Like '%update%' Then

@@ -172,7 +172,7 @@ BEGIN
         SELECT string_agg(Dataset_Name, ', ' ORDER BY Dataset_Name)
         INTO _list
         FROM Tmp_DatasetInfo
-        WHERE NOT Dataset_Name IN ( SELECT dataset FROM t_dataset );
+        WHERE NOT Dataset_Name IN (SELECT dataset FROM t_dataset);
 
         If Coalesce(_list, '') <> '' Then
             If Position(',' In _list) > 0 Then

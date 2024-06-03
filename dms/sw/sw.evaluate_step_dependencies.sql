@@ -140,10 +140,10 @@ BEGIN
     If _maxJobsToProcess > 0 Then
         -- Limit the number of jobs to evaluate
         DELETE FROM Tmp_DepTable
-        WHERE NOT Job IN ( SELECT Job
-                           FROM Tmp_DepTable
-                           ORDER BY Job
-                           LIMIT _maxJobsToProcess );
+        WHERE NOT Job IN (SELECT Job
+                          FROM Tmp_DepTable
+                          ORDER BY Job
+                          LIMIT _maxJobsToProcess);
 
     End If;
 

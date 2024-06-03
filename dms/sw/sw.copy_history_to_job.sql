@@ -276,22 +276,22 @@ BEGIN
 
         DELETE FROM sw.t_job_step_dependencies target
         WHERE EXISTS
-            (  SELECT 1
-               FROM sw.t_job_step_dependencies TSD
-                    INNER JOIN ( SELECT JSD.Job,
-                                        JSD.Step
-                                 FROM sw.t_job_step_dependencies JSD
-                                      LEFT OUTER JOIN sw.t_job_step_dependencies_history H
-                                        ON JSD.Job = H.Job AND
-                                           JSD.Step = H.Step AND
-                                           JSD.Target_Step = H.Target_Step
-                                 WHERE JSD.Job = _job AND
-                                       H.Job IS NULL
-                                ) DeleteQ
-                      ON TSD.Job = DeleteQ.Job AND
-                         TSD.Step = DeleteQ.Step
-                WHERE target.job = TSD.job AND
-                      target.step = TSD.step
+            (SELECT 1
+             FROM sw.t_job_step_dependencies TSD
+                  INNER JOIN (SELECT JSD.Job,
+                                     JSD.Step
+                              FROM sw.t_job_step_dependencies JSD
+                                   LEFT OUTER JOIN sw.t_job_step_dependencies_history H
+                                     ON JSD.Job = H.Job AND
+                                        JSD.Step = H.Step AND
+                                        JSD.Target_Step = H.Target_Step
+                              WHERE JSD.Job = _job AND
+                                    H.Job IS NULL
+                             ) DeleteQ
+                    ON TSD.Job = DeleteQ.Job AND
+                       TSD.Step = DeleteQ.Step
+              WHERE target.job = TSD.job AND
+                    target.step = TSD.step
             );
 
 
@@ -304,13 +304,13 @@ BEGIN
             SELECT MIN(H.job)
             INTO _similarJob
             FROM sw.t_job_step_dependencies_history H
-                 INNER JOIN ( SELECT job
-                              FROM sw.t_jobs_history
-                              WHERE job > _job AND
-                                    script = ( SELECT script
-                                               FROM sw.t_jobs_history
-                                               WHERE job = _job AND
-                                                     most_recent_entry = 1 )
+                 INNER JOIN (SELECT job
+                             FROM sw.t_jobs_history
+                             WHERE job > _job AND
+                                   script = (SELECT script
+                                             FROM sw.t_jobs_history
+                                             WHERE job = _job AND
+                                                   most_recent_entry = 1)
                              ) SimilarJobQ
                    ON H.job = SimilarJobQ.job;
 
@@ -456,11 +456,11 @@ BEGIN
 
     UPDATE sw.t_job_steps target
     SET dependencies = CountQ.dependencies
-    FROM ( SELECT step,
-                  COUNT(target_step) AS dependencies
-           FROM sw.t_job_step_dependencies
-           WHERE job = _job
-           GROUP BY step
+    FROM (SELECT step,
+                 COUNT(target_step) AS dependencies
+          FROM sw.t_job_step_dependencies
+          WHERE job = _job
+          GROUP BY step
          ) CountQ
     WHERE target.Job = _job AND
           CountQ.Step = target.Step AND

@@ -140,32 +140,32 @@ BEGIN
                                ELSE ROUND(Extract(epoch from
                                             (statement_timestamp() - (COALESCE(ActiveStatsQ.oldest_active_request_created, StatsQ.oldest_request_created)))) / 86400)
                            END AS days_in_queue
-                    FROM ( SELECT batch_id
-                           FROM Tmp_BatchIDs
+                    FROM (SELECT batch_id
+                          FROM Tmp_BatchIDs
                          ) BatchQ
                          LEFT OUTER JOIN
-                         ( SELECT RR.batch_id AS batch_id,
-                                  MIN(RR.created) AS oldest_request_created,
-                                  MIN(RR.instrument_group) AS instrument_group_first,
-                                  MAX(RR.instrument_group) AS instrument_group_last,
-                                  MIN(RR.separation_group) AS separation_group_first,
-                                  MAX(RR.separation_group) AS separation_group_last
-                           FROM t_requested_run RR
-                                INNER JOIN Tmp_BatchIDs
-                                  ON RR.batch_id = Tmp_BatchIDs.batch_id
-                           GROUP BY RR.batch_id
+                         (SELECT RR.batch_id AS batch_id,
+                                 MIN(RR.created) AS oldest_request_created,
+                                 MIN(RR.instrument_group) AS instrument_group_first,
+                                 MAX(RR.instrument_group) AS instrument_group_last,
+                                 MIN(RR.separation_group) AS separation_group_first,
+                                 MAX(RR.separation_group) AS separation_group_last
+                          FROM t_requested_run RR
+                               INNER JOIN Tmp_BatchIDs
+                                 ON RR.batch_id = Tmp_BatchIDs.batch_id
+                          GROUP BY RR.batch_id
                          ) StatsQ ON BatchQ.batch_id = StatsQ.batch_id
                          LEFT OUTER JOIN
-                         ( SELECT RR.batch_id AS batch_id,
-                                  COUNT(RR.request_id) AS active_requests,
-                                  MIN(RR.request_id)   AS first_active_request,
-                                  MAX(RR.request_id)   AS last_active_request,
-                                  MIN(RR.created)      AS oldest_active_request_created
-                           FROM t_requested_run RR
-                                INNER JOIN Tmp_BatchIDs
-                                  ON RR.batch_id = Tmp_BatchIDs.batch_id
-                           WHERE RR.state_name = 'Active'
-                           GROUP BY RR.batch_id
+                         (SELECT RR.batch_id AS batch_id,
+                                 COUNT(RR.request_id) AS active_requests,
+                                 MIN(RR.request_id)   AS first_active_request,
+                                 MAX(RR.request_id)   AS last_active_request,
+                                 MIN(RR.created)      AS oldest_active_request_created
+                          FROM t_requested_run RR
+                               INNER JOIN Tmp_BatchIDs
+                                 ON RR.batch_id = Tmp_BatchIDs.batch_id
+                          WHERE RR.state_name = 'Active'
+                          GROUP BY RR.batch_id
                          ) ActiveStatsQ ON BatchQ.batch_id = ActiveStatsQ.batch_id
                   ) AS s
             ON ( t.batch_id = s.batch_id )
@@ -235,45 +235,45 @@ BEGIN
                StatsQ.max_days_in_queue,
                StatsQ.instrument_first,
                StatsQ.instrument_last
-        FROM ( SELECT batch_id
-               FROM Tmp_BatchIDs
+        FROM (SELECT batch_id
+              FROM Tmp_BatchIDs
              ) BatchQ
-             LEFT OUTER JOIN ( SELECT RR.batch_id AS batch_id,
-                                      Count(RR.dataset_id) AS datasets,
-                                      MIN(QT.days_in_queue) AS min_days_in_queue,
-                                      MAX(QT.days_in_queue) AS max_days_in_queue,
-                                      MIN(InstName.instrument) AS instrument_first,
-                                      MAX(InstName.instrument) AS instrument_last
-                               FROM T_Requested_Run RR
-                                    INNER JOIN Tmp_BatchIDs
-                                      ON RR.batch_id = Tmp_BatchIDs.batch_id
-                                    INNER JOIN v_requested_run_queue_times AS QT
-                                      ON QT.requested_run_id = RR.request_id
-                                    INNER JOIN T_Dataset DS
-                                      ON RR.dataset_id = DS.dataset_id
-                                    INNER JOIN t_instrument_name InstName
-                                      ON DS.instrument_id = InstName.instrument_id
-                               GROUP BY RR.batch_id ) StatsQ
+             LEFT OUTER JOIN (SELECT RR.batch_id AS batch_id,
+                                     Count(RR.dataset_id) AS datasets,
+                                     MIN(QT.days_in_queue) AS min_days_in_queue,
+                                     MAX(QT.days_in_queue) AS max_days_in_queue,
+                                     MIN(InstName.instrument) AS instrument_first,
+                                     MAX(InstName.instrument) AS instrument_last
+                              FROM T_Requested_Run RR
+                                   INNER JOIN Tmp_BatchIDs
+                                     ON RR.batch_id = Tmp_BatchIDs.batch_id
+                                   INNER JOIN v_requested_run_queue_times AS QT
+                                     ON QT.requested_run_id = RR.request_id
+                                   INNER JOIN T_Dataset DS
+                                     ON RR.dataset_id = DS.dataset_id
+                                   INNER JOIN t_instrument_name InstName
+                                     ON DS.instrument_id = InstName.instrument_id
+                              GROUP BY RR.batch_id ) StatsQ
                 ON BatchQ.batch_id = StatsQ.batch_id;
 
         BEGIN
 
             MERGE INTO t_cached_requested_run_batch_stats AS t
-            USING ( SELECT batch_id,
-                           datasets,
-                           min_days_in_queue,
-                           max_days_in_queue,
-                           instrument_first,
-                           instrument_last
-                    FROM Tmp_RequestedRunStats
+            USING (SELECT batch_id,
+                          datasets,
+                          min_days_in_queue,
+                          max_days_in_queue,
+                          instrument_first,
+                          instrument_last
+                   FROM Tmp_RequestedRunStats
                   ) AS s
-            ON ( t.batch_id = s.batch_id )
+            ON (t.batch_id = s.batch_id)
             WHEN MATCHED AND
-                 ( t.datasets               IS DISTINCT FROM s.datasets OR
-                   t.min_days_in_queue      IS DISTINCT FROM s.min_days_in_queue OR
-                   t.max_days_in_queue      IS DISTINCT FROM s.max_days_in_queue OR
-                   t.instrument_first       IS DISTINCT FROM s.instrument_first OR
-                   t.instrument_last        IS DISTINCT FROM s.instrument_last
+                 (t.datasets               IS DISTINCT FROM s.datasets OR
+                  t.min_days_in_queue      IS DISTINCT FROM s.min_days_in_queue OR
+                  t.max_days_in_queue      IS DISTINCT FROM s.max_days_in_queue OR
+                  t.instrument_first       IS DISTINCT FROM s.instrument_first OR
+                  t.instrument_last        IS DISTINCT FROM s.instrument_last
                  ) THEN
                 UPDATE SET
                     datasets          = s.datasets,
@@ -283,8 +283,8 @@ BEGIN
                     instrument_last   = s.instrument_last,
                     last_affected     = statement_timestamp()
             WHEN NOT MATCHED THEN
-                INSERT ( batch_id, datasets, min_days_in_queue, max_days_in_queue, instrument_first, instrument_last, last_affected )
-                VALUES ( s.batch_id, s.datasets, s.min_days_in_queue, s.max_days_in_queue, s.instrument_first, s.instrument_last, statement_timestamp() )
+                INSERT (batch_id, datasets, min_days_in_queue, max_days_in_queue, instrument_first, instrument_last, last_affected)
+                VALUES (s.batch_id, s.datasets, s.min_days_in_queue, s.max_days_in_queue, s.instrument_first, s.instrument_last, statement_timestamp())
             ;
 
         END;
@@ -313,53 +313,54 @@ BEGIN
                StatsQ.days_in_prep_queue,
                StatsQ.blocked,
                StatsQ.block_missing
-        FROM ( SELECT batch_id
-               FROM Tmp_BatchIDs
+        FROM (SELECT batch_id
+              FROM Tmp_BatchIDs
              ) BatchQ
-             LEFT OUTER JOIN ( SELECT RR.batch_id,
-                                      COUNT(RR.request_id) AS requests,
-                                      MAX(QT.days_in_queue) AS days_in_prep_queue,
-                                      SUM(CASE
-                                          WHEN ((COALESCE(RR.block, 0) > 0) AND
-                                                (COALESCE(RR.run_order, 0) > 0))
-                                          THEN 1
-                                          ELSE 0
-                                          END) AS blocked,
-                                      SUM(CASE
-                                          WHEN ((LOWER(COALESCE(spr.block_and_randomize_runs, '')) = 'yes') AND
-                                               ((COALESCE(RR.block, 0) = 0) OR (COALESCE(RR.run_order, 0) = 0)))
-                                          THEN 1
-                                          ELSE 0
-                                          END) AS block_missing
-                               FROM T_Requested_Run RR
-                                    INNER JOIN Tmp_BatchIDs
-                                      ON RR.batch_id = Tmp_BatchIDs.batch_id
-                                    INNER JOIN t_experiments AS E
-                                       ON RR.exp_id = E.exp_id
-                                    LEFT OUTER JOIN t_sample_prep_request AS SPR
-                                       ON E.sample_prep_request_id = SPR.prep_request_id AND
-                                          SPR.prep_request_id <> 0
-                                    LEFT OUTER JOIN v_sample_prep_request_queue_times AS QT
-                                       ON SPR.prep_request_id = QT.request_id
-                               GROUP BY RR.batch_id ) StatsQ
+             LEFT OUTER JOIN (SELECT RR.batch_id,
+                                     COUNT(RR.request_id) AS requests,
+                                     MAX(QT.days_in_queue) AS days_in_prep_queue,
+                                     SUM(CASE
+                                         WHEN ((COALESCE(RR.block, 0) > 0) AND
+                                               (COALESCE(RR.run_order, 0) > 0))
+                                         THEN 1
+                                         ELSE 0
+                                         END) AS blocked,
+                                     SUM(CASE
+                                         WHEN ((LOWER(COALESCE(spr.block_and_randomize_runs, '')) = 'yes') AND
+                                              ((COALESCE(RR.block, 0) = 0) OR (COALESCE(RR.run_order, 0) = 0)))
+                                         THEN 1
+                                         ELSE 0
+                                         END) AS block_missing
+                              FROM T_Requested_Run RR
+                                   INNER JOIN Tmp_BatchIDs
+                                     ON RR.batch_id = Tmp_BatchIDs.batch_id
+                                   INNER JOIN t_experiments AS E
+                                      ON RR.exp_id = E.exp_id
+                                   LEFT OUTER JOIN t_sample_prep_request AS SPR
+                                      ON E.sample_prep_request_id = SPR.prep_request_id AND
+                                         SPR.prep_request_id <> 0
+                                   LEFT OUTER JOIN v_sample_prep_request_queue_times AS QT
+                                      ON SPR.prep_request_id = QT.request_id
+                              GROUP BY RR.batch_id
+                             ) StatsQ
                ON BatchQ.batch_id = StatsQ.batch_id;
 
         BEGIN
 
             MERGE INTO t_cached_requested_run_batch_stats AS t
-            USING ( SELECT batch_id,
-                           requests,
-                           days_in_prep_queue,
-                           blocked,
-                           block_missing
-                    FROM Tmp_RequestedRunExperimentStats
+            USING (SELECT batch_id,
+                          requests,
+                          days_in_prep_queue,
+                          blocked,
+                          block_missing
+                   FROM Tmp_RequestedRunExperimentStats
                   ) AS s
-            ON ( t.batch_id = s.batch_id )
+            ON (t.batch_id = s.batch_id)
             WHEN MATCHED AND
-                 ( t.requests           IS DISTINCT FROM s.requests OR
-                   t.days_in_prep_queue IS DISTINCT FROM s.days_in_prep_queue OR
-                   t.blocked            IS DISTINCT FROM s.blocked OR
-                   t.block_missing      IS DISTINCT FROM s.block_missing
+                 (t.requests           IS DISTINCT FROM s.requests OR
+                  t.days_in_prep_queue IS DISTINCT FROM s.days_in_prep_queue OR
+                  t.blocked            IS DISTINCT FROM s.blocked OR
+                  t.block_missing      IS DISTINCT FROM s.block_missing
                  ) THEN
                 UPDATE SET
                     requests           = s.requests,
@@ -368,8 +369,8 @@ BEGIN
                     block_missing      = s.block_missing,
                     last_affected      = statement_timestamp()
             WHEN NOT MATCHED THEN
-                INSERT ( requests, days_in_prep_queue, blocked, block_missing, last_affected )
-                VALUES ( s.requests, s.days_in_prep_queue, s.blocked, s.block_missing, statement_timestamp() )
+                INSERT (requests, days_in_prep_queue, blocked, block_missing, last_affected)
+                VALUES (s.requests, s.days_in_prep_queue, s.blocked, s.block_missing, statement_timestamp())
             ;
 
         END;

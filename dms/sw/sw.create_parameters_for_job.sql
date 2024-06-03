@@ -98,9 +98,9 @@ BEGIN
                 SELECT xmltable.section,
                        xmltable.name,
                        xmltable.value
-                FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
-                       FROM sw.t_job_parameters
-                       WHERE sw.t_job_parameters.job = _job ) Src,
+                FROM (SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
+                      FROM sw.t_job_parameters
+                      WHERE sw.t_job_parameters.job = _job) Src,
                      XMLTABLE('//params/Param'
                               PASSING Src.rooted_xml
                               COLUMNS section text PATH '@Section',
@@ -154,16 +154,16 @@ BEGIN
 
         SELECT xml_item
         INTO _xmlParameters
-        FROM ( SELECT
-                 XMLAGG(XMLELEMENT(
-                        NAME "Param",
-                        XMLATTRIBUTES(
-                            section AS "Section",
-                            name AS "Name",
-                            value AS "Value"))
-                        ORDER BY section, name
-                       ) AS xml_item
-               FROM Tmp_Job_Parameters_Merged
+        FROM (SELECT
+                XMLAGG(XMLELEMENT(
+                       NAME "Param",
+                       XMLATTRIBUTES(
+                           section AS "Section",
+                           name AS "Name",
+                           value AS "Value"))
+                       ORDER BY section, name
+                      ) AS xml_item
+              FROM Tmp_Job_Parameters_Merged
             ) AS LookupQ;
 
         DROP TABLE Tmp_Job_Parameters_Merged;
@@ -176,16 +176,16 @@ BEGIN
 
         SELECT xml_item
         INTO _xmlParameters
-        FROM ( SELECT
-                 XMLAGG(XMLELEMENT(
-                        NAME "Param",
-                        XMLATTRIBUTES(
-                            section AS "Section",
-                            name AS "Name",
-                            value AS "Value"))
-                        ORDER BY section, name
-                       ) AS xml_item
-               FROM Tmp_Job_Parameters_CPJ
+        FROM (SELECT
+                XMLAGG(XMLELEMENT(
+                       NAME "Param",
+                       XMLATTRIBUTES(
+                           section AS "Section",
+                           name AS "Name",
+                           value AS "Value"))
+                       ORDER BY section, name
+                      ) AS xml_item
+              FROM Tmp_Job_Parameters_CPJ
             ) AS LookupQ;
 
     End If;

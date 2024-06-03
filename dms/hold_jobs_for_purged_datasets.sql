@@ -45,10 +45,10 @@ BEGIN
     SELECT job
     FROM t_analysis_job
     WHERE job_state_id = 1 AND
-          dataset_id IN ( SELECT DISTINCT target_id
-                          FROM t_event_log
-                          WHERE target_type = 6 AND
-                                target_state = 4 );
+          dataset_id IN (SELECT DISTINCT target_id
+                         FROM t_event_log
+                         WHERE target_type = 6 AND
+                               target_state = 4);
 
     If Not FOUND Then
         If _infoOnly Then

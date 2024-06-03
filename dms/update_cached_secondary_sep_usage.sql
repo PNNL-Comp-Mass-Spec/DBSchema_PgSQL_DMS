@@ -43,26 +43,23 @@ BEGIN
         FROM t_secondary_sep_usage;
 
         MERGE INTO t_secondary_sep_usage AS t
-        USING ( SELECT
-                    SS.separation_type_id,
-                    SUM(CASE
-                            WHEN public.months_between(DS.Created, CURRENT_TIMESTAMP) <= 12 THEN 1
-                            ELSE 0
-                        END) AS Usage_Last12Months,
-                    SUM(CASE
-                            WHEN DS.Dataset_ID IS NULL THEN 0
-                            ELSE 1
-                        END) AS Usage_All_Years,
-                    MAX(DS.created) AS Most_Recent_Use
-                FROM t_secondary_sep SS
-                     LEFT OUTER JOIN t_dataset DS
-                       ON DS.separation_type = SS.separation_type
-                GROUP BY SS.separation_type_id, SS.separation_type
+        USING (SELECT SS.separation_type_id,
+                      SUM(CASE WHEN public.months_between(DS.Created, CURRENT_TIMESTAMP) <= 12 THEN 1
+                               ELSE 0
+                          END) AS Usage_Last12Months,
+                      SUM(CASE WHEN DS.Dataset_ID IS NULL THEN 0
+                               ELSE 1
+                          END) AS Usage_All_Years,
+                      MAX(DS.created) AS Most_Recent_Use
+               FROM t_secondary_sep SS
+                    LEFT OUTER JOIN t_dataset DS
+                      ON DS.separation_type = SS.separation_type
+               GROUP BY SS.separation_type_id, SS.separation_type
               ) AS s
         ON (t.separation_type_id = s.separation_type_id)
         WHEN MATCHED AND
              (t.Usage_Last12Months IS DISTINCT FROM s.Usage_Last12Months OR
-              t.Usage_All_Years IS DISTINCT FROM s.Usage_All_Years or
+              t.Usage_All_Years IS DISTINCT FROM s.Usage_All_Years OR
               t.Most_Recent_Use IS DISTINCT FROM s.Most_Recent_Use) THEN
             UPDATE SET
                 Usage_Last12Months = s.Usage_Last12Months,

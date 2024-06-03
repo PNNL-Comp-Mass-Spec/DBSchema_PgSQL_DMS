@@ -88,23 +88,23 @@ BEGIN
 
     SELECT xml_item
     INTO _xmlParameters
-    FROM ( SELECT
-             XMLELEMENT(name "sections",
-               XMLAGG(XMLELEMENT(NAME "section", XMLATTRIBUTES(Sections.Section AS "name"),
-                 (SELECT XMLAGG(XMLELEMENT(
-                                NAME "item",
-                                XMLATTRIBUTES(
-                                     Src.Name AS "key",
-                                     Src.Value AS "value")))
-                  FROM Tmp_JobParamsTable Src
-                  WHERE Sections.Section = Src.Section))
-               )
-             ) AS xml_item
-           FROM (SELECT Section
-                 FROM Tmp_JobParamsTable
-                 GROUP BY Section
-                 ORDER BY Section
-                 ) Sections
+    FROM (SELECT
+            XMLELEMENT(name "sections",
+              XMLAGG(XMLELEMENT(NAME "section", XMLATTRIBUTES(Sections.Section AS "name"),
+                (SELECT XMLAGG(XMLELEMENT(
+                               NAME "item",
+                               XMLATTRIBUTES(
+                                    Src.Name AS "key",
+                                    Src.Value AS "value")))
+                 FROM Tmp_JobParamsTable Src
+                 WHERE Sections.Section = Src.Section))
+              )
+            ) AS xml_item
+          FROM (SELECT Section
+                FROM Tmp_JobParamsTable
+                GROUP BY Section
+                ORDER BY Section
+               ) Sections
          ) AS LookupQ;
 
     DROP TABLE Tmp_JobParamsTable;

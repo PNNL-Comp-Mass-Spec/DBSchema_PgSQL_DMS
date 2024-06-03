@@ -46,10 +46,10 @@ BEGIN
     ---------------------------------------------------
 
     DELETE FROM sw.t_local_job_processors
-    WHERE job IN ( SELECT job
-                   FROM sw.t_jobs
-                   WHERE state = 4 AND
-                         finish < CURRENT_TIMESTAMP - INTERVAL '2 hours'
+    WHERE job IN (SELECT job
+                  FROM sw.t_jobs
+                  WHERE state = 4 AND
+                        finish < CURRENT_TIMESTAMP - INTERVAL '2 hours'
                  );
 
 END

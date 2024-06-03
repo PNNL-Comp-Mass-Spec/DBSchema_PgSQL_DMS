@@ -1413,13 +1413,14 @@ BEGIN
                        ELSE ''
                    END AS Isobaric_Mod_Comment
             FROM Tmp_ModsToStore M
-                 LEFT OUTER JOIN ( SELECT Residue_ID,
-                                          Local_Symbol_ID,
-                                          Mass_Correction_ID,
-                                          Mod_Type_Symbol,
-                                          MIN(Isobaric_Mod_Ion_Number) AS Min_Isobaric_Mod_Ion_Number
-                                   FROM Tmp_ModsToStore
-                                   GROUP BY Residue_ID, Local_Symbol_ID, Mass_Correction_ID, Mod_Type_Symbol) AS LookupQ
+                 LEFT OUTER JOIN (SELECT Residue_ID,
+                                         Local_Symbol_ID,
+                                         Mass_Correction_ID,
+                                         Mod_Type_Symbol,
+                                         MIN(Isobaric_Mod_Ion_Number) AS Min_Isobaric_Mod_Ion_Number
+                                  FROM Tmp_ModsToStore
+                                  GROUP BY Residue_ID, Local_Symbol_ID, Mass_Correction_ID, Mod_Type_Symbol
+                                 ) AS LookupQ
                    ON M.Residue_ID = LookupQ.Residue_ID AND
                       M.Local_Symbol_ID = LookupQ.Local_Symbol_ID AND
                       M.Mass_Correction_ID = LookupQ.Mass_Correction_ID AND

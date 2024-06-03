@@ -4,7 +4,7 @@
 
 CREATE TABLE timetable.chain (
     chain_id bigint NOT NULL,
-    chain_name text NOT NULL,
+    chain_name public.citext NOT NULL,
     run_at timetable.cron,
     max_instances integer,
     timeout integer DEFAULT 0,

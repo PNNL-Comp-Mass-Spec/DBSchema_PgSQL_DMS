@@ -113,11 +113,11 @@ BEGIN
 
     UPDATE Tmp_DatasetsToUpdate
     SET Ambiguous = true
-    WHERE EXISTS ( SELECT DS.Dataset_ID
-                   FROM Tmp_DatasetsToUpdate DS
-                   GROUP BY DS.Dataset_ID
-                   HAVING COUNT(DS.ID) > 1 AND
-                          DS.Dataset_ID = Tmp_DatasetsToUpdate.Dataset_ID);
+    WHERE EXISTS (SELECT DS.Dataset_ID
+                  FROM Tmp_DatasetsToUpdate DS
+                  GROUP BY DS.Dataset_ID
+                  HAVING COUNT(DS.ID) > 1 AND
+                         DS.Dataset_ID = Tmp_DatasetsToUpdate.Dataset_ID);
 
     If Not Exists (SELECT ID FROM Tmp_DatasetsToUpdate) Then
         RAISE INFO '%', 'No candidate datasets were found';

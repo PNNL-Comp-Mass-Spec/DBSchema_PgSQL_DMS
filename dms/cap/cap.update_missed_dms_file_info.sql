@@ -79,8 +79,8 @@ BEGIN
 
     If _datasetIDs <> '' Then
         DELETE FROM Tmp_DatasetsToProcess
-        WHERE NOT Dataset_ID IN ( SELECT Value
-                                  FROM public.parse_delimited_integer_list(_datasetIDs) );
+        WHERE NOT Dataset_ID IN (SELECT Value
+                                 FROM public.parse_delimited_integer_list(_datasetIDs));
     End If;
 
     --------------------------------------------
@@ -124,24 +124,24 @@ BEGIN
     SELECT Dataset_ID
            -- , Scan_Count_Old, ScanCountNew
            -- , File_Size_Bytes_Old, FileSizeBytesNew
-    FROM ( SELECT dataset_id,
-                  Scan_Count_Old,
-                  File_Size_Bytes_Old,
-                  public.try_cast((xpath('//DatasetInfo/AcquisitionInfo/ScanCount/text()',     ds_info_xml))[1]::text, 0) AS ScanCountNew,
-                  public.try_cast((xpath('//DatasetInfo/AcquisitionInfo/FileSizeBytes/text()', ds_info_xml))[1]::text, 0::bigint) AS FileSizeBytesNew
-            FROM ( SELECT DI.dataset_id,
-                          DI.cache_date,
-                          DS.File_Info_Last_Modified,
-                          DS.Dataset,
-                          DI.ds_info_xml,
-                          DS.Scan_Count AS Scan_Count_Old,
-                          DS.File_Size_Bytes AS File_Size_Bytes_Old
-                  FROM cap.t_dataset_info_xml DI
-                       INNER JOIN public.t_dataset DS
-                         ON DI.dataset_id = DS.dataset_id AND
-                            DI.cache_date > DS.File_Info_Last_Modified
-                  WHERE NOT DI.ignore
-                  ) InnerQ
+    FROM (SELECT dataset_id,
+                 Scan_Count_Old,
+                 File_Size_Bytes_Old,
+                 public.try_cast((xpath('//DatasetInfo/AcquisitionInfo/ScanCount/text()',     ds_info_xml))[1]::text, 0) AS ScanCountNew,
+                 public.try_cast((xpath('//DatasetInfo/AcquisitionInfo/FileSizeBytes/text()', ds_info_xml))[1]::text, 0::bigint) AS FileSizeBytesNew
+           FROM (SELECT DI.dataset_id,
+                        DI.cache_date,
+                        DS.File_Info_Last_Modified,
+                        DS.Dataset,
+                        DI.ds_info_xml,
+                        DS.Scan_Count AS Scan_Count_Old,
+                        DS.File_Size_Bytes AS File_Size_Bytes_Old
+                 FROM cap.t_dataset_info_xml DI
+                      INNER JOIN public.t_dataset DS
+                        ON DI.dataset_id = DS.dataset_id AND
+                           DI.cache_date > DS.File_Info_Last_Modified
+                 WHERE NOT DI.ignore
+                ) InnerQ
          ) FilterQ
     WHERE ScanCountNew <> Coalesce(Scan_Count_Old, 0) OR
           FileSizeBytesNew <> Coalesce(File_Size_Bytes_Old, 0) AND FileSizeBytesNew > 0;

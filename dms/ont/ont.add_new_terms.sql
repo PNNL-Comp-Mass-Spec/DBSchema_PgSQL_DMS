@@ -169,7 +169,7 @@ BEGIN
         _s :=        ' SELECT DISTINCT term_pk, term_name, identifier, is_leaf, parent_term_name, Parent_term_Identifier, ' ||
                                       'grandparent_term_name, grandparent_term_identifier'                                  ||
               format(' FROM %s', _sourceTable)                                                                              ||
-              format(' WHERE NOT parent_term_identifier IS NULL AND NOT identifier IN ( SELECT identifier::citext FROM %s )', _targetTableWithSchema);
+              format(' WHERE NOT parent_term_identifier IS NULL AND NOT identifier IN (SELECT identifier::citext FROM %s)', _targetTableWithSchema);
         */
 
         _s := format('SELECT DISTINCT s.term_pk, s.term_name, s.identifier%s', CASE WHEN _infoOnly Then '::citext, ' Else '::int, ' END)                ||
@@ -190,9 +190,9 @@ BEGIN
 
         _s :=        'SELECT DISTINCT s.term_pk, s.term_name, s.identifier, s.is_leaf, '
                               's.parent_term_name, s.parent_term_Identifier, s.grandparent_term_name, s.grandparent_term_identifier' ||
-             format(' FROM ( SELECT * FROM %s', _sourceTable)                                                                        ||
-             format(' WHERE ontology = ''%s'' AND is_obsolete = 0 AND NOT parent_term_identifier IS NULL ) s', _ontologyName)        ||
-             format(' LEFT OUTER JOIN ( SELECT identifier, parent_term_id, grandparent_term_id FROM %s ) t', _targetTableWithSchema) ||
+             format(' FROM (SELECT * FROM %s', _sourceTable)                                                                        ||
+             format(' WHERE ontology = ''%s'' AND is_obsolete = 0 AND NOT parent_term_identifier IS NULL) s', _ontologyName)        ||
+             format(' LEFT OUTER JOIN (SELECT identifier, parent_term_id, grandparent_term_id FROM %s) t', _targetTableWithSchema) ||
                              ' ON s.identifier = t.identifier AND'
                                 ' s.parent_term_identifier = t.parent_term_id AND '
                                 ' Coalesce(s.grandparent_term_identifier, '''') = Coalesce(t.grandparent_term_id, '''')'

@@ -609,10 +609,10 @@ BEGIN
         -----------------------------------------------
 
         MERGE INTO t_dataset_files AS Target
-        USING ( SELECT dataset_id, InstFilePath, InstFileHash
-                FROM Tmp_HashUpdates
+        USING (SELECT dataset_id, InstFilePath, InstFileHash
+               FROM Tmp_HashUpdates
               ) AS Source
-        ON (Target.dataset_id = Source.dataset_id And Target.file_path = Source.InstFilePath)
+        ON (Target.dataset_id = Source.dataset_id AND Target.file_path = Source.InstFilePath)
         WHEN MATCHED THEN
             UPDATE SET
                 file_hash = Source.InstFileHash,
@@ -626,10 +626,10 @@ BEGIN
         -----------------------------------------------
 
         MERGE INTO t_dataset_files AS Target
-        USING ( SELECT dataset_id, InstFilePath, InstFileSize
-                FROM Tmp_SizeUpdates
+        USING (SELECT dataset_id, InstFilePath, InstFileSize
+               FROM Tmp_SizeUpdates
               ) AS Source
-        ON (Target.dataset_id = Source.dataset_id And Target.file_path = Source.InstFilePath)
+        ON (Target.dataset_id = Source.dataset_id AND Target.file_path = Source.InstFilePath)
         WHEN MATCHED THEN
             UPDATE SET
                 file_size_bytes = Source.InstFileSize,
@@ -649,17 +649,17 @@ BEGIN
 
         UPDATE t_dataset_files Target
         SET file_size_rank = SrcQ.Size_Rank
-        FROM ( SELECT dataset_id,
-                      file_path,
-                      file_size_bytes,
-                      file_hash,
-                      dataset_file_id,
-                      Row_Number() OVER (
-                         PARTITION BY dataset_id
-                         ORDER BY deleted ASC, file_size_bytes DESC
-                         ) AS Size_Rank
-               FROM t_dataset_files
-               WHERE Dataset_ID IN (SELECT Dataset_ID FROM Tmp_UpdatedDatasets)
+        FROM (SELECT dataset_id,
+                     file_path,
+                     file_size_bytes,
+                     file_hash,
+                     dataset_file_id,
+                     Row_Number() OVER (
+                        PARTITION BY dataset_id
+                        ORDER BY deleted ASC, file_size_bytes DESC
+                        ) AS Size_Rank
+              FROM t_dataset_files
+              WHERE Dataset_ID IN (SELECT Dataset_ID FROM Tmp_UpdatedDatasets)
              ) SrcQ
         WHERE Target.Dataset_File_ID = SrcQ.Dataset_File_ID;
 

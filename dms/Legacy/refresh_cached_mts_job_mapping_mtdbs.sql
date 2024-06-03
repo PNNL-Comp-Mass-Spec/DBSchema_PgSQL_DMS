@@ -57,14 +57,14 @@ BEGIN
     WHERE target.CachedInfo_ID IN
         (SELECT J.CachedInfo_ID
          FROM t_mts_mt_db_jobs_cached J
-              INNER JOIN ( SELECT server_name,
-                                  mt_db_name,
-                                  job,
-                                  result_type,
-                                  MIN(cached_info_id) AS MinID
-                           FROM t_mts_mt_db_jobs_cached
-                           GROUP BY Server_Name, MT_DB_Name, Job, ResultType
-                           HAVING COUNT(cached_info_id) > 1
+              INNER JOIN (SELECT server_name,
+                                 mt_db_name,
+                                 job,
+                                 result_type,
+                                 MIN(cached_info_id) AS MinID
+                          FROM t_mts_mt_db_jobs_cached
+                          GROUP BY Server_Name, MT_DB_Name, Job, ResultType
+                          HAVING COUNT(cached_info_id) > 1
                          ) DupQ
                ON J.Server_Name = DupQ.Server_Name AND
                   J.MT_DB_Name = DupQ.MT_DB_Name AND
@@ -119,11 +119,11 @@ BEGIN
         FROM t_mts_mt_db_jobs_cached;
 
         MERGE INTO t_mts_mt_db_jobs_cached AS target
-        USING ( SELECT server_name, db_name AS MT_DB_Name, Job,
-                       Coalesce(result_type, '') AS result_type, last_affected, process_state
-                FROM mts.t_analysis_job_to_mt_db_map AS MTSJobInfo
-                WHERE job >= _jobMinimum AND
-                      job <= _jobMaximum
+        USING (SELECT server_name, db_name AS MT_DB_Name, Job,
+                      Coalesce(result_type, '') AS result_type, last_affected, process_state
+               FROM mts.t_analysis_job_to_mt_db_map AS MTSJobInfo
+               WHERE job >= _jobMinimum AND
+                     job <= _jobMaximum
               ) AS Source
         ON (target.server_name = source.server_name AND
             target.mt_db_name = source.mt_db_name AND

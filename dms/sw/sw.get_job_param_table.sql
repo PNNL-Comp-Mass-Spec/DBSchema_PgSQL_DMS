@@ -91,33 +91,33 @@ BEGIN
     SELECT 'JobParameters' AS Section,
            UnpivotQ.Name,
            UnpivotQ.Value
-    FROM ( SELECT Dataset AS DatasetName,
-                  Dataset_ID::text AS DatasetID,
-                  Dataset_Folder_Name AS DatasetFolderName,
-                  Archive_Folder_Path AS DatasetArchivePath,
-                  Dataset_Storage_Path AS DatasetStoragePath,
-                  Transfer_Folder_Path AS TransferFolderPath,
-                  Instrument_Data_Purged::text AS InstrumentDataPurged,
-                  Param_File_Name AS ParamFileName,
-                  Settings_File_Name AS SettingsFileName,
-                  Special_Processing AS Special_Processing,
-                  Param_File_Storage_Path AS ParamFileStoragePath,     -- Storage path for the primary tool of the script
-                  Organism_DB_Name AS LegacyFastaFileName,
-                  Protein_Collection_List AS ProteinCollectionList,
-                  Protein_Options_List AS ProteinOptions,
-                  Instrument_Class AS InstClass,
-                  Instrument_Group AS InstrumentGroup,
-                  Instrument,
-                  Raw_Data_Type AS RawDataType,
-                  Dataset_Type AS DatasetType,
-                  Experiment,
-                  Search_Engine_Input_File_Formats AS SearchEngineInputFileFormats,
-                  Organism AS OrganismName,
-                  Org_DB_Required::text AS OrgDbReqd,
-                  Tool_Name AS ToolName,
-                  Result_Type AS ResultType
-                FROM public.v_get_pipeline_job_parameters P
-                WHERE P.Job = _job) AS m
+    FROM (SELECT Dataset AS DatasetName,
+                 Dataset_ID::text AS DatasetID,
+                 Dataset_Folder_Name AS DatasetFolderName,
+                 Archive_Folder_Path AS DatasetArchivePath,
+                 Dataset_Storage_Path AS DatasetStoragePath,
+                 Transfer_Folder_Path AS TransferFolderPath,
+                 Instrument_Data_Purged::text AS InstrumentDataPurged,
+                 Param_File_Name AS ParamFileName,
+                 Settings_File_Name AS SettingsFileName,
+                 Special_Processing AS Special_Processing,
+                 Param_File_Storage_Path AS ParamFileStoragePath,     -- Storage path for the primary tool of the script
+                 Organism_DB_Name AS LegacyFastaFileName,
+                 Protein_Collection_List AS ProteinCollectionList,
+                 Protein_Options_List AS ProteinOptions,
+                 Instrument_Class AS InstClass,
+                 Instrument_Group AS InstrumentGroup,
+                 Instrument,
+                 Raw_Data_Type AS RawDataType,
+                 Dataset_Type AS DatasetType,
+                 Experiment,
+                 Search_Engine_Input_File_Formats AS SearchEngineInputFileFormats,
+                 Organism AS OrganismName,
+                 Org_DB_Required::text AS OrgDbReqd,
+                 Tool_Name AS ToolName,
+                 Result_Type AS ResultType
+          FROM public.v_get_pipeline_job_parameters P
+          WHERE P.Job = _job) AS m
          CROSS JOIN LATERAL (
            VALUES
                 ('DatasetName', m.DatasetName),
@@ -284,7 +284,7 @@ BEGIN
         SELECT Trim(XmlQ.section), Trim(XmlQ.name), Trim(XmlQ.value)
         FROM (
             SELECT xmltable.*
-            FROM ( SELECT _paramXML AS params
+            FROM (SELECT _paramXML AS params
                  ) Src,
                  XMLTABLE('//sections/section/item'
                           PASSING Src.params

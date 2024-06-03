@@ -73,11 +73,11 @@ BEGIN
 
     UPDATE Tmp_Biomaterial_Stats
     SET Experiment_Count = StatsQ.Items
-    FROM ( SELECT Biomaterial_ID,
-                  COUNT(Exp_ID) AS Items
-           FROM t_experiment_biomaterial
-           GROUP BY Biomaterial_ID
-          ) AS StatsQ
+    FROM (SELECT Biomaterial_ID,
+                 COUNT(Exp_ID) AS Items
+          FROM t_experiment_biomaterial
+          GROUP BY Biomaterial_ID
+         ) AS StatsQ
     WHERE Tmp_Biomaterial_Stats.Biomaterial_ID = StatsQ.Biomaterial_ID;
 
     ----------------------------------------------------------
@@ -86,15 +86,15 @@ BEGIN
 
     UPDATE Tmp_Biomaterial_Stats
     SET Dataset_Count = StatsQ.Items
-    FROM ( SELECT t_experiment_biomaterial.biomaterial_id,
-                  COUNT(t_dataset.dataset_id) AS Items
-           FROM t_experiment_biomaterial
-                INNER JOIN t_experiments
-                  ON t_experiment_biomaterial.exp_id = t_experiments.exp_id
-                INNER JOIN t_dataset
-                  ON t_experiments.exp_id = t_dataset.exp_id
-           GROUP BY t_experiment_biomaterial.biomaterial_id
-          ) AS StatsQ
+    FROM (SELECT t_experiment_biomaterial.biomaterial_id,
+                 COUNT(t_dataset.dataset_id) AS Items
+          FROM t_experiment_biomaterial
+               INNER JOIN t_experiments
+                 ON t_experiment_biomaterial.exp_id = t_experiments.exp_id
+               INNER JOIN t_dataset
+                 ON t_experiments.exp_id = t_dataset.exp_id
+          GROUP BY t_experiment_biomaterial.biomaterial_id
+         ) AS StatsQ
     WHERE Tmp_Biomaterial_Stats.Biomaterial_ID = StatsQ.Biomaterial_ID;
 
     ----------------------------------------------------------
@@ -103,17 +103,17 @@ BEGIN
 
     UPDATE Tmp_Biomaterial_Stats
     SET Job_Count = StatsQ.Items
-    FROM ( SELECT t_experiment_biomaterial.biomaterial_id,
-                  COUNT(t_analysis_job.job) AS Items
-           FROM t_experiment_biomaterial
-                INNER JOIN t_experiments
-                  ON t_experiment_biomaterial.exp_id = t_experiments.exp_id
-                INNER JOIN t_dataset
-                  ON t_experiments.exp_id = t_dataset.exp_id
-                INNER JOIN t_analysis_job
-                  ON t_dataset.dataset_id = t_analysis_job.dataset_id
-           GROUP BY t_experiment_biomaterial.biomaterial_id
-          ) AS StatsQ
+    FROM (SELECT t_experiment_biomaterial.biomaterial_id,
+                 COUNT(t_analysis_job.job) AS Items
+          FROM t_experiment_biomaterial
+               INNER JOIN t_experiments
+                 ON t_experiment_biomaterial.exp_id = t_experiments.exp_id
+               INNER JOIN t_dataset
+                 ON t_experiments.exp_id = t_dataset.exp_id
+               INNER JOIN t_analysis_job
+                 ON t_dataset.dataset_id = t_analysis_job.dataset_id
+          GROUP BY t_experiment_biomaterial.biomaterial_id
+         ) AS StatsQ
     WHERE Tmp_Biomaterial_Stats.Biomaterial_ID = StatsQ.Biomaterial_ID;
 
     ----------------------------------------------------------
@@ -121,11 +121,11 @@ BEGIN
     ----------------------------------------------------------
 
     MERGE INTO t_biomaterial_tracking AS Target
-    USING ( SELECT Biomaterial_ID,
-                   Experiment_Count,
-                   Dataset_Count,
-                   Job_Count
-            FROM Tmp_Biomaterial_Stats
+    USING (SELECT Biomaterial_ID,
+                  Experiment_Count,
+                  Dataset_Count,
+                  Job_Count
+           FROM Tmp_Biomaterial_Stats
           ) AS Src
     ON (Target.biomaterial_id = Src.biomaterial_id)
     WHEN MATCHED AND

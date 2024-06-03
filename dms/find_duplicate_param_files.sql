@@ -390,10 +390,10 @@ BEGIN
             INSERT INTO Tmp_ParamEntries (Param_File_ID, Entry_Type, Entry_Specifier, Entry_Value, Compare)
             SELECT DISTINCT PE.Param_File_ID, Trim(_entryInfo.Type), Trim(_entryInfo.Specifier), Trim(_entryInfo.Value), Coalesce(_entryInfo.Compare, true)
             FROM Tmp_ParamEntries PE
-            WHERE NOT PE.Param_File_ID IN ( SELECT Target.Param_File_ID
-                                            FROM Tmp_ParamEntries Target
-                                            WHERE Target.Entry_Type = _entryInfo.Type AND
-                                                  Target.Entry_Specifier = _entryInfo.Specifier );
+            WHERE NOT PE.Param_File_ID IN (SELECT Target.Param_File_ID
+                                           FROM Tmp_ParamEntries Target
+                                           WHERE Target.Entry_Type = _entryInfo.Type AND
+                                                 Target.Entry_Specifier = _entryInfo.Specifier);
 
         END LOOP;
 
@@ -414,9 +414,9 @@ BEGIN
 
         UPDATE Tmp_ParamEntries PE
         SET Compare = false
-        FROM ( SELECT DISTINCT SPE.Entry_Type, SPE.Entry_Specifier
-               FROM Tmp_DefaultSequestParamEntries SPE
-               WHERE SPE.Compare = false) LookupQ
+        FROM (SELECT DISTINCT SPE.Entry_Type, SPE.Entry_Specifier
+              FROM Tmp_DefaultSequestParamEntries SPE
+              WHERE SPE.Compare = false) LookupQ
         WHERE PE.Entry_Type = LookupQ.Entry_Type AND
               PE.Entry_Specifier = LookupQ.Entry_Specifier AND
               PE.Compare = true;
@@ -577,26 +577,27 @@ BEGIN
 
             INSERT INTO Tmp_MassModDuplicates (param_file_id)
             SELECT B.param_file_id
-            FROM ( SELECT param_file_id,
-                          residue_id,
-                          mass_correction_id,
-                          mod_type_symbol
-                   FROM t_param_file_mass_mods
-                   WHERE param_file_id = _paramFileInfo.ParamFileID
+            FROM (SELECT param_file_id,
+                         residue_id,
+                         mass_correction_id,
+                         mod_type_symbol
+                  FROM t_param_file_mass_mods
+                  WHERE param_file_id = _paramFileInfo.ParamFileID
                  ) A
-                 INNER JOIN ( SELECT PFMM.param_file_id,
-                                     PFMM.residue_id,
-                                     PFMM.mass_correction_id,
-                                     PFMM.mod_type_symbol
-                             FROM t_param_file_mass_mods PFMM
-                                  INNER JOIN t_param_files PF
-                                     ON PFMM.param_file_id = PF.param_file_id
-                             WHERE PFMM.param_file_id <> _paramFileInfo.ParamFileID AND
-                                   PF.param_file_type_id = _paramFileInfo.ParamFileTypeID AND
-                                   PFMM.param_file_id IN ( SELECT param_file_id
-                                                           FROM Tmp_MassModCounts
-                                                           WHERE ModCount = _modCount )
-                           ) B
+                 INNER JOIN
+                     (SELECT PFMM.param_file_id,
+                             PFMM.residue_id,
+                             PFMM.mass_correction_id,
+                             PFMM.mod_type_symbol
+                      FROM t_param_file_mass_mods PFMM
+                           INNER JOIN t_param_files PF
+                             ON PFMM.param_file_id = PF.param_file_id
+                      WHERE PFMM.param_file_id <> _paramFileInfo.ParamFileID AND
+                            PF.param_file_type_id = _paramFileInfo.ParamFileTypeID AND
+                            PFMM.param_file_id IN (SELECT param_file_id
+                                                   FROM Tmp_MassModCounts
+                                                   WHERE ModCount = _modCount)
+                     ) B
                    ON A.residue_id = B.residue_id AND
                       A.mass_correction_id = B.mass_correction_id AND
                       A.mod_type_symbol = B.mod_type_symbol
@@ -667,32 +668,32 @@ BEGIN
 
                 INSERT INTO Tmp_ParamEntryDuplicates (param_file_id)
                 SELECT B.param_file_id
-                FROM ( SELECT Param_File_ID,
-                              Entry_Type,
-                              Entry_Specifier,
-                              Entry_Value
-                       FROM Tmp_ParamEntries
-                       WHERE Compare AND param_file_id = _paramFileInfo.ParamFileID
+                FROM (SELECT Param_File_ID,
+                             Entry_Type,
+                             Entry_Specifier,
+                             Entry_Value
+                      FROM Tmp_ParamEntries
+                      WHERE Compare AND param_file_id = _paramFileInfo.ParamFileID
                     ) A
-                    INNER JOIN ( SELECT PE.Param_File_ID,
-                                        PE.Entry_Type,
-                                        PE.Entry_Specifier,
-                                        PE.Entry_Value
+                    INNER JOIN (SELECT PE.Param_File_ID,
+                                       PE.Entry_Type,
+                                       PE.Entry_Specifier,
+                                       PE.Entry_Value
                                 FROM Tmp_ParamEntries PE
-                                    INNER JOIN t_param_files PF
-                                        ON PE.param_file_id = PF.param_file_id
+                                     INNER JOIN t_param_files PF
+                                       ON PE.param_file_id = PF.param_file_id
                                 WHERE PE.Compare AND
                                       PE.param_file_id <> _paramFileInfo.ParamFileID AND
                                       PF.param_file_type_id = _paramFileInfo.ParamFileTypeID AND
-                                      PE.param_file_id IN ( SELECT Param_File_ID
-                                                            FROM Tmp_ParamEntries
-                                                            WHERE Compare
-                                                            GROUP BY param_file_id
-                                                            HAVING COUNT(*) = _entryCount )
-                            ) B
-                    ON A.Entry_Type = B.Entry_Type AND
-                       A.Entry_Specifier = B.Entry_Specifier AND
-                       A.Entry_Value = B.Entry_Value
+                                      PE.param_file_id IN (SELECT Param_File_ID
+                                                           FROM Tmp_ParamEntries
+                                                           WHERE Compare
+                                                           GROUP BY param_file_id
+                                                           HAVING COUNT(*) = _entryCount)
+                               ) B
+                      ON A.Entry_Type = B.Entry_Type AND
+                         A.Entry_Specifier = B.Entry_Specifier AND
+                         A.Entry_Value = B.Entry_Value
                 GROUP BY B.param_file_id
                 HAVING COUNT(*) = _entryCount;
 
@@ -726,10 +727,10 @@ BEGIN
             FROM Tmp_ParamEntryDuplicates PED INNER JOIN
                  Tmp_MassModDuplicates MMD ON PED.Param_File_ID = MMD.Param_File_ID
             WHERE NOT EXISTS
-                  ( SELECT 1
-                    FROM Tmp_SimilarParamFiles SPF
-                    WHERE SPF.Param_File_ID_Master = PED.Param_File_ID AND
-                          SPF.Param_File_ID_Dup = _paramFileInfo.ParamFileID
+                  (SELECT 1
+                   FROM Tmp_SimilarParamFiles SPF
+                   WHERE SPF.Param_File_ID_Master = PED.Param_File_ID AND
+                         SPF.Param_File_ID_Dup = _paramFileInfo.ParamFileID
                   );
 
             GET DIAGNOSTICS _matchCount = ROW_COUNT;
@@ -756,10 +757,10 @@ BEGIN
             SELECT _paramFileInfo.ParamFileID, MMD.Param_File_ID
             FROM Tmp_MassModDuplicates MMD
             WHERE NOT EXISTS
-                  ( SELECT 1
-                    FROM Tmp_SimilarParamFiles SPF
-                    WHERE SPF.Param_File_ID_Master = MMD.Param_File_ID AND
-                          SPF.Param_File_ID_Dup = _paramFileInfo.ParamFileID
+                  (SELECT 1
+                   FROM Tmp_SimilarParamFiles SPF
+                   WHERE SPF.Param_File_ID_Master = MMD.Param_File_ID AND
+                         SPF.Param_File_ID_Dup = _paramFileInfo.ParamFileID
                   );
 
         End If;

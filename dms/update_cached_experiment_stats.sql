@@ -54,10 +54,11 @@ BEGIN
     If _processingMode IN (0, 1) Then
         SELECT MIN(exp_id)
         INTO _minimumExperimentID
-        FROM ( SELECT exp_id
-               FROM T_Experiments
-               ORDER BY exp_id DESC
-               LIMIT 10000) LookupQ;
+        FROM (SELECT exp_id
+              FROM T_Experiments
+              ORDER BY exp_id DESC
+              LIMIT 10000
+             ) LookupQ;
 
         If Not FOUND Then
             _minimumExperimentID := 0;
@@ -202,8 +203,8 @@ BEGIN
                 RAISE INFO 'Updating Experiment IDs % to %', _experimentIdStart, _experimentIdEnd;
             End If;
         Else
-            SELECT Min(Exp_ID),
-                   Max(Exp_ID)
+            SELECT MIN(Exp_ID),
+                   MAX(Exp_ID)
             INTO _currentBatchExpIdStart, _currentBatchExpIdEnd
             FROM Tmp_Experiment_IDs;
 
@@ -219,18 +220,19 @@ BEGIN
         UPDATE t_cached_experiment_stats
         SET Dataset_Count       = Coalesce(StatsQ.Dataset_Count, 0),
             Most_Recent_Dataset = StatsQ.Most_Recent_Dataset
-        FROM ( SELECT E.Exp_ID,
-                      DSCountQ.Dataset_Count,
-                      DSCountQ.Most_Recent_Dataset
-               FROM Tmp_Experiment_IDs E
-                    LEFT OUTER JOIN ( SELECT exp_id,
-                                             COUNT(dataset_id) AS Dataset_Count,
-                                             MAX(created) AS Most_Recent_Dataset
-                                      FROM t_dataset
-                                      WHERE exp_id BETWEEN _currentBatchExpIdStart AND _currentBatchExpIdEnd
-                                      GROUP BY exp_id ) AS DSCountQ
-                      ON DSCountQ.exp_id = E.Exp_ID
-               WHERE E.Exp_ID BETWEEN _currentBatchExpIdStart AND _currentBatchExpIdEnd
+        FROM (SELECT E.Exp_ID,
+                     DSCountQ.Dataset_Count,
+                     DSCountQ.Most_Recent_Dataset
+              FROM Tmp_Experiment_IDs E
+                   LEFT OUTER JOIN (SELECT exp_id,
+                                           COUNT(dataset_id) AS Dataset_Count,
+                                           MAX(created) AS Most_Recent_Dataset
+                                    FROM t_dataset
+                                    WHERE exp_id BETWEEN _currentBatchExpIdStart AND _currentBatchExpIdEnd
+                                    GROUP BY exp_id
+                                   ) AS DSCountQ
+                     ON DSCountQ.exp_id = E.Exp_ID
+              WHERE E.Exp_ID BETWEEN _currentBatchExpIdStart AND _currentBatchExpIdEnd
              ) StatsQ
         WHERE t_cached_experiment_stats.exp_id = StatsQ.Exp_ID AND
               (t_cached_experiment_stats.dataset_count       <> Coalesce(StatsQ.dataset_count, 0) OR
@@ -247,12 +249,12 @@ BEGIN
 
         UPDATE t_cached_experiment_stats
         SET Factor_Count = Coalesce(StatsQ.Factor_Count, 0)
-        FROM ( SELECT E.Exp_ID,
-                      FC.Factor_Count
-               FROM Tmp_Experiment_IDs E
-                    INNER JOIN V_Factor_Count_By_Experiment FC
-                      ON FC.exp_id = E.Exp_ID
-               WHERE E.Exp_ID BETWEEN _currentBatchExpIdStart AND _currentBatchExpIdEnd
+        FROM (SELECT E.Exp_ID,
+                     FC.Factor_Count
+              FROM Tmp_Experiment_IDs E
+                   INNER JOIN V_Factor_Count_By_Experiment FC
+                     ON FC.exp_id = E.Exp_ID
+              WHERE E.Exp_ID BETWEEN _currentBatchExpIdStart AND _currentBatchExpIdEnd
              ) StatsQ
         WHERE t_cached_experiment_stats.exp_id = StatsQ.Exp_ID AND
               t_cached_experiment_stats.factor_count <> Coalesce(StatsQ.Factor_Count, 0);

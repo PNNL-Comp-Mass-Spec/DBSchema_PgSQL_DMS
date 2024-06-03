@@ -120,9 +120,9 @@ BEGIN
                B.Created AS Created
         FROM t_sample_prep_request SPR
              JOIN LATERAL (
-               SELECT Value AS Item
-               FROM public.parse_delimited_list(SPR.Biomaterial_List, ';')
-             ) AS TL On true
+                SELECT Value AS Item
+                FROM public.parse_delimited_list(SPR.Biomaterial_List, ';')
+               ) AS TL On true
              INNER JOIN t_biomaterial B
                ON B.Biomaterial_Name = TL.Item
         WHERE SPR.prep_request_id = _samplePrepRequestID;
@@ -219,13 +219,13 @@ BEGIN
                'prep_lc_run' AS Item_Type,
                '' AS Status,
                Created
-        FROM ( SELECT LCRun.prep_run_id AS Item_ID,
-                      LCRun.comment AS Item_Name,
-                      TL.value AS SPR_ID,
-                      LCRun.Created
-               FROM t_prep_lc_run LCRun
-                    INNER JOIN LATERAL public.parse_delimited_integer_list(LCRun.sample_prep_requests) AS TL ON true
-               WHERE sample_prep_requests LIKE '%' || _samplePrepRequestID::text || '%'
+        FROM (SELECT LCRun.prep_run_id AS Item_ID,
+                     LCRun.comment AS Item_Name,
+                     TL.value AS SPR_ID,
+                     LCRun.Created
+              FROM t_prep_lc_run LCRun
+                   INNER JOIN LATERAL public.parse_delimited_integer_list(LCRun.sample_prep_requests) AS TL ON true
+              WHERE sample_prep_requests LIKE '%' || _samplePrepRequestID::text || '%'
              ) TX
         WHERE TX.SPR_ID = _samplePrepRequestID;
 
@@ -251,11 +251,11 @@ BEGIN
                'D' AS Marked
         FROM t_sample_prep_request_items I
         WHERE prep_request_id = _samplePrepRequestID
-              AND NOT EXISTS ( SELECT 1
-                               FROM Tmp_PrepRequestItems TPRI
-                               WHERE I.prep_request_id = TPRI.prep_request_id AND
-                                     I.item_id         = TPRI.item_id AND
-                                     I.item_type       = TPRI.item_type );
+              AND NOT EXISTS (SELECT 1
+                              FROM Tmp_PrepRequestItems TPRI
+                              WHERE I.prep_request_id = TPRI.prep_request_id AND
+                                    I.item_id         = TPRI.item_id AND
+                                    I.item_type       = TPRI.item_type);
 
         ---------------------------------------------------
         -- Update database

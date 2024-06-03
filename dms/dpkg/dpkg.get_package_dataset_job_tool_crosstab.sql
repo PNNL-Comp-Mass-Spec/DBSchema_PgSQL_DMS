@@ -142,15 +142,15 @@ BEGIN
         -- Update job counts
         UPDATE Tmp_Datasets
         SET Jobs = CountQ.Total
-        FROM ( SELECT DS.dataset,
-                      COUNT(DPJ.job) AS Total
-               FROM dpkg.t_data_package_analysis_jobs DPJ
-                    INNER JOIN public.t_analysis_Job AJ
-                      ON AJ.job = DPJ.job
-                    INNER JOIN public.t_dataset DS
-                      ON AJ.dataset_id = DS.dataset_id
-               WHERE DPJ.data_pkg_id = _dataPackageID
-               GROUP BY DS.dataset
+        FROM (SELECT DS.dataset,
+                     COUNT(DPJ.job) AS Total
+              FROM dpkg.t_data_package_analysis_jobs DPJ
+                   INNER JOIN public.t_analysis_Job AJ
+                     ON AJ.job = DPJ.job
+                   INNER JOIN public.t_dataset DS
+                     ON AJ.dataset_id = DS.dataset_id
+              WHERE DPJ.data_pkg_id = _dataPackageID
+              GROUP BY DS.dataset
              ) CountQ
         WHERE CountQ.dataset = Tmp_Datasets.dataset;
 

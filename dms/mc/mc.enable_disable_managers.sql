@@ -162,11 +162,11 @@ BEGIN
         If _managerTypeID > 0 Then
             -- Delete entries from Tmp_ManagerList that don't match entries in mgr_name of the given type
             DELETE FROM Tmp_ManagerList
-            WHERE NOT manager_name IN ( SELECT M.mgr_name
-                                        FROM Tmp_ManagerList U
-                                             INNER JOIN mc.t_mgrs M
-                                               ON M.mgr_name = U.manager_name AND
-                                                  M.mgr_type_id = _managerTypeID );
+            WHERE NOT manager_name IN (SELECT M.mgr_name
+                                       FROM Tmp_ManagerList U
+                                            INNER JOIN mc.t_mgrs M
+                                              ON M.mgr_name = U.manager_name AND
+                                                 M.mgr_type_id = _managerTypeID);
             --
             GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -179,12 +179,12 @@ BEGIN
 
         If Not _includeDisabled Then
             DELETE FROM Tmp_ManagerList
-            WHERE NOT manager_name IN ( SELECT M.mgr_name
-                                        FROM Tmp_ManagerList U
-                                             INNER JOIN mc.t_mgrs M
-                                               ON M.mgr_name = U.manager_name AND
-                                                  M.mgr_type_id = _managerTypeID
-                                        WHERE M.control_from_website > 0);
+            WHERE NOT manager_name IN (SELECT M.mgr_name
+                                       FROM Tmp_ManagerList U
+                                            INNER JOIN mc.t_mgrs M
+                                              ON M.mgr_name = U.manager_name AND
+                                                 M.mgr_type_id = _managerTypeID
+                                       WHERE M.control_from_website > 0);
         End If;
     Else
         -- Populate Tmp_ManagerList with all managers in mc.t_mgrs (of type _managerTypeID)

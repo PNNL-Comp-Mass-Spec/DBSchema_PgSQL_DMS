@@ -93,12 +93,12 @@ BEGIN
 
     UPDATE cap.t_task_steps TS
     SET Dependencies = CompareQ.Actual_Dependencies
-    FROM ( SELECT SD.Job,
-                  SD.Step,
-                  COUNT(job) AS Actual_Dependencies
-           FROM cap.t_task_step_dependencies SD
-           WHERE SD.Job IN ( SELECT W.Job FROM cap.t_task_steps W WHERE W.State = 1 )   -- State 1=Waiting
-           GROUP BY SD.Job, SD.Step
+    FROM (SELECT SD.Job,
+                 SD.Step,
+                 COUNT(job) AS Actual_Dependencies
+          FROM cap.t_task_step_dependencies SD
+          WHERE SD.Job IN (SELECT W.Job FROM cap.t_task_steps W WHERE W.State = 1)   -- State 1=Waiting
+          GROUP BY SD.Job, SD.Step
          ) CompareQ
     WHERE TS.State = 1 AND
           TS.Job = CompareQ.Job AND
@@ -171,9 +171,9 @@ BEGIN
 
     UPDATE T_Tmp_Steplist TargetQ
     SET ProcessingOrder = LookupQ.ProcessingOrder
-    FROM ( SELECT TS.EntryID,
-                  Row_Number() OVER (ORDER BY TS.Priority, TS.Job) AS ProcessingOrder
-           FROM T_Tmp_Steplist TS
+    FROM (SELECT TS.EntryID,
+                 Row_Number() OVER (ORDER BY TS.Priority, TS.Job) AS ProcessingOrder
+          FROM T_Tmp_Steplist TS
          ) LookupQ
     WHERE TargetQ.EntryID = LookupQ.EntryID;
 

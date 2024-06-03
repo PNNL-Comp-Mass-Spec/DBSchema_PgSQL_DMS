@@ -42,35 +42,35 @@ BEGIN
     If _infoOnly Then
         RETURN QUERY
         SELECT 'Preview updates'::citext as Task,
-               Sum(CASE
+               SUM(CASE
                        WHEN t.Name <> s.Name OR
                             t.Rank <> s.Rank OR
                             t.Parent_Tax_ID <> s.Parent_Tax_ID OR
                             t.Synonyms <> s.Synonyms THEN 1
                        ELSE 0
                        End)::int AS Updated_Tax_IDs,
-               Sum(CASE WHEN t.tax_id IS NULL THEN 1 ELSE 0 END)::int AS New_Tax_IDs
-        FROM ( SELECT Nodes.tax_id,
-                      NodeNames.name,
-                      Nodes.rank,
-                      Nodes.parent_tax_id,
-                      Coalesce(SynonymStats.synonyms, 0) AS synonyms
-               FROM ont.t_ncbi_taxonomy_names NodeNames
-                    INNER JOIN ont.t_ncbi_taxonomy_nodes Nodes
-                      ON NodeNames.tax_id = Nodes.tax_id
-                    LEFT OUTER JOIN ( SELECT PrimaryName.tax_id,
-                                             COUNT(NameList.entry_id) AS synonyms
-                                      FROM ont.t_ncbi_taxonomy_names NameList
-                                           INNER JOIN ont.t_ncbi_taxonomy_names PrimaryName
-                                             ON NameList.tax_id = PrimaryName.tax_id AND
-                                                PrimaryName.name_class = 'scientific name'
-                                           INNER JOIN ont.t_ncbi_taxonomy_name_class NameClass
-                                             ON NameList.name_class = NameClass.name_class
-                                      WHERE NameClass.sort_weight BETWEEN 2 AND 19
-                                      GROUP BY PrimaryName.tax_id
-                                    ) SynonymStats
-                      ON Nodes.tax_id = SynonymStats.tax_id
-               WHERE NodeNames.name_class = 'scientific name'
+               SUM(CASE WHEN t.tax_id IS NULL THEN 1 ELSE 0 END)::int AS New_Tax_IDs
+        FROM (SELECT Nodes.tax_id,
+                     NodeNames.name,
+                     Nodes.rank,
+                     Nodes.parent_tax_id,
+                     Coalesce(SynonymStats.synonyms, 0) AS synonyms
+              FROM ont.t_ncbi_taxonomy_names NodeNames
+                   INNER JOIN ont.t_ncbi_taxonomy_nodes Nodes
+                     ON NodeNames.tax_id = Nodes.tax_id
+                   LEFT OUTER JOIN (SELECT PrimaryName.tax_id,
+                                           COUNT(NameList.entry_id) AS synonyms
+                                    FROM ont.t_ncbi_taxonomy_names NameList
+                                         INNER JOIN ont.t_ncbi_taxonomy_names PrimaryName
+                                           ON NameList.tax_id = PrimaryName.tax_id AND
+                                              PrimaryName.name_class = 'scientific name'
+                                         INNER JOIN ont.t_ncbi_taxonomy_name_class NameClass
+                                           ON NameList.name_class = NameClass.name_class
+                                    WHERE NameClass.sort_weight BETWEEN 2 AND 19
+                                    GROUP BY PrimaryName.tax_id
+                                   ) SynonymStats
+                     ON Nodes.tax_id = SynonymStats.tax_id
+              WHERE NodeNames.name_class = 'scientific name'
              ) AS s
              LEFT OUTER JOIN ont.t_ncbi_taxonomy_cached t
                ON t.tax_id = s.tax_id;
@@ -106,16 +106,16 @@ BEGIN
     FROM ont.t_ncbi_taxonomy_names NodeNames
          INNER JOIN ont.t_ncbi_taxonomy_nodes Nodes
            ON NodeNames.tax_id = Nodes.tax_id
-         LEFT OUTER JOIN ( SELECT PrimaryName.tax_id,
-                                  COUNT(NameList.entry_id) AS synonyms
-                           FROM ont.t_ncbi_taxonomy_names NameList
-                                INNER JOIN ont.t_ncbi_taxonomy_names PrimaryName
-                                  ON NameList.tax_id = PrimaryName.tax_id AND
-                                     PrimaryName.name_class = 'scientific name'
-                                INNER JOIN ont.t_ncbi_taxonomy_name_class NameClass
-                                  ON NameList.name_class = NameClass.name_class
-                           WHERE NameClass.sort_weight BETWEEN 2 AND 19
-                           GROUP BY PrimaryName.tax_id ) SynonymStats
+         LEFT OUTER JOIN (SELECT PrimaryName.tax_id,
+                                 COUNT(NameList.entry_id) AS synonyms
+                          FROM ont.t_ncbi_taxonomy_names NameList
+                               INNER JOIN ont.t_ncbi_taxonomy_names PrimaryName
+                                 ON NameList.tax_id = PrimaryName.tax_id AND
+                                    PrimaryName.name_class = 'scientific name'
+                               INNER JOIN ont.t_ncbi_taxonomy_name_class NameClass
+                                 ON NameList.name_class = NameClass.name_class
+                          WHERE NameClass.sort_weight BETWEEN 2 AND 19
+                          GROUP BY PrimaryName.tax_id) SynonymStats
            ON Nodes.tax_id = SynonymStats.tax_id
     WHERE NodeNames.name_class = 'scientific name';
     --
@@ -175,11 +175,11 @@ BEGIN
 
     If _deleteExtras THEN
         DELETE FROM ont.t_ncbi_taxonomy_cached
-        WHERE tax_id IN ( SELECT t.tax_id
-                          FROM ont.t_ncbi_taxonomy_cached t
-                               LEFT OUTER JOIN Tmp_SourceData s
-                                 ON s.tax_id = t.tax_id
-                          WHERE s.tax_id IS NULL );
+        WHERE tax_id IN (SELECT t.tax_id
+                         FROM ont.t_ncbi_taxonomy_cached t
+                              LEFT OUTER JOIN Tmp_SourceData s
+                                ON s.tax_id = t.tax_id
+                         WHERE s.tax_id IS NULL);
         --
         GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 

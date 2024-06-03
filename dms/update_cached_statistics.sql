@@ -86,27 +86,27 @@ BEGIN
         UPDATE t_param_files target
         SET job_usage_count = StatsQ.JobCount,
             job_usage_last_year = StatsQ.JobCountLastYear        -- Usage over the last 12 months
-        FROM ( SELECT PF.param_file_id,
-                      Coalesce(CountQ.JobCount, 0) AS JobCount,
-                      Coalesce(CountQ.JobCountLastYear, 0) AS JobCountLastYear
-               FROM t_param_files PF
-                    LEFT OUTER JOIN ( SELECT AJ.Param_File_Name,
-                                             PFT.Param_File_Type_ID,
-                                             COUNT(AJ.job) AS JobCount,
-                                             SUM(CASE
-                                                     WHEN AJ.created >= _thresholdOneYear THEN 1
-                                                     ELSE 0
-                                                 END) AS JobCountLastYear
-                                      FROM t_analysis_job AJ
-                                           INNER JOIN t_analysis_tool AnTool
-                                             ON AJ.analysis_tool_id = AnTool.analysis_tool_id
-                                           INNER JOIN t_param_file_types PFT
-                                             ON AnTool.param_file_type_id = PFT.param_file_type_id
-                                      GROUP BY AJ.param_file_name, PFT.param_file_type_id
-                                     ) CountQ
-                      ON PF.param_file_name = CountQ.param_file_name AND
-                         PF.param_file_type_id = CountQ.param_file_type_id
-              ) StatsQ
+        FROM (SELECT PF.param_file_id,
+                     Coalesce(CountQ.JobCount, 0) AS JobCount,
+                     Coalesce(CountQ.JobCountLastYear, 0) AS JobCountLastYear
+              FROM t_param_files PF
+                   LEFT OUTER JOIN (SELECT AJ.Param_File_Name,
+                                           PFT.Param_File_Type_ID,
+                                           COUNT(AJ.job) AS JobCount,
+                                           SUM(CASE
+                                                   WHEN AJ.created >= _thresholdOneYear THEN 1
+                                                   ELSE 0
+                                               END) AS JobCountLastYear
+                                    FROM t_analysis_job AJ
+                                         INNER JOIN t_analysis_tool AnTool
+                                           ON AJ.analysis_tool_id = AnTool.analysis_tool_id
+                                         INNER JOIN t_param_file_types PFT
+                                           ON AnTool.param_file_type_id = PFT.param_file_type_id
+                                    GROUP BY AJ.param_file_name, PFT.param_file_type_id
+                                   ) CountQ
+                     ON PF.param_file_name = CountQ.param_file_name AND
+                        PF.param_file_type_id = CountQ.param_file_type_id
+             ) StatsQ
         WHERE target.param_file_id = StatsQ.param_file_id AND
               (
                 target.Job_Usage_Count     IS DISTINCT FROM StatsQ.JobCount OR
@@ -126,25 +126,25 @@ BEGIN
         UPDATE t_settings_files target
         SET job_usage_count = StatsQ.JobCount,
             job_usage_last_year = StatsQ.JobCountLastYear        -- Usage over the last 12 months
-        FROM ( SELECT SF.settings_file_id,
-                      Coalesce(CountQ.JobCount, 0) AS JobCount,
-                      Coalesce(CountQ.JobCountLastYear, 0) AS JobCountLastYear
-               FROM t_settings_files SF
-                    LEFT OUTER JOIN ( SELECT AJ.settings_file_name,
-                                             AnTool.analysis_tool,
-                                             COUNT(AJ.job) AS JobCount,
-                                             SUM(CASE
-                                                     WHEN AJ.created >= _thresholdOneYear THEN 1
-                                                     ELSE 0
-                                                 END) AS JobCountLastYear
-                                      FROM t_analysis_job AJ
-                                           INNER JOIN t_analysis_tool AnTool
-                                             ON AJ.analysis_tool_id = AnTool.analysis_tool_id
-                                      GROUP BY AJ.settings_file_name, AnTool.analysis_tool
-                                     ) CountQ
-                      ON SF.analysis_tool = CountQ.analysis_tool AND
-                         SF.file_name = CountQ.settings_file_name
-              ) StatsQ
+        FROM (SELECT SF.settings_file_id,
+                     Coalesce(CountQ.JobCount, 0) AS JobCount,
+                     Coalesce(CountQ.JobCountLastYear, 0) AS JobCountLastYear
+              FROM t_settings_files SF
+                   LEFT OUTER JOIN (SELECT AJ.settings_file_name,
+                                           AnTool.analysis_tool,
+                                           COUNT(AJ.job) AS JobCount,
+                                           SUM(CASE
+                                                   WHEN AJ.created >= _thresholdOneYear THEN 1
+                                                   ELSE 0
+                                               END) AS JobCountLastYear
+                                    FROM t_analysis_job AJ
+                                         INNER JOIN t_analysis_tool AnTool
+                                           ON AJ.analysis_tool_id = AnTool.analysis_tool_id
+                                    GROUP BY AJ.settings_file_name, AnTool.analysis_tool
+                                   ) CountQ
+                     ON SF.analysis_tool = CountQ.analysis_tool AND
+                        SF.file_name = CountQ.settings_file_name
+             ) StatsQ
         WHERE target.settings_file_id = StatsQ.settings_file_id AND
               (
                 target.Job_Usage_Count     IS DISTINCT FROM StatsQ.JobCount OR
@@ -164,21 +164,20 @@ BEGIN
         UPDATE t_lc_cart_configuration target
         SET dataset_usage_count = Coalesce(StatsQ.DatasetCount, 0),
             dataset_usage_last_year = Coalesce(StatsQ.DatasetCountLastYear, 0)        -- Usage over the last 12 months
-        FROM ( SELECT LCCart.cart_config_id,
-                      Coalesce(CountQ.DatasetCount, 0) AS DatasetCount,
-                      Coalesce(CountQ.DatasetCountLastYear, 0) AS DatasetCountLastYear
-               FROM t_lc_cart_configuration LCCart
-                    LEFT OUTER JOIN ( SELECT DS.Cart_Config_ID,
-                                             COUNT(DS.dataset_id) AS DatasetCount,
-                                             SUM(CASE
-                                                     WHEN DS.Created >= _thresholdOneYear THEN 1
-                                                     ELSE 0
-                                                 END) AS DatasetCountLastYear
-                                      FROM t_dataset DS
-                                      WHERE NOT DS.cart_config_id IS NULL
-                                      GROUP BY DS.cart_config_id
-                                     ) CountQ
-                      ON LCCart.cart_config_id = CountQ.cart_config_id
+        FROM (SELECT LCCart.cart_config_id,
+                     Coalesce(CountQ.DatasetCount, 0) AS DatasetCount,
+                     Coalesce(CountQ.DatasetCountLastYear, 0) AS DatasetCountLastYear
+              FROM t_lc_cart_configuration LCCart
+                   LEFT OUTER JOIN (SELECT DS.Cart_Config_ID,
+                                           COUNT(DS.dataset_id) AS DatasetCount,
+                                           SUM(CASE WHEN DS.Created >= _thresholdOneYear THEN 1
+                                                    ELSE 0
+                                               END) AS DatasetCountLastYear
+                                    FROM t_dataset DS
+                                    WHERE NOT DS.cart_config_id IS NULL
+                                    GROUP BY DS.cart_config_id
+                                   ) CountQ
+                     ON LCCart.cart_config_id = CountQ.cart_config_id
              ) StatsQ
         WHERE target.cart_config_id = StatsQ.cart_config_ID AND
               (
@@ -199,28 +198,28 @@ BEGIN
         UPDATE t_instrument_group_allowed_ds_type target
         SET dataset_usage_count = StatsQ.DatasetCount,
             dataset_usage_last_year = StatsQ.DatasetCountLastYear        -- Usage over the last 12 months
-        FROM ( SELECT IGDT.instrument_group,
-                      IGDT.dataset_type,
-                      Coalesce(CountQ.DatasetCount, 0) AS DatasetCount,
-                      Coalesce(CountQ.DatasetCountLastYear, 0) AS DatasetCountLastYear
-               FROM t_instrument_group_allowed_ds_type IGDT
-                    LEFT OUTER JOIN ( SELECT InstName.instrument_group,
-                                             DTN.Dataset_Type,
-                                             COUNT(DS.dataset_id) AS DatasetCount,
-                                             SUM(CASE
-                                                     WHEN DS.Created >= _thresholdOneYear THEN 1
-                                                     ELSE 0
-                                                 END) AS DatasetCountLastYear
-                                      FROM t_dataset DS
-                                           INNER JOIN t_instrument_name InstName
-                                             ON DS.instrument_id = InstName.instrument_id
-                                           INNER JOIN T_Dataset_Type_Name DTN
-                                             ON DS.dataset_type_id = DTN.dataset_type_id
-                                      GROUP BY InstName.instrument_group, DTN.Dataset_Type
-                                    ) CountQ
-                      ON IGDT.instrument_group = CountQ.instrument_group AND
-                         IGDT.Dataset_Type = CountQ.Dataset_Type
-               ) StatsQ
+        FROM (SELECT IGDT.instrument_group,
+                     IGDT.dataset_type,
+                     Coalesce(CountQ.DatasetCount, 0) AS DatasetCount,
+                     Coalesce(CountQ.DatasetCountLastYear, 0) AS DatasetCountLastYear
+              FROM t_instrument_group_allowed_ds_type IGDT
+                   LEFT OUTER JOIN (SELECT InstName.instrument_group,
+                                           DTN.Dataset_Type,
+                                           COUNT(DS.dataset_id) AS DatasetCount,
+                                           SUM(CASE
+                                                   WHEN DS.Created >= _thresholdOneYear THEN 1
+                                                   ELSE 0
+                                               END) AS DatasetCountLastYear
+                                    FROM t_dataset DS
+                                         INNER JOIN t_instrument_name InstName
+                                           ON DS.instrument_id = InstName.instrument_id
+                                         INNER JOIN T_Dataset_Type_Name DTN
+                                           ON DS.dataset_type_id = DTN.dataset_type_id
+                                    GROUP BY InstName.instrument_group, DTN.Dataset_Type
+                                   ) CountQ
+                     ON IGDT.instrument_group = CountQ.instrument_group AND
+                        IGDT.Dataset_Type = CountQ.Dataset_Type
+             ) StatsQ
         WHERE target.instrument_group = StatsQ.instrument_group AND
               target.Dataset_Type = StatsQ.Dataset_Type AND
               (
@@ -258,41 +257,40 @@ BEGIN
         -- Remove extra rows from t_cached_instrument_dataset_type_usage
 
         DELETE FROM t_cached_instrument_dataset_type_usage
-        WHERE entry_id IN ( SELECT CachedData.entry_id
-                            FROM t_instrument_group_allowed_ds_type AS GT
-                                 INNER JOIN t_instrument_name AS InstName
-                                   ON GT.instrument_group = InstName.instrument_group
-                                 RIGHT OUTER JOIN t_cached_instrument_dataset_type_usage AS CachedData
-                                   ON GT.dataset_type = CachedData.dataset_type AND
-                                      InstName.instrument_id = CachedData.instrument_id
-                            WHERE GT.instrument_group IS NULL );
+        WHERE entry_id IN (SELECT CachedData.entry_id
+                           FROM t_instrument_group_allowed_ds_type AS GT
+                                INNER JOIN t_instrument_name AS InstName
+                                  ON GT.instrument_group = InstName.instrument_group
+                                RIGHT OUTER JOIN t_cached_instrument_dataset_type_usage AS CachedData
+                                  ON GT.dataset_type = CachedData.dataset_type AND
+                                     InstName.instrument_id = CachedData.instrument_id
+                           WHERE GT.instrument_group IS NULL);
 
         -- Update stats in t_cached_instrument_dataset_type_usage
 
         UPDATE t_cached_instrument_dataset_type_usage target
         SET dataset_usage_count = StatsQ.DatasetCount,
             dataset_usage_last_year = StatsQ.DatasetCountLastYear
-        FROM ( SELECT IDTU.instrument_id,
-                      IDTU.dataset_type,
-                      Coalesce(CountQ.DatasetCount, 0) AS DatasetCount,
-                      Coalesce(CountQ.DatasetCountLastYear, 0) AS DatasetCountLastYear
-               FROM t_cached_instrument_dataset_type_usage IDTU
-                    LEFT OUTER JOIN ( SELECT InstName.Instrument_ID,
-                                             DTN.Dataset_Type AS Dataset_Type,
-                                             COUNT(DS.dataset_id) AS DatasetCount,
-                                             SUM(CASE
-                                                     WHEN DS.Created >= _thresholdOneYear THEN 1
-                                                     ELSE 0
-                                                 END) AS DatasetCountLastYear
-                                       FROM t_dataset DS
-                                            INNER JOIN t_instrument_name InstName
-                                              ON DS.instrument_id = InstName.instrument_id
-                                            INNER JOIN T_Dataset_Type_Name DTN
-                                              ON DS.dataset_type_id = DTN.dataset_type_id
-                                       GROUP BY InstName.instrument_id, DTN.Dataset_Type
-                                     ) CountQ
-                      ON IDTU.instrument_id = CountQ.instrument_id AND
-                         IDTU.dataset_type = CountQ.dataset_type
+        FROM (SELECT IDTU.instrument_id,
+                     IDTU.dataset_type,
+                     Coalesce(CountQ.DatasetCount, 0) AS DatasetCount,
+                     Coalesce(CountQ.DatasetCountLastYear, 0) AS DatasetCountLastYear
+              FROM t_cached_instrument_dataset_type_usage IDTU
+                   LEFT OUTER JOIN (SELECT InstName.Instrument_ID,
+                                           DTN.Dataset_Type AS Dataset_Type,
+                                           COUNT(DS.dataset_id) AS DatasetCount,
+                                           SUM(CASE WHEN DS.Created >= _thresholdOneYear THEN 1
+                                                    ELSE 0
+                                               END) AS DatasetCountLastYear
+                                     FROM t_dataset DS
+                                          INNER JOIN t_instrument_name InstName
+                                            ON DS.instrument_id = InstName.instrument_id
+                                          INNER JOIN T_Dataset_Type_Name DTN
+                                            ON DS.dataset_type_id = DTN.dataset_type_id
+                                     GROUP BY InstName.instrument_id, DTN.Dataset_Type
+                                    ) CountQ
+                     ON IDTU.instrument_id = CountQ.instrument_id AND
+                        IDTU.dataset_type = CountQ.dataset_type
                ) StatsQ
         WHERE target.instrument_id = StatsQ.instrument_id AND
               target.dataset_type = StatsQ.dataset_type AND
@@ -434,22 +432,21 @@ BEGIN
 
         UPDATE t_analysis_job_request target
         SET job_count = StatsQ.JobCount
-        FROM ( SELECT AJR.request_id,
-                      SUM(CASE
-                              WHEN AJ.job IS NULL THEN 0
+        FROM (SELECT AJR.request_id,
+                     SUM(CASE WHEN AJ.job IS NULL THEN 0
                               ELSE 1
-                          END) AS JobCount
-               FROM t_analysis_job_request AJR
-                    INNER JOIN t_users U
-                      ON AJR.user_id = U.user_id
-                    INNER JOIN t_analysis_job_request_state AJRS
-                      ON AJR.request_state_id = AJRS.request_state_id
-                    INNER JOIN t_organisms Org
-                      ON AJR.organism_id = Org.organism_id
-                    LEFT OUTER JOIN t_analysis_job AJ
-                      ON AJR.request_id = AJ.request_id
-               GROUP BY AJR.request_id
-              ) StatsQ
+                         END) AS JobCount
+              FROM t_analysis_job_request AJR
+                   INNER JOIN t_users U
+                     ON AJR.user_id = U.user_id
+                   INNER JOIN t_analysis_job_request_state AJRS
+                     ON AJR.request_state_id = AJRS.request_state_id
+                   INNER JOIN t_organisms Org
+                     ON AJR.organism_id = Org.organism_id
+                   LEFT OUTER JOIN t_analysis_job AJ
+                     ON AJR.request_id = AJ.request_id
+              GROUP BY AJR.request_id
+             ) StatsQ
         WHERE target.request_id = StatsQ.request_id AND
               target.job_count IS DISTINCT FROM StatsQ.JobCount;
 
@@ -468,7 +465,7 @@ BEGIN
             UNION
             SELECT 15 AS Entry_ID,
                    'Total runtime' AS Task,
-                   (Sum(Runtime_Seconds))::numeric AS Runtime_Seconds
+                   (SUM(Runtime_Seconds))::numeric AS Runtime_Seconds
             FROM Tmp_Update_Stats
             ORDER BY Entry_ID
         LOOP

@@ -165,7 +165,7 @@ BEGIN
         WHERE error_code = 0 AND
               verified = 0 AND
               dataset_id = _datasetID AND
-              status_num IN ( SELECT status_num FROM Tmp_StatusNumListTable );
+              status_num IN (SELECT status_num FROM Tmp_StatusNumListTable);
 
         DROP TABLE Tmp_StatusNumListTable;
 

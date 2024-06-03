@@ -226,11 +226,11 @@ BEGIN
 
             UPDATE t_emsl_instrument_usage_report InstUsage
             SET dataset_id_acq_overlap = NULL
-            FROM ( SELECT DMS_Inst_ID,
-                          ItemType,
-                          StartTime
-                   FROM Tmp_DatasetStartTimes
-                   WHERE Datasets = 1
+            FROM (SELECT DMS_Inst_ID,
+                         ItemType,
+                         StartTime
+                  FROM Tmp_DatasetStartTimes
+                  WHERE Datasets = 1
                  ) FilterQ
             WHERE InstUsage.dms_inst_id = FilterQ.DMS_Inst_ID AND
                   InstUsage.type = FilterQ.ItemType AND

@@ -322,9 +322,9 @@ BEGIN
 
         -- Add/update hosts
         MERGE INTO t_bionet_hosts AS t
-        USING ( SELECT host, NameOrIP AS IP, Instruments
-                FROM Tmp_Hosts
-                WHERE NOT IsAlias
+        USING (SELECT host, NameOrIP AS IP, Instruments
+               FROM Tmp_Hosts
+               WHERE NOT IsAlias
               ) AS s
         ON (t.host = s.host)
         WHEN MATCHED AND
@@ -352,10 +352,11 @@ BEGIN
 
         UPDATE t_bionet_hosts Target
         SET alias = Src.alias
-        FROM ( SELECT Host AS Alias,
-                      NameOrIP AS TargetHost
-               FROM Tmp_Hosts
-               WHERE IsAlias ) Src
+        FROM (SELECT Host AS Alias,
+                     NameOrIP AS TargetHost
+              FROM Tmp_Hosts
+              WHERE IsAlias
+             ) Src
         WHERE Target.Host = Src.TargetHost;
 
     End If;

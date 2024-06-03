@@ -75,12 +75,13 @@ BEGIN
 
     UPDATE Tmp_Selected_Jobs
     SET ResetFailedStepsOnly = true
-    WHERE Job IN ( SELECT Job
-                   FROM cap.t_task_steps
-                   WHERE State = 6 AND
-                         Tool = 'DatasetIntegrity' AND
-                         Completion_Message = 'Error running OpenChrom' AND
-                         Job IN ( SELECT Job FROM Tmp_Selected_Jobs ) );
+    WHERE Job IN (SELECT Job
+                  FROM cap.t_task_steps
+                  WHERE State = 6 AND
+                        Tool = 'DatasetIntegrity' AND
+                        Completion_Message = 'Error running OpenChrom' AND
+                        Job IN (SELECT Job FROM Tmp_Selected_Jobs)
+                 );
 
     If _infoOnly Then
 
@@ -163,9 +164,9 @@ BEGIN
     WHERE State = 6 AND
           Tool = 'DatasetIntegrity' AND
           Completion_Message = 'Error running OpenChrom' AND
-          Job IN ( SELECT Job
-                   FROM Tmp_Selected_Jobs
-                   WHERE ResetFailedStepsOnly );
+          Job IN (SELECT Job
+                  FROM Tmp_Selected_Jobs
+                  WHERE ResetFailedStepsOnly);
 
     DELETE FROM Tmp_Selected_Jobs
     WHERE ResetFailedStepsOnly;

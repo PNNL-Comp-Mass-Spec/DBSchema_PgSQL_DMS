@@ -137,9 +137,9 @@ BEGIN
             If _infoOnly Then
                 RAISE INFO '';
 
-                If Not Exists ( SELECT results_name
-                                FROM sw.t_shared_results
-                                WHERE results_name = _outputFolder)
+                If Not Exists (SELECT results_name
+                               FROM sw.t_shared_results
+                               WHERE results_name = _outputFolder)
                 Then
                     RAISE INFO 'Did not find output folder % in sw.t_shared_results; nothing to remove', _outputFolder;
                 Else
@@ -180,13 +180,13 @@ BEGIN
 
                 RAISE INFO '';
 
-                If Not Exists ( SELECT JS.job
-                                FROM sw.V_Job_Steps JS
-                                     INNER JOIN sw.t_jobs J
-                                       ON JS.job = J.job
-                                WHERE JS.Output_Folder = _outputFolder AND
-                                      JS.state = 5 AND
-                                      J.state = 4)
+                If Not Exists (SELECT JS.job
+                               FROM sw.V_Job_Steps JS
+                                    INNER JOIN sw.t_jobs J
+                                      ON JS.job = J.job
+                               WHERE JS.Output_Folder = _outputFolder AND
+                                     JS.state = 5 AND
+                                     J.state = 4)
                 Then
                     RAISE INFO 'Did not find any completed jobs in sw.t_jobs with a completed job step with output folder %; nothing to remove', _outputFolder;
                 Else
@@ -230,9 +230,9 @@ BEGIN
 
                 RAISE INFO '';
 
-                If Not Exists ( SELECT job
-                                FROM sw.t_job_steps_history
-                                WHERE output_folder_name = _outputFolder AND state = 5)
+                If Not Exists (SELECT job
+                               FROM sw.t_job_steps_history
+                               WHERE output_folder_name = _outputFolder AND state = 5)
                 Then
                     RAISE INFO 'Did not find any completed jobs in sw.t_job_steps_history with output folder %; nothing to remove', _outputFolder;
                 Else
@@ -369,9 +369,9 @@ BEGIN
 
             RAISE INFO '';
 
-            If Not Exists ( SELECT job
-                            FROM sw.t_job_step_dependencies
-                            WHERE job = _job)
+            If Not Exists (SELECT job
+                           FROM sw.t_job_step_dependencies
+                           WHERE job = _job)
             Then
                 RAISE INFO 'Did not find any rows in sw.t_job_step_dependencies for job %; nothing to remove', _job;
             Else

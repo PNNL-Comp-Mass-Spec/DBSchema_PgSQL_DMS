@@ -152,12 +152,12 @@ BEGIN
         FROM t_instrument_name InstName
              INNER JOIN t_emsl_dms_instrument_mapping InstMapping
                ON InstName.instrument_id = InstMapping.dms_instrument_id
-             INNER JOIN ( SELECT InstMapping.eus_instrument_id
-                          FROM t_instrument_name InstName
-                               INNER JOIN t_emsl_dms_instrument_mapping InstMapping
-                                 ON InstName.instrument_id = InstMapping.dms_instrument_id
-                          GROUP BY InstMapping.eus_instrument_id
-                          HAVING COUNT(InstName.instrument_id) > 1
+             INNER JOIN (SELECT InstMapping.eus_instrument_id
+                         FROM t_instrument_name InstName
+                              INNER JOIN t_emsl_dms_instrument_mapping InstMapping
+                                ON InstName.instrument_id = InstMapping.dms_instrument_id
+                         GROUP BY InstMapping.eus_instrument_id
+                         HAVING COUNT(InstName.instrument_id) > 1
                         ) LookupQ
                ON InstMapping.eus_instrument_id = LookupQ.eus_instrument_id
         WHERE InstName.instrument = _instrumentName::citext;
@@ -402,7 +402,7 @@ BEGIN
                ON DS.dataset_id = Tmp_Durations.dataset_id
              INNER JOIN t_instrument_name InstName
                ON DS.instrument_id = InstName.instrument_id
-        WHERE NOT Tmp_Durations.dataset_id IN ( SELECT dataset_id FROM t_run_interval ) AND
+        WHERE NOT Tmp_Durations.dataset_id IN (SELECT dataset_id FROM t_run_interval) AND
               Tmp_Durations.Interval > _maxNormalInterval;
 
         ---------------------------------------------------

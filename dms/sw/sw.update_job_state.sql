@@ -345,11 +345,11 @@ BEGIN
 
         If _newDMSJobState = 4 Then     -- State 4: Complete
 
-            If Exists ( SELECT Step
-                        FROM sw.t_job_steps
-                        WHERE Job = _jobInfo.Job AND
-                              Completion_Message LIKE '%No results above threshold%' AND
-                              tool = 'DataExtractor' ) Then
+            If Exists (SELECT Step
+                       FROM sw.t_job_steps
+                       WHERE Job = _jobInfo.Job AND
+                             Completion_Message LIKE '%No results above threshold%' AND
+                             tool = 'DataExtractor' ) Then
                 _newDMSJobState := 14;
             End If;
 
@@ -362,11 +362,11 @@ BEGIN
 
         If _newDMSJobState = 4 Then     -- State 4: Complete
 
-            If Exists ( SELECT Step
-                        FROM sw.t_job_steps
-                        WHERE Job = _jobInfo.Job AND
-                              Completion_Message LIKE '%No results in DeconTools Isos file%' AND
-                              tool LIKE 'Decon%' ) Then
+            If Exists (SELECT Step
+                       FROM sw.t_job_steps
+                       WHERE Job = _jobInfo.Job AND
+                             Completion_Message LIKE '%No results in DeconTools Isos file%' AND
+                             tool LIKE 'Decon%' ) Then
                 _newDMSJobState := 14;
             End If;
 

@@ -46,10 +46,10 @@ BEGIN
     -- Does entry already exist?
     ---------------------------------------------------
 
-    If Exists ( SELECT entry_id
-                FROM pc.t_archived_output_file_collections_xref
-                WHERE archived_file_id = _archivedFileID AND
-                      protein_collection_id = _collectionID)
+    If Exists (SELECT entry_id
+               FROM pc.t_archived_output_file_collections_xref
+               WHERE archived_file_id = _archivedFileID AND
+                     protein_collection_id = _collectionID)
     Then
         _message := format('Table pc.t_archived_output_file_collections_xref already has a row with archived file ID %s and protein collection ID %s',
                            _archivedFileID, _collectionID);

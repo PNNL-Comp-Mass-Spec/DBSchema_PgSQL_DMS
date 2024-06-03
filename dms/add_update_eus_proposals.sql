@@ -232,8 +232,8 @@ BEGIN
 
         INSERT INTO Tmp_EUS_Users (person_id)
         SELECT EUS_Person_ID
-        FROM ( SELECT value AS EUS_Person_ID
-               FROM public.parse_delimited_integer_list ( _eusUsersList )
+        FROM (SELECT value AS EUS_Person_ID
+              FROM public.parse_delimited_integer_list ( _eusUsersList )
              ) SourceQ
              INNER JOIN t_eus_users
                ON SourceQ.EUS_Person_ID = t_eus_users.person_id;
@@ -249,10 +249,10 @@ BEGIN
         End If;
 
         MERGE INTO t_eus_proposal_users AS target
-        USING ( SELECT _eusPropID::citext AS Proposal_ID,
-                       person_id,
-                       'Y' AS Of_DMS_Interest
-                FROM Tmp_EUS_Users
+        USING (SELECT _eusPropID::citext AS Proposal_ID,
+                      person_id,
+                      'Y' AS Of_DMS_Interest
+               FROM Tmp_EUS_Users
               ) AS Source
         ON (target.proposal_id = source.proposal_id AND
             target.person_id = source.person_id)

@@ -194,7 +194,7 @@ BEGIN
         SELECT Trim(XmlQ.Parameter), XmlQ.RequestID, Trim(XmlQ.Value)
         FROM (
             SELECT xmltable.*
-            FROM ( SELECT _blockingXML AS rooted_xml
+            FROM (SELECT _blockingXML AS rooted_xml
                  ) Src,
                  XMLTABLE('//root/r'
                           PASSING Src.rooted_xml

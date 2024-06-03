@@ -158,7 +158,7 @@ BEGIN
             If _infoOnly Then
                 -- Cache the 10 oldest job events to delete
                 INSERT INTO Tmp_EventsToDelete (Target_Table, Event_ID, Job, Step, Target_State, Prev_Target_State, Processor, Entered)
-                SELECT 'T_Job_Events', T.Event_ID, T.Job, Null As Step, T.Target_State, T.Prev_Target_State, Null As Processor, T.Entered
+                SELECT 'T_Job_Events', T.Event_ID, T.Job, Null AS Step, T.Target_State, T.Prev_Target_State, Null AS Processor, T.Entered
                 FROM Tmp_JobEventIDs S
                      INNER JOIN logsw.t_job_events T
                        ON S.event_id = T.Event_ID
@@ -167,11 +167,11 @@ BEGIN
 
                 -- Append the 10 newest job events to delete
                 INSERT INTO Tmp_EventsToDelete (Target_Table, Event_ID, Job, Step, Target_State, Prev_Target_State, Processor, Entered)
-                SELECT 'T_Job_Events', T.Event_ID,  T.Job, Null As Step, T.Target_State, T.Prev_Target_State, Null As Processor, T.Entered
-                FROM ( SELECT Event_ID
-                       FROM Tmp_JobEventIDs
-                       ORDER BY Event_ID DESC
-                       LIMIT 10
+                SELECT 'T_Job_Events', T.Event_ID,  T.Job, Null AS Step, T.Target_State, T.Prev_Target_State, Null AS Processor, T.Entered
+                FROM (SELECT Event_ID
+                      FROM Tmp_JobEventIDs
+                      ORDER BY Event_ID DESC
+                      LIMIT 10
                      ) S
                      INNER JOIN logsw.t_job_events T
                        ON S.event_id = T.Event_ID
@@ -229,7 +229,7 @@ BEGIN
 
             If _infoOnly Then
                 INSERT INTO Tmp_EventsToDelete (Target_Table, Event_ID, Job, Step, Target_State, Prev_Target_State, Processor, Entered)
-                SELECT 'T_Job_Step_Events', T.Event_ID, T.Job, T.Step, T.Target_State, T.Prev_Target_State, Null As Processor, T.Entered
+                SELECT 'T_Job_Step_Events', T.Event_ID, T.Job, T.Step, T.Target_State, T.Prev_Target_State, Null AS Processor, T.Entered
                 FROM Tmp_JobStepEventIDs S
                      INNER JOIN logsw.t_job_step_events T
                        ON S.Event_ID = T.Event_ID
@@ -237,11 +237,11 @@ BEGIN
                 LIMIT 10;
 
                 INSERT INTO Tmp_EventsToDelete (Target_Table, Event_ID, Job, Step, Target_State, Prev_Target_State, Processor, Entered)
-                SELECT 'T_Job_Step_Events', T.Event_ID, T.Job, T.Step, T.Target_State, T.Prev_Target_State, Null As Processor, T.Entered
-                FROM ( SELECT Event_ID
-                       FROM Tmp_JobStepEventIDs
-                       ORDER BY Event_ID DESC
-                       LIMIT 10
+                SELECT 'T_Job_Step_Events', T.Event_ID, T.Job, T.Step, T.Target_State, T.Prev_Target_State, Null AS Processor, T.Entered
+                FROM (SELECT Event_ID
+                      FROM Tmp_JobStepEventIDs
+                      ORDER BY Event_ID DESC
+                      LIMIT 10
                      ) S
                      INNER JOIN logsw.t_job_step_events T
                        ON S.Event_ID = T.Event_ID
@@ -300,7 +300,7 @@ BEGIN
 
             If _infoOnly Then
                 INSERT INTO Tmp_EventsToDelete (Target_Table, Event_ID, Job, Step, Target_State, Prev_Target_State, Processor, Entered)
-                SELECT 'T_Job_Step_Processing_Log', T.Event_ID, T.Job, T.Step, Null As Target_State, Null As Prev_Target_State, T.Processor, T.Entered
+                SELECT 'T_Job_Step_Processing_Log', T.Event_ID, T.Job, T.Step, Null AS Target_State, Null AS Prev_Target_State, T.Processor, T.Entered
                 FROM Tmp_ProcessingLogEventIDs S
                      INNER JOIN logsw.t_job_step_processing_log T
                        ON S.Event_ID = T.Event_ID
@@ -308,11 +308,11 @@ BEGIN
                 LIMIT 10;
 
                 INSERT INTO Tmp_EventsToDelete (Target_Table, Event_ID, Job, Step, Target_State, Prev_Target_State, Processor, Entered)
-                SELECT 'T_Job_Step_Processing_Log', T.Event_ID, T.Job, T.Step, Null As Target_State, Null As Prev_Target_State, T.Processor, T.Entered
-                FROM ( SELECT Event_ID
-                       FROM Tmp_ProcessingLogEventIDs
-                       ORDER BY Event_ID DESC
-                       LIMIT 10
+                SELECT 'T_Job_Step_Processing_Log', T.Event_ID, T.Job, T.Step, Null AS Target_State, Null AS Prev_Target_State, T.Processor, T.Entered
+                FROM (SELECT Event_ID
+                      FROM Tmp_ProcessingLogEventIDs
+                      ORDER BY Event_ID DESC
+                      LIMIT 10
                      ) S
                      INNER JOIN logsw.t_job_step_processing_log T
                        ON S.Event_ID = T.Event_ID
@@ -438,10 +438,10 @@ BEGIN
                 -- Append the 10 newest log entries to delete
                 INSERT INTO Tmp_LogEntriesToDelete (Entry_ID, Posted_By, Entered, Type, Message)
                 SELECT T.entry_id, T.Posted_By, T.Entered, T.type, T.Message
-                FROM ( SELECT entry_id
-                       FROM Tmp_HistoricLogIDs
-                       ORDER BY entry_id DESC
-                       LIMIT 10
+                FROM (SELECT entry_id
+                      FROM Tmp_HistoricLogIDs
+                      ORDER BY entry_id DESC
+                      LIMIT 10
                      ) S
                      INNER JOIN logsw.t_log_entries T
                        ON S.entry_id = T.entry_id

@@ -66,12 +66,12 @@ BEGIN
     INSERT INTO Tmp_IDsToUpdate (EntityID)
     SELECT DISTINCT LookupQ.dataset_id
     FROM public.t_dataset_archive DA
-         INNER JOIN ( SELECT dataset_id
-                      FROM cap.t_myemsl_uploads
-                      WHERE status_uri_path_id > 1 AND
-                            entered >= CURRENT_TIMESTAMP - make_interval(days => _windowDays) AND
-                            Coalesce(subfolder, '') = ''
-                     ) LookupQ
+         INNER JOIN (SELECT dataset_id
+                     FROM cap.t_myemsl_uploads
+                     WHERE status_uri_path_id > 1 AND
+                           entered >= CURRENT_TIMESTAMP - make_interval(days => _windowDays) AND
+                           Coalesce(subfolder, '') = ''
+                    ) LookupQ
            ON DA.Dataset_ID = LookupQ.dataset_id
     WHERE DA.MyEMSL_State < 1;
     --
@@ -105,11 +105,11 @@ BEGIN
 
             UPDATE cap.t_task_steps
             SET State = 2
-            WHERE job IN ( SELECT M.job
-                           FROM cap.t_myemsl_uploads M
-                                INNER JOIN Tmp_IDsToUpdate U
-                                  ON M.dataset_id = U.EntityID
-                           WHERE M.error_code = 0 ) AND
+            WHERE job IN (SELECT M.job
+                          FROM cap.t_myemsl_uploads M
+                               INNER JOIN Tmp_IDsToUpdate U
+                                 ON M.dataset_id = U.EntityID
+                          WHERE M.error_code = 0) AND
                   State = 3 AND
                   Tool IN ('ArchiveVerify', 'ArchiveStatusCheck');
 
@@ -126,13 +126,13 @@ BEGIN
     INSERT INTO Tmp_IDsToUpdate (EntityID)
     SELECT DISTINCT J.Job
     FROM public.t_analysis_job J
-         INNER JOIN ( SELECT dataset_id,
-                             subfolder
-           FROM cap.t_myemsl_uploads
-                      WHERE status_uri_path_id > 1 AND
-                            entered >= CURRENT_TIMESTAMP - make_interval(days => _windowDays) AND
-                            Coalesce(subfolder, '') <> ''
-                     ) LookupQ
+         INNER JOIN (SELECT dataset_id,
+                            subfolder
+                     FROM cap.t_myemsl_uploads
+                     WHERE status_uri_path_id > 1 AND
+                           entered >= CURRENT_TIMESTAMP - make_interval(days => _windowDays) AND
+                           Coalesce(subfolder, '') <> ''
+                    ) LookupQ
            ON J.dataset_id = LookupQ.dataset_id AND
               J.results_folder_name = LookupQ.subfolder
     WHERE J.myemsl_state < 1;
@@ -169,10 +169,10 @@ BEGIN
             SET State = 2
             FROM cap.t_myemsl_uploads U
             WHERE cap.t_task_steps.job = U.job AND
-                  U.dataset_id IN ( SELECT J.dataset_id
-                                    FROM public.t_analysis_job J
-                                         INNER JOIN Tmp_IDsToUpdate U
-                                           ON J.job = U.EntityID ) AND
+                  U.dataset_id IN (SELECT J.dataset_id
+                                   FROM public.t_analysis_job J
+                                        INNER JOIN Tmp_IDsToUpdate U
+                                          ON J.job = U.EntityID ) AND
                   cap.t_task_steps.Tool IN ('ArchiveVerify') AND
                   cap.t_task_steps.State = 3 AND
                   U.error_code = 0;

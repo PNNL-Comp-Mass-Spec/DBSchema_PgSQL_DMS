@@ -305,7 +305,7 @@ BEGIN
           NOT a.attisdropped AND
           pg_namespace.nspname = _sourceSchema AND
           pg_class.relname = _tableName AND
-          NOT a.attname IN ( SELECT ColumnName FROM Tmp_PrimaryKeyColumns) AND
+          NOT a.attname IN (SELECT ColumnName FROM Tmp_PrimaryKeyColumns) AND
           a.attidentity  = '' AND               -- Exclude identity columns
           a.attgenerated = '' AND               -- Exclude generated (computed) columns
           NOT a.atttypid IN (26, 27, 28, 29);   -- Exclude object identifiers, including transaction ID columns (xid)

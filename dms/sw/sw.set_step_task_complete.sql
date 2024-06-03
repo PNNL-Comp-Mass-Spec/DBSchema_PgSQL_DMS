@@ -452,11 +452,11 @@ BEGIN
             _message := format('Re-running step %s for job %s because step %s reported completion code %s (%s)',
                                 _sharedResultStep, _job, _step, _completionCode, _completionCodeDescription);
 
-            If Exists ( SELECT entry_id
-                        FROM sw.t_log_entries
-                        WHERE Message = _message AND
-                              type = 'Normal' AND
-                              Entered >= CURRENT_TIMESTAMP - INTERVAL '1 day'
+            If Exists (SELECT entry_id
+                       FROM sw.t_log_entries
+                       WHERE Message = _message AND
+                             type = 'Normal' AND
+                             Entered >= CURRENT_TIMESTAMP - INTERVAL '1 day'
                       ) Then
 
                 _message := format('has already reported completion code %s (%s) within the last 24 hours',
@@ -543,7 +543,7 @@ BEGIN
 
         UPDATE sw.t_job_steps JS
         SET state = 3
-        FROM ( SELECT unnest(_stepToolsToSkip) AS tool) ToolsToSkip
+        FROM (SELECT unnest(_stepToolsToSkip) AS tool) ToolsToSkip
         WHERE JS.tool = ToolsToSkip.tool AND
               JS.Job = _job AND
               JS.State = 1;

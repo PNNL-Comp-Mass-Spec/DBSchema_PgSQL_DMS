@@ -76,8 +76,8 @@ BEGIN
          INNER JOIN mc.t_mgrs M
            ON M.mgr_id = PV.mgr_id
     WHERE PT.param_name = _paramName::citext AND
-          M.mgr_type_id IN ( SELECT value
-                             FROM public.parse_delimited_integer_list(_managerTypeIDList)
+          M.mgr_type_id IN (SELECT value
+                            FROM public.parse_delimited_integer_list(_managerTypeIDList)
                            ) AND
           M.control_from_website > 0;
 

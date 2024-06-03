@@ -384,11 +384,11 @@ BEGIN
         )
         SELECT Src.Storage_Server_Name,
                Src.Server_Vol
-        FROM ( SELECT Storage_Server_Name,
-                      Server_Vol
-               FROM Tmp_PurgeableDatasets
-               GROUP BY Storage_Server_Name, Server_Vol
-               HAVING COUNT(*) >= _previewCount
+        FROM (SELECT Storage_Server_Name,
+                     Server_Vol
+              FROM Tmp_PurgeableDatasets
+              GROUP BY Storage_Server_Name, Server_Vol
+              HAVING COUNT(*) >= _previewCount
              ) AS Src
              LEFT OUTER JOIN Tmp_StorageVolsToSkip AS Target
                ON Src.Storage_Server_Name = Target.Storage_Server_Name AND

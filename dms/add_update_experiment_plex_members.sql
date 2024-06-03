@@ -777,8 +777,8 @@ BEGIN
                 End If;
 
                 MERGE INTO t_experiment_plex_members AS t
-                USING ( SELECT channel, exp_id, channel_type_id, Comment
-                        FROM Tmp_Experiment_Plex_Members
+                USING (SELECT channel, exp_id, channel_type_id, Comment
+                       FROM Tmp_Experiment_Plex_Members
                       ) AS s
                 ON (t.channel = s.channel AND t.plex_exp_id = _currentPlexExperimentId)
                 WHEN MATCHED AND

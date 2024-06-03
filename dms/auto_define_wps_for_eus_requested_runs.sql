@@ -174,16 +174,16 @@ BEGIN
                    SUM(CASE WHEN FilterQ.work_package = 'none' THEN 1 ELSE 0 END) AS RequestsToUpdate,
                    P.title
             FROM Tmp_ProposalsToCheck C
-                 INNER JOIN ( SELECT request_id,
-                                     request_name,
-                                     created,
-                                     eus_proposal_id,
-                                     work_package
-                              FROM t_requested_run RR
-                              WHERE request_id IN ( SELECT RequestedRunID FROM Tmp_RequestedRunsToUpdate ) OR
-                                    (eus_proposal_id IN ( SELECT EUSProposal FROM Tmp_RequestedRunsToUpdate ) AND
-                                     RR.created >= CURRENT_TIMESTAMP - make_interval(months => _mostRecentMonths)
-                                    )
+                 INNER JOIN (SELECT request_id,
+                                    request_name,
+                                    created,
+                                    eus_proposal_id,
+                                    work_package
+                             FROM t_requested_run RR
+                             WHERE request_id IN (SELECT RequestedRunID FROM Tmp_RequestedRunsToUpdate) OR
+                                   (eus_proposal_id IN (SELECT EUSProposal FROM Tmp_RequestedRunsToUpdate) AND
+                                    RR.created >= CURRENT_TIMESTAMP - make_interval(months => _mostRecentMonths)
+                                   )
                             ) FilterQ
                    ON C.EUSProposal = FilterQ.eus_proposal_id
                  INNER JOIN t_eus_proposals P
@@ -249,16 +249,16 @@ BEGIN
                        ELSE FilterQ.work_package
                    END AS WorkPackage
             FROM Tmp_ProposalsToCheck C
-                 INNER JOIN ( SELECT request_id,
-                                     request_name,
-                                     created,
-                                     eus_proposal_id,
-                                     work_package
-                              FROM t_requested_run RR
-                              WHERE request_id IN ( SELECT RequestedRunID FROM Tmp_RequestedRunsToUpdate ) OR
-                                    (eus_proposal_id IN ( SELECT EUSProposal FROM Tmp_RequestedRunsToUpdate ) AND
-                                     RR.created >= CURRENT_TIMESTAMP - make_interval(months => _mostRecentMonths)
-                                    )
+                 INNER JOIN (SELECT request_id,
+                                    request_name,
+                                    created,
+                                    eus_proposal_id,
+                                    work_package
+                             FROM t_requested_run RR
+                             WHERE request_id IN (SELECT RequestedRunID FROM Tmp_RequestedRunsToUpdate) OR
+                                   (eus_proposal_id IN (SELECT EUSProposal FROM Tmp_RequestedRunsToUpdate) AND
+                                    RR.created >= CURRENT_TIMESTAMP - make_interval(months => _mostRecentMonths)
+                                   )
                             ) FilterQ
                    ON C.EUSProposal = FilterQ.eus_proposal_id
             ORDER BY C.EUSProposal, request_name

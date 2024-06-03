@@ -196,16 +196,16 @@ BEGIN
                            xmltable.name,
                            xmltable.value,
                            Replace(Replace(Replace(Coalesce(xmltable.step, ''), 'Yes (', ''), 'No (', ''), ')', '') AS Step
-                    FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
-                           FROM sw.t_job_parameters_history
-                           WHERE sw.t_job_parameters_history.job = _job AND
-                                 sw.t_job_parameters_history.most_recent_entry = 1 ) Src,
-                               XMLTABLE('//params/Param'
-                                  PASSING Src.rooted_xml
-                                  COLUMNS section citext PATH '@Section',
-                                          name    citext PATH '@Name',
-                                          value   citext PATH '@Value',
-                                          step    citext PATH '@Step')
+                    FROM (SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
+                          FROM sw.t_job_parameters_history
+                          WHERE sw.t_job_parameters_history.job = _job AND
+                                sw.t_job_parameters_history.most_recent_entry = 1 ) Src,
+                              XMLTABLE('//params/Param'
+                                 PASSING Src.rooted_xml
+                                 COLUMNS section citext PATH '@Section',
+                                         name    citext PATH '@Name',
+                                         value   citext PATH '@Value',
+                                         step    citext PATH '@Step')
                    ) XmlQ
           ) ConvertQ
     WHERE ConvertQ.Name <> 'DataPackageID' AND

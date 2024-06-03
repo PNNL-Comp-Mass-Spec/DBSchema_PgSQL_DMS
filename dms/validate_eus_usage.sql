@@ -447,7 +447,7 @@ BEGIN
 
                 SELECT string_agg(UserID[1]::text, ', ' ORDER BY UserID[1])
                 INTO _eusUserIDList
-                FROM ( SELECT regexp_matches(_eusUsersList, '[0-9]+', 'g') AS UserID) MatchQ;
+                FROM (SELECT regexp_matches(_eusUsersList, '[0-9]+', 'g') AS UserID) MatchQ;
 
                 If Coalesce(_eusUserIDList, '') = '' Then
                     _message := format('Unable to convert "person (ID)" entries to integers; integers not found in "%s"', _eusUsersList);

@@ -55,12 +55,13 @@ BEGIN
 
     UPDATE Tmp_UsageStats
     SET Usage_Last_12_Months = SourceQ.usage_last_12_months
-    FROM ( SELECT E.tissue_id AS tissue_id,
-                  COUNT(E.exp_id) AS usage_last_12_months
-            FROM public.t_experiments E
-            WHERE NOT E.tissue_id IS NULL AND
-                  E.created >= CURRENT_DATE - INTERVAL '365 days'
-            GROUP BY E.tissue_id ) SourceQ
+    FROM (SELECT E.tissue_id AS tissue_id,
+                 COUNT(E.exp_id) AS usage_last_12_months
+          FROM public.t_experiments E
+          WHERE NOT E.tissue_id IS NULL AND
+                E.created >= CURRENT_DATE - INTERVAL '365 days'
+          GROUP BY E.tissue_id
+         ) SourceQ
     WHERE Tmp_UsageStats.Tissue_ID = SourceQ.tissue_id;
 
     If Not _infoOnly Then

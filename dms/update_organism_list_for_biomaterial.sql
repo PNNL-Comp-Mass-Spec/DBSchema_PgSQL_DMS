@@ -221,9 +221,9 @@ BEGIN
     ---------------------------------------------------
 
     MERGE INTO t_biomaterial_organisms AS t
-    USING ( SELECT _biomaterialID AS Biomaterial_ID,
-                   Organism_ID
-            FROM Tmp_BiomaterialOrganisms
+    USING (SELECT _biomaterialID AS Biomaterial_ID,
+                  Organism_ID
+           FROM Tmp_BiomaterialOrganisms
           ) AS s
     ON (t.biomaterial_id = s.biomaterial_id AND t.organism_id = s.organism_id)
     -- Note: all of the columns in table t_biomaterial_organisms are primary keys or identity columns; there are no updatable columns

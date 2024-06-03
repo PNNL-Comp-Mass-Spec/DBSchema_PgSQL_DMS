@@ -186,7 +186,7 @@ BEGIN
         ---------------------------------------------------
 
         INSERT INTO ont.t_term (term_pk, ontology_id, term_name, identifier, definition, namespace, is_obsolete, is_root_term, is_leaf)
-        SELECT s.term_pk, _ontologyID, s.term_name, s.identifier, '' AS definition, _namespace, 0 AS is_obsolete, 0 AS i_root_term, Max(s.is_leaf)
+        SELECT s.term_pk, _ontologyID, s.term_name, s.identifier, '' AS definition, _namespace, 0 AS is_obsolete, 0 AS i_root_term, MAX(s.is_leaf)
         FROM Tmp_SourceData s
         WHERE s.matches_existing = 0
         GROUP BY s.term_pk, s.term_name, s.identifier;
@@ -271,14 +271,14 @@ BEGIN
 
         INSERT INTO Tmp_RelationshipsToDelete (Relationship_ID)
         SELECT ont.t_term_relationship.term_relationship_id
-        FROM ( SELECT DISTINCT SourceTable.identifier,
-                               SourceTable.term_pk AS Child_PK,
-                               SourceTable.parent_term_id,
-                               ont.t_term.term_pk AS Parent_PK
-               FROM ont.t_cv_bto SourceTable
-                    INNER JOIN ont.t_term
-                      ON SourceTable.parent_term_ID = ont.t_term.identifier
-               WHERE ont.t_term.ontology_id = _ontologyID
+        FROM (SELECT DISTINCT SourceTable.identifier,
+                              SourceTable.term_pk AS Child_PK,
+                              SourceTable.parent_term_id,
+                              ont.t_term.term_pk AS Parent_PK
+              FROM ont.t_cv_bto SourceTable
+                   INNER JOIN ont.t_term
+                     ON SourceTable.parent_term_ID = ont.t_term.identifier
+              WHERE ont.t_term.ontology_id = _ontologyID
              ) ValidRelationships
              RIGHT OUTER JOIN ont.t_term_relationship
                ON ValidRelationships.Child_PK = ont.t_term_relationship.subject_term_pk AND
@@ -321,13 +321,14 @@ BEGIN
                (CASE WHEN T.is_leaf = S.is_leaf THEN format('%s', T.is_leaf) ELSE format('%s --> %s', T.is_leaf, S.is_leaf)       END)::citext is_leaf,
                T.updated
         FROM ont.t_term AS T
-             INNER JOIN ( SELECT d.term_pk,
-                                 d.term_name,
-                                 d.identifier,
-                                 MAX(d.is_leaf) AS is_leaf
-                          FROM Tmp_SourceData d
-                          WHERE d.matches_existing = 1
-                          GROUP BY d.term_pk, d.term_name, d.identifier ) AS S
+             INNER JOIN (SELECT d.term_pk,
+                                d.term_name,
+                                d.identifier,
+                                MAX(d.is_leaf) AS is_leaf
+                         FROM Tmp_SourceData d
+                         WHERE d.matches_existing = 1
+                         GROUP BY d.term_pk, d.term_name, d.identifier
+                        ) AS S
                ON T.term_pk = S.term_pk
         WHERE T.term_name <> S.term_name OR
               T.identifier <> S.identifier OR
@@ -337,7 +338,7 @@ BEGIN
                S.term_pk,
                S.term_name,
                S.identifier,
-               Max(S.is_leaf)::citext AS is_leaf,
+               MAX(S.is_leaf)::citext AS is_leaf,
                null::timestamp AS updated
         FROM Tmp_SourceData AS S
         WHERE S.matches_existing = 0

@@ -133,12 +133,12 @@ BEGIN
            container_limit
     FROM t_material_locations
     WHERE (freezer_tag = _sourceFreezerTag) AND
-          (NOT location_id IN ( SELECT location_id
-                                FROM t_material_locations
-                                WHERE freezer_tag = _sourceFreezerTag::citext AND
-                                      status = 'Inactive' AND
-                                      col = 'na'
-                               )
+          (NOT location_id IN (SELECT location_id
+                               FROM t_material_locations
+                               WHERE freezer_tag = _sourceFreezerTag::citext AND
+                                     status = 'Inactive' AND
+                                     col = 'na'
+                              )
            )
     ORDER BY shelf, rack, row, col;
 
@@ -153,9 +153,9 @@ BEGIN
 
         FOR _shelfInfo IN
             SELECT Shelf,
-                   Min(Rack) AS Rack_Min, Max(Rack) AS Rack_Max,
-                   Min(Row)  AS Row_Min,  Max(Row)  AS Row_Max,
-                   Min(Col)  AS Col_Min,  Max(Col)  AS Col_Max
+                   MIN(Rack) AS Rack_Min, MAX(Rack) AS Rack_Max,
+                   MIN(Row)  AS Row_Min,  MAX(Row)  AS Row_Max,
+                   MIN(Col)  AS Col_Min,  MAX(Col)  AS Col_Max
             FROM t_material_locations
             WHERE freezer_tag = '1208A' and Rack <> 'na' and Row <> 'na'
             GROUP BY Shelf

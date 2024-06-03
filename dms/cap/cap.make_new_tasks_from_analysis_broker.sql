@@ -176,11 +176,11 @@ BEGIN
     UPDATE Tmp_New_Jobs
     SET No_Dataset_Archive = true
     WHERE Tmp_New_Jobs.Finish >= CURRENT_TIMESTAMP - make_interval(days => _timeWindowToRequireExistingDatasetArchiveJob) AND
-          NOT EXISTS ( SELECT Dataset_ID
-                       FROM cap.t_tasks
-                       WHERE Script = 'DatasetArchive' AND
-                             State = 3 AND
-                             t_tasks.Dataset_ID = Tmp_New_Jobs.Dataset_ID
+          NOT EXISTS (SELECT Dataset_ID
+                      FROM cap.t_tasks
+                      WHERE Script = 'DatasetArchive' AND
+                            State = 3 AND
+                            t_tasks.Dataset_ID = Tmp_New_Jobs.Dataset_ID
                      );
 
     ---------------------------------------------------
@@ -254,21 +254,21 @@ BEGIN
                    Capture_Task_Needed,
                    Results_Folder_Name,
                    Dataset
-            FROM ( SELECT Dataset_ID,
-                          No_Dataset_Archive,
-                          Pending_Archive_Update,
-                          Archive_Update_Current,
-                          CASE
-                              WHEN (No_Dataset_Archive = false OR _bypassDatasetArchive) AND
-                                   Not Pending_Archive_Update AND
-                                   Not Archive_Update_Current
-                              THEN 'Yes'
-                              ELSE 'No'
-                          END AS Capture_Task_Needed,
-                          Results_Folder_Name,
-                          Dataset
-                   FROM Tmp_New_Jobs
-                   ) LookupQ
+            FROM (SELECT Dataset_ID,
+                         No_Dataset_Archive,
+                         Pending_Archive_Update,
+                         Archive_Update_Current,
+                         CASE
+                             WHEN (No_Dataset_Archive = false OR _bypassDatasetArchive) AND
+                                  Not Pending_Archive_Update AND
+                                  Not Archive_Update_Current
+                             THEN 'Yes'
+                             ELSE 'No'
+                         END AS Capture_Task_Needed,
+                         Results_Folder_Name,
+                         Dataset
+                  FROM Tmp_New_Jobs
+                 ) LookupQ
             WHERE NOT _infoOnlyShowsNewJobsOnly OR
                   Capture_Task_Needed = 'Yes'
             ORDER BY Dataset_ID

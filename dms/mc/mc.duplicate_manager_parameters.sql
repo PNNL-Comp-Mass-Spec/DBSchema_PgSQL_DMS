@@ -114,9 +114,9 @@ BEGIN
                    _targetMgrID AS mgr_id,
                    Source.comment
             FROM mc.t_param_value AS Source
-                 LEFT OUTER JOIN ( SELECT PV.param_type_id
-                                   FROM mc.t_param_value PV
-                                   WHERE PV.mgr_id = _targetMgrID ) AS ExistingParams
+                 LEFT OUTER JOIN (SELECT PV.param_type_id
+                                  FROM mc.t_param_value PV
+                                  WHERE PV.mgr_id = _targetMgrID) AS ExistingParams
                    ON Source.param_type_id = ExistingParams.param_type_id
             WHERE Source.mgr_id = _sourceMgrID AND
                   ExistingParams.param_type_id IS NULL;
@@ -129,9 +129,9 @@ BEGIN
            _targetMgrID AS mgr_id,
            Source.comment
     FROM mc.t_param_value AS Source
-         LEFT OUTER JOIN ( SELECT PV.param_type_id
-                           FROM mc.t_param_value PV
-                           WHERE PV.mgr_id = _targetMgrID ) AS ExistingParams
+         LEFT OUTER JOIN (SELECT PV.param_type_id
+                          FROM mc.t_param_value PV
+                          WHERE PV.mgr_id = _targetMgrID) AS ExistingParams
            ON Source.param_type_id = ExistingParams.param_type_id
     WHERE Source.mgr_id = _sourceMgrID AND
           ExistingParams.param_type_id IS NULL;

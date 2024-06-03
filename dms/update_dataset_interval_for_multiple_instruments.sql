@@ -249,21 +249,21 @@ BEGIN
 
         UPDATE Tmp_Instruments
         SET Use_EUS_ID = true
-        FROM ( SELECT InstName.instrument,
-                      InstMapping.eus_instrument_id
-               FROM t_instrument_name InstName
-                    INNER JOIN t_emsl_dms_instrument_mapping InstMapping
-                      ON InstName.instrument_id = InstMapping.dms_instrument_id
-                    INNER JOIN ( SELECT InstMapping.eus_instrument_id
-                                 FROM t_instrument_name InstName
-                                      INNER JOIN t_emsl_dms_instrument_mapping InstMapping
-                                        ON InstName.instrument_id = InstMapping.dms_instrument_id
-                                 WHERE NOT InstMapping.eus_instrument_id IS NULL
-                                 GROUP BY InstMapping.eus_instrument_id
-                                 HAVING COUNT(InstName.instrument_id) > 1
-                               ) LookupQ
-                        ON InstMapping.eus_instrument_id = LookupQ.eus_instrument_id
-              ) FilterQ
+        FROM (SELECT InstName.instrument,
+                     InstMapping.eus_instrument_id
+              FROM t_instrument_name InstName
+                   INNER JOIN t_emsl_dms_instrument_mapping InstMapping
+                     ON InstName.instrument_id = InstMapping.dms_instrument_id
+                   INNER JOIN (SELECT InstMapping.eus_instrument_id
+                               FROM t_instrument_name InstName
+                                    INNER JOIN t_emsl_dms_instrument_mapping InstMapping
+                                      ON InstName.instrument_id = InstMapping.dms_instrument_id
+                               WHERE NOT InstMapping.eus_instrument_id IS NULL
+                               GROUP BY InstMapping.eus_instrument_id
+                               HAVING COUNT(InstName.instrument_id) > 1
+                              ) LookupQ
+                       ON InstMapping.eus_instrument_id = LookupQ.eus_instrument_id
+             ) FilterQ
         WHERE Tmp_Instruments.eus_instrument_id = FilterQ.eus_instrument_id;
 
         If _infoOnly Then

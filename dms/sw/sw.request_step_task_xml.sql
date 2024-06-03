@@ -264,7 +264,7 @@ BEGIN
         -- with PGA representing
         -- 'INNER JOIN dbo.T_Analysis_Job_Processor_Group PGA ON PGM.Group_ID = PGA.ID'
         --
-        -- Since processor groups were deprecated in 2015, gp_groups is now computed as 'sum(1) AS GP_Groups'
+        -- Since processor groups were deprecated in 2015, gp_groups is now computed as 'SUM(1) AS GP_Groups'
         --
         -- The above information relates to the following query because, prior to May 2015,
         -- _processorDoesGP was computed using '_processorDoesGP = t_local_processors.gp_groups',
@@ -485,14 +485,15 @@ BEGIN
                        PT.Exceeds_Available_Memory,
                        CASE WHEN _processorDoesGP THEN 'Yes' ELSE 'No' END AS Processor_Does_General_Proc
                 FROM Tmp_AvailableProcessorTools PT
-                     CROSS JOIN ( SELECT M.total_cpus,
-                                         M.cpus_available,
-                                         M.total_memory_mb,
-                                         M.memory_available
-                                  FROM sw.t_local_processors LP
-                                     INNER JOIN sw.t_machines M
-                                       ON LP.machine = M.machine
-                                  WHERE LP.processor_name = _processorName ) MachineQ
+                     CROSS JOIN (SELECT M.total_cpus,
+                                        M.cpus_available,
+                                        M.total_memory_mb,
+                                        M.memory_available
+                                 FROM sw.t_local_processors LP
+                                      INNER JOIN sw.t_machines M
+                                        ON LP.machine = M.machine
+                                 WHERE LP.processor_name = _processorName
+                                ) MachineQ
                 ORDER BY PT.Tool_Name
             LOOP
                 _infoData := format(_formatSpecifier,
@@ -725,36 +726,35 @@ BEGIN
                     ELSE 5   -- Results_Transfer step to be run on the job-specific storage server
                 END AS Association_Type,
                 JS.next_try
-            FROM ( SELECT TJ.job,
-                          TJ.priority,        -- Job_Priority
-                          TJ.archive_busy,
-                          TJ.storage_server,
-                          TJ.dataset_id
-                   FROM sw.t_jobs TJ
-                   WHERE TJ.state <> 8
+            FROM (SELECT TJ.job,
+                         TJ.priority,        -- Job_Priority
+                         TJ.archive_busy,
+                         TJ.storage_server,
+                         TJ.dataset_id
+                  FROM sw.t_jobs TJ
+                  WHERE TJ.state <> 8
                  ) J
                  INNER JOIN sw.t_job_steps JS
                    ON J.job = JS.job
-                 INNER JOIN ( SELECT LP.processor_name,
-                                     M.machine
-                              FROM sw.t_machines M
-                                   INNER JOIN sw.t_local_processors LP
-                                     ON M.machine = LP.machine
-                                   INNER JOIN sw.t_processor_tool_group_details PTGD
-                                     ON LP.proc_tool_mgr_id = PTGD.mgr_id AND
-                                        M.proc_tool_group_id = PTGD.group_id
-                              WHERE LP.processor_name = _processorName AND
-                                    PTGD.enabled > 0 AND
-                                    PTGD.tool_name = 'Results_Transfer'
+                 INNER JOIN (SELECT LP.processor_name,
+                                    M.machine
+                             FROM sw.t_machines M
+                                  INNER JOIN sw.t_local_processors LP
+                                    ON M.machine = LP.machine
+                                  INNER JOIN sw.t_processor_tool_group_details PTGD
+                                    ON LP.proc_tool_mgr_id = PTGD.mgr_id AND
+                                       M.proc_tool_group_id = PTGD.group_id
+                             WHERE LP.processor_name = _processorName AND
+                                   PTGD.enabled > 0 AND
+                                   PTGD.tool_name = 'Results_Transfer'
                  ) TP
                    ON JS.Tool = 'Results_Transfer' AND
                       TP.machine = Coalesce(J.storage_server, TP.machine)        -- Must use Coalesce here to handle jobs where the storage server is not defined in sw.t_jobs
             WHERE JS.state = 2 AND (CURRENT_TIMESTAMP > JS.next_try OR _infoLevel > 0)
-            ORDER BY
-                Association_Type,
-                J.priority,        -- Job_Priority
-                job,
-                step
+            ORDER BY Association_Type,
+                     J.priority,        -- Job_Priority
+                     job,
+                     step
             LIMIT _candidateJobStepsToRetrieve;
 
             If Not FOUND And _infoLevel <> 0 Then
@@ -797,36 +797,35 @@ BEGIN
                         ELSE 106  -- Results_Transfer step to be run on the job-specific storage server
                     END AS Association_Type,
                     JS.next_try
-                FROM ( SELECT TJ.job,
-                            TJ.priority,        -- Job_Priority
-                            TJ.archive_busy,
-                            TJ.storage_server,
-                            TJ.dataset_id
-                        FROM sw.t_jobs TJ
-                        WHERE TJ.state <> 8
-                      ) J
-                      INNER JOIN sw.t_job_steps JS
-                        ON J.job = JS.job
-                      INNER JOIN ( SELECT LP.processor_name,
+                FROM (SELECT TJ.job,
+                           TJ.priority,        -- Job_Priority
+                           TJ.archive_busy,
+                           TJ.storage_server,
+                           TJ.dataset_id
+                      FROM sw.t_jobs TJ
+                      WHERE TJ.state <> 8
+                     ) J
+                     INNER JOIN sw.t_job_steps JS
+                       ON J.job = JS.job
+                     INNER JOIN (SELECT LP.processor_name,
                                         M.machine
-                                FROM sw.t_machines M
-                                    INNER JOIN sw.t_local_processors LP
-                                        ON M.machine = LP.machine
-                                    INNER JOIN sw.t_processor_tool_group_details PTGD
-                                        ON LP.proc_tool_mgr_id = PTGD.mgr_id AND
-                                           M.proc_tool_group_id = PTGD.group_id
-                                WHERE LP.processor_name = _processorName AND
-                                      PTGD.enabled > 0 AND
-                                      PTGD.tool_name = 'Results_Transfer'
+                                 FROM sw.t_machines M
+                                     INNER JOIN sw.t_local_processors LP
+                                       ON M.machine = LP.machine
+                                     INNER JOIN sw.t_processor_tool_group_details PTGD
+                                       ON LP.proc_tool_mgr_id = PTGD.mgr_id AND
+                                          M.proc_tool_group_id = PTGD.group_id
+                                 WHERE LP.processor_name = _processorName AND
+                                       PTGD.enabled > 0 AND
+                                       PTGD.tool_name = 'Results_Transfer'
                     ) TP
                     ON JS.Tool = 'Results_Transfer' AND
                        TP.machine <> J.storage_server
                    WHERE JS.state = 2 AND (CURRENT_TIMESTAMP > JS.next_try OR _infoLevel > 0)
-                ORDER BY
-                    Association_Type,
-                    J.priority,        -- Job_Priority
-                    job,
-                    step
+                ORDER BY Association_Type,
+                         J.priority,        -- Job_Priority
+                         job,
+                         step
                 LIMIT _candidateJobStepsToRetrieve;
             End If;
 
@@ -928,60 +927,59 @@ BEGIN
                     ELSE 100 -- not recognized assignment ('<Not recognized>')
                 END AS Association_Type,
                 JS.next_try
-            FROM ( SELECT TJ.job,
-                          TJ.priority,        -- Job_Priority
-                          TJ.archive_busy,
-                          TJ.storage_server,
-                          TJ.dataset_id
-                   FROM sw.t_jobs TJ
-                   WHERE TJ.state <> 8
+            FROM (SELECT TJ.job,
+                         TJ.priority,        -- Job_Priority
+                         TJ.archive_busy,
+                         TJ.storage_server,
+                         TJ.dataset_id
+                  FROM sw.t_jobs TJ
+                  WHERE TJ.state <> 8
                  ) J
                  INNER JOIN sw.t_job_steps JS
                    ON J.job = JS.job
-                 INNER JOIN (    -- Viable processors/step tool combinations (with CPU loading, memory usage,and processor group information)
-                              SELECT LP.Processor_Name,
-                                     LP.Processor_ID,
-                                     PTGD.Tool_Name,
-                                     PTGD.priority AS Tool_Priority,
-                                     PTGD.Max_Job_Priority,
+                 INNER JOIN (-- Viable processors/step tool combinations (with CPU loading, memory usage,and processor group information)
+                             SELECT LP.Processor_Name,
+                                    LP.Processor_ID,
+                                    PTGD.Tool_Name,
+                                    PTGD.priority AS Tool_Priority,
+                                    PTGD.Max_Job_Priority,
 
-                                     ---------------------------------------------------
-                                     -- Deprecated in May 2015:
-                                     --
-                                     -- LP.gp_groups AS Processor_GP,
-                                     -- ST.available_for_general_processing AS Tool_GP,
-                                     ---------------------------------------------------
+                                    ---------------------------------------------------
+                                    -- Deprecated in May 2015:
+                                    --
+                                    -- LP.gp_groups AS Processor_GP,
+                                    -- ST.available_for_general_processing AS Tool_GP,
+                                    ---------------------------------------------------
 
-                                     M.cpus_available,
-                                     ST.cpu_load,
-                                     M.memory_available,
-                                     M.machine
-                              FROM sw.t_machines M
-                                   INNER JOIN sw.t_local_processors LP
-                                     ON M.machine = LP.machine
-                                   INNER JOIN sw.t_processor_tool_group_details PTGD
-                                     ON LP.proc_tool_mgr_id = PTGD.mgr_id AND
-                                        M.proc_tool_group_id = PTGD.group_id
-                                   INNER JOIN sw.t_step_tools ST
-                                     ON PTGD.tool_name = ST.step_tool
-                              WHERE LP.processor_name = _processorName AND
-                                    PTGD.enabled > 0 AND
-                                    PTGD.tool_name <> 'Results_Transfer'        -- Candidate Result_Transfer steps were found above
+                                    M.cpus_available,
+                                    ST.cpu_load,
+                                    M.memory_available,
+                                    M.machine
+                             FROM sw.t_machines M
+                                  INNER JOIN sw.t_local_processors LP
+                                    ON M.machine = LP.machine
+                                  INNER JOIN sw.t_processor_tool_group_details PTGD
+                                    ON LP.proc_tool_mgr_id = PTGD.mgr_id AND
+                                       M.proc_tool_group_id = PTGD.group_id
+                                  INNER JOIN sw.t_step_tools ST
+                                    ON PTGD.tool_name = ST.step_tool
+                             WHERE LP.processor_name = _processorName AND
+                                   PTGD.enabled > 0 AND
+                                   PTGD.tool_name <> 'Results_Transfer'        -- Candidate Result_Transfer steps were found above
                  ) TP
                    ON TP.tool_name = JS.tool
             WHERE (CURRENT_TIMESTAMP > JS.Next_Try OR _infoLevel > 0) AND
                   J.priority <= TP.max_job_priority AND
                   (JS.state In (2, 11) OR _remoteInfoID > 1 And JS.state = 9) AND
                   NOT EXISTS (SELECT * FROM sw.t_local_processor_job_step_exclusion JSE WHERE JSE.processor_id = TP.processor_id AND JSE.step = JS.Step)
-            ORDER BY
-                Association_Type,
-                Tool_Priority,
-                J.priority,        -- Job_Priority
-                CASE WHEN JS.tool = 'Results_Transfer' Then 10    -- Give Results_Transfer steps priority so that they run first and are grouped by Job
-                     ELSE 0
-                END DESC,
-                Job,
-                Step
+            ORDER BY Association_Type,
+                     Tool_Priority,
+                     J.priority,        -- Job_Priority
+                     CASE WHEN JS.tool = 'Results_Transfer' Then 10    -- Give Results_Transfer steps priority so that they run first and are grouped by Job
+                          ELSE 0
+                     END DESC,
+                     Job,
+                     Step
             LIMIT _candidateJobStepsToRetrieve;
 
         Else
@@ -1036,35 +1034,35 @@ BEGIN
             --         TP.machine,
             --         1 AS Association_Type,
             --         JS.next_try
-            --     FROM ( SELECT TJ.job,
-            --                   TJ.priority,        -- Job_Priority
-            --                   TJ.archive_busy,
-            --                   TJ.storage_server,
-            --                   TJ.dataset_id
-            --            FROM sw.t_jobs TJ
+            --     FROM (SELECT TJ.job,
+            --                  TJ.priority,        -- Job_Priority
+            --                  TJ.archive_busy,
+            --                  TJ.storage_server,
+            --                  TJ.dataset_id
+            --           FROM sw.t_jobs TJ
             --        WHERE TJ.state <> 8 ) J
             --        INNER JOIN sw.t_job_steps JS
             --            ON J.job = JS.job
-            --          INNER JOIN (    -- Viable processors/step tools combinations (with CPU loading and processor group information)
-            --                       SELECT LP.processor_name,
-            --                              LP.processor_id AS Processor_ID,
-            --                              PTGD.tool_name,
-            --                              PTGD.priority AS Tool_Priority,
-            --                              LP.gp_groups AS Processor_GP,
-            --                              ST.available_for_general_processing AS Tool_GP,
-            --                              M.cpus_available,
-            --                              ST.cpu_load,
-            --                              M.memory_available,
-            --                              M.machine
-            --                       FROM sw.t_machines M
-            --                            INNER JOIN sw.t_local_processors LP
-            --                              ON M.machine = LP.machine
-            --                            INNER JOIN sw.t_processor_tool_group_details PTGD
-            --                              ON LP.proc_tool_mgr_id = PTGD.mgr_id AND
-            --                                 M.proc_tool_group_id = PTGD.group_id
-            --                            INNER JOIN sw.t_step_tools ST
-            --                              ON PTGD.tool_name = ST.step_tool
-            --                       WHERE PTGD.enabled > 0 AND
+            --          INNER JOIN (-- Viable processors/step tools combinations (with CPU loading and processor group information)
+            --                      SELECT LP.processor_name,
+            --                             LP.processor_id AS Processor_ID,
+            --                             PTGD.tool_name,
+            --                             PTGD.priority AS Tool_Priority,
+            --                             LP.gp_groups AS Processor_GP,
+            --                             ST.available_for_general_processing AS Tool_GP,
+            --                             M.cpus_available,
+            --                             ST.cpu_load,
+            --                             M.memory_available,
+            --                             M.machine
+            --                      FROM sw.t_machines M
+            --                           INNER JOIN sw.t_local_processors LP
+            --                             ON M.machine = LP.machine
+            --                           INNER JOIN sw.t_processor_tool_group_details PTGD
+            --                             ON LP.proc_tool_mgr_id = PTGD.mgr_id AND
+            --                                M.proc_tool_group_id = PTGD.group_id
+            --                           INNER JOIN sw.t_step_tools ST
+            --                             ON PTGD.tool_name = ST.step_tool
+            --                      WHERE PTGD.enabled > 0 AND
             --         LP.processor_name = _processorName AND
             --         PTGD.tool_name <> 'Results_Transfer'        -- Candidate Result_Transfer steps were found above
             --                     ) TP
@@ -1138,43 +1136,44 @@ BEGIN
                     ELSE 100    -- not recognized assignment ('<Not recognized>')
                 END AS Association_Type,
                 JS.next_try
-            FROM ( SELECT TJ.job,
-                          TJ.priority,        -- Job_Priority
-                          TJ.archive_busy,
-                          TJ.storage_server,
-                          TJ.dataset_id
-                   FROM sw.t_jobs TJ
-                   WHERE TJ.state <> 8 ) J
+            FROM (SELECT TJ.job,
+                         TJ.priority,        -- Job_Priority
+                         TJ.archive_busy,
+                         TJ.storage_server,
+                         TJ.dataset_id
+                  FROM sw.t_jobs TJ
+                  WHERE TJ.state <> 8
+                 ) J
                  INNER JOIN sw.t_job_steps JS
                    ON J.job = JS.job
-                 INNER JOIN (    -- Viable processors/step tools combinations (with CPU loading and processor group information)
-                              SELECT LP.Processor_Name,
-                                     LP.Processor_ID,
-                                     PTGD.Tool_Name,
-                                     PTGD.priority AS Tool_Priority,
-                                     PTGD.Max_Job_Priority,
+                 INNER JOIN (-- Viable processors/step tools combinations (with CPU loading and processor group information)
+                             SELECT LP.Processor_Name,
+                                    LP.Processor_ID,
+                                    PTGD.Tool_Name,
+                                    PTGD.priority AS Tool_Priority,
+                                    PTGD.Max_Job_Priority,
 
-                                     ---------------------------------------------------
-                                     -- Deprecated in May 2015:
-                                     --
-                                     -- ST.available_for_general_processing AS Tool_GP,
-                                     ---------------------------------------------------
+                                    ---------------------------------------------------
+                                    -- Deprecated in May 2015:
+                                    --
+                                    -- ST.available_for_general_processing AS Tool_GP,
+                                    ---------------------------------------------------
 
-                                     M.cpus_available,
-                                     ST.cpu_load,
-                                     M.memory_available,
-                                     M.machine
-                              FROM sw.t_machines M
-                                   INNER JOIN sw.t_local_processors LP
-                                     ON M.machine = LP.machine
-                                   INNER JOIN sw.t_processor_tool_group_details PTGD
-                                     ON LP.proc_tool_mgr_id = PTGD.mgr_id AND
-                                        M.proc_tool_group_id = PTGD.group_id
-                                   INNER JOIN sw.t_step_tools ST
-                                     ON PTGD.tool_name = ST.step_tool
-                              WHERE PTGD.enabled > 0 AND
-                                    LP.processor_name = _processorName AND
-                                    PTGD.tool_name <> 'Results_Transfer'            -- Candidate Result_Transfer steps were found above
+                                    M.cpus_available,
+                                    ST.cpu_load,
+                                    M.memory_available,
+                                    M.machine
+                             FROM sw.t_machines M
+                                  INNER JOIN sw.t_local_processors LP
+                                    ON M.machine = LP.machine
+                                  INNER JOIN sw.t_processor_tool_group_details PTGD
+                                    ON LP.proc_tool_mgr_id = PTGD.mgr_id AND
+                                       M.proc_tool_group_id = PTGD.group_id
+                                  INNER JOIN sw.t_step_tools ST
+                                    ON PTGD.tool_name = ST.step_tool
+                             WHERE PTGD.enabled > 0 AND
+                                   LP.processor_name = _processorName AND
+                                   PTGD.tool_name <> 'Results_Transfer'            -- Candidate Result_Transfer steps were found above
                             ) TP
                    ON TP.tool_name = JS.tool
             WHERE (TP.cpus_available >= CASE WHEN JS.state = 9 OR _remoteInfoID > 1 THEN -50 ELSE TP.cpu_load END) AND
@@ -1289,15 +1288,15 @@ BEGIN
 
         UPDATE Tmp_CandidateJobSteps CJS
         SET Association_Type = 109
-        FROM ( SELECT J.dataset_id,
-                      LP.machine
-               FROM sw.t_job_steps JS
-                    INNER JOIN sw.t_jobs J
-                      ON JS.job = J.job
-                    INNER JOIN sw.t_local_processors LP
-                      ON JS.processor = LP.processor_name
-               WHERE JS.state = 4 AND
-                     JS.start >= CURRENT_TIMESTAMP - INTERVAL '10 minutes'
+        FROM (SELECT J.dataset_id,
+                     LP.machine
+              FROM sw.t_job_steps JS
+                   INNER JOIN sw.t_jobs J
+                     ON JS.job = J.job
+                   INNER JOIN sw.t_local_processors LP
+                     ON JS.processor = LP.processor_name
+              WHERE JS.state = 4 AND
+                    JS.start >= CURRENT_TIMESTAMP - INTERVAL '10 minutes'
              ) RecentStartQ
         WHERE CJS.dataset_id = RecentStartQ.dataset_id AND
               CJS.machine = RecentStartQ.machine;
@@ -1329,18 +1328,18 @@ BEGIN
                                                                THEN ' and others'
                                                                ELSE ''
                                                           END)
-                FROM ( SELECT job,
-                              MIN(processor) AS Alternate_Processor,
-                              COUNT(processor) AS Alternate_Processor_Count
-                       FROM sw.t_local_job_processors
-                       WHERE processor <> _processorName
-                       GROUP BY job
+                FROM (SELECT job,
+                             MIN(processor) AS Alternate_Processor,
+                             COUNT(processor) AS Alternate_Processor_Count
+                      FROM sw.t_local_job_processors
+                      WHERE processor <> _processorName
+                      GROUP BY job
                      ) LJP
                 WHERE CJS.job = LJP.job AND
                       CJS.Association_Type = 99 AND
-                      NOT EXISTS ( SELECT job
-                                   FROM sw.t_local_job_processors
-                                   WHERE processor = _processorName );
+                      NOT EXISTS (SELECT job
+                                  FROM sw.t_local_job_processors
+                                  WHERE processor = _processorName );
             End If;
 
         End If;
@@ -1494,24 +1493,24 @@ BEGIN
 
             UPDATE sw.t_machines Target
             SET cpus_available = total_cpus - CPUQ.CPUs_Busy
-            FROM ( SELECT LP.Machine,
-                          SUM(CASE
-                                  WHEN _jobIsRunningRemote > 0 AND
-                                       JS.Step = _step THEN 0
-                                  WHEN ST.Uses_All_Cores > 0 AND
-                                       JS.Actual_CPU_Load = JS.CPU_Load THEN Coalesce(M.Total_CPUs, JS.CPU_Load)
-                                  ELSE JS.Actual_CPU_Load
-                              END) AS CPUs_Busy
-                   FROM sw.t_job_steps JS
-                        INNER JOIN sw.t_local_processors LP
-                          ON JS.processor = LP.processor_name
-                        INNER JOIN sw.t_step_tools ST
-                          ON ST.step_tool = JS.tool
-                        INNER JOIN sw.t_machines M
-                          ON LP.machine = M.machine
-                   WHERE LP.machine = _machine AND
-                         JS.state = 4
-                   GROUP BY LP.machine
+            FROM (SELECT LP.Machine,
+                         SUM(CASE
+                                 WHEN _jobIsRunningRemote > 0 AND
+                                      JS.Step = _step THEN 0
+                                 WHEN ST.Uses_All_Cores > 0 AND
+                                      JS.Actual_CPU_Load = JS.CPU_Load THEN Coalesce(M.Total_CPUs, JS.CPU_Load)
+                                 ELSE JS.Actual_CPU_Load
+                             END) AS CPUs_Busy
+                  FROM sw.t_job_steps JS
+                       INNER JOIN sw.t_local_processors LP
+                         ON JS.processor = LP.processor_name
+                       INNER JOIN sw.t_step_tools ST
+                         ON ST.step_tool = JS.tool
+                       INNER JOIN sw.t_machines M
+                         ON LP.machine = M.machine
+                  WHERE LP.machine = _machine AND
+                        JS.state = 4
+                  GROUP BY LP.machine
                ) CPUQ
             WHERE CPUQ.machine = Target.machine;
 

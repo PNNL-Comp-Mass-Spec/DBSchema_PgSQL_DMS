@@ -237,21 +237,20 @@ BEGIN
                    XmlQ.name,
                    XmlQ.value,
                    Coalesce(public.try_cast(XmlQ.Step, null::int), 0) AS StepNumber
-            FROM (
-                    SELECT xmltable.section,
-                           xmltable.name,
-                           xmltable.value,
-                           Replace(Replace(Replace(Coalesce(xmltable.step, ''), 'Yes (', ''), 'No (', ''), ')', '') AS Step
-                    FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
-                           FROM sw.t_job_parameters
-                           WHERE sw.t_job_parameters.job = _job ) Src,
-                               XMLTABLE('//params/Param'
-                                  PASSING Src.rooted_xml
-                                  COLUMNS section citext PATH '@Section',
-                                          name    citext PATH '@Name',
-                                          value   citext PATH '@Value',
-                                          step    citext PATH '@Step')
-                   ) XmlQ
+            FROM (SELECT xmltable.section,
+                         xmltable.name,
+                         xmltable.value,
+                         Replace(Replace(Replace(Coalesce(xmltable.step, ''), 'Yes (', ''), 'No (', ''), ')', '') AS Step
+                  FROM (SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
+                        FROM sw.t_job_parameters
+                        WHERE sw.t_job_parameters.job = _job ) Src,
+                            XMLTABLE('//params/Param'
+                               PASSING Src.rooted_xml
+                               COLUMNS section citext PATH '@Section',
+                                       name    citext PATH '@Name',
+                                       value   citext PATH '@Value',
+                                       step    citext PATH '@Step')
+                 ) XmlQ
           ) ConvertQ
     WHERE ConvertQ.Name <> 'DataPackageID' AND
           (ConvertQ.StepNumber = 0 OR

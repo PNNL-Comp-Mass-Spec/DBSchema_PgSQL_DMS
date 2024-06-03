@@ -153,10 +153,10 @@ BEGIN
                 -- Append the 10 newest events to delete
                 INSERT INTO Tmp_EventsToDelete (Event_ID, Target_Type, Target_ID, Target_State, Prev_Target_State, Entered)
                 SELECT T.Event_ID, T.Target_Type, T.Target_ID, T.Target_State, T.Prev_Target_State, T.Entered
-                FROM ( SELECT Event_ID
-                       FROM Tmp_EventLogIDs
-                       ORDER BY Event_ID DESC
-                       LIMIT 10
+                FROM (SELECT Event_ID
+                      FROM Tmp_EventLogIDs
+                      ORDER BY Event_ID DESC
+                      LIMIT 10
                      ) S
                      INNER JOIN logdms.t_event_log T
                        ON S.Event_ID = T.Event_ID
@@ -272,10 +272,10 @@ BEGIN
                 -- Append the 10 newest log entries to delete
                 INSERT INTO Tmp_LogEntriesToDelete (Entry_ID, Posted_By, Entered, Type, Message)
                 SELECT T.entry_id, T.Posted_By, T.Entered, T.type, T.Message
-                FROM ( SELECT entry_id
-                       FROM Tmp_HistoricLogIDs
-                       ORDER BY entry_id DESC
-                       LIMIT 10
+                FROM (SELECT entry_id
+                      FROM Tmp_HistoricLogIDs
+                      ORDER BY entry_id DESC
+                      LIMIT 10
                      ) S
                      INNER JOIN logdms.t_log_entries T
                        ON S.entry_id = T.entry_id

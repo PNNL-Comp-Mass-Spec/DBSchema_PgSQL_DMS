@@ -113,10 +113,10 @@ BEGIN
 
         DELETE FROM t_aux_info_value
         WHERE target_id = _destEntityID AND
-              aux_description_id IN ( SELECT Item_ID
-                                      FROM V_Aux_Info_Definition
-                                      WHERE Target = _targetName AND
-                                            Category = _categoryName );
+              aux_description_id IN (SELECT Item_ID
+                                     FROM V_Aux_Info_Definition
+                                     WHERE Target = _targetName AND
+                                           Category = _categoryName);
 
         -- Insert new values
 
@@ -128,10 +128,10 @@ BEGIN
                value
         FROM t_aux_info_value
         WHERE target_id = _sourceEntityID AND
-              aux_description_id IN ( SELECT Item_ID
-                                      FROM V_Aux_Info_Definition
-                                      WHERE Target = _targetName AND
-                                            Category = _categoryName );
+              aux_description_id IN (SELECT Item_ID
+                                     FROM V_Aux_Info_Definition
+                                     WHERE Target = _targetName AND
+                                           Category = _categoryName);
 
     End If;
 
@@ -148,11 +148,11 @@ BEGIN
 
         DELETE FROM t_aux_info_value
         WHERE target_id = _destEntityID AND
-              aux_description_id IN ( SELECT Item_ID
-                                      FROM V_Aux_Info_Definition
-                                      WHERE Target = _targetName AND
-                                            Category = _categoryName AND
-                                            Subcategory = _subCategoryName );
+              aux_description_id IN (SELECT Item_ID
+                                     FROM V_Aux_Info_Definition
+                                     WHERE Target = _targetName AND
+                                           Category = _categoryName AND
+                                           Subcategory = _subCategoryName);
 
         -- Insert new values
 
@@ -164,11 +164,11 @@ BEGIN
                value
         FROM t_aux_info_value
         WHERE target_id = _sourceEntityID AND
-              aux_description_id IN ( SELECT Item_ID
-                                      FROM V_Aux_Info_Definition
-                                      WHERE Target = _targetName AND
-                                            Category = _categoryName AND
-                                            Subcategory = _subCategoryName );
+              aux_description_id IN (SELECT Item_ID
+                                     FROM V_Aux_Info_Definition
+                                     WHERE Target = _targetName AND
+                                           Category = _categoryName AND
+                                           Subcategory = _subCategoryName);
     End If;
 
     ---------------------------------------------------
@@ -184,9 +184,9 @@ BEGIN
 
         DELETE FROM t_aux_info_value
         WHERE target_id = _destEntityID AND
-              aux_description_id IN ( SELECT Item_ID
-                                      FROM V_Aux_Info_Definition
-                                      WHERE Target = _targetName );
+              aux_description_id IN (SELECT Item_ID
+                                     FROM V_Aux_Info_Definition
+                                     WHERE Target = _targetName);
 
         INSERT INTO t_aux_info_value (target_id,
                                       aux_description_id,
@@ -196,9 +196,9 @@ BEGIN
                value
         FROM t_aux_info_value
         WHERE target_id = _sourceEntityID AND
-              aux_description_id IN ( SELECT Item_ID
-                                      FROM V_Aux_Info_Definition
-                                      WHERE Target = _targetName );
+              aux_description_id IN (SELECT Item_ID
+                                     FROM V_Aux_Info_Definition
+                                     WHERE Target = _targetName);
     End If;
 
 END

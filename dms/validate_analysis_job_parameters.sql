@@ -361,11 +361,11 @@ BEGIN
         INTO _datasetList
         FROM Tmp_DatasetInfo
         WHERE instrument_class::citext <> 'Data_Folders' AND
-              NOT instrument_class::citext IN ( SELECT AIC.instrument_class
-                                                FROM t_analysis_tool AnTool
-                                                     INNER JOIN t_analysis_tool_allowed_instrument_class AIC
-                                                       ON AnTool.analysis_tool_id = AIC.analysis_tool_id
-                                                WHERE AnTool.analysis_tool = _toolName::citext );
+              NOT instrument_class::citext IN (SELECT AIC.instrument_class
+                                               FROM t_analysis_tool AnTool
+                                                    INNER JOIN t_analysis_tool_allowed_instrument_class AIC
+                                                      ON AnTool.analysis_tool_id = AIC.analysis_tool_id
+                                               WHERE AnTool.analysis_tool = _toolName::citext );
 
         If Coalesce(_datasetList, '') <> '' Then
             _message := format('The instrument class for the following datasets is not compatible with the analysis tool: "%s"', _datasetList);
@@ -390,11 +390,11 @@ BEGIN
         INTO _datasetList
         FROM Tmp_DatasetInfo
         WHERE dataset_type::citext <> 'DataFiles' AND
-              NOT dataset_type::citext IN ( SELECT ADT.dataset_type
-                                            FROM t_analysis_tool_allowed_dataset_type ADT
-                                                 INNER JOIN t_analysis_tool Tool
-                                                   ON ADT.analysis_tool_id = Tool.analysis_tool_id
-                                            WHERE Tool.analysis_tool = _toolName::citext );
+              NOT dataset_type::citext IN (SELECT ADT.dataset_type
+                                           FROM t_analysis_tool_allowed_dataset_type ADT
+                                                INNER JOIN t_analysis_tool Tool
+                                                  ON ADT.analysis_tool_id = Tool.analysis_tool_id
+                                           WHERE Tool.analysis_tool = _toolName::citext );
 
         If _datasetList <> '' Then
             _message := format('The dataset type for the following datasets is not compatible with the analysis tool: "%s"', _datasetList);
@@ -460,13 +460,13 @@ BEGIN
                 -- The specified parameter file is valid
                 -- Make sure the parameter file tool corresponds to _toolName
 
-                If Not Exists ( SELECT param_file_id
-                                FROM t_param_files PF
-                                     INNER JOIN t_analysis_tool ToolList
-                                       ON PF.param_file_type_id = ToolList.param_file_type_id
-                                WHERE PF.param_file_name = _paramFileName::citext AND
-                                      ToolList.analysis_tool = _toolName::citext
-                                ) Then
+                If Not Exists (SELECT param_file_id
+                               FROM t_param_files PF
+                                    INNER JOIN t_analysis_tool ToolList
+                                      ON PF.param_file_type_id = ToolList.param_file_type_id
+                               WHERE PF.param_file_name = _paramFileName::citext AND
+                                     ToolList.analysis_tool = _toolName::citext
+                              ) Then
 
                     SELECT ToolList.analysis_tool
                     INTO _paramFileTool
@@ -538,10 +538,10 @@ BEGIN
             -- The specified settings file is valid
             -- Make sure the settings file tool corresponds to _toolName
 
-            If Not Exists ( SELECT file_name
-                            FROM V_Settings_File_Picklist SFP
-                            WHERE SFP.File_Name = _settingsFileName::citext AND
-                                  SFP.Analysis_Tool = _toolName::citext
+            If Not Exists (SELECT file_name
+                           FROM V_Settings_File_Picklist SFP
+                           WHERE SFP.File_Name = _settingsFileName::citext AND
+                                 SFP.Analysis_Tool = _toolName::citext
                           ) Then
 
                 SELECT SFP.analysis_tool
@@ -628,10 +628,10 @@ BEGIN
                     SELECT Trim(XmlQ.name), Trim(XmlQ.value)
                     FROM (
                         SELECT xmltable.*
-                        FROM ( SELECT contents AS settings
-                               FROM t_settings_files
-                               WHERE file_name = _settingsFileName::citext AND
-                                     analysis_tool = _toolName::citext
+                        FROM (SELECT contents AS settings
+                              FROM t_settings_files
+                              WHERE file_name = _settingsFileName::citext AND
+                                    analysis_tool = _toolName::citext
                              ) Src,
                              XMLTABLE('//sections/section/item'
                                       PASSING Src.settings
@@ -874,9 +874,9 @@ BEGIN
                 SELECT Trim(xmltable.section) AS section,
                        Trim(xmltable.name)    AS name,
                        Trim(xmltable.value)   AS value
-                FROM ( SELECT contents AS settings
-                       FROM t_settings_files
-                       WHERE file_name = _settingsFileName::citext
+                FROM (SELECT contents AS settings
+                      FROM t_settings_files
+                      WHERE file_name = _settingsFileName::citext
                      ) Src,
                      XMLTABLE('//sections/section/item'
                               PASSING Src.settings
@@ -904,9 +904,9 @@ BEGIN
                 SELECT Trim(xmltable.section) AS section,
                        Trim(xmltable.name)    AS name,
                        Trim(xmltable.value)   AS value
-                FROM ( SELECT contents AS settings
-                       FROM t_settings_files
-                       WHERE file_name = _settingsFileName::citext
+                FROM (SELECT contents AS settings
+                      FROM t_settings_files
+                      WHERE file_name = _settingsFileName::citext
                      ) Src,
                      XMLTABLE('//sections/section/item'
                               PASSING Src.settings

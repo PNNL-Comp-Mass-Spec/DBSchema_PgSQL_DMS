@@ -69,25 +69,25 @@ BEGIN
         FROM t_eus_users;
 
         MERGE INTO t_eus_users AS target
-        USING ( SELECT DISTINCT Source.user_id AS person_id,
-                                Source.name_fm,
-                                CASE WHEN hanford_id IS NULL
-                                     THEN NULL
-                                     ELSE format('H%s', hanford_id)
-                                     END AS hid,
-                                CASE WHEN hanford_id IS NULL
-                                     THEN 2        -- Offsite
-                                     ELSE 1        -- Onsite
-                                     END AS site_status_id,
-                                Source.first_name,
-                                Source.last_name
-                FROM V_NEXUS_Import_Proposal_Participants Source
-                     INNER JOIN ( SELECT proposal_id
-                                  FROM t_eus_proposals
-                                  WHERE state_id IN (1,2) OR
-                                        _updateUsersOnInactiveProposals AND state_id <> 4   -- State for is 'No Interest'
-                                 ) DmsEUSProposals
-                       ON Source.project_id = DmsEUSProposals.proposal_id
+        USING (SELECT DISTINCT Source.user_id AS person_id,
+                               Source.name_fm,
+                               CASE WHEN hanford_id IS NULL
+                                    THEN NULL
+                                    ELSE format('H%s', hanford_id)
+                                    END AS hid,
+                               CASE WHEN hanford_id IS NULL
+                                    THEN 2        -- Offsite
+                                    ELSE 1        -- Onsite
+                                    END AS site_status_id,
+                               Source.first_name,
+                               Source.last_name
+               FROM V_NEXUS_Import_Proposal_Participants Source
+                    INNER JOIN (SELECT proposal_id
+                                FROM t_eus_proposals
+                                WHERE state_id IN (1,2) OR
+                                      _updateUsersOnInactiveProposals AND state_id <> 4   -- State for is 'No Interest'
+                               ) DmsEUSProposals
+                      ON Source.project_id = DmsEUSProposals.proposal_id
             ) AS Source
         ON (target.person_id = Source.person_id)
         WHEN MATCHED AND
@@ -162,15 +162,15 @@ BEGIN
         FROM t_eus_proposal_users;
 
         MERGE INTO t_eus_proposal_users AS target
-        USING ( SELECT DISTINCT Source.project_id AS proposal_id,
-                                Source.user_id AS person_id,
-                                'Y' AS of_dms_interest
-                FROM V_NEXUS_Import_Proposal_Participants Source
-                     INNER JOIN ( SELECT proposal_id
-                                  FROM t_eus_proposals
-                                  WHERE state_id IN (1,2)
-                                ) DmsEUSProposals
-                       ON Source.project_id = DmsEUSProposals.proposal_id
+        USING (SELECT DISTINCT Source.project_id AS proposal_id,
+                               Source.user_id AS person_id,
+                               'Y' AS of_dms_interest
+               FROM V_NEXUS_Import_Proposal_Participants Source
+                    INNER JOIN (SELECT proposal_id
+                                FROM t_eus_proposals
+                                WHERE state_id IN (1,2)
+                               ) DmsEUSProposals
+                      ON Source.project_id = DmsEUSProposals.proposal_id
               ) AS Source
         ON (target.proposal_id = Source.proposal_id AND
             target.person_id = Source.person_id)

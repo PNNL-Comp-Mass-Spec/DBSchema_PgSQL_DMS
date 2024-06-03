@@ -64,12 +64,13 @@ BEGIN
 
     INSERT INTO T_Tmp_SchemaChangeLogRank (schema_change_log_id, version_rank, current_source_length)
     SELECT RankQ.schema_change_log_id, RankQ.version_rank, RankQ.current_source_length
-    FROM ( SELECT SCL.schema_change_log_id,
-                  char_length(SCL.function_source) AS current_source_length,
-                  Row_Number() OVER (PARTITION BY SCL.schema_name, SCL.object_name
-                                     ORDER BY SCL.schema_change_log_id DESC) AS version_rank
-           FROM t_schema_change_log SCL
-           WHERE NOT SCL.function_source IS NULL) RankQ;
+    FROM (SELECT SCL.schema_change_log_id,
+                 char_length(SCL.function_source) AS current_source_length,
+                 Row_Number() OVER (PARTITION BY SCL.schema_name, SCL.object_name
+                                    ORDER BY SCL.schema_change_log_id DESC) AS version_rank
+          FROM t_schema_change_log SCL
+          WHERE NOT SCL.function_source IS NULL
+         ) RankQ;
 
     UPDATE T_Tmp_SchemaChangeLogRank target
     SET trim_data = true
@@ -108,10 +109,11 @@ BEGIN
         -- Look for duplicate entries (see below for more info)
         SELECT COUNT(*)
         INTO _duplicateCount
-        FROM ( SELECT RankQ.schema_change_log_id,
-                      Row_Number() OVER (PARTITION BY RankQ.schema_name, RankQ.object_name, RankQ.command_tag, RankQ.entered
-                                         ORDER BY RankQ.schema_change_log_id) AS DupeRank
-               FROM t_schema_change_log RankQ) FilterQ
+        FROM (SELECT RankQ.schema_change_log_id,
+                     Row_Number() OVER (PARTITION BY RankQ.schema_name, RankQ.object_name, RankQ.command_tag, RankQ.entered
+                                        ORDER BY RankQ.schema_change_log_id) AS DupeRank
+              FROM t_schema_change_log RankQ
+             ) FilterQ
         WHERE FilterQ.DupeRank > 1;
 
         If _duplicateCount > 0 Then
@@ -187,12 +189,14 @@ BEGIN
 
     DELETE FROM t_schema_change_log target
     WHERE target.schema_change_log_id IN
-          ( SELECT FilterQ.schema_change_log_id
-            FROM ( SELECT RankQ.schema_change_log_id,
-                          Row_Number() OVER (PARTITION BY RankQ.schema_name, RankQ.object_name, RankQ.command_tag, RankQ.entered
-                                             ORDER BY RankQ.schema_change_log_id) AS DupeRank
-                   FROM t_schema_change_log RankQ) FilterQ
-            WHERE FilterQ.DupeRank > 1 );
+          (SELECT FilterQ.schema_change_log_id
+           FROM (SELECT RankQ.schema_change_log_id,
+                        Row_Number() OVER (PARTITION BY RankQ.schema_name, RankQ.object_name, RankQ.command_tag, RankQ.entered
+                                           ORDER BY RankQ.schema_change_log_id) AS DupeRank
+                 FROM t_schema_change_log RankQ
+                ) FilterQ
+           WHERE FilterQ.DupeRank > 1
+          );
 
     GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 

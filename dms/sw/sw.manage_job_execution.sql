@@ -90,12 +90,12 @@ BEGIN
 
     SELECT (xpath('//root/operation/action/text()', rooted_xml))[1]::text
     INTO _action
-    FROM ( SELECT _paramXML as rooted_xml) Src;
+    FROM (SELECT _paramXML as rooted_xml) Src;
 
 
     SELECT (xpath('//root/operation/value/text()', rooted_xml))[1]::text
     INTO _value
-    FROM ( SELECT _paramXML as rooted_xml) Src;
+    FROM (SELECT _paramXML as rooted_xml) Src;
 
     ---------------------------------------------------
     -- Create temporary table to hold list of jobs
@@ -110,7 +110,7 @@ BEGIN
     SELECT XmlQ.job
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT _paramXML as params
+        FROM (SELECT _paramXML as params
              ) Src,
              XMLTABLE('//root/jobs/job'
                       PASSING Src.params

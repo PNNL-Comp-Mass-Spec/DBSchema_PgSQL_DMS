@@ -125,21 +125,21 @@ BEGIN
         SELECT string_agg(CountQ.job::text, ', ' ORDER BY CountQ.Job),
                SUM(CountQ.Job_Steps) AS Job_Steps
         INTO _jobList, _totalSteps
-        FROM ( SELECT JS.job, Count(*) AS Job_Steps
-               FROM t_job_steps JS INNER JOIN
-                    ( SELECT job,
-                             step,
-                             COUNT(target_step) AS Actual_Dependencies
-                      FROM sw.t_job_step_dependencies
-                      WHERE job IN ( SELECT job FROM sw.t_job_steps WHERE state = 1 )
-                      GROUP BY job, step
-                    ) CompareQ ON
-                       JS.job = CompareQ.job AND
-                       JS.step = CompareQ.step
-               WHERE JS.state = 1 AND
-                     JS.dependencies < CompareQ.Actual_Dependencies
-               GROUP BY JS.job
-               ) CountQ;
+        FROM (SELECT JS.job, Count(*) AS Job_Steps
+              FROM t_job_steps JS INNER JOIN
+                   (SELECT job,
+                           step,
+                           COUNT(target_step) AS Actual_Dependencies
+                    FROM sw.t_job_step_dependencies
+                    WHERE job IN (SELECT job FROM sw.t_job_steps WHERE state = 1)
+                    GROUP BY job, step
+                   ) CompareQ ON
+                      JS.job = CompareQ.job AND
+                      JS.step = CompareQ.step
+              WHERE JS.state = 1 AND
+                    JS.dependencies < CompareQ.Actual_Dependencies
+              GROUP BY JS.job
+             ) CountQ;
 
         If _totalSteps > 0 Then
            RAISE INFO 'Need to update the dependencies count for % % for %',
@@ -153,12 +153,12 @@ BEGIN
     Else
         UPDATE sw.t_job_steps JS
         SET dependencies = CompareQ.Actual_Dependencies
-        FROM ( SELECT job,
-                      step,
-                      COUNT(target_step) AS Actual_Dependencies
-               FROM sw.t_job_step_dependencies
-               WHERE job IN ( SELECT job FROM sw.t_job_steps WHERE state = 1 )
-               GROUP BY job, step
+        FROM (SELECT job,
+                     step,
+                     COUNT(target_step) AS Actual_Dependencies
+              FROM sw.t_job_step_dependencies
+              WHERE job IN (SELECT job FROM sw.t_job_steps WHERE state = 1)
+              GROUP BY job, step
              ) CompareQ
         WHERE JS.state = 1 AND
               JS.job = CompareQ.job AND
@@ -250,9 +250,9 @@ BEGIN
 
     UPDATE Tmp_Steplist TargetQ
     SET Processing_Order = LookupQ.Processing_Order
-    FROM ( SELECT Entry_ID,
-                  Row_Number() OVER (ORDER BY Priority, Job) AS Processing_Order
-           FROM Tmp_Steplist
+    FROM (SELECT Entry_ID,
+                 Row_Number() OVER (ORDER BY Priority, Job) AS Processing_Order
+          FROM Tmp_Steplist
          ) LookupQ
     WHERE TargetQ.Entry_ID = LookupQ.Entry_ID;
 
@@ -561,10 +561,10 @@ BEGIN
                         output_folder_name =
                           CASE WHEN (_newState = 3 AND
                                     Coalesce(input_folder_name, '') <> '' AND
-                                    NOT tool IN ( SELECT step_tool
-                                                  FROM sw.t_step_tools
-                                                  WHERE shared_result_version > 0 AND
-                                                        disable_output_folder_name_override_on_skip > 0 )
+                                    NOT tool IN (SELECT step_tool
+                                                 FROM sw.t_step_tools
+                                                 WHERE shared_result_version > 0 AND
+                                                       disable_output_folder_name_override_on_skip > 0 )
                                     )
                                THEN input_folder_name
                                ELSE output_folder_name

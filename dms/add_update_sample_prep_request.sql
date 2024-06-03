@@ -313,15 +313,15 @@ BEGIN
             _stateComment := '';
         End If;
 
-        If Exists ( SELECT U.username
-                    FROM t_users U
-                         INNER JOIN t_user_operations_permissions UOP
-                           ON U.user_id = UOP.user_id
-                         INNER JOIN t_user_operations UO
-                           ON UOP.operation_id = UO.operation_id
-                    WHERE U.Status = 'Active' AND
-                          UO.operation = 'DMS_Sample_Preparation' AND
-                          Username = _callingUser::citext
+        If Exists (SELECT U.username
+                   FROM t_users U
+                        INNER JOIN t_user_operations_permissions UOP
+                          ON U.user_id = UOP.user_id
+                        INNER JOIN t_user_operations UO
+                          ON UOP.operation_id = UO.operation_id
+                   WHERE U.Status = 'Active' AND
+                         UO.operation = 'DMS_Sample_Preparation' AND
+                         Username = _callingUser::citext
                   ) Then
 
               _allowUpdateEstimatedPrepTime := true;
@@ -432,13 +432,13 @@ BEGIN
         SELECT COUNT(*)
         INTO _missingCount
         FROM Tmp_MaterialContainers
-        WHERE NOT name IN ( SELECT container FROM t_material_containers );
+        WHERE NOT name IN (SELECT container FROM t_material_containers);
 
         If _missingCount > 0 Then
             SELECT string_agg(name, ', ' ORDER BY name)
             INTO _invalidNames
             FROM Tmp_MaterialContainers
-            WHERE NOT name IN ( SELECT container FROM t_material_containers );
+            WHERE NOT name IN (SELECT container FROM t_material_containers);
 
             If Position(',' In _invalidNames) > 0 Then
                 RAISE EXCEPTION 'Invalid material containers: "%" do not exist', _invalidNames;

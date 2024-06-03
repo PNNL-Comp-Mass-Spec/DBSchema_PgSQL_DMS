@@ -284,11 +284,11 @@ BEGIN
 
             SELECT string_agg(InstGroup, ', ' ORDER BY InstGroup)
             INTO _instrumentGroups
-            FROM ( SELECT DISTINCT RR.instrument_group AS InstGroup
-                   FROM T_Requested_Run RR
-                        INNER JOIN Tmp_RequestedRuns TmpRuns
-                          ON TmpRuns.Request_ID = RR.Request_ID
-                   WHERE (RR.state_name = 'Active' AND _mode LIKE '%update%') OR _mode LIKE 'add%'
+            FROM (SELECT DISTINCT RR.instrument_group AS InstGroup
+                  FROM T_Requested_Run RR
+                       INNER JOIN Tmp_RequestedRuns TmpRuns
+                         ON TmpRuns.Request_ID = RR.Request_ID
+                  WHERE (RR.state_name = 'Active' AND _mode LIKE '%update%') OR _mode LIKE 'add%'
                  ) GroupQ;
 
             If _mode Like '%update%' Then

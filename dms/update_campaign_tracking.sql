@@ -104,13 +104,14 @@ BEGIN
                                    WHEN StatsQ.Most_Recent > Most_Recent_Activity THEN StatsQ.Most_Recent
                                    ELSE Most_Recent_Activity
                                END
-    FROM ( SELECT C.campaign_id,
-                  COUNT(SS.submission_id) AS Items,
-                  MAX(SS.created) AS Most_Recent
-           FROM t_campaign C
-                INNER JOIN t_sample_submission SS
-                  ON C.campaign_id = SS.campaign_id
-           GROUP BY C.campaign_id ) AS StatsQ
+    FROM (SELECT C.campaign_id,
+                 COUNT(SS.submission_id) AS Items,
+                 MAX(SS.created) AS Most_Recent
+          FROM t_campaign C
+               INNER JOIN t_sample_submission SS
+                 ON C.campaign_id = SS.campaign_id
+          GROUP BY C.campaign_id
+         ) AS StatsQ
     WHERE Tmp_CampaignStats.campaign_id = StatsQ.campaign_id;
 
     ----------------------------------------------------------
@@ -124,13 +125,14 @@ BEGIN
                                    WHEN StatsQ.Most_Recent > Most_Recent_Activity THEN StatsQ.Most_Recent
                                    ELSE Most_Recent_Activity
                                END
-    FROM ( SELECT C.campaign_id,
-                  COUNT(B.biomaterial_id) AS Items,
-                  MAX(B.created) AS Most_Recent
-           FROM t_campaign C
-                INNER JOIN t_biomaterial B
-                  ON C.campaign_id = B.campaign_id
-           GROUP BY C.campaign_id ) AS StatsQ
+    FROM (SELECT C.campaign_id,
+                 COUNT(B.biomaterial_id) AS Items,
+                 MAX(B.created) AS Most_Recent
+          FROM t_campaign C
+               INNER JOIN t_biomaterial B
+                 ON C.campaign_id = B.campaign_id
+          GROUP BY C.campaign_id
+         ) AS StatsQ
     WHERE Tmp_CampaignStats.campaign_id = StatsQ.campaign_id;
 
     ----------------------------------------------------------
@@ -144,13 +146,14 @@ BEGIN
                                    WHEN StatsQ.Most_Recent > Most_Recent_Activity THEN StatsQ.Most_Recent
                                    ELSE Most_Recent_Activity
                                END
-    FROM ( SELECT C.campaign_id,
-                  COUNT(E.exp_id) AS Items,
-                  MAX(E.created) AS Most_Recent
-           FROM t_campaign C
-                INNER JOIN t_experiments E
-                  ON C.campaign_id = E.campaign_id
-           GROUP BY C.campaign_id ) AS StatsQ
+    FROM (SELECT C.campaign_id,
+                 COUNT(E.exp_id) AS Items,
+                 MAX(E.created) AS Most_Recent
+          FROM t_campaign C
+               INNER JOIN t_experiments E
+                 ON C.campaign_id = E.campaign_id
+          GROUP BY C.campaign_id
+         ) AS StatsQ
     WHERE Tmp_CampaignStats.campaign_id = StatsQ.campaign_id;
 
     ----------------------------------------------------------
@@ -164,15 +167,16 @@ BEGIN
                                    WHEN StatsQ.Most_Recent > Most_Recent_Activity THEN StatsQ.Most_Recent
                                    ELSE Most_Recent_Activity
                                END
-    FROM ( SELECT C.campaign_id,
-                  COUNT(DS.dataset_id) AS Items,
-                  MAX(DS.created) AS Most_Recent
-           FROM t_experiments E
-                INNER JOIN t_dataset DS
-                  ON E.exp_id = DS.exp_id
-                INNER JOIN t_campaign C
-                  ON E.campaign_id = C.campaign_id
-           GROUP BY C.campaign_id ) AS StatsQ
+    FROM (SELECT C.campaign_id,
+                 COUNT(DS.dataset_id) AS Items,
+                 MAX(DS.created) AS Most_Recent
+          FROM t_experiments E
+               INNER JOIN t_dataset DS
+                 ON E.exp_id = DS.exp_id
+               INNER JOIN t_campaign C
+                 ON E.campaign_id = C.campaign_id
+          GROUP BY C.campaign_id
+         ) AS StatsQ
     WHERE Tmp_CampaignStats.campaign_id = StatsQ.campaign_id;
 
     ----------------------------------------------------------
@@ -186,17 +190,18 @@ BEGIN
                                    WHEN StatsQ.Most_Recent > Most_Recent_Activity THEN StatsQ.Most_Recent
                                    ELSE Most_Recent_Activity
                                END
-    FROM ( SELECT C.campaign_id,
-                  COUNT(AJ.job) AS Items,
-                  MAX(AJ.created) AS Most_Recent
-           FROM t_experiments E
-                INNER JOIN t_dataset DS
-                  ON E.exp_id = DS.exp_id
-                INNER JOIN t_analysis_job AJ
-                  ON DS.dataset_id = AJ.dataset_id
-                INNER JOIN t_campaign C
-                  ON E.campaign_id = C.campaign_id
-           GROUP BY C.campaign_id ) AS StatsQ
+    FROM (SELECT C.campaign_id,
+                 COUNT(AJ.job) AS Items,
+                 MAX(AJ.created) AS Most_Recent
+          FROM t_experiments E
+               INNER JOIN t_dataset DS
+                 ON E.exp_id = DS.exp_id
+               INNER JOIN t_analysis_job AJ
+                 ON DS.dataset_id = AJ.dataset_id
+               INNER JOIN t_campaign C
+                 ON E.campaign_id = C.campaign_id
+          GROUP BY C.campaign_id
+         ) AS StatsQ
     WHERE Tmp_CampaignStats.campaign_id = StatsQ.campaign_id;
 
     ----------------------------------------------------------
@@ -210,13 +215,14 @@ BEGIN
                                    WHEN StatsQ.Most_Recent > Most_Recent_Activity THEN StatsQ.Most_Recent
                                    ELSE Most_Recent_Activity
                                END
-    FROM ( SELECT E.campaign_id,
-                  COUNT(RR.request_id) AS Items,
-                  MAX(RR.created) AS Most_Recent
-           FROM t_requested_run RR
-                INNER JOIN t_experiments E
-                  ON RR.exp_id = E.exp_id
-           GROUP BY E.campaign_id ) AS StatsQ
+    FROM (SELECT E.campaign_id,
+                 COUNT(RR.request_id) AS Items,
+                 MAX(RR.created) AS Most_Recent
+          FROM t_requested_run RR
+               INNER JOIN t_experiments E
+                 ON RR.exp_id = E.exp_id
+          GROUP BY E.campaign_id
+         ) AS StatsQ
     WHERE StatsQ.campaign_id = Tmp_CampaignStats.campaign_id;
 
     ----------------------------------------------------------
@@ -230,13 +236,14 @@ BEGIN
                                    WHEN StatsQ.Most_Recent > Most_Recent_Activity THEN StatsQ.Most_Recent
                                    ELSE Most_Recent_Activity
                                END
-    FROM ( SELECT C.campaign_id,
-                  COUNT(SPR.prep_request_id) AS Items,
-                  MAX(SPR.created) AS Most_Recent
-           FROM t_sample_prep_request SPR
-                INNER JOIN t_campaign C
-                  ON SPR.campaign = C.campaign
-           GROUP BY C.campaign_id ) AS StatsQ
+    FROM (SELECT C.campaign_id,
+                 COUNT(SPR.prep_request_id) AS Items,
+                 MAX(SPR.created) AS Most_Recent
+          FROM t_sample_prep_request SPR
+               INNER JOIN t_campaign C
+                 ON SPR.campaign = C.campaign
+          GROUP BY C.campaign_id
+         ) AS StatsQ
     WHERE StatsQ.campaign_id = Tmp_CampaignStats.campaign_id;
 
     ----------------------------------------------------------
@@ -245,12 +252,13 @@ BEGIN
 
     UPDATE Tmp_CampaignStats
     SET data_package_count = StatsQ.Items
-    FROM ( SELECT E.campaign_id,
-                  COUNT(DISTINCT DPE.data_pkg_id) AS Items
-           FROM dpkg.t_data_package_experiments DPE
-                INNER JOIN t_experiments E
-                  ON E.exp_id = DPE.experiment_id
-           GROUP BY E.campaign_id ) AS StatsQ
+    FROM (SELECT E.campaign_id,
+                 COUNT(DISTINCT DPE.data_pkg_id) AS Items
+          FROM dpkg.t_data_package_experiments DPE
+               INNER JOIN t_experiments E
+                 ON E.exp_id = DPE.experiment_id
+          GROUP BY E.campaign_id
+         ) AS StatsQ
     WHERE StatsQ.campaign_id = Tmp_CampaignStats.campaign_id;
 
     ----------------------------------------------------------
@@ -258,24 +266,24 @@ BEGIN
     ----------------------------------------------------------
 
     MERGE INTO t_campaign_tracking AS Target
-    USING ( SELECT Campaign_ID,
-                   Sample_Submission_Count,
-                   Biomaterial_Count,
-                   Experiment_Count,
-                   Dataset_Count,
-                   Job_Count,
-                   Run_Request_Count,
-                   Sample_Prep_Request_Count,
-                   Data_Package_Count,
-                   Sample_Submission_Most_Recent,
-                   Biomaterial_Most_Recent,
-                   Experiment_Most_Recent,
-                   Dataset_Most_Recent,
-                   Job_Most_Recent,
-                   Run_Request_Most_Recent,
-                   Sample_Prep_Request_Most_Recent,
-                   Most_Recent_Activity
-            FROM Tmp_CampaignStats
+    USING (SELECT Campaign_ID,
+                  Sample_Submission_Count,
+                  Biomaterial_Count,
+                  Experiment_Count,
+                  Dataset_Count,
+                  Job_Count,
+                  Run_Request_Count,
+                  Sample_Prep_Request_Count,
+                  Data_Package_Count,
+                  Sample_Submission_Most_Recent,
+                  Biomaterial_Most_Recent,
+                  Experiment_Most_Recent,
+                  Dataset_Most_Recent,
+                  Job_Most_Recent,
+                  Run_Request_Most_Recent,
+                  Sample_Prep_Request_Most_Recent,
+                  Most_Recent_Activity
+           FROM Tmp_CampaignStats
           ) AS Src
     ON (Target.campaign_id = Src.campaign_id)
     WHEN MATCHED AND

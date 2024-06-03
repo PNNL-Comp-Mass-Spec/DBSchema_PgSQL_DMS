@@ -81,18 +81,18 @@ BEGIN
 
         UPDATE Tmp_LCColumns
         SET Most_Recent_Dataset = LookupQ.dataset
-        FROM ( SELECT lc_column_ID,
-                      dataset,
-                      created
-               FROM ( SELECT lc_column_ID,
-                             dataset,
-                             created,
-                             Row_Number() OVER (Partition BY lc_column_ID ORDER BY created DESC ) AS DatasetRank
-                       FROM t_dataset
-                       WHERE lc_column_ID IN ( SELECT ID FROM Tmp_LCColumns )
-                    ) RankQ
-               WHERE DatasetRank = 1
-               ) LookupQ
+        FROM (SELECT lc_column_ID,
+                     dataset,
+                     created
+              FROM (SELECT lc_column_ID,
+                           dataset,
+                           created,
+                           Row_Number() OVER (Partition BY lc_column_ID ORDER BY created DESC ) AS DatasetRank
+                    FROM t_dataset
+                    WHERE lc_column_ID IN (SELECT ID FROM Tmp_LCColumns)
+                   ) RankQ
+              WHERE DatasetRank = 1
+             ) LookupQ
         WHERE Tmp_LCColumns.ID = LookupQ.LC_Column_ID;
 
     End If;
@@ -116,9 +116,9 @@ BEGIN
     -----------------------------------------------------------
 
     DELETE FROM Tmp_LCColumns
-    WHERE ID IN ( SELECT lc_column_id
-                  FROM t_lc_column
-                  WHERE lc_column IN ('unknown', 'No_Column', 'DI', 'Infuse') );
+    WHERE ID IN (SELECT lc_column_id
+                 FROM t_lc_column
+                 WHERE lc_column IN ('unknown', 'No_Column', 'DI', 'Infuse'));
 
     If Not Exists (SELECT ID FROM Tmp_LCColumns) Then
         _message := 'Did not find any stale LC columns to retire (after removing columns that should not be auto-retired)';

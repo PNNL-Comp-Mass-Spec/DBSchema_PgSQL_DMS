@@ -260,7 +260,9 @@ BEGIN
            Storage_Server
     FROM cap.t_tasks
     WHERE State = 5 AND
-          Job IN ( SELECT Job FROM cap.t_task_steps WHERE state IN (2, 3, 4, 5, 13)) AND
+          Job IN (SELECT Job
+                  FROM cap.t_task_steps
+                  WHERE state IN (2, 3, 4, 5, 13)) AND
           NOT Job IN (SELECT Job FROM cap.t_task_steps WHERE state = 6) AND
           NOT Job In (SELECT Job FROM Tmp_ChangedJobs);
     --
@@ -313,27 +315,27 @@ BEGIN
         /*
         SELECT SUM(SecondsElapsedMax) / 60.0
         INTO _processingTimeMinutes
-        FROM ( SELECT Tool,
-                      MAX(Coalesce(SecondsElapsed1, 0) + Coalesce(SecondsElapsed2, 0)) AS SecondsElapsedMax
-               FROM ( SELECT Tool,
-                             CASE
-                                 WHEN ABS(DATEDIFF(HOUR, start, finish)) > 100000 THEN 360000000
-                                 ELSE DATEDIFF(SECOND, Start, Finish)
-                             END AS SecondsElapsed1,
-                             CASE
-                                 WHEN (NOT Start IS NULL) AND
-                                      Finish IS NULL THEN
-                                        CASE
-                                            WHEN ABS(DATEDIFF(HOUR, start, CURRENT_TIMESTAMP)) > 100000 THEN 360000000
-                                            ELSE DATEDIFF(SECOND, Start, CURRENT_TIMESTAMP)
-                                        END
-                                 ELSE NULL
-                             END AS SecondsElapsed2
-                      FROM cap.t_task_steps
-                      WHERE Job = _jobInfo.Job
-                      ) StatsQ
-               GROUP BY Tool
-               ) StepToolQ;
+        FROM (SELECT Tool,
+                     MAX(Coalesce(SecondsElapsed1, 0) + Coalesce(SecondsElapsed2, 0)) AS SecondsElapsedMax
+              FROM (SELECT Tool,
+                           CASE
+                               WHEN ABS(DATEDIFF(HOUR, start, finish)) > 100000 THEN 360000000
+                               ELSE DATEDIFF(SECOND, Start, Finish)
+                           END AS SecondsElapsed1,
+                           CASE
+                               WHEN (NOT Start IS NULL) AND
+                                    Finish IS NULL THEN
+                                      CASE
+                                          WHEN ABS(DATEDIFF(HOUR, start, CURRENT_TIMESTAMP)) > 100000 THEN 360000000
+                                          ELSE DATEDIFF(SECOND, Start, CURRENT_TIMESTAMP)
+                                      END
+                               ELSE NULL
+                           END AS SecondsElapsed2
+                    FROM cap.t_task_steps
+                    WHERE Job = _jobInfo.Job
+                   ) StatsQ
+              GROUP BY Tool
+             ) StepToolQ;
 
         _processingTimeMinutes := Coalesce(_processingTimeMinutes, 0);
         */

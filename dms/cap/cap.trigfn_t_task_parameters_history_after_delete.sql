@@ -26,12 +26,12 @@ BEGIN
 
     UPDATE cap.t_task_parameters_history
     SET most_recent_entry = CASE WHEN LookupQ.SaveRank = 1 THEN 1 ELSE 0 END
-    FROM ( SELECT H.job,
-                  H.saved,
-                  Row_Number() OVER (PARTITION BY H.job ORDER BY H.saved DESC) AS SaveRank
-           FROM cap.t_task_parameters_history H
-                INNER JOIN deleted AS deletedRows
-                  ON H.job = deletedRows.job
+    FROM (SELECT H.job,
+                 H.saved,
+                 Row_Number() OVER (PARTITION BY H.job ORDER BY H.saved DESC) AS SaveRank
+          FROM cap.t_task_parameters_history H
+               INNER JOIN deleted AS deletedRows
+                 ON H.job = deletedRows.job
          ) LookupQ
     WHERE LookupQ.job = cap.t_task_parameters_history.job AND
           LookupQ.saved = cap.t_task_parameters_history.saved;

@@ -108,10 +108,10 @@ BEGIN
         _tempTableJobsToRemove := _jobHistoryMinimumCount - (_currentJobCount - _jobCountToDelete);
 
         DELETE FROM Tmp_JobsToDelete
-        WHERE job IN ( SELECT Job
-                       FROM Tmp_JobsToDelete
-                       ORDER BY Job DESC
-                       LIMIT _tempTableJobsToRemove);
+        WHERE job IN (SELECT Job
+                      FROM Tmp_JobsToDelete
+                      ORDER BY Job DESC
+                      LIMIT _tempTableJobsToRemove);
         --
         GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -186,10 +186,10 @@ BEGIN
             SELECT Job,
                    public.timestamp_text(Saved) AS Saved,
                    'Preview delete' AS Comment
-            FROM ( SELECT Job, Saved
-                   FROM Tmp_JobsToDelete
-                   ORDER BY Job DESC
-                   LIMIT 10) FilterQ
+            FROM (SELECT Job, Saved
+                  FROM Tmp_JobsToDelete
+                  ORDER BY Job DESC
+                  LIMIT 10) FilterQ
             ORDER BY Job
         LOOP
             _infoData := format(_formatSpecifier,
@@ -236,16 +236,16 @@ BEGIN
                    H.Free_Memory_MB,
                    'First row to be deleted' AS Comment
             FROM sw.t_machine_status_history H
-                 INNER JOIN ( SELECT machine,
-                                     MIN(entry_id) AS Entry_ID
-                              FROM sw.t_machine_status_history
-                              WHERE entry_id IN
-                                       ( SELECT entry_id
-                                         FROM ( SELECT entry_id,
-                                                Row_Number() OVER (PARTITION BY machine ORDER BY entry_id DESC) AS RowRank
-                                                FROM sw.t_machine_status_history ) RankQ
-                                         WHERE RowRank > 1000 )
-                              GROUP BY machine
+                 INNER JOIN (SELECT machine,
+                                    MIN(entry_id) AS Entry_ID
+                             FROM sw.t_machine_status_history
+                             WHERE entry_id IN
+                                      (SELECT entry_id
+                                       FROM (SELECT entry_id,
+                                             Row_Number() OVER (PARTITION BY machine ORDER BY entry_id DESC) AS RowRank
+                                             FROM sw.t_machine_status_history ) RankQ
+                                       WHERE RowRank > 1000 )
+                             GROUP BY machine
                             ) FilterQ
                    ON H.entry_id = FilterQ.entry_id
             ORDER BY machine
@@ -277,22 +277,22 @@ BEGIN
 
         -- Keep the 1000 most recent status values for each machine
         DELETE FROM sw.t_machine_status_history Target
-        WHERE EXISTS ( SELECT 1
-                       FROM ( SELECT entry_id,
-                                     Row_Number() OVER (PARTITION BY machine ORDER BY entry_id DESC) AS RowRank
-                              FROM sw.t_machine_status_history ) RankQ
-                       WHERE Target.entry_id = RankQ.entry_id AND
-                             RowRank > 1000
+        WHERE EXISTS (SELECT 1
+                      FROM (SELECT entry_id,
+                                   Row_Number() OVER (PARTITION BY machine ORDER BY entry_id DESC) AS RowRank
+                            FROM sw.t_machine_status_history) RankQ
+                      WHERE Target.entry_id = RankQ.entry_id AND
+                            RowRank > 1000
                      );
 
         -- Keep the 500 most recent processing stats values for each processor
         DELETE FROM sw.t_job_step_processing_stats Target
-        WHERE EXISTS ( SELECT 1
-                       FROM ( SELECT entry_id,
-                                     Row_Number() OVER (PARTITION BY processor ORDER BY entered DESC) AS RowRank
-                       FROM sw.t_job_step_processing_stats ) RankQ
-                       WHERE Target.entry_id = RankQ.entry_id AND
-                             RowRank > 500
+        WHERE EXISTS (SELECT 1
+                      FROM (SELECT entry_id,
+                                   Row_Number() OVER (PARTITION BY processor ORDER BY entered DESC) AS RowRank
+                      FROM sw.t_job_step_processing_stats) RankQ
+                      WHERE Target.entry_id = RankQ.entry_id AND
+                            RowRank > 500
                      );
 
     End If;

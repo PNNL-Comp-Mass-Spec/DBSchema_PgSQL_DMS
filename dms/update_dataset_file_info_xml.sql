@@ -384,7 +384,7 @@ BEGIN
         SELECT public.trim_whitespace(XmlQ.ScanType), public.try_cast(XmlQ.ScanCount, 0), Trim(XmlQ.ScanFilter)
         FROM (
             SELECT xmltable.*
-            FROM ( SELECT _datasetInfoXML AS rooted_xml
+            FROM (SELECT _datasetInfoXML AS rooted_xml
                  ) Src,
                  XMLTABLE('//DatasetInfo/ScanTypes/ScanType'
                           PASSING Src.rooted_xml
@@ -404,7 +404,7 @@ BEGIN
         SELECT public.trim_whitespace(XmlQ.InstFilePath), Trim(XmlQ.InstFileHash), Trim(XmlQ.InstFileHashType), XmlQ.InstFileSize
         FROM (
             SELECT xmltable.*
-            FROM ( SELECT _datasetInfoXML AS rooted_xml
+            FROM (SELECT _datasetInfoXML AS rooted_xml
                  ) Src,
                  XMLTABLE('//DatasetInfo/AcquisitionInfo/InstrumentFiles/InstrumentFile'
                           PASSING Src.rooted_xml
@@ -553,7 +553,7 @@ BEGIN
         SELECT XmlQ.Mz, XmlQ.MaxIntensity, XmlQ.MedianIntensity
         FROM (
             SELECT xmltable.*
-            FROM ( SELECT _datasetInfoXML AS rooted_xml
+            FROM (SELECT _datasetInfoXML AS rooted_xml
                  ) Src,
                  XMLTABLE('//DatasetInfo/EICInfo/EICStats'
                           PASSING Src.rooted_xml
@@ -869,34 +869,34 @@ BEGIN
         _currentLocation := 'Update t_dataset_info using a merge';
 
         MERGE INTO t_dataset_info AS target
-        USING ( SELECT dataset_id, scan_count_ms, scan_count_msn,
-                       scan_count_dia, elution_time_max,
-                       tic_max_ms, tic_max_msn,
-                       bpi_max_ms, bpi_max_msn,
-                       tic_median_ms, tic_median_msn,
-                       bpi_median_ms, bpi_median_msn,
-                       profile_scan_count_ms, profile_scan_count_msn,
-                       centroid_scan_count_ms, centroid_scan_count_msn
-                FROM Tmp_DS_Info
+        USING (SELECT dataset_id, scan_count_ms, scan_count_msn,
+                      scan_count_dia, elution_time_max,
+                      tic_max_ms, tic_max_msn,
+                      bpi_max_ms, bpi_max_msn,
+                      tic_median_ms, tic_median_msn,
+                      bpi_median_ms, bpi_median_msn,
+                      profile_scan_count_ms, profile_scan_count_msn,
+                      centroid_scan_count_ms, centroid_scan_count_msn
+               FROM Tmp_DS_Info
               ) AS Source
         ON (target.dataset_id = Source.dataset_id)
         WHEN MATCHED THEN
             UPDATE SET
-                scan_count_ms = Source.scan_count_ms,
-                scan_count_msn = Source.scan_count_msn,
-                scan_count_dia = Source.scan_count_dia,
-                elution_time_max = Source.elution_time_max,
-                tic_max_ms = Source.tic_max_ms,
-                tic_max_msn = Source.tic_max_msn,
-                bpi_max_ms = Source.bpi_max_ms,
-                bpi_max_msn = Source.bpi_max_msn,
-                tic_median_ms = Source.tic_median_ms,
-                tic_median_msn = Source.tic_median_msn,
-                bpi_median_ms = Source.bpi_median_ms,
-                bpi_median_msn = Source.bpi_median_msn,
-                profile_scan_count_ms = Source.profile_scan_count_ms,
-                profile_scan_count_msn = Source.profile_scan_count_msn,
-                centroid_scan_count_ms = Source.centroid_scan_count_ms,
+                scan_count_ms           = Source.scan_count_ms,
+                scan_count_msn          = Source.scan_count_msn,
+                scan_count_dia          = Source.scan_count_dia,
+                elution_time_max        = Source.elution_time_max,
+                tic_max_ms              = Source.tic_max_ms,
+                tic_max_msn             = Source.tic_max_msn,
+                bpi_max_ms              = Source.bpi_max_ms,
+                bpi_max_msn             = Source.bpi_max_msn,
+                tic_median_ms           = Source.tic_median_ms,
+                tic_median_msn          = Source.tic_median_msn,
+                bpi_median_ms           = Source.bpi_median_ms,
+                bpi_median_msn          = Source.bpi_median_msn,
+                profile_scan_count_ms   = Source.profile_scan_count_ms,
+                profile_scan_count_msn  = Source.profile_scan_count_msn,
+                centroid_scan_count_ms  = Source.centroid_scan_count_ms,
                 centroid_scan_count_msn = Source.centroid_scan_count_msn,
                 last_affected = CURRENT_TIMESTAMP
         WHEN NOT MATCHED THEN
@@ -973,8 +973,8 @@ BEGIN
         _currentLocation := 'Update t_dataset_files using a merge';
 
         MERGE INTO t_dataset_files AS target
-        USING ( SELECT _datasetID AS Dataset_ID, InstFilePath, InstFileSize, InstFileHash, FileSizeRank
-                FROM Tmp_Instrument_Files
+        USING (SELECT _datasetID AS Dataset_ID, InstFilePath, InstFileSize, InstFileHash, FileSizeRank
+               FROM Tmp_Instrument_Files
               ) AS Source
         ON (target.dataset_id = Source.dataset_id And
             target.file_path = Source.InstFilePath And
@@ -1009,12 +1009,12 @@ BEGIN
         _currentLocation := 'Update t_dataset_qc_ions using a merge';
 
         MERGE INTO t_dataset_qc_ions AS target
-        USING ( SELECT _datasetID AS Dataset_ID,
-                       Mz,
-                       Max(MaxIntensity) AS MaxIntensity,
-                       Max(MedianIntensity) AS MedianIntensity
-                FROM Tmp_EIC_Values
-                GROUP BY Mz
+        USING (SELECT _datasetID AS Dataset_ID,
+                      Mz,
+                      MAX(MaxIntensity) AS MaxIntensity,
+                      MAX(MedianIntensity) AS MedianIntensity
+               FROM Tmp_EIC_Values
+               GROUP BY Mz
               ) AS Source
         ON (target.dataset_id = Source.dataset_id And
             target.mz = Source.Mz)

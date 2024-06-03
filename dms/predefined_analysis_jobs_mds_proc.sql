@@ -129,8 +129,8 @@ BEGIN
 
     If Not FOUND Then
         _message := format('Function predefined_analysis_jobs_mds did not return any results for %s %s',
-                                CASE WHEN _datasetList LIKE '%,%' THEN 'datasets' ELSE 'dataset' END,
-                                _datasetList);
+                           CASE WHEN _datasetList LIKE '%,%' THEN 'datasets' ELSE 'dataset' END,
+                           _datasetList);
 
         RAISE WARNING '%', _message;
         _returnCode := 'U5203';
@@ -145,8 +145,8 @@ BEGIN
 
         If Not FOUND Then
             _message := format('Function predefined_analysis_jobs_mds did not return any results for %s %s',
-                                    CASE WHEN _datasetList LIKE '%,%' THEN 'datasets' ELSE 'dataset' END,
-                                    _datasetList);
+                               CASE WHEN _datasetList LIKE '%,%' THEN 'datasets' ELSE 'dataset' END,
+                               _datasetList);
         End If;
 
         RAISE WARNING '%', _message;

@@ -279,22 +279,22 @@ BEGIN
 
         DELETE FROM cap.t_task_step_dependencies target
         WHERE EXISTS
-            (  SELECT 1
-               FROM cap.t_task_step_dependencies TSD
-                    INNER JOIN ( SELECT D.job,
-                                        D.step
-                                 FROM cap.t_task_step_dependencies D
-                                      LEFT OUTER JOIN cap.t_task_step_dependencies_history H
-                                        ON D.job = H.job AND
-                                           D.step = H.step AND
-                                           D.Target_Step = H.Target_Step
-                                 WHERE D.job = _newJob AND
-                                       H.job IS NULL
-                                ) DeleteQ
-                      ON TSD.job = DeleteQ.job AND
-                         TSD.step = DeleteQ.step
-                WHERE target.job = TSD.job AND
-                      target.step = TSD.step
+            (SELECT 1
+             FROM cap.t_task_step_dependencies TSD
+                  INNER JOIN (SELECT D.job,
+                                     D.step
+                              FROM cap.t_task_step_dependencies D
+                                   LEFT OUTER JOIN cap.t_task_step_dependencies_history H
+                                     ON D.job = H.job AND
+                                        D.step = H.step AND
+                                        D.Target_Step = H.Target_Step
+                              WHERE D.job = _newJob AND
+                                    H.job IS NULL
+                             ) DeleteQ
+                    ON TSD.job = DeleteQ.job AND
+                       TSD.step = DeleteQ.step
+             WHERE target.job = TSD.job AND
+                   target.step = TSD.step
             );
 
         -- Check whether this capture task job has entries in t_task_step_dependencies_history
@@ -306,14 +306,14 @@ BEGIN
             SELECT MIN(H.job)
             INTO _similarJob
             FROM cap.t_task_step_dependencies_history H
-                 INNER JOIN ( SELECT job
-                              FROM cap.t_tasks_history
-                              WHERE job > _job AND
-                                    script = ( SELECT script
-                                               FROM cap.t_tasks_history
-                                               WHERE job = _job AND
-                                                     most_recent_entry = 1 )
-                             ) SimilarJobQ
+                 INNER JOIN (SELECT job
+                             FROM cap.t_tasks_history
+                             WHERE job > _job AND
+                                   script = (SELECT script
+                                             FROM cap.t_tasks_history
+                                             WHERE job = _job AND
+                                                   most_recent_entry = 1)
+                            ) SimilarJobQ
                    ON H.job = SimilarJobQ.job;
 
             If FOUND Then
@@ -450,11 +450,11 @@ BEGIN
 
     UPDATE cap.t_task_steps target
     SET dependencies = CountQ.dependencies
-    FROM ( SELECT step,
-                  COUNT(job) AS dependencies
-           FROM cap.t_task_step_dependencies
-           WHERE job = _newJob
-           GROUP BY step
+    FROM (SELECT step,
+                 COUNT(job) AS dependencies
+          FROM cap.t_task_step_dependencies
+          WHERE job = _newJob
+          GROUP BY step
          ) CountQ
     WHERE target.job = _newJob AND
           CountQ.step = target.step AND

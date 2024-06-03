@@ -123,10 +123,10 @@ BEGIN
         If FOUND And _validateJobStepSuccess Then
             -- Remove any jobs that have failed, in progress, or holding job steps
             DELETE FROM Tmp_Selected_Jobs
-            WHERE EXISTS ( SELECT 1
-                           FROM sw.t_job_steps JS
-                           WHERE Tmp_Selected_Jobs.job = JS.job AND
-                                 NOT JS.state IN (3, 5));               -- 3=Skipped, 5=Complete
+            WHERE EXISTS (SELECT 1
+                          FROM sw.t_job_steps JS
+                          WHERE Tmp_Selected_Jobs.job = JS.job AND
+                                NOT JS.state IN (3, 5));               -- 3=Skipped, 5=Complete
             --
             GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -169,9 +169,9 @@ BEGIN
         SELECT job,
                state
         FROM sw.t_jobs
-        WHERE job IN ( SELECT DISTINCT Value
-                       FROM public.parse_delimited_integer_list(_jobListOverride) ) AND
-              NOT job IN ( SELECT job FROM Tmp_Selected_Jobs );
+        WHERE job IN (SELECT DISTINCT Value
+                      FROM public.parse_delimited_integer_list(_jobListOverride)) AND
+              NOT job IN (SELECT job FROM Tmp_Selected_Jobs);
     End If;
 
     If Not Exists (SELECT job FROM Tmp_Selected_Jobs) Then

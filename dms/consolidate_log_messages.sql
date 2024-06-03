@@ -166,7 +166,7 @@ BEGIN
     FROM public.t_log_entries L
          LEFT OUTER JOIN Tmp_MessagesToDelete D
            ON L.entry_id = D.entry_id
-    WHERE L.message IN ( SELECT Duplicates.message FROM Tmp_DuplicateMessages Duplicates)
+    WHERE L.message IN (SELECT Duplicates.message FROM Tmp_DuplicateMessages Duplicates)
     ORDER BY L.message, L.entry_id;
 
     If Not _infoOnly Then
@@ -177,7 +177,7 @@ BEGIN
 
         -- Option 1:
         -- DELETE FROM public.t_log_entries
-        -- WHERE entry_id IN ( SELECT entry_id FROM Tmp_MessagesToDelete );
+        -- WHERE entry_id IN (SELECT entry_id FROM Tmp_MessagesToDelete);
 
         -- Option 2 (this is the preferred form, though in this case both options have the same execution plan)
         DELETE FROM public.t_log_entries
@@ -205,8 +205,8 @@ BEGIN
             UPDATE public.t_log_entries target
             SET type = 'ErrorIgnore'
             WHERE target.type = 'Error' AND
-                  target.message IN ( SELECT Duplicates.message
-                                      FROM Tmp_DuplicateMessages Duplicates);
+                  target.message IN (SELECT Duplicates.message
+                                     FROM Tmp_DuplicateMessages Duplicates);
         End If;
 
     End If;

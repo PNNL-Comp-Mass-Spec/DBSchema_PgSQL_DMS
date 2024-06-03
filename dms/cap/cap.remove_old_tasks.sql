@@ -157,12 +157,12 @@ BEGIN
     End If;
 
     If _maxTasksToRemove > 0 Then
-        SELECT max(Entry_ID)
+        SELECT MAX(Entry_ID)
         INTO _entryIdThreshold
-        FROM ( SELECT Entry_ID
-               FROM Tmp_Selected_Jobs
-               ORDER BY job
-               LIMIT _maxTasksToRemove) FilterQ;
+        FROM (SELECT Entry_ID
+              FROM Tmp_Selected_Jobs
+              ORDER BY job
+              LIMIT _maxTasksToRemove) FilterQ;
 
         DELETE FROM Tmp_Selected_Jobs
         WHERE Entry_ID > _entryIdThreshold;

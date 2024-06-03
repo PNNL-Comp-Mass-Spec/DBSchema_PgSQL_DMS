@@ -227,9 +227,9 @@ BEGIN
             SELECT experiment
             INTO _retiredExperiment
             FROM t_experiments
-            WHERE exp_id IN ( SELECT ID
-                              FROM Tmp_Material_Items
-                              WHERE itemType = 'E' ) AND
+            WHERE exp_id IN (SELECT ID
+                             FROM Tmp_Material_Items
+                             WHERE itemType = 'E') AND
                   container_id = _contID AND
                   material_active = 'Inactive';
 
@@ -308,7 +308,7 @@ BEGIN
                           WHEN _mode = 'retire_items' THEN 'Inactive'
                           ELSE Material_Active
                           END
-    WHERE biomaterial_id IN ( SELECT ID FROM Tmp_Material_Items WHERE itemType = 'B' );
+    WHERE biomaterial_id IN (SELECT ID FROM Tmp_Material_Items WHERE itemType = 'B');
 
     ---------------------------------------------------
     -- Update container reference to destination container

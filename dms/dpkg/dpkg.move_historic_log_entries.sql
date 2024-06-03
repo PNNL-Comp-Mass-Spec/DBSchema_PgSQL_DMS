@@ -92,7 +92,6 @@ BEGIN
       type       = EXCLUDED.type,
       message    = EXCLUDED.message;
 
-
     -- Remove the old entries from dpkg.t_log_entries
     DELETE FROM dpkg.t_log_entries
     WHERE Entered < _cutoffDateTime;

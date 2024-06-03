@@ -124,9 +124,9 @@ BEGIN
 
     UPDATE Tmp_Jobs
     SET Invalid = true
-    WHERE NOT EXISTS ( SELECT J.job
-                       FROM sw.t_jobs J
-                       WHERE J.job = Tmp_Jobs.Job);
+    WHERE NOT EXISTS (SELECT J.job
+                      FROM sw.t_jobs J
+                      WHERE J.job = Tmp_Jobs.Job);
 
     If Exists (SELECT * FROM Tmp_Jobs J WHERE J.Invalid) Then
         _message := format('Invalid jobs were found: %s', _jobList);
@@ -175,9 +175,9 @@ BEGIN
     FROM Tmp_Jobs
          INNER JOIN sw.t_job_steps JS
            ON Tmp_Jobs.job = JS.job
-         INNER JOIN ( SELECT JSR.job, JSR.step, JSR.start, JSR.input_folder_name
-                      FROM sw.t_job_steps JSR
-                      WHERE JSR.tool IN ('Results_Transfer', 'Results_Cleanup')
+         INNER JOIN (SELECT JSR.job, JSR.step, JSR.start, JSR.input_folder_name
+                     FROM sw.t_job_steps JSR
+                     WHERE JSR.tool IN ('Results_Transfer', 'Results_Cleanup')
                     ) FilterQ
            ON JS.job = FilterQ.job AND
               JS.output_folder_name = FilterQ.input_folder_name AND
@@ -193,9 +193,9 @@ BEGIN
     FROM Tmp_Jobs
          INNER JOIN sw.t_job_steps JS
            ON Tmp_Jobs.job = JS.job
-         INNER JOIN ( SELECT JSR.job, JSR.step, JSR.start, JSR.input_folder_name
-                      FROM sw.t_job_steps JSR
-                      WHERE JSR.tool IN ('Results_Transfer', 'Results_Cleanup')
+         INNER JOIN (SELECT JSR.job, JSR.step, JSR.start, JSR.input_folder_name
+                     FROM sw.t_job_steps JSR
+                     WHERE JSR.tool IN ('Results_Transfer', 'Results_Cleanup')
                     ) FilterQ
            ON JS.job = FilterQ.job AND
               JS.output_folder_name = FilterQ.input_folder_name AND
@@ -217,8 +217,8 @@ BEGIN
 
     UPDATE Tmp_Jobs target
     SET Update_Required = true
-    WHERE target.Job IN ( SELECT DISTINCT JSU.Job
-                          FROM Tmp_JobStepsToUpdate JSU );
+    WHERE target.Job IN (SELECT DISTINCT JSU.Job
+                         FROM Tmp_JobStepsToUpdate JSU);
 
     ---------------------------------------------------
     -- Look for jobs with Update_Required = false
@@ -239,20 +239,20 @@ BEGIN
                            public.timestamp_text(InvalidQ.start),  public.timestamp_text(InvalidQ.start_history),
                            public.timestamp_text(InvalidQ.finish), public.timestamp_text(InvalidQ.finish_history)),
         Mismatch_Results_Transfer = true
-    FROM ( SELECT JS.job,
-                  JS.step AS Step,
-                  JS.start, JS.finish,
-                  JSH.start AS Start_History,
-                  JSH.finish AS Finish_History
-           FROM sw.t_job_steps JS
-                INNER JOIN sw.t_job_steps_history JSH
-                  ON JS.job = JSH.job AND
-                     JS.step = JSH.step AND
-                     JSH.most_recent_entry = 1
-           WHERE JS.job IN (SELECT DISTINCT JSU.job FROM Tmp_JobStepsToUpdate JSU) AND
-                 JS.tool In ('Results_Transfer', 'Results_Cleanup') AND
-                 (JSH.start <> JS.start OR JSH.finish <> JS.finish)
-          ) InvalidQ
+    FROM (SELECT JS.job,
+                 JS.step AS Step,
+                 JS.start, JS.finish,
+                 JSH.start AS Start_History,
+                 JSH.finish AS Finish_History
+          FROM sw.t_job_steps JS
+               INNER JOIN sw.t_job_steps_history JSH
+                 ON JS.job = JSH.job AND
+                    JS.step = JSH.step AND
+                    JSH.most_recent_entry = 1
+          WHERE JS.job IN (SELECT DISTINCT JSU.job FROM Tmp_JobStepsToUpdate JSU) AND
+                JS.tool In ('Results_Transfer', 'Results_Cleanup') AND
+                (JSH.start <> JS.start OR JSH.finish <> JS.finish)
+         ) InvalidQ
     WHERE target.job = InvalidQ.job;
 
     If _infoOnly Then

@@ -129,20 +129,20 @@ BEGIN
 
     SELECT string_agg(format('%I', FactorName), ', ' ORDER BY FactorName)
     INTO _factorNameList
-    FROM ( SELECT Src.name AS FactorName
-           FROM t_factor Src
-                INNER JOIN Tmp_FactorItems I
-                  ON Src.factor_id = I.FactorID
-           GROUP BY Src.name
+    FROM (SELECT Src.name AS FactorName
+          FROM t_factor Src
+               INNER JOIN Tmp_FactorItems I
+                 ON Src.factor_id = I.FactorID
+          GROUP BY Src.name
          ) GroupingQ;
 
     SELECT string_agg(format('%I text', GroupQ.name), ', ' ORDER BY GroupQ.name)
     INTO _factorNameAndTypeList
-    FROM ( SELECT Src.name
-           FROM t_factor Src
-                INNER JOIN Tmp_FactorItems I
-                  ON Src.factor_id = I.FactorID
-           GROUP BY Src.name) GroupQ;
+    FROM (SELECT Src.name
+          FROM t_factor Src
+               INNER JOIN Tmp_FactorItems I
+                 ON Src.factor_id = I.FactorID
+          GROUP BY Src.name) GroupQ;
 
     -- This will have a comma separated list of factor names, for example: 'BioRep, Sample, Time'
     _factorNameList := Trim(Coalesce(_factorNameList, ''));

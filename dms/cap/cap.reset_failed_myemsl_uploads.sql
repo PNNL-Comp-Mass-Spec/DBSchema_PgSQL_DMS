@@ -155,17 +155,17 @@ BEGIN
         UPDATE Tmp_FailedJobs Target
         SET SkipResetMode = 1,
             SkipReason = 'Upload has failed two or more times'
-        FROM ( SELECT U.job,
-                      U.subfolder,
-                      U.file_count_new,
-                      U.file_count_updated,
-                      COUNT(entry_id) AS Attempts
-               FROM cap.t_myemsl_uploads AS U
-                    INNER JOIN Tmp_FailedJobs
-                      ON U.job = Tmp_FailedJobs.job AND
-                         U.subfolder = Tmp_FailedJobs.subfolder
-               WHERE U.verified = 0
-               GROUP BY U.job, U.subfolder, U.file_count_new, U.file_count_updated
+        FROM (SELECT U.job,
+                     U.subfolder,
+                     U.file_count_new,
+                     U.file_count_updated,
+                     COUNT(entry_id) AS Attempts
+              FROM cap.t_myemsl_uploads AS U
+                   INNER JOIN Tmp_FailedJobs
+                     ON U.job = Tmp_FailedJobs.job AND
+                        U.subfolder = Tmp_FailedJobs.subfolder
+              WHERE U.verified = 0
+              GROUP BY U.job, U.subfolder, U.file_count_new, U.file_count_updated
              ) AttemptQ
         WHERE Target.job = AttemptQ.job AND
               Target.subfolder = AttemptQ.subfolder AND
@@ -225,11 +225,11 @@ BEGIN
 
             DELETE FROM Tmp_FailedJobs
             WHERE SkipResetMode = 0 AND
-                  NOT Job IN ( SELECT Job
-                               FROM Tmp_FailedJobs
-                               WHERE SkipResetMode = 0
-                               ORDER BY Job
-                               LIMIT _maxJobsToReset);
+                  NOT Job IN (SELECT Job
+                              FROM Tmp_FailedJobs
+                              WHERE SkipResetMode = 0
+                              ORDER BY Job
+                              LIMIT _maxJobsToReset);
 
             If Not _infoOnly Then
                 _verb := 'Resetting ';

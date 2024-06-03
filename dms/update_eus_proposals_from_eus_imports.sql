@@ -62,17 +62,17 @@ BEGIN
         FROM t_eus_proposals;
 
         MERGE INTO t_eus_proposals AS target
-        USING ( SELECT project_id,
-                       title,
-                       proposal_type_display AS Proposal_Type,
-                       actual_start_date AS Proposal_Start_Date,
-                       actual_end_date AS Proposal_End_Date,
-                       CASE WHEN actual_start_date > CURRENT_TIMESTAMP THEN 1     -- Proposal start date is later than today; mark it active anyway
-                            WHEN CURRENT_TIMESTAMP BETWEEN Coalesce(actual_start_date, CURRENT_TIMESTAMP) AND actual_end_date + INTERVAL '1 day' THEN 1
-                            ELSE 0
-                       END AS Active
-                FROM V_NEXUS_Import_Proposals
-                WHERE id_rank = 1
+        USING (SELECT project_id,
+                      title,
+                      proposal_type_display AS Proposal_Type,
+                      actual_start_date AS Proposal_Start_Date,
+                      actual_end_date AS Proposal_End_Date,
+                      CASE WHEN actual_start_date > CURRENT_TIMESTAMP THEN 1     -- Proposal start date is later than today; mark it active anyway
+                           WHEN CURRENT_TIMESTAMP BETWEEN Coalesce(actual_start_date, CURRENT_TIMESTAMP) AND actual_end_date + INTERVAL '1 day' THEN 1
+                           ELSE 0
+                      END AS Active
+               FROM V_NEXUS_Import_Proposals
+               WHERE id_rank = 1
               ) AS Source
         ON (target.proposal_id = source.project_id)
         WHEN MATCHED AND

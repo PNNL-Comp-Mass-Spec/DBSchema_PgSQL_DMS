@@ -48,9 +48,9 @@ DECLARE
 BEGIN
     SELECT string_agg(LookupQ.scan_type, ', ' ORDER BY G.sort_key, LookupQ.scan_type)
     INTO _result
-    FROM ( SELECT DISTINCT scan_type
-           FROM t_dataset_scan_types
-           WHERE dataset_id = _datasetID) LookupQ
+    FROM (SELECT DISTINCT scan_type
+          FROM t_dataset_scan_types
+          WHERE dataset_id = _datasetID) LookupQ
          LEFT OUTER JOIN t_dataset_scan_type_glossary G
            ON LookupQ.scan_type = G.scan_type;
 

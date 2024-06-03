@@ -6,7 +6,7 @@ CREATE TABLE timetable.task (
     task_id bigint NOT NULL,
     chain_id bigint,
     task_order double precision NOT NULL,
-    task_name text,
+    task_name public.citext,
     kind timetable.command_kind DEFAULT 'SQL'::timetable.command_kind NOT NULL,
     command text NOT NULL,
     run_as text,

@@ -53,15 +53,15 @@ BEGIN
                CC.Setup_Date
         FROM T_Charge_Code CC
         WHERE CC.Usage_Sample_Prep > 0 AND
-              NOT EXISTS ( SELECT 1
-                           FROM ( SELECT CC.Charge_Code,
-                                         COUNT(SPR.prep_request_id) AS SPR_Usage
-                                  FROM T_Sample_Prep_Request SPR
-                                       INNER JOIN T_Charge_Code CC
-                                         ON SPR.Work_Package = CC.Charge_Code
-                                  GROUP BY CC.Charge_Code ) StatsQ
-                           WHERE StatsQ.SPR_Usage > 0 AND
-                                 StatsQ.Charge_Code = CC.Charge_Code );
+              NOT EXISTS (SELECT 1
+                          FROM (SELECT CC.Charge_Code,
+                                       COUNT(SPR.prep_request_id) AS SPR_Usage
+                                FROM T_Sample_Prep_Request SPR
+                                     INNER JOIN T_Charge_Code CC
+                                       ON SPR.Work_Package = CC.Charge_Code
+                                GROUP BY CC.Charge_Code) StatsQ
+                          WHERE StatsQ.SPR_Usage > 0 AND
+                                StatsQ.Charge_Code = CC.Charge_Code);
 
         -- Look for Charge Codes with a non-zero requested run usage value, but are no longer associated with a requested run
 
@@ -78,15 +78,15 @@ BEGIN
                CC.Setup_Date
         FROM T_Charge_Code CC
         WHERE CC.Usage_Requested_Run > 0 AND
-              NOT EXISTS ( SELECT 1
-                           FROM ( SELECT CC.Charge_Code,
-                                         COUNT(request_id) AS RR_Usage
-                                  FROM T_Charge_Code CC
-                                       INNER JOIN T_Requested_Run RR
-                                         ON CC.Charge_Code = RR.Work_Package
-                                  GROUP BY CC.Charge_Code ) StatsQ
-                           WHERE StatsQ.RR_Usage > 0 AND
-                                 StatsQ.Charge_Code = CC.Charge_Code );
+              NOT EXISTS (SELECT 1
+                          FROM (SELECT CC.Charge_Code,
+                                       COUNT(request_id) AS RR_Usage
+                                FROM T_Charge_Code CC
+                                     INNER JOIN T_Requested_Run RR
+                                       ON CC.Charge_Code = RR.Work_Package
+                                GROUP BY CC.Charge_Code) StatsQ
+                          WHERE StatsQ.RR_Usage > 0 AND
+                                StatsQ.Charge_Code = CC.Charge_Code);
 
         -- Show usage stats for all work packages
 
@@ -101,29 +101,29 @@ BEGIN
                Coalesce(A.Charge_Code_Title, B.Charge_Code_Title) AS Charge_Code_Title,
                Coalesce(A.Sub_Account_Title, B.Sub_Account_Title) AS Sub_Account_Title,
                Coalesce(A.Setup_Date,        B.Setup_Date)        AS Setup_Date
-        FROM ( SELECT CC.charge_code,
-                      CC.Usage_Sample_Prep AS Sample_Prep_Usage_Old,
-                      COUNT(SPR.prep_request_id)::int4 AS Sample_Prep_Usage_New,
-                      CC.WBS_Title,
-                      CC.Charge_Code_Title,
-                      CC.Sub_Account_Title,
-                      CC.Setup_Date
-               FROM t_sample_prep_request SPR
-                    INNER JOIN t_charge_code CC
-                      ON SPR.work_package = CC.charge_code
-               GROUP BY CC.charge_code
+        FROM (SELECT CC.charge_code,
+                     CC.Usage_Sample_Prep AS Sample_Prep_Usage_Old,
+                     COUNT(SPR.prep_request_id)::int4 AS Sample_Prep_Usage_New,
+                     CC.WBS_Title,
+                     CC.Charge_Code_Title,
+                     CC.Sub_Account_Title,
+                     CC.Setup_Date
+              FROM t_sample_prep_request SPR
+                   INNER JOIN t_charge_code CC
+                     ON SPR.work_package = CC.charge_code
+              GROUP BY CC.charge_code
              ) A
-             FULL OUTER JOIN ( SELECT CC.charge_code,
-                                      CC.Usage_Requested_Run AS Requested_Run_Usage_Old,
-                                      COUNT(RR.request_id)::int4 AS Requested_Run_Usage_New,
-                                      CC.WBS_Title,
-                                      CC.Charge_Code_Title,
-                                      CC.Sub_Account_Title,
-                                      CC.Setup_Date
-                               FROM t_charge_code CC
-                                    INNER JOIN t_requested_run RR
-                                      ON CC.charge_code = RR.work_package
-                               GROUP BY CC.charge_code
+             FULL OUTER JOIN (SELECT CC.charge_code,
+                                     CC.Usage_Requested_Run AS Requested_Run_Usage_Old,
+                                     COUNT(RR.request_id)::int4 AS Requested_Run_Usage_New,
+                                     CC.WBS_Title,
+                                     CC.Charge_Code_Title,
+                                     CC.Sub_Account_Title,
+                                     CC.Setup_Date
+                              FROM t_charge_code CC
+                                   INNER JOIN t_requested_run RR
+                                     ON CC.charge_code = RR.work_package
+                              GROUP BY CC.charge_code
              ) B
                ON A.charge_code = B.charge_code;
 
@@ -139,18 +139,19 @@ BEGIN
     UPDATE T_Charge_Code Target
     SET usage_sample_prep = 0
     WHERE Target.usage_sample_prep > 0 AND
-          Target.Charge_Code IN ( SELECT CC.Charge_Code
-                                  FROM T_Charge_Code CC
-                                  WHERE usage_sample_prep > 0 AND
-                                        NOT EXISTS ( SELECT 1
-                                                     FROM ( SELECT CC.Charge_Code,
-                                                                   COUNT(SPR.prep_request_id) AS SPR_Usage
-                                                            FROM T_Sample_Prep_Request SPR
-                                                                 INNER JOIN T_Charge_Code CC
-                                                                   ON SPR.Work_Package = CC.Charge_Code
-                                                            GROUP BY CC.Charge_Code ) StatsQ
-                                                     WHERE StatsQ.SPR_Usage > 0 AND
-                                                           StatsQ.Charge_Code = CC.Charge_Code ) );
+          Target.Charge_Code IN (SELECT CC.Charge_Code
+                                 FROM T_Charge_Code CC
+                                 WHERE usage_sample_prep > 0 AND
+                                       NOT EXISTS (SELECT 1
+                                                   FROM (SELECT CC.Charge_Code,
+                                                                COUNT(SPR.prep_request_id) AS SPR_Usage
+                                                         FROM T_Sample_Prep_Request SPR
+                                                              INNER JOIN T_Charge_Code CC
+                                                                ON SPR.Work_Package = CC.Charge_Code
+                                                         GROUP BY CC.Charge_Code ) StatsQ
+                                                   WHERE StatsQ.SPR_Usage > 0 AND
+                                                         StatsQ.Charge_Code = CC.Charge_Code)
+                                );
     --
     GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -174,18 +175,20 @@ BEGIN
     UPDATE T_Charge_Code Target
     SET Usage_Requested_Run = 0
     WHERE Target.Usage_Requested_Run > 0 AND
-          Target.Charge_Code IN ( SELECT CC.Charge_Code
-                                  FROM T_Charge_Code CC
-                                  WHERE Usage_Requested_Run > 0 AND
-                                        NOT EXISTS ( SELECT 1
-                                                     FROM ( SELECT CC.Charge_Code,
-                                                                   COUNT(RR.request_id) AS RR_Usage
-                                                            FROM T_Charge_Code CC
-                                                                 INNER JOIN T_Requested_Run RR
-                                                                   ON CC.Charge_Code = RR.Work_Package
-                                                            GROUP BY CC.Charge_Code ) StatsQ
-                                                     WHERE StatsQ.RR_Usage > 0 AND
-                                                           StatsQ.Charge_Code = CC.Charge_Code ) );
+          Target.Charge_Code IN (SELECT CC.Charge_Code
+                                 FROM T_Charge_Code CC
+                                 WHERE Usage_Requested_Run > 0 AND
+                                       NOT EXISTS (SELECT 1
+                                                   FROM (SELECT CC.Charge_Code,
+                                                                COUNT(RR.request_id) AS RR_Usage
+                                                         FROM T_Charge_Code CC
+                                                              INNER JOIN T_Requested_Run RR
+                                                                ON CC.Charge_Code = RR.Work_Package
+                                                         GROUP BY CC.Charge_Code
+                                                        ) StatsQ
+                                                   WHERE StatsQ.RR_Usage > 0 AND
+                                                         StatsQ.Charge_Code = CC.Charge_Code)
+                                );
     --
     GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -208,13 +211,13 @@ BEGIN
 
     UPDATE t_charge_code Target
     SET usage_sample_prep = SPR_Usage
-    FROM ( SELECT CC.charge_code,
-                  COUNT(SPR.prep_request_id) AS SPR_Usage
-           FROM t_sample_prep_request SPR
-               INNER JOIN t_charge_code CC
-                   ON SPR.work_package = CC.charge_code
-           GROUP BY CC.charge_code
-          ) StatsQ
+    FROM (SELECT CC.charge_code,
+                 COUNT(SPR.prep_request_id) AS SPR_Usage
+          FROM t_sample_prep_request SPR
+              INNER JOIN t_charge_code CC
+                  ON SPR.work_package = CC.charge_code
+          GROUP BY CC.charge_code
+         ) StatsQ
     WHERE Target.charge_code = StatsQ.charge_code AND
           Coalesce(Target.usage_sample_prep, 0) <> StatsQ.SPR_Usage;
     --
@@ -251,13 +254,13 @@ BEGIN
 
     UPDATE t_charge_code Target
     SET usage_requested_run = RR_Usage
-    FROM ( SELECT CC.charge_code,
-                   COUNT(RR.request_id) AS RR_Usage
-           FROM t_charge_code CC
-               INNER JOIN t_requested_run RR
-                   ON CC.Charge_Code = RR.work_package
-           GROUP BY CC.Charge_Code
-          ) StatsQ
+    FROM (SELECT CC.charge_code,
+                  COUNT(RR.request_id) AS RR_Usage
+          FROM t_charge_code CC
+              INNER JOIN t_requested_run RR
+                  ON CC.Charge_Code = RR.work_package
+          GROUP BY CC.Charge_Code
+         ) StatsQ
     WHERE Target.Charge_Code = StatsQ.Charge_Code AND
           Coalesce(Target.Usage_Requested_Run, 0) <> StatsQ.RR_Usage;
     --

@@ -203,9 +203,9 @@ BEGIN
            Special_Processing,
            Owner
     FROM V_Get_Pipeline_Jobs AS VGP
-    WHERE Tool IN ( SELECT script
-                    FROM sw.t_scripts
-                    WHERE enabled = 'Y' );
+    WHERE Tool IN (SELECT script
+                   FROM sw.t_scripts
+                   WHERE enabled = 'Y');
 
     If Not FOUND Then
         -- No new or held jobs were found in public.t_analysis_job
@@ -301,13 +301,13 @@ BEGIN
     FROM Tmp_DMSJobs T
          INNER JOIN sw.t_jobs
            ON T.job = sw.t_jobs.job
-         LEFT OUTER JOIN ( SELECT J.job
-                           FROM sw.t_jobs J
-                                INNER JOIN sw.t_job_steps JS
-                                  ON J.job = JS.job
-                           WHERE J.state IN (2, 5, 8) AND   -- Jobs that are running, failed, or holding
-                                 JS.state IN (4, 5, 9)      -- Steps that are running or finished (but not failed or holding)
-                          ) LookupQ
+         LEFT OUTER JOIN (SELECT J.job
+                          FROM sw.t_jobs J
+                               INNER JOIN sw.t_job_steps JS
+                                 ON J.job = JS.job
+                          WHERE J.state IN (2, 5, 8) AND   -- Jobs that are running, failed, or holding
+                                JS.state IN (4, 5, 9)      -- Steps that are running or finished (but not failed or holding)
+                         ) LookupQ
      ON sw.t_jobs.job = LookupQ.job
     WHERE sw.t_jobs.state IN (2, 5, 8) AND
           NOT T.script IN ('LTQ_FTPek','ICR2LS') AND
@@ -338,10 +338,10 @@ BEGIN
         If _maxJobsToProcess > 0 Then
             -- Limit the number of jobs to reset
             DELETE FROM Tmp_ResetJobs
-            WHERE NOT Job IN ( SELECT Job
-                               FROM Tmp_ResetJobs
-                               ORDER BY Job
-                               LIMIT _maxJobsToProcess );
+            WHERE NOT Job IN (SELECT Job
+                              FROM Tmp_ResetJobs
+                              ORDER BY Job
+                              LIMIT _maxJobsToProcess);
         End If;
 
         If _debugMode Then
@@ -405,8 +405,8 @@ BEGIN
              INNER JOIN sw.t_scripts S
                ON DJ.script = S.script
         WHERE state = 1 AND
-              NOT job IN ( SELECT job
-                           FROM sw.t_jobs ) AND
+              NOT job IN (SELECT job
+                          FROM sw.t_jobs) AND
               S.enabled = 'Y' AND
               S.backfill_to_dms = 0
         LIMIT _maxJobsToAddResetOrResume;
@@ -494,9 +494,9 @@ BEGIN
         UPDATE sw.t_jobs
         SET state = 8                            -- 8=Holding
         WHERE sw.t_jobs.state <> 8 AND
-              sw.t_jobs.job IN ( SELECT job
-                                 FROM Tmp_DMSJobs
-                                 WHERE state = 8 );
+              sw.t_jobs.job IN (SELECT job
+                                FROM Tmp_DMSJobs
+                                WHERE state = 8);
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -584,12 +584,12 @@ BEGIN
 
         UPDATE Tmp_DMSJobs
         SET Comment = RTrim(Substring(Target.Comment, 1, FilterQ.Matchindex - 1))
-        FROM ( SELECT DJ.Job,
-                      Position(';' In DJ.Comment) AS MatchIndex
-               FROM Tmp_DMSJobs DJ
-                       INNER JOIN Tmp_JobsToResumeOrReset RJ
-                         ON DJ.Job = RJ.Job AND
-                            RJ.FailedJob > 0
+        FROM (SELECT DJ.Job,
+                     Position(';' In DJ.Comment) AS MatchIndex
+              FROM Tmp_DMSJobs DJ
+                      INNER JOIN Tmp_JobsToResumeOrReset RJ
+                        ON DJ.Job = RJ.Job AND
+                           RJ.FailedJob > 0
              ) FilterQ
         WHERE Target.Job = FilterQ.Job AND
               FilterQ.MatchIndex > 0;

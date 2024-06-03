@@ -94,17 +94,17 @@ BEGIN
         )
         SELECT DISTINCT SourceQ.protein_collection_list_id,
                         ProteinCollections.Value
-        FROM ( SELECT DISTINCT PCLMap.protein_collection_list_id,
-                               PCLMap.protein_collection_list
-               FROM t_cached_protein_collection_list_map PCLMap
-                    LEFT OUTER JOIN t_cached_protein_collection_list_members PCLMembers
-                      ON PCLMap.protein_collection_list_id = PCLMembers.protein_collection_list_id
-               WHERE PCLMembers.protein_collection_name IS NULL
+        FROM (SELECT DISTINCT PCLMap.protein_collection_list_id,
+                              PCLMap.protein_collection_list
+              FROM t_cached_protein_collection_list_map PCLMap
+                   LEFT OUTER JOIN t_cached_protein_collection_list_members PCLMembers
+                     ON PCLMap.protein_collection_list_id = PCLMembers.protein_collection_list_id
+              WHERE PCLMembers.protein_collection_name IS NULL
              ) SourceQ
              JOIN LATERAL (
-                 SELECT value
-                 FROM public.parse_delimited_list(SourceQ.protein_collection_list)
-                 ) AS ProteinCollections On True;
+                SELECT value
+                FROM public.parse_delimited_list(SourceQ.protein_collection_list)
+               ) AS ProteinCollections On True;
 
         -- Update the usage counts in t_protein_collection_usage
 
@@ -112,30 +112,30 @@ BEGIN
         SET job_usage_count_last12months = UsageQ.job_usage_count_last12months,
             job_usage_count = UsageQ.job_usage_count,
             most_recently_used = UsageQ.Most_Recent_Date
-        FROM ( SELECT PCLMembers.Protein_Collection_Name AS ProteinCollection,
-                      Sum(Jobs) AS Job_Usage_Count,
-                      Sum(Job_Usage_Count_Last12Months) AS Job_Usage_Count_Last12Months,
-                      MAX(NewestJob) AS Most_Recent_Date
-               FROM ( SELECT J.protein_collection_list,
-                             COUNT(J.job) AS Jobs,
-                             Sum(CASE WHEN COALESCE(J.created, J.start, J.finish) >= CURRENT_TIMESTAMP - INTERVAL '1 year'
-                                      THEN 1
-                                      ELSE 0
-                                 END) AS Job_Usage_Count_Last12Months,
-                             MAX(COALESCE(J.created, J.start, J.finish)) AS NewestJob
-                      FROM t_analysis_job J
-                      GROUP BY J.protein_collection_list
-                    ) CountQ
-                    INNER JOIN t_cached_protein_collection_list_map PCLMap
-                      ON CountQ.protein_collection_list = PCLMap.protein_collection_list
-                    INNER JOIN t_cached_protein_collection_list_members PCLMembers
-                      ON PCLMap.protein_collection_list_id = PCLMembers.protein_collection_list_id
-               GROUP BY PCLMembers.protein_collection_name
+        FROM (SELECT PCLMembers.Protein_Collection_Name AS ProteinCollection,
+                     SUM(Jobs) AS Job_Usage_Count,
+                     SUM(Job_Usage_Count_Last12Months) AS Job_Usage_Count_Last12Months,
+                     MAX(NewestJob) AS Most_Recent_Date
+              FROM (SELECT J.protein_collection_list,
+                           COUNT(J.job) AS Jobs,
+                           SUM(CASE WHEN COALESCE(J.created, J.start, J.finish) >= CURRENT_TIMESTAMP - INTERVAL '1 year'
+                                    THEN 1
+                                    ELSE 0
+                               END) AS Job_Usage_Count_Last12Months,
+                           MAX(COALESCE(J.created, J.start, J.finish)) AS NewestJob
+                    FROM t_analysis_job J
+                    GROUP BY J.protein_collection_list
+                   ) CountQ
+                   INNER JOIN t_cached_protein_collection_list_map PCLMap
+                     ON CountQ.protein_collection_list = PCLMap.protein_collection_list
+                   INNER JOIN t_cached_protein_collection_list_members PCLMembers
+                     ON PCLMap.protein_collection_list_id = PCLMembers.protein_collection_list_id
+              GROUP BY PCLMembers.protein_collection_name
              ) AS UsageQ
         WHERE target.Name = UsageQ.ProteinCollection AND
               (
-                target.job_usage_count_last12months IS DISTINCT FROM UsageQ.job_usage_count_last12months or
-                target.job_usage_count IS DISTINCT FROM UsageQ.job_usage_count or
+                target.job_usage_count_last12months IS DISTINCT FROM UsageQ.job_usage_count_last12months OR
+                target.job_usage_count IS DISTINCT FROM UsageQ.job_usage_count OR
                 target.most_recently_used IS DISTINCT FROM UsageQ.Most_Recent_Date
               );
 

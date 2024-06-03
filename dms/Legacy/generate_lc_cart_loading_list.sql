@@ -15,8 +15,8 @@ CREATE OR REPLACE FUNCTION public.generate_lc_cart_loading_list(_lccartname text
 **
 **      Stats by year:
 **        SELECT Extract(year from Entered) AS RR_Year,
-**               Sum(CASE WHEN NOT Cart_Column IS NULL THEN 1 ELSE 0 END) AS Requests_with_Non_Null_Cart_Col,
-**               Sum(CASE WHEN     Cart_Column > 1     THEN 1 ELSE 0 END) AS Requests_with_Cart_Col_Over_One
+**               SUM(CASE WHEN NOT Cart_Column IS NULL THEN 1 ELSE 0 END) AS Requests_with_Non_Null_Cart_Col,
+**               SUM(CASE WHEN     Cart_Column > 1     THEN 1 ELSE 0 END) AS Requests_with_Cart_Col_Over_One
 **        FROM T_Requested_Run
 **        GROUP BY RR_Year
 **        ORDER BY RR_Year DESC;
@@ -142,9 +142,9 @@ BEGIN
 
     SELECT MAX(CountQ.SampleCount)
     INTO _maxSamples
-    FROM ( SELECT COUNT(request_id) AS SampleCount
-           FROM Tmp_XR
-           GROUP BY cart_column_id ) CountQ;
+    FROM (SELECT COUNT(request_id) AS SampleCount
+          FROM Tmp_XR
+          GROUP BY cart_column_id) CountQ;
 
     SELECT MAX(entry_id)
     INTO _maxEntryID
@@ -209,10 +209,10 @@ BEGIN
 
         UPDATE Tmp_XS
         SET seq = CountQ.Seq
-        FROM ( SELECT entry_id,
-                      Row_Number() OVER (ORDER BY entry_id) * 10 As Seq
-               FROM Tmp_XS
-               WHERE cart_column_id = _columnNumber) CountQ
+        FROM (SELECT entry_id,
+                     Row_Number() OVER (ORDER BY entry_id) * 10 AS Seq
+              FROM Tmp_XS
+              WHERE cart_column_id = _columnNumber) CountQ
         WHERE Tmp_XS.entry_id = CountQ.entry_id;
 
     END LOOP;
@@ -284,10 +284,10 @@ BEGIN
 
     UPDATE Tmp_XF
     SET blankSeq = CountQ.BlankSeq
-    FROM ( SELECT RankSrc.seq,
-                  Row_Number() OVER ( ORDER BY RankSrc.Seq ) AS BlankSeq
-           FROM Tmp_XF RankSrc
-           WHERE RankSrc.request_id = 0 ) CountQ
+    FROM (SELECT RankSrc.seq,
+                 Row_Number() OVER ( ORDER BY RankSrc.Seq ) AS BlankSeq
+          FROM Tmp_XF RankSrc
+          WHERE RankSrc.request_id = 0) CountQ
     WHERE Tmp_XF.request_id = 0 AND
           Tmp_XF.seq = CountQ.Seq;
 
@@ -305,7 +305,7 @@ BEGIN
         RR.priority AS Priority,
         CASE WHEN Tmp_XF.request_id = 0 THEN _dsTypeForBlanks::citext ELSE DSType.Dataset_Type END AS Type,
         RR.batch_id AS Batch,
-        RR.block As Block,
+        RR.block AS Block,
         RR.run_order AS Run_Order,
         EUT.eus_usage_type AS EMSL_Usage_Type,
         RR.eus_proposal_id AS EMSL_Proposal_ID,

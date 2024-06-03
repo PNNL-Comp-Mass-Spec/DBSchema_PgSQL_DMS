@@ -39,19 +39,19 @@ BEGIN
     Else
         SELECT string_agg(LookupQ.campaign, ', ' ORDER BY LookupQ.campaign)
         INTO _result
-        FROM ( SELECT DISTINCT Campaigns.campaign
-               FROM (SELECT t_campaign.campaign
-                     FROM t_biomaterial
-                          INNER JOIN t_campaign
-                            ON t_biomaterial.campaign_id = t_campaign.campaign_id
-                     WHERE t_biomaterial.container_id = _containerID
-                     UNION
-                     SELECT t_campaign.campaign
-                     FROM t_experiments
-                          INNER JOIN t_campaign
-                            ON t_experiments.campaign_id = t_campaign.campaign_id
-                     WHERE t_experiments.container_id = _containerID
-                    ) Campaigns
+        FROM (SELECT DISTINCT Campaigns.campaign
+              FROM (SELECT t_campaign.campaign
+                    FROM t_biomaterial
+                         INNER JOIN t_campaign
+                           ON t_biomaterial.campaign_id = t_campaign.campaign_id
+                    WHERE t_biomaterial.container_id = _containerID
+                    UNION
+                    SELECT t_campaign.campaign
+                    FROM t_experiments
+                         INNER JOIN t_campaign
+                           ON t_experiments.campaign_id = t_campaign.campaign_id
+                    WHERE t_experiments.container_id = _containerID
+                   ) Campaigns
              ) LookupQ;
     End If;
 

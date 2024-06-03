@@ -76,46 +76,43 @@ BEGIN
 
         MERGE INTO t_emsl_instruments AS t
         USING
-            ( SELECT    instrument_id AS Instrument_ID,
-                        instrument_name AS Instrument_Name,
-                        eus_display_name AS Display_Name,
-                        available_hours AS Available_Hours,
-                        CASE WHEN active_sw THEN '1' ELSE '0' END AS Active_Sw,
-                        CASE WHEN primary_instrument THEN '1' ELSE '0' END AS Primary_Instrument
-              FROM      V_NEXUS_Import_Instruments
-            ) AS s ( Instrument_ID, Instrument_Name, Display_Name,
-                     Available_Hours, Active_Sw, Primary_Instrument )
-        ON ( t.eus_instrument_id = s.Instrument_ID )
+            (SELECT instrument_id AS Instrument_ID,
+                    instrument_name AS Instrument_Name,
+                    eus_display_name AS Display_Name,
+                    available_hours AS Available_Hours,
+                    CASE WHEN active_sw THEN '1' ELSE '0' END AS Active_Sw,
+                    CASE WHEN primary_instrument THEN '1' ELSE '0' END AS Primary_Instrument
+             FROM V_NEXUS_Import_Instruments
+            ) AS s (Instrument_ID, Instrument_Name, Display_Name,
+                    Available_Hours, Active_Sw, Primary_Instrument)
+        ON (t.eus_instrument_id = s.Instrument_ID)
         WHEN MATCHED AND (
                 t.eus_instrument_name IS DISTINCT FROM s.Instrument_Name OR
                 t.eus_display_name IS DISTINCT FROM s.Display_Name OR
                 t.eus_available_hours IS DISTINCT FROM s.Available_Hours OR
                 t.eus_active_sw IS DISTINCT FROM s.Active_Sw OR
                 t.eus_primary_instrument IS DISTINCT FROM s.Primary_Instrument
-                )
-            THEN UPDATE SET
+                ) THEN
+            UPDATE SET
                 eus_instrument_name = s.Instrument_Name,
                 eus_display_name = s.Display_Name,
                 eus_available_hours = s.Available_Hours,
                 last_affected = CURRENT_TIMESTAMP,
                 eus_active_sw = s.Active_Sw,
                 eus_primary_instrument = s.Primary_Instrument
-        WHEN NOT MATCHED
-            THEN INSERT  (
-                  eus_instrument_id,
-                  eus_instrument_name,
-                  eus_display_name,
-                  eus_available_hours,
-                  eus_active_sw,
-                  eus_primary_instrument
-                ) VALUES
-                ( s.Instrument_ID,
-                  s.Instrument_Name,
-                  s.Display_Name,
-                  s.Available_Hours,
-                  s.Active_Sw,
-                  s.Primary_Instrument
-                )
+        WHEN NOT MATCHED THEN
+            INSERT (eus_instrument_id,
+                    eus_instrument_name,
+                    eus_display_name,
+                    eus_available_hours,
+                    eus_active_sw,
+                    eus_primary_instrument)
+            VALUES (s.Instrument_ID,
+                    s.Instrument_Name,
+                    s.Display_Name,
+                    s.Available_Hours,
+                    s.Active_Sw,
+                    s.Primary_Instrument)
         ;
 
         GET DIAGNOSTICS _mergeCount = ROW_COUNT;

@@ -66,12 +66,12 @@ BEGIN
 
     DELETE FROM Tmp_Selected_Jobs
     WHERE EXISTS
-        ( SELECT 1
-          FROM Tmp_Selected_Jobs INNER JOIN
-               sw.t_job_steps JS
-                 ON Tmp_Selected_Jobs.job = JS.job
-          WHERE JS.state IN (4,9) AND
-                JS.start >= CURRENT_TIMESTAMP - INTERVAL '48 hours'
+        (SELECT 1
+         FROM Tmp_Selected_Jobs INNER JOIN
+              sw.t_job_steps JS
+                ON Tmp_Selected_Jobs.job = JS.job
+         WHERE JS.state IN (4,9) AND
+               JS.start >= CURRENT_TIMESTAMP - INTERVAL '48 hours'
         );
 
     If Not Exists (SELECT * FROM Tmp_Selected_Jobs) Then
@@ -82,10 +82,10 @@ BEGIN
     If _maxJobsToProcess > 0 Then
         -- Limit the number of jobs to delete
         DELETE FROM Tmp_Selected_Jobs
-        WHERE NOT Job IN ( SELECT Job
-                           FROM Tmp_Selected_Jobs
-                           ORDER BY Job
-                           LIMIT _maxJobsToProcess);
+        WHERE NOT Job IN (SELECT Job
+                          FROM Tmp_Selected_Jobs
+                          ORDER BY Job
+                          LIMIT _maxJobsToProcess);
     End If;
 
     ---------------------------------------------------

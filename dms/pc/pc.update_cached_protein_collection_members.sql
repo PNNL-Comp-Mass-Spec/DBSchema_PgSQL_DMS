@@ -121,15 +121,15 @@ BEGIN
         SELECT PC.protein_collection_id,
                PC.num_proteins,
                false AS Processed
-        FROM ( SELECT protein_collection_id,
-                      num_proteins
-               FROM pc.t_protein_collections
-               WHERE NOT collection_state_id IN (4, 5)
+        FROM (SELECT protein_collection_id,
+                     num_proteins
+              FROM pc.t_protein_collections
+              WHERE NOT collection_state_id IN (4, 5)
              ) PC
-             LEFT OUTER JOIN ( SELECT protein_collection_id,
-                                      COUNT(reference_id) AS cached_protein_count
-                               FROM pc.t_protein_collection_members_cached
-                               GROUP BY protein_collection_id
+             LEFT OUTER JOIN (SELECT protein_collection_id,
+                                     COUNT(reference_id) AS cached_protein_count
+                              FROM pc.t_protein_collection_members_cached
+                              GROUP BY protein_collection_id
                              ) CacheQ
                ON PC.protein_collection_id = CacheQ.protein_collection_id
         WHERE CacheQ.protein_collection_id IS NULL OR
@@ -198,11 +198,11 @@ BEGIN
         INSERT INTO Tmp_CurrentIDs (Protein_Collection_ID)
         SELECT PC.Protein_Collection_ID
         FROM Tmp_ProteinCollections PC
-             INNER JOIN ( SELECT Protein_Collection_ID,
-                                 Num_Proteins
-                          FROM Tmp_ProteinCollections
-                          WHERE NOT Processed
-                          ORDER BY Protein_Collection_ID
+             INNER JOIN (SELECT Protein_Collection_ID,
+                                Num_Proteins
+                         FROM Tmp_ProteinCollections
+                         WHERE NOT Processed
+                         ORDER BY Protein_Collection_ID
                         ) SumQ
                ON SumQ.Protein_Collection_ID <= PC.Protein_Collection_ID
         WHERE NOT PC.Processed
@@ -242,10 +242,10 @@ BEGIN
             End If;
 
             DELETE FROM Tmp_CurrentIDs
-            WHERE NOT Protein_Collection_ID IN ( SELECT Protein_Collection_ID
-                                                 FROM Tmp_CurrentIDs
-                                                 ORDER BY Protein_Collection_ID
-                                                 LIMIT _maxCollectionsToUpdate);
+            WHERE NOT Protein_Collection_ID IN (SELECT Protein_Collection_ID
+                                                FROM Tmp_CurrentIDs
+                                                ORDER BY Protein_Collection_ID
+                                                LIMIT _maxCollectionsToUpdate);
         End If;
 
         -- Update the processed flag for the candidates
@@ -306,21 +306,21 @@ BEGIN
         ---------------------------------------------------
 
         MERGE INTO pc.t_protein_collection_members_cached AS t
-        USING ( SELECT PCM.protein_collection_id,
-                       ProtName.reference_id,
-                       ProtName.name AS protein_name,
-                       RTrim(Substring(ProtName.description, 1, 64)) AS description,
-                       Prot.length AS residue_count,
-                       Prot.monoisotopic_mass,
-                       PCM.protein_id
-                FROM Tmp_ProteinCollectionMembers PCM
-                     INNER JOIN pc.t_proteins Prot
-                       ON PCM.protein_id = Prot.protein_id
-                     INNER JOIN pc.t_protein_names ProtName
-                       ON PCM.protein_id = ProtName.protein_id AND
-                          PCM.reference_id = ProtName.reference_id
+        USING (SELECT PCM.protein_collection_id,
+                      ProtName.reference_id,
+                      ProtName.name AS protein_name,
+                      RTrim(Substring(ProtName.description, 1, 64)) AS description,
+                      Prot.length AS residue_count,
+                      Prot.monoisotopic_mass,
+                      PCM.protein_id
+               FROM Tmp_ProteinCollectionMembers PCM
+                    INNER JOIN pc.t_proteins Prot
+                      ON PCM.protein_id = Prot.protein_id
+                    INNER JOIN pc.t_protein_names ProtName
+                      ON PCM.protein_id = ProtName.protein_id AND
+                         PCM.reference_id = ProtName.reference_id
         ) AS s
-        ON ( t.protein_collection_id = s.protein_collection_id AND t.reference_id = s.reference_id)
+        ON (t.protein_collection_id = s.protein_collection_id AND t.reference_id = s.reference_id)
         WHEN MATCHED AND (
             t.protein_name <> s.protein_name OR
             t.residue_count <> s.residue_count OR
@@ -335,8 +335,8 @@ BEGIN
             monoisotopic_mass = s.monoisotopic_mass,
             protein_id = s.protein_id
         WHEN NOT MATCHED THEN
-            INSERT(protein_collection_id, reference_id, protein_name, description, residue_count, monoisotopic_mass, protein_id)
-            VALUES(s.protein_collection_id, s.reference_id, s.protein_name, s.description, s.residue_count, s.monoisotopic_mass, s.protein_id)
+            INSERT (protein_collection_id, reference_id, protein_name, description, residue_count, monoisotopic_mass, protein_id)
+            VALUES (s.protein_collection_id, s.reference_id, s.protein_name, s.description, s.residue_count, s.monoisotopic_mass, s.protein_id)
         ;
 
         GET DIAGNOSTICS _mergeCount = ROW_COUNT;
@@ -356,16 +356,16 @@ BEGIN
         End If;
 
         DELETE FROM pc.t_protein_collection_members_cached Target
-        WHERE target.protein_collection_id IN ( SELECT protein_collection_id FROM Tmp_CurrentIDs ) AND
-              NOT EXISTS ( SELECT true
-                           FROM pc.t_protein_collection_members_cached PCM
-                                INNER JOIN Tmp_CurrentIDs C
-                                  ON PCM.protein_collection_id = C.protein_collection_id
-                                INNER JOIN Tmp_ProteinCollectionMembers M
-                                  ON PCM.protein_collection_id = M.protein_collection_id AND
-                                     PCM.reference_id = M.reference_id
-                           WHERE Target.protein_collection_id = PCM.protein_collection_id AND
-                                 Target.reference_id = PCM.reference_id );
+        WHERE target.protein_collection_id IN (SELECT protein_collection_id FROM Tmp_CurrentIDs) AND
+              NOT EXISTS (SELECT true
+                          FROM pc.t_protein_collection_members_cached PCM
+                               INNER JOIN Tmp_CurrentIDs C
+                                 ON PCM.protein_collection_id = C.protein_collection_id
+                               INNER JOIN Tmp_ProteinCollectionMembers M
+                                 ON PCM.protein_collection_id = M.protein_collection_id AND
+                                    PCM.reference_id = M.reference_id
+                          WHERE Target.protein_collection_id = PCM.protein_collection_id AND
+                                Target.reference_id = PCM.reference_id);
         --
         GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -428,10 +428,10 @@ BEGIN
            PC.num_proteins,
            StatsQ.NumProteinsNew
     FROM pc.t_protein_collections PC
-         INNER JOIN ( SELECT protein_collection_id,
-                             COUNT(reference_id) AS NumProteinsNew
-                      FROM pc.t_protein_collection_members_cached
-                      GROUP BY protein_collection_id
+         INNER JOIN (SELECT protein_collection_id,
+                            COUNT(reference_id) AS NumProteinsNew
+                     FROM pc.t_protein_collection_members_cached
+                     GROUP BY protein_collection_id
                     ) StatsQ
            ON PC.protein_collection_id = StatsQ.protein_collection_id
     WHERE PC.num_proteins <> StatsQ.NumProteinsNew;

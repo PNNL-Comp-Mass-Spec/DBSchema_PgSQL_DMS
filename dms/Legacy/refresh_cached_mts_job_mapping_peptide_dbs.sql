@@ -83,11 +83,11 @@ BEGIN
         FROM t_mts_pt_db_jobs_cached;
 
         MERGE INTO t_mts_pt_db_jobs_cached AS target
-        USING ( SELECT server_name, DB_Name AS Peptide_DB_Name, Job,
-                       Coalesce(result_type, '') AS result_type, last_affected, process_state
-                FROM  mts.t_analysis_job_to_peptide_db_map AS MTSJobInfo
-                WHERE job >= _jobMinimum AND
-                      job <= _jobMaximum
+        USING (SELECT server_name, DB_Name AS Peptide_DB_Name, Job,
+                      Coalesce(result_type, '') AS result_type, last_affected, process_state
+               FROM  mts.t_analysis_job_to_peptide_db_map AS MTSJobInfo
+               WHERE job >= _jobMinimum AND
+                     job <= _jobMaximum
               ) AS Source
         ON (target.server_name = source.server_name AND
             target.peptide_db_name = source.peptide_db_name AND

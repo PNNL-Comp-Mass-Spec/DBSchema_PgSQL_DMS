@@ -131,10 +131,10 @@ BEGIN
     WHERE TransferJS.Tool = 'Results_Transfer' AND
           TransferJS.state = 5 AND
           JS.shared_result_version > 0 AND
-          NOT JS.output_folder_name IN ( SELECT results_name
-                                         FROM sw.t_shared_results ) AND
-          TransferJS.job IN ( SELECT job
-                              FROM Tmp_Selected_Jobs );
+          NOT JS.output_folder_name IN (SELECT results_name
+                                        FROM sw.t_shared_results) AND
+          TransferJS.job IN (SELECT job
+                             FROM Tmp_Selected_Jobs);
 
     ---------------------------------------------------
     -- Delete job dependencies

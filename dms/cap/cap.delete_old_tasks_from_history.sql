@@ -99,10 +99,10 @@ BEGIN
         _tempTableJobsToRemove := _jobHistoryMinimumCount - (_currentJobCount - _jobCountToDelete);
 
         DELETE FROM Tmp_JobsToDelete
-        WHERE Job IN ( SELECT Job
-                       FROM Tmp_JobsToDelete
-                       ORDER BY Job DESC
-                       LIMIT _tempTableJobsToRemove );
+        WHERE Job IN (SELECT Job
+                      FROM Tmp_JobsToDelete
+                      ORDER BY Job DESC
+                      LIMIT _tempTableJobsToRemove);
         --
         GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
@@ -172,10 +172,10 @@ BEGIN
 
             FOR _previewData IN
                 SELECT Job, Saved, 'Preview delete' AS Comment
-                FROM ( SELECT Job, Saved
-                       FROM Tmp_JobsToDelete
-                       ORDER BY Job DESC
-                       LIMIT 10 ) FilterQ
+                FROM (SELECT Job, Saved
+                      FROM Tmp_JobsToDelete
+                      ORDER BY Job DESC
+                      LIMIT 10) FilterQ
                 ORDER BY Job
                 LIMIT 10
             LOOP

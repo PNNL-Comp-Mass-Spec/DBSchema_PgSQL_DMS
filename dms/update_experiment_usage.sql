@@ -143,10 +143,10 @@ BEGIN
 
     UPDATE t_experiments Target
     SET last_used = LookupQ.MostRecentUse
-    FROM ( SELECT RR.exp_id,
-                  MAX(CAST(RR.Created AS date)) AS MostRecentUse
-           FROM t_requested_run RR
-           GROUP BY RR.exp_id
+    FROM (SELECT RR.exp_id,
+                 MAX(CAST(RR.Created AS date)) AS MostRecentUse
+          FROM t_requested_run RR
+          GROUP BY RR.exp_id
          ) LookupQ
     WHERE LookupQ.exp_id = Target.exp_id AND
           LookupQ.MostRecentUse > Target.Last_Used;
@@ -159,11 +159,11 @@ BEGIN
 
     UPDATE t_experiments Target
     SET last_used = LookupQ.MostRecentUse
-    FROM ( SELECT DS.exp_id,
-                  MAX(CAST(DS.Created AS date)) AS MostRecentUse
-           FROM t_dataset DS
-           GROUP BY DS.exp_id
-           ) LookupQ
+    FROM (SELECT DS.exp_id,
+                 MAX(CAST(DS.Created AS date)) AS MostRecentUse
+          FROM t_dataset DS
+          GROUP BY DS.exp_id
+         ) LookupQ
     WHERE LookupQ.Exp_ID = Target.Exp_ID AND
           LookupQ.MostRecentUse > Target.Last_Used;
     --

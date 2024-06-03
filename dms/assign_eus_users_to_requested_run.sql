@@ -123,9 +123,9 @@ BEGIN
     FROM Tmp_UserIDs NewUsers
          INNER JOIN t_eus_users U
            ON NewUsers.ID = U.person_id
-    WHERE NOT NewUsers.ID IN ( SELECT eus_person_id
-                               FROM t_requested_run_eus_users
-                               WHERE request_id = _requestID );
+    WHERE NOT NewUsers.ID IN (SELECT eus_person_id
+                              FROM t_requested_run_eus_users
+                              WHERE request_id = _requestID);
 
     ---------------------------------------------------
     -- Remove associations between requested run and users
@@ -134,8 +134,8 @@ BEGIN
 
     DELETE FROM t_requested_run_eus_users
     WHERE request_id = _requestID AND
-          NOT eus_person_id IN ( SELECT ID
-                                 FROM Tmp_UserIDs );
+          NOT eus_person_id IN (SELECT ID
+                                FROM Tmp_UserIDs);
 
     DROP TABLE Tmp_UserIDs;
 END

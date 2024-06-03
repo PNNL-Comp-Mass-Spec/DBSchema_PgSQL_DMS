@@ -87,9 +87,9 @@ BEGIN
 
     DELETE FROM t_aux_info_value
     WHERE target_id = _targetID AND
-          aux_description_id IN ( SELECT item_id
-                                  FROM V_Aux_Info_Definition_with_ID
-                                  WHERE target = _targetTypeName::citext
+          aux_description_id IN (SELECT item_id
+                                 FROM V_Aux_Info_Definition_with_ID
+                                 WHERE target = _targetTypeName::citext
                                 );
     --
     GET DIAGNOSTICS _deleteCount = ROW_COUNT;

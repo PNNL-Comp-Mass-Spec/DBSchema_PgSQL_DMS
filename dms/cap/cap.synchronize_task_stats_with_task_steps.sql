@@ -100,14 +100,14 @@ BEGIN
     UPDATE Tmp_JobsToUpdate
     SET StartNew = SourceQ.Step_Start,
         FinishNew = SourceQ.Step_Finish
-    FROM ( SELECT T.Job,
-                  MIN(TS.Start) AS Step_Start,
-                  MAX(TS.Finish) AS Step_Finish
-           FROM cap.t_tasks T
-                INNER JOIN cap.t_task_steps TS
-                  ON T.Job = TS.Job
-           WHERE T.Job IN (SELECT Job FROM Tmp_JobsToUpdate)
-           GROUP BY T.Job
+    FROM (SELECT T.Job,
+                 MIN(TS.Start) AS Step_Start,
+                 MAX(TS.Finish) AS Step_Finish
+          FROM cap.t_tasks T
+               INNER JOIN cap.t_task_steps TS
+                 ON T.Job = TS.Job
+          WHERE T.Job IN (SELECT Job FROM Tmp_JobsToUpdate)
+          GROUP BY T.Job
          ) SourceQ
     WHERE Tmp_JobsToUpdate.Job = SourceQ.Job;
 

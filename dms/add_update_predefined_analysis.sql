@@ -276,21 +276,21 @@ BEGIN
 
         If _instrumentClassCriteria <> '' Or _instrumentNameCriteria <> '' Or _instrumentExclCriteria <> '' Then
 
-            If Not Exists ( SELECT ADT.Dataset_Type
-                            FROM t_analysis_tool_allowed_dataset_type ADT
-                                 INNER JOIN t_analysis_tool Tool
-                                   ON ADT.analysis_tool_id = Tool.analysis_tool_id
-                            WHERE Tool.analysis_tool = _analysisToolName::citext
+            If Not Exists (SELECT ADT.Dataset_Type
+                           FROM t_analysis_tool_allowed_dataset_type ADT
+                                INNER JOIN t_analysis_tool Tool
+                                  ON ADT.analysis_tool_id = Tool.analysis_tool_id
+                           WHERE Tool.analysis_tool = _analysisToolName::citext
                           ) Then
                 _msg := format('Analysis tool "%s" does not have any allowed dataset types; unable to continue', _analysisToolName);
                 RAISE EXCEPTION '%', _msg;
             End If;
 
-            If Not Exists ( SELECT AIC.Instrument_Class
-                            FROM t_analysis_tool_allowed_instrument_class AIC
-                                 INNER JOIN t_analysis_tool Tool
-                                   ON AIC.analysis_tool_id = Tool.analysis_tool_id
-                            WHERE Tool.analysis_tool = _analysisToolName::citext
+            If Not Exists (SELECT AIC.Instrument_Class
+                           FROM t_analysis_tool_allowed_instrument_class AIC
+                                INNER JOIN t_analysis_tool Tool
+                                  ON AIC.analysis_tool_id = Tool.analysis_tool_id
+                           WHERE Tool.analysis_tool = _analysisToolName::citext
                           ) Then
 
                 _msg := format('Analysis tool "%s" does not have any allowed instrument classes; unable to continue', _analysisToolName);
@@ -353,18 +353,18 @@ BEGIN
                 FROM Tmp_MatchingInstruments
                 ORDER BY UniqueID
             LOOP
-                If Not Exists ( SELECT instrument_id
-                                FROM t_instrument_name InstName
-                                     INNER JOIN t_instrument_group_allowed_ds_type IGADT
-                                       ON InstName.instrument_group = IGADT.instrument_group
-                                     INNER JOIN ( SELECT ADT.dataset_type
-                                                  FROM t_analysis_tool_allowed_dataset_type ADT
-                                                       INNER JOIN t_analysis_tool Tool
-                                                         ON ADT.analysis_tool_id = Tool.analysis_tool_id
-                                                  WHERE (Tool.analysis_tool = _analysisToolName)
-                                                ) ToolQ
-                                       ON IGADT.dataset_type = ToolQ.dataset_type
-                                WHERE (InstName.instrument = _instrument.InstrumentName)
+                If Not Exists (SELECT instrument_id
+                               FROM t_instrument_name InstName
+                                    INNER JOIN t_instrument_group_allowed_ds_type IGADT
+                                      ON InstName.instrument_group = IGADT.instrument_group
+                                    INNER JOIN (SELECT ADT.dataset_type
+                                                FROM t_analysis_tool_allowed_dataset_type ADT
+                                                     INNER JOIN t_analysis_tool Tool
+                                                       ON ADT.analysis_tool_id = Tool.analysis_tool_id
+                                                WHERE Tool.analysis_tool = _analysisToolName
+                                               ) ToolQ
+                                      ON IGADT.dataset_type = ToolQ.dataset_type
+                               WHERE InstName.instrument = _instrument.InstrumentName
                               ) Then
 
                     -- Example criteria that will result in this message: Instrument Criteria=Agilent_TOF%, Tool=AgilentSequest
@@ -381,12 +381,12 @@ BEGIN
                     RAISE EXCEPTION '%', _msg;
                 End If;
 
-                If Not Exists ( SELECT AIC.Instrument_Class
-                                FROM t_analysis_tool_allowed_instrument_class AIC
-                                    INNER JOIN t_analysis_tool Tool
-                                    ON AIC.analysis_tool_id = Tool.analysis_tool_id
-                                WHERE Tool.analysis_tool = _analysisToolName AND
-                                    AIC.instrument_class = _instrument.InstrumentClass
+                If Not Exists (SELECT AIC.Instrument_Class
+                               FROM t_analysis_tool_allowed_instrument_class AIC
+                                   INNER JOIN t_analysis_tool Tool
+                                   ON AIC.analysis_tool_id = Tool.analysis_tool_id
+                               WHERE Tool.analysis_tool = _analysisToolName AND
+                                   AIC.instrument_class = _instrument.InstrumentClass
                               ) Then
 
                     -- Example criteria that will result in this message: Instrument Class=BRUKERFTMS, Tool=XTandem
