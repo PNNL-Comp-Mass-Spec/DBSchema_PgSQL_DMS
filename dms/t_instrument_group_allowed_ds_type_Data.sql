@@ -22,28 +22,28 @@ SET row_security = off;
 
 COPY public.t_instrument_group_allowed_ds_type (instrument_group, dataset_type, comment, dataset_usage_count, dataset_usage_last_year) FROM stdin;
 Ascend	DIA-HMS-HCD-HMSn		127	119
-Lumos	HMS-HCD-HMSn		28787	2690
+QExactive	HMS-HCD-HMSn		115012	20084
+Exploris	HMS-HCD-HMSn		5468	5158
+Lumos	HMS-HCD-HMSn		28787	2668
+QExactive	DIA-HMS-HCD-HMSn		591	217
+QEHFX	HMS-HCD-HMSn		32561	5508
+21T	DIA-HMS-HCD-HMSn		17	8
 Lumos	HMS-HCD-MSn		7612	1489
 Bruker_FTMS	HMS	Typical mode	151775	9686
-QExactive	DIA-HMS-HCD-HMSn		591	249
-QExactive	HMS-HCD-HMSn		115012	20216
-Exploris	HMS-HCD-HMSn		5468	5188
-QEHFX	HMS-HCD-HMSn		33997	5590
 Eclipse	HMS-HCD-MSn		3205	1078
-21T	DIA-HMS-HCD-HMSn		0	0
 Ascend	HMS-HCD-CID-HMSn		0	0
 Ascend	HMS-HCD-CID-MSn		2	2
 Ascend	HMS-HCD-CID/ETD-HMSn		0	0
 Ascend	HMS-HCD-CID/ETD-MSn		0	0
+21T	MS		1962	61
 11T	HMS	Typical mode	0	0
 11T	HMS-HMSn	Rarely used	0	0
 21T	HMS-HMSn		914	0
 21T	HMS-MSn	Typical mode	2136	0
-21T	MS		1856	1
 Ascend	HMS-HCD-MSn		26	23
-Ascend	HMS-HCD-HMSn		1448	1313
-Agilent_GC-MS	GC-MS		50188	2447
-21T	HMS		22782	1629
+Ascend	HMS-HCD-HMSn		1448	1284
+21T	HMS		23619	1501
+Agilent_GC-MS	GC-MS		50188	2421
 Agilent_GC-MS	GC-SIM		0	0
 Agilent_Ion_Trap	MS		0	0
 Agilent_Ion_Trap	MS-MSn		710	0
@@ -156,7 +156,7 @@ Eclipse	HMS-HCD-CID-MSn		168	0
 Eclipse	HMS-HCD-CID/ETD-HMSn		0	0
 Eclipse	HMS-HCD-CID/ETD-MSn		0	0
 Eclipse	HMS-HCD-ETD-MSn		1	0
-DataFolders	DataFiles		1409	175
+Eclipse	HMS-HCD-HMSn		10179	2314
 Eclipse	HMS-HMSn		20	0
 Eclipse	HMS-MSn		26	0
 Eclipse	HMS-PQD-CID/ETD-MSn		0	0
@@ -209,7 +209,7 @@ LCQ	MS-MSn	Typical mode	24438	0
 LTQ	MS		842	0
 LTQ	MS-MSn	Typical mode	63499	0
 LTQ-ETD	MS		304	0
-Eclipse	HMS-HCD-HMSn		10179	2359
+DataFolders	DataFiles		1409	174
 Eclipse	HMS-HCD-ETD-HMSn		159	0
 LTQ-ETD	MS-CID/ETD-MSn		355	0
 LTQ-ETD	MS-ETD-MSn		491	0
@@ -280,15 +280,14 @@ Other	HMS-MSn		0	0
 Other	MS		0	0
 Other	MS-MSn		0	0
 PrepHPLC	UV		73	71
-MALDI-Imaging	MALDI-HMS	Typical mode	2102	221
+MALDI-Imaging	MALDI-HMS	Typical mode	2102	218
 QEHFX	HMS-HMSn		0	0
 QEHFX_Frac	HMS		0	0
 QEHFX_Frac	HMS-HCD-HMSn		0	0
 QEHFX_Frac	HMS-HMSn		0	0
 Lumos	HMS		930	68
-VelosOrbi	HMS		11863	1207
+QEHFX	DIA-HMS-HCD-HMSn		248	248
 QExactive	HMS-HMSn		15	0
-QExactive-Imaging	HMS		66	49
 QExactive-Imaging	HMS-HCD-HMSn		10	9
 QExactive-Imaging	HMS-HMSn		0	0
 QExactive_Frac	HMS		0	0
@@ -332,11 +331,12 @@ VelosPro	MS		10	0
 VelosPro	MS-CID/ETD-MSn		0	0
 TSQ	MRM	Use for MRM	143548	7594
 QExactive-Imaging	MALDI-HMS		449	28
-QExactive	HMS		23873	4055
-QEHFX	DIA-HMS-HCD-HMSn		265	256
-QEHFX	HMS		1059	110
+QExactive-Imaging	HMS		66	45
+QExactive	HMS		23873	4050
+VelosOrbi	HMS		11863	1119
 Lumos	HMS-HCD-CID-HMSn		605	0
 Lumos	DIA-HMS-HCD-HMSn		945	604
+QEHFX	HMS		222	1
 VelosPro	MS-ETD-MSn		0	0
 VelosPro	MS-HCD-CID-MSn		7	0
 VelosPro	MS-HCD-MSn		0	0
@@ -347,7 +347,7 @@ Waters_IMS	IMS-HMS-MSn		0	0
 Waters_TOF	HMS		1510	909
 Waters_TOF	HMS-HMSn		32	0
 Waters_IMS	HMS-HMSn		719	0
-Waters_IMS	HMS		8834	616
+Waters_IMS	HMS		8834	578
 \.
 
 

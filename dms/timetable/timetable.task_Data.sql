@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
+-- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
@@ -76,7 +76,6 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 185	100	10	Disable Analysis Managers	SQL	CALL mc.disable_analysis_managers (_infoOnly => false);	\N	\N	f	t	0
 186	100	20	Disable chain 100	SQL	CALL disable_timetable_chain (_chainID => 100);	\N	\N	f	t	0
 189	101	30	Disable chain 101	SQL	CALL disable_timetable_chain (_chainID => 101);	\N	\N	f	t	0
-190	102	10	Disable capture task managers	SQL	CALL mc.enable_disable_managers (_enable => false, _managerTypeID => 15);	\N	\N	f	t	0
 191	102	20	Disable chain 102	SQL	CALL disable_timetable_chain (_chainID => 102);	\N	\N	f	t	0
 192	103	10	Enable All Managers Once	SQL	CALL mc.enable_disable_all_managers (_enable => true, _infoOnly => false, _managerNameList => 'All');	\N	\N	f	t	0
 193	103	20	Disable chain 103	SQL	CALL disable_timetable_chain (_chainID => 103);	\N	\N	f	t	0
@@ -87,6 +86,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 194	104	10	Enable Space Managers	SQL	CALL mc.enable_space_managers (_infoOnly => false);	\N	\N	f	t	0
 195	104	20	Enable CTM step tools	SQL	SELECT * FROM cap.enable_disable_archive_step_tools (_enable => true, _disableComment => 'Disabled for scheduled archive maintenance');	\N	\N	f	t	0
 188	101	20	Disable CTM step tools	SQL	SELECT * FROM cap.enable_disable_archive_step_tools (_enable => false, _disableComment => 'Disabled for scheduled archive maintenance');	\N	\N	f	t	0
+190	102	10	Disable capture task managers	SQL	CALL mc.enable_disable_managers (_enable => false, _managerTypeID => 15, _infoOnly => false);	\N	\N	f	t	0
 66	37	10	Re-enable MSGFPlus	SQL	SELECT * FROM sw.enable_disable_step_tool_for_debugging ('MSGFPlus', _debugMode => false);	\N	\N	f	t	0
 146	79	10	Update missed MyEMSLState info	SQL	CALL cap.update_missed_myemsl_state_values (_windowDays => 30, _infoOnly => false);	\N	\N	f	t	0
 147	80	10	Process pipeline jobs	SQL	CALL sw.update_context (_infoOnly => false);	\N	\N	f	t	0
