@@ -73,13 +73,13 @@ BEGIN
         CREATE TEMP TABLE Tmp_EventLogIDs (
             Event_ID int NOT NULL,
             Entered  timestamp NOT NULL,
-            PRIMARY KEY ( Event_ID )
+            PRIMARY KEY (Event_ID)
         );
 
         CREATE TEMP TABLE Tmp_HistoricLogIDs (
             Entry_ID int NOT NULL,
             Entered  timestamp NOT NULL,
-            PRIMARY KEY ( Entry_ID, Entered )
+            PRIMARY KEY (Entry_ID, Entered)
         );
 
         CREATE TEMP TABLE Tmp_EventsToDelete (
@@ -89,7 +89,7 @@ BEGIN
             Target_State smallint NULL,
             Prev_Target_State smallint NULL,
             Entered timestamp NULL,
-            PRIMARY KEY ( Event_ID)
+            PRIMARY KEY (Event_ID)
         );
 
         CREATE TEMP TABLE Tmp_LogEntriesToDelete (

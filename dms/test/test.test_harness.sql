@@ -22,7 +22,7 @@ BEGIN
     RAISE INFO 'Manager count returned: %', array_length(_managerNames, 1);
 
     RETURN Query
-    SELECT unnest( _managerNames );
+    SELECT unnest(_managerNames);
 
 EXCEPTION
     WHEN OTHERS THEN

@@ -164,12 +164,12 @@ BEGIN
                     blocking_factor = Source.blocking_factor,
                     block = Source.block,
                     run_order = Source.run_order
-                FROM ( SELECT RR.batch_id,
-                              RR.blocking_factor,
-                              RR.block,
-                              RR.run_order
-                       FROM t_requested_run RR
-                       WHERE RR.request_id = _requestID
+                FROM (SELECT RR.batch_id,
+                             RR.blocking_factor,
+                             RR.block,
+                             RR.run_order
+                      FROM t_requested_run RR
+                      WHERE RR.request_id = _requestID
                     ) Source
                 WHERE Target.request_id = _newAutoRequestID;
 

@@ -39,12 +39,12 @@ BEGIN
     If _instrumentFilterList = '' Then
         INSERT INTO Tmp_InstrumentFilter (instrument_id)
         SELECT GroupQ.instrument_id
-        FROM ( SELECT Src.instrument_id, Min(Src.instrument) AS instrument
-               FROM t_instrument_name Src
-                    LEFT OUTER JOIN Tmp_InstrumentFilter Target
-                      ON Src.instrument_id = Target.instrument_id
-               WHERE Target.instrument_id IS NULL
-               GROUP BY Src.instrument_id
+        FROM (SELECT Src.instrument_id, MIN(Src.instrument) AS instrument
+              FROM t_instrument_name Src
+                   LEFT OUTER JOIN Tmp_InstrumentFilter Target
+                     ON Src.instrument_id = Target.instrument_id
+              WHERE Target.instrument_id IS NULL
+              GROUP BY Src.instrument_id
              ) GroupQ
         ORDER BY GroupQ.instrument;
 
@@ -71,9 +71,10 @@ BEGIN
         If Position('%' In _matchSpec) > 0 Then
             INSERT INTO Tmp_InstrumentFilter (instrument_id)
             SELECT FilterQ.instrument_id
-            FROM ( SELECT instrument_id, instrument
-                   FROM t_instrument_name
-                   WHERE instrument ILIKE _matchSpec ) FilterQ
+            FROM (SELECT instrument_id, instrument
+                  FROM t_instrument_name
+                  WHERE instrument ILIKE _matchSpec
+                 ) FilterQ
                  LEFT OUTER JOIN Tmp_InstrumentFilter Target
                    ON FilterQ.instrument_id = Target.instrument_id
             WHERE Target.instrument_id IS NULL
@@ -81,9 +82,10 @@ BEGIN
         Else
             INSERT INTO Tmp_InstrumentFilter (instrument_id)
             SELECT FilterQ.instrument_id
-            FROM ( SELECT instrument_id, instrument
-                   FROM t_instrument_name
-                   WHERE instrument = _matchSpec ) FilterQ
+            FROM (SELECT instrument_id, instrument
+                  FROM t_instrument_name
+                  WHERE instrument = _matchSpec
+                 ) FilterQ
                  LEFT OUTER JOIN Tmp_InstrumentFilter Target
                    ON FilterQ.instrument_id = Target.instrument_id
             WHERE Target.instrument_id IS NULL

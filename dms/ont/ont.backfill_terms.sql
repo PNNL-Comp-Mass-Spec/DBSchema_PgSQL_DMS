@@ -123,7 +123,7 @@ BEGIN
     _s := ' INSERT INTO Tmp_SourceData (term_pk, term_name, identifier, is_leaf,'            ||
           CASE WHEN _sourceTableWithSchema = 'ont.t_cv_bto' THEN ' synonyms,' ELSE '' END    ||
                                       ' parent_term_name, Parent_term_ID,'                   ||
-                                      ' grandparent_term_name, grandparent_term_id, matches_existing )' ||
+                                      ' grandparent_term_name, grandparent_term_id, matches_existing)' ||
           ' SELECT term_pk, term_name, identifier, is_leaf,'                                 ||
           CASE WHEN _sourceTableWithSchema = 'ont.t_cv_bto' THEN ' synonyms,' ELSE '' END    ||
                  ' parent_term_name, parent_term_id,'                                        ||
@@ -169,7 +169,7 @@ BEGIN
         FROM (SELECT d.term_pk, d.term_name, d.identifier, MAX(d.is_leaf) AS is_leaf
                FROM Tmp_SourceData d
                WHERE d.matches_existing = 1
-               GROUP BY d.term_pk, d.term_name, d.identifier ) AS s
+               GROUP BY d.term_pk, d.term_name, d.identifier) AS s
         WHERE t.term_pk = s.term_pk AND
               (
                 t.term_name <> s.term_name OR
@@ -185,8 +185,26 @@ BEGIN
         -- Add new rows
         ---------------------------------------------------
 
-        INSERT INTO ont.t_term (term_pk, ontology_id, term_name, identifier, definition, namespace, is_obsolete, is_root_term, is_leaf)
-        SELECT s.term_pk, _ontologyID, s.term_name, s.identifier, '' AS definition, _namespace, 0 AS is_obsolete, 0 AS i_root_term, MAX(s.is_leaf)
+        INSERT INTO ont.t_term (
+            term_pk,
+            ontology_id,
+            term_name,
+            identifier,
+            definition,
+            namespace,
+            is_obsolete,
+            is_root_term,
+            is_leaf
+        )
+        SELECT s.term_pk,
+               _ontologyID,
+               s.term_name,
+               s.identifier,
+               '' AS definition,
+               _namespace,
+               0 AS is_obsolete,
+               0 AS i_root_term,
+               MAX(s.is_leaf)
         FROM Tmp_SourceData s
         WHERE s.matches_existing = 0
         GROUP BY s.term_pk, s.term_name, s.identifier;

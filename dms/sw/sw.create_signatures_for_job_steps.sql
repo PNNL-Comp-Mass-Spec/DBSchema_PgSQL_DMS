@@ -80,7 +80,8 @@ BEGIN
     SELECT XmlQ.job, XmlQ.step, Trim(XmlQ.section), Trim(XmlQ.name), Trim(XmlQ.value)
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT ('<params>' || _xmlParameters::text || '</params>')::xml AS rooted_xml ) Src,
+        FROM (SELECT ('<params>' || _xmlParameters::text || '</params>')::xml AS rooted_xml
+             ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
                       COLUMNS job     int  PATH '@Job',
@@ -197,9 +198,9 @@ BEGIN
         FROM Tmp_Job_Params JP
         WHERE JP.Section IN (
                 SELECT unnest(xpath('//sections/section/@name', rooted_xml))::text
-                FROM ( SELECT ('<sections>' || Parameter_Template::text || '</sections>')::xml AS rooted_xml
-                       FROM sw.t_step_tools
-                       WHERE sw.t_step_tools.step_tool = _stepTool
+                FROM (SELECT ('<sections>' || Parameter_Template::text || '</sections>')::xml AS rooted_xml
+                      FROM sw.t_step_tools
+                      WHERE sw.t_step_tools.step_tool = _stepTool
                      ) Src
                 )
               AND

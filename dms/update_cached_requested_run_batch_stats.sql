@@ -168,18 +168,18 @@ BEGIN
                           GROUP BY RR.batch_id
                          ) ActiveStatsQ ON BatchQ.batch_id = ActiveStatsQ.batch_id
                   ) AS s
-            ON ( t.batch_id = s.batch_id )
+            ON (t.batch_id = s.batch_id)
             WHEN MATCHED AND
-                 ( t.instrument_group_first        IS DISTINCT FROM s.instrument_group_first OR
-                   t.instrument_group_last         IS DISTINCT FROM s.instrument_group_last OR
-                   t.separation_group_first        IS DISTINCT FROM s.separation_group_first OR
-                   t.separation_group_last         IS DISTINCT FROM s.separation_group_last OR
-                   t.active_requests               IS DISTINCT FROM s.active_requests OR
-                   t.first_active_request          IS DISTINCT FROM s.first_active_request OR
-                   t.last_active_request           IS DISTINCT FROM s.last_active_request OR
-                   t.oldest_active_request_created IS DISTINCT FROM s.oldest_active_request_created OR
-                   t.oldest_request_created        IS DISTINCT FROM s.oldest_request_created OR
-                   t.days_in_queue                 IS DISTINCT FROM s.days_in_queue
+                 (t.instrument_group_first        IS DISTINCT FROM s.instrument_group_first OR
+                  t.instrument_group_last         IS DISTINCT FROM s.instrument_group_last OR
+                  t.separation_group_first        IS DISTINCT FROM s.separation_group_first OR
+                  t.separation_group_last         IS DISTINCT FROM s.separation_group_last OR
+                  t.active_requests               IS DISTINCT FROM s.active_requests OR
+                  t.first_active_request          IS DISTINCT FROM s.first_active_request OR
+                  t.last_active_request           IS DISTINCT FROM s.last_active_request OR
+                  t.oldest_active_request_created IS DISTINCT FROM s.oldest_active_request_created OR
+                  t.oldest_request_created        IS DISTINCT FROM s.oldest_request_created OR
+                  t.days_in_queue                 IS DISTINCT FROM s.days_in_queue
                  ) THEN
                 UPDATE SET
                     instrument_group_first        = s.instrument_group_first,
@@ -194,18 +194,18 @@ BEGIN
                     days_in_queue                 = s.days_in_queue,
                     last_affected                 = statement_timestamp()
             WHEN NOT MATCHED THEN
-                INSERT ( batch_id,
-                         instrument_group_first, instrument_group_last,
-                         separation_group_first, separation_group_last,
-                         active_requests, first_active_request, last_active_request,
-                         oldest_active_request_created, oldest_request_created,
-                         days_in_queue, last_affected )
-                VALUES ( s.batch_id,
-                         s.instrument_group_first, s.instrument_group_last,
-                         s.separation_group_first, s.separation_group_last,
-                         s.active_requests, s.first_active_request, s.last_active_request,
-                         s.oldest_active_request_created, s.oldest_request_created,
-                         s.days_in_queue, statement_timestamp() )
+                INSERT (batch_id,
+                        instrument_group_first, instrument_group_last,
+                        separation_group_first, separation_group_last,
+                        active_requests, first_active_request, last_active_request,
+                        oldest_active_request_created, oldest_request_created,
+                        days_in_queue, last_affected)
+                VALUES (s.batch_id,
+                        s.instrument_group_first, s.instrument_group_last,
+                        s.separation_group_first, s.separation_group_last,
+                        s.active_requests, s.first_active_request, s.last_active_request,
+                        s.oldest_active_request_created, s.oldest_request_created,
+                        s.days_in_queue, statement_timestamp())
             ;
 
         END;
@@ -253,7 +253,7 @@ BEGIN
                                      ON RR.dataset_id = DS.dataset_id
                                    INNER JOIN t_instrument_name InstName
                                      ON DS.instrument_id = InstName.instrument_id
-                              GROUP BY RR.batch_id ) StatsQ
+                              GROUP BY RR.batch_id) StatsQ
                 ON BatchQ.batch_id = StatsQ.batch_id;
 
         BEGIN

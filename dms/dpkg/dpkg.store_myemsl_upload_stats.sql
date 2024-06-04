@@ -221,8 +221,9 @@ BEGIN
         status_uri_path_id,
         status_num,
         error_code,
-        entered)
-    VALUES( _dataPackageID,
+        entered
+    )
+    VALUES (_dataPackageID,
             _subfolder,
             _fileCountNew,
             _fileCountUpdated,

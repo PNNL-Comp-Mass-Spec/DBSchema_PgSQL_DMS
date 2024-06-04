@@ -23,11 +23,11 @@ DECLARE
 BEGIN
     SELECT string_agg(LookupQ.dataset, ', ' ORDER BY LookupQ.dataset)
     INTO _result
-    FROM ( SELECT DISTINCT DS.dataset
-           FROM t_analysis_job_request_datasets AJRD
-                INNER JOIN t_dataset DS
-                  ON AJRD.dataset_id = DS.dataset_id
-           WHERE AJRD.request_id = _requestID
+    FROM (SELECT DISTINCT DS.dataset
+          FROM t_analysis_job_request_datasets AJRD
+               INNER JOIN t_dataset DS
+                 ON AJRD.dataset_id = DS.dataset_id
+          WHERE AJRD.request_id = _requestID
          ) LookupQ;
 
     If Coalesce(_result, '') = '' Then

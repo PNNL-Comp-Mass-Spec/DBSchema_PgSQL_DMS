@@ -76,10 +76,10 @@ BEGIN
     FROM t_dataset
     WHERE t_dataset.dataset_rating_id BETWEEN -9 AND 1 AND
           t_dataset.created BETWEEN _window AND _now AND
-          NOT EXISTS ( SELECT 1
-                       FROM t_notification_event AS TNE
-                       WHERE TNE.target_id = t_dataset.dataset_id AND
-                             TNE.event_type_id = _eventTypeID );
+          NOT EXISTS (SELECT 1
+                      FROM t_notification_event AS TNE
+                      WHERE TNE.target_id = t_dataset.dataset_id AND
+                            TNE.event_type_id = _eventTypeID);
 
     ---------------------------------------------------
     -- Look for datasets that are released
@@ -93,10 +93,10 @@ BEGIN
     FROM t_dataset
     WHERE t_dataset.dataset_rating_id >= 2 AND
           t_dataset.created BETWEEN _window AND _now AND
-          NOT EXISTS ( SELECT 1
-                       FROM t_notification_event AS TNE
-                       WHERE TNE.target_id = t_dataset.dataset_id AND
-                             TNE.event_type_id = _eventTypeID );
+          NOT EXISTS (SELECT 1
+                      FROM t_notification_event AS TNE
+                      WHERE TNE.target_id = t_dataset.dataset_id AND
+                            TNE.event_type_id = _eventTypeID);
 
     If _infoOnly Then
 
@@ -145,10 +145,10 @@ BEGIN
         SELECT Tmp_NewEvents.event_type_id,
                Tmp_NewEvents.target_id
         FROM Tmp_NewEvents
-        WHERE NOT EXISTS ( SELECT TNE.target_id
-                           FROM t_notification_event TNE
-                           WHERE TNE.target_id = Tmp_NewEvents.target_id AND
-                                 TNE.event_type_id = Tmp_NewEvents.event_type_id );
+        WHERE NOT EXISTS (SELECT TNE.target_id
+                          FROM t_notification_event TNE
+                          WHERE TNE.target_id = Tmp_NewEvents.target_id AND
+                                TNE.event_type_id = Tmp_NewEvents.event_type_id);
 
         If _deleteOldEvents Then
 

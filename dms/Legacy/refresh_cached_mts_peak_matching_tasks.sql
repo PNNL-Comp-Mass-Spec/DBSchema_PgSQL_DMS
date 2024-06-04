@@ -109,7 +109,7 @@ BEGIN
                             md_id, qid,
                             ini_file_name, comparison_mass_tag_count, md_state,
                             RANK() OVER (PARTITION BY tool_name, task_server, task_database, task_id
-                                         ORDER BY mts_job_id DESC ) AS TaskStartRank
+                                         ORDER BY mts_job_id DESC) AS TaskStartRank
                      FROM mts.t_peak_matching_tasks AS PMT
                      WHERE mts_job_id >= _jobMinimum AND
                            mts_job_id <= _jobMaximum) SourceQ

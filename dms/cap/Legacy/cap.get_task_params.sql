@@ -96,13 +96,14 @@ BEGIN
                    xmltable.name,
                    xmltable.value,
                    xmltable.step
-            FROM ( SELECT ('<params>' || _xmlParameters::text || '</params>')::xml As rooted_xml ) Src,
-                       XMLTABLE('//params/Param'
-                          PASSING Src.rooted_xml
-                          COLUMNS section text PATH '@Section',
-                                  name    text PATH '@Name',
-                                  value   text PATH '@Value',
-                                  step    text PATH '@Step')
+            FROM (SELECT ('<params>' || _xmlParameters::text || '</params>')::xml AS rooted_xml
+                 ) Src,
+                 XMLTABLE('//params/Param'
+                    PASSING Src.rooted_xml
+                    COLUMNS section text PATH '@Section',
+                            name    text PATH '@Name',
+                            value   text PATH '@Value',
+                            step    text PATH '@Step')
          ) XmlQ;
 
     RETURN QUERY

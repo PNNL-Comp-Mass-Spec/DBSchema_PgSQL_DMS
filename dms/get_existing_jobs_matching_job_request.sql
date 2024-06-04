@@ -75,9 +75,10 @@ BEGIN
 
         INSERT INTO Tmp_Jobs (Job)
         SELECT DISTINCT AJ.job
-        FROM ( SELECT dataset_id
-               FROM t_analysis_job_request_datasets
-               WHERE request_id = _requestID ) DSList
+        FROM (SELECT dataset_id
+              FROM t_analysis_job_request_datasets
+              WHERE request_id = _requestID
+             ) DSList
              INNER JOIN t_analysis_job AJ
                ON AJ.dataset_id = DSList.dataset_id
              INNER JOIN t_analysis_tool AJT
@@ -91,14 +92,14 @@ BEGIN
               (_resultType NOT LIKE '%Peptide_Hit%' OR
                _resultType LIKE '%Peptide_Hit%' AND
                (
-                   (    _requestInfo.protein_collection_list <> 'na' AND
-                        AJ.protein_collection_list = _requestInfo.protein_collection_list AND
-                        AJ.protein_options_list = _requestInfo.protein_options_list
+                   (_requestInfo.protein_collection_list <> 'na' AND
+                    AJ.protein_collection_list = _requestInfo.protein_collection_list AND
+                    AJ.protein_options_list = _requestInfo.protein_options_list
                    ) OR
-                   (    _requestInfo.protein_collection_list = 'na' AND
-                        AJ.protein_collection_list = _requestInfo.protein_collection_list AND
-                        AJ.organism_db_name = _requestInfo.organism_db_name AND
-                        Org.organism = _requestInfo.organism
+                   (_requestInfo.protein_collection_list = 'na' AND
+                    AJ.protein_collection_list = _requestInfo.protein_collection_list AND
+                    AJ.organism_db_name = _requestInfo.organism_db_name AND
+                    Org.organism = _requestInfo.organism
                    )
                )
               )

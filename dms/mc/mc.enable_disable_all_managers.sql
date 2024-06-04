@@ -85,7 +85,7 @@ BEGIN
         _mgrTypeIDs := ARRAY (
                         SELECT DISTINCT value
                         FROM public.parse_delimited_integer_list(_managerTypeIDList)
-                        ORDER BY Value );
+                        ORDER BY Value);
     Else
         -- Populate _mgrTypeIDs with all manager types in mc.t_mgr_types
 
@@ -93,7 +93,7 @@ BEGIN
                         SELECT DISTINCT mgr_type_id
                         FROM mc.t_mgr_types
                         WHERE mgr_type_active > 0
-                        ORDER BY mgr_type_id );
+                        ORDER BY mgr_type_id);
     End If;
 
     -----------------------------------------------

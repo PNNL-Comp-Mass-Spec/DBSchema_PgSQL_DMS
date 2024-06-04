@@ -199,7 +199,7 @@ BEGIN
                     FROM (SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
                           FROM sw.t_job_parameters_history
                           WHERE sw.t_job_parameters_history.job = _job AND
-                                sw.t_job_parameters_history.most_recent_entry = 1 ) Src,
+                                sw.t_job_parameters_history.most_recent_entry = 1) Src,
                               XMLTABLE('//params/Param'
                                  PASSING Src.rooted_xml
                                  COLUMNS section citext PATH '@Section',

@@ -109,11 +109,11 @@ BEGIN
     SELECT COUNT(*)
     INTO _identicalStatCount
     FROM Tmp_JobStepStatusHistory NewStats
-         INNER JOIN ( SELECT step_tool,
-                             state,
-                             step_count
-                      FROM sw.t_job_step_status_history
-                      WHERE posting_time = _mostRecentPostingTime
+         INNER JOIN (SELECT step_tool,
+                            state,
+                            step_count
+                     FROM sw.t_job_step_status_history
+                     WHERE posting_time = _mostRecentPostingTime
                     ) RecentStats
            ON NewStats.Step_tool = RecentStats.step_tool AND
               NewStats.State = RecentStats.state AND
@@ -186,7 +186,12 @@ BEGIN
         RETURN;
     End If;
 
-    INSERT INTO sw.t_job_step_status_history (posting_time, step_tool, state, step_count)
+    INSERT INTO sw.t_job_step_status_history (
+        posting_time,
+        step_tool,
+        state,
+        step_count
+    )
     SELECT Posting_Time, Step_Tool, State, Step_Count
     FROM Tmp_JobStepStatusHistory
     ORDER BY step_tool, state;

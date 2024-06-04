@@ -120,20 +120,20 @@ BEGIN
 
     INSERT INTO Tmp_RequestIDs (RequestID)
     SELECT A.request_id
-    FROM ( SELECT request_id,
-                  settings_file_name,
-                  param_file_name,
-                  COUNT(AJ.job) AS Jobs
-           FROM t_analysis_job AJ
-           WHERE request_id >= _requestMinimum
-           GROUP BY request_id, settings_file_name, param_file_name
+    FROM (SELECT request_id,
+                 settings_file_name,
+                 param_file_name,
+                 COUNT(AJ.job) AS Jobs
+          FROM t_analysis_job AJ
+          WHERE request_id >= _requestMinimum
+          GROUP BY request_id, settings_file_name, param_file_name
          ) A
          INNER JOIN
-         ( SELECT request_id,
-                  COUNT(AJ.job) AS Jobs
-           FROM t_analysis_job AJ
-           WHERE request_id >= _requestMinimum
-           GROUP BY request_id
+         (SELECT request_id,
+                 COUNT(AJ.job) AS Jobs
+          FROM t_analysis_job AJ
+          WHERE request_id >= _requestMinimum
+          GROUP BY request_id
          ) B
             ON A.request_id = B.request_id
     WHERE A.Jobs = B.Jobs;

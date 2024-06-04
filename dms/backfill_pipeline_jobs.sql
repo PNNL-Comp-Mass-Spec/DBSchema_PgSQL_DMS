@@ -624,12 +624,13 @@ BEGIN
 
                     _currentLocation := format('Add job %s to Tmp_Job_Backfill_Details', _jobStr);
 
-                    INSERT INTO Tmp_Job_Backfill_Details
-                            (DataPackageID, Job, BatchID, Priority, Created, Start, Finish, AnalysisToolID,
-                            ParamFileName, SettingsFileName, OrganismDBName, OrganismID, DatasetID, Comment, OwnerUsername,
-                            StateID, AssignedProcessorName, ResultsFolderName, ProteinCollectionList, ProteinOptionsList,
-                            RequestID, PropagationMode, ProcessingTimeMinutes)
-                    VALUES( _jobInfo.DataPackageID,
+                    INSERT INTO Tmp_Job_Backfill_Details (
+                        DataPackageID, Job, BatchID, Priority, Created, Start, Finish, AnalysisToolID,
+                        ParamFileName, SettingsFileName, OrganismDBName, OrganismID, DatasetID, Comment, OwnerUsername,
+                        StateID, AssignedProcessorName, ResultsFolderName, ProteinCollectionList, ProteinOptionsList,
+                        RequestID, PropagationMode, ProcessingTimeMinutes
+                    )
+                    VALUES (_jobInfo.DataPackageID,
                             _jobInfo.Job,
                             0,                               -- BatchID
                             _jobInfo.Priority,               -- Priority
@@ -652,7 +653,7 @@ BEGIN
                             1,                               -- RequestID
                             0,                               -- PropagationMode
                             _jobInfo.ProcessingTimeMinutes   -- ProcessingTimeMinutes
-                            );
+                           );
 
                     If Not _infoOnly Then
                         ------------------------------------------------
@@ -661,10 +662,12 @@ BEGIN
 
                         _currentLocation := format('Add job %s to t_analysis_job using Tmp_Job_Backfill_Details', _jobStr);
 
-                        INSERT INTO t_analysis_job ( job, batch_id, priority, created, start, finish, analysis_tool_id,
-                                                     param_file_name, settings_file_name, organism_db_name, organism_id, dataset_id, comment, owner_username,
-                                                     job_state_id, assigned_processor_name, results_folder_name, protein_collection_list, protein_options_list,
-                                                     request_id, propagation_mode, processing_time_minutes )
+                        INSERT INTO t_analysis_job (
+                            job, batch_id, priority, created, start, finish, analysis_tool_id,
+                            param_file_name, settings_file_name, organism_db_name, organism_id, dataset_id, comment, owner_username,
+                            job_state_id, assigned_processor_name, results_folder_name, protein_collection_list, protein_options_list,
+                            request_id, propagation_mode, processing_time_minutes
+                        )
                         SELECT job, BatchID, priority, created, Start, Finish, AnalysisToolID,
                                ParamFileName, SettingsFileName, OrganismDBName, OrganismID, DatasetID, comment, OwnerUsername,
                                StateID, AssignedProcessorName, ResultsFolderName, ProteinCollectionList, ProteinOptionsList,

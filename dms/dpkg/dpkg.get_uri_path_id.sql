@@ -40,12 +40,12 @@ BEGIN
         ------------------------------------------------
 
         MERGE INTO dpkg.t_uri_paths AS t
-        USING ( SELECT _uriPath AS URI_Path
+        USING (SELECT _uriPath AS URI_Path
               ) AS s
-        ON ( t.uri_path = s.uri_path )
+        ON (t.uri_path = s.uri_path)
         WHEN NOT MATCHED THEN
-            INSERT ( uri_path )
-            VALUES ( s.URI_Path )
+            INSERT (uri_path)
+            VALUES (s.URI_Path)
         ;
 
         -- Now that the merge is complete, a match should be found

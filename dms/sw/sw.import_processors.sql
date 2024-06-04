@@ -37,7 +37,15 @@ BEGIN
     -- Add processors from DMS that aren't already in local table
     ---------------------------------------------------
 
-    INSERT INTO sw.t_local_processors (processor_id, processor_name, state, Groups, GP_Groups, Machine, proc_tool_mgr_id)
+    INSERT INTO sw.t_local_processors (
+        processor_id,
+        processor_name,
+        state,
+        groups,
+        gp_groups,
+        machine,
+        proc_tool_mgr_id
+    )
     SELECT ID, processor_name, state, groups, GP_Groups, Machine, 1
     FROM public.V_Get_Pipeline_Processors VPP
     WHERE VPP.state = 'E' AND

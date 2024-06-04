@@ -109,7 +109,7 @@ BEGIN
 
     -- Does the protein collection exist?
 
-    If Not Exists ( SELECT protein_collection_id FROM pc.t_protein_collections WHERE protein_collection_id = _proteinCollectionID) Then
+    If Not Exists (SELECT protein_collection_id FROM pc.t_protein_collections WHERE protein_collection_id = _proteinCollectionID) Then
         _message := format('Protein collection ID not found in pc.t_protein_collections: %s', _proteinCollectionID);
         RAISE WARNING '%', _message;
 
@@ -144,9 +144,9 @@ BEGIN
 
     -- Determine the state of the entry based on provided data
 
-    If Exists ( SELECT archived_file_id
-                FROM pc.t_archived_output_file_collections_xref
-                WHERE protein_collection_id = _proteinCollectionID)
+    If Exists (SELECT archived_file_id
+               FROM pc.t_archived_output_file_collections_xref
+               WHERE protein_collection_id = _proteinCollectionID)
     Then
         _archivedFileState := 'modified';
     Else

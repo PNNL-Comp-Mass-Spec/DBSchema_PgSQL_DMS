@@ -280,8 +280,8 @@ BEGIN
                            FROM t_analysis_tool_allowed_dataset_type ADT
                                 INNER JOIN t_analysis_tool Tool
                                   ON ADT.analysis_tool_id = Tool.analysis_tool_id
-                           WHERE Tool.analysis_tool = _analysisToolName::citext
-                          ) Then
+                           WHERE Tool.analysis_tool = _analysisToolName::citext)
+            Then
                 _msg := format('Analysis tool "%s" does not have any allowed dataset types; unable to continue', _analysisToolName);
                 RAISE EXCEPTION '%', _msg;
             End If;
@@ -290,12 +290,10 @@ BEGIN
                            FROM t_analysis_tool_allowed_instrument_class AIC
                                 INNER JOIN t_analysis_tool Tool
                                   ON AIC.analysis_tool_id = Tool.analysis_tool_id
-                           WHERE Tool.analysis_tool = _analysisToolName::citext
-                          ) Then
-
+                           WHERE Tool.analysis_tool = _analysisToolName::citext)
+            Then
                 _msg := format('Analysis tool "%s" does not have any allowed instrument classes; unable to continue', _analysisToolName);
                 RAISE EXCEPTION '%', _msg;
-
             End If;
 
             ---------------------------------------------------
@@ -364,9 +362,8 @@ BEGIN
                                                 WHERE Tool.analysis_tool = _analysisToolName
                                                ) ToolQ
                                       ON IGADT.dataset_type = ToolQ.dataset_type
-                               WHERE InstName.instrument = _instrument.InstrumentName
-                              ) Then
-
+                               WHERE InstName.instrument = _instrument.InstrumentName)
+                Then
                     -- Example criteria that will result in this message: Instrument Criteria=Agilent_TOF%, Tool=AgilentSequest
 
                     _allowedDatasetTypes := public.get_instrument_dataset_type_list(_instrument.InstrumentID);
@@ -386,9 +383,8 @@ BEGIN
                                    INNER JOIN t_analysis_tool Tool
                                    ON AIC.analysis_tool_id = Tool.analysis_tool_id
                                WHERE Tool.analysis_tool = _analysisToolName AND
-                                   AIC.instrument_class = _instrument.InstrumentClass
-                              ) Then
-
+                                   AIC.instrument_class = _instrument.InstrumentClass)
+                Then
                     -- Example criteria that will result in this message: Instrument Class=BRUKERFTMS, Tool=XTandem
                     -- 2nd example: Instrument Criteria=Agilent_TOF%, Tool=Decon2LS
 

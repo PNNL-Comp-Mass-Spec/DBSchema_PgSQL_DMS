@@ -76,11 +76,11 @@ BEGIN
            string_agg(Mass_Correction_Tag, ',' ORDER BY Local_Symbol)
     INTO _pmTargetSymbolList,
          _pmMassCorrectionTagList
-    FROM ( SELECT Local_Symbol, Mass_Correction_Tag
-           FROM V_Param_File_Mass_Mod_Info
-           WHERE Mod_Type_Symbol = 'D' AND
-                 Param_File_Name = _parameterFileName::citext
-           GROUP BY Local_Symbol, Mass_Correction_Tag
+    FROM (SELECT Local_Symbol, Mass_Correction_Tag
+          FROM V_Param_File_Mass_Mod_Info
+          WHERE Mod_Type_Symbol = 'D' AND
+                Param_File_Name = _parameterFileName::citext
+          GROUP BY Local_Symbol, Mass_Correction_Tag
          ) GroupQ;
 
     -----------------------------------------------------------

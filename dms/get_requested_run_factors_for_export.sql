@@ -119,7 +119,7 @@ BEGIN
 
     _colList := 'batch_id, name, status, request, dataset_id, dataset, experiment, experiment_id, block, run_order';
 
-    SELECT make_factor_crosstab_sql ( _colList)
+    SELECT make_factor_crosstab_sql (_colList)
     INTO _sql;
 
     -----------------------------------------

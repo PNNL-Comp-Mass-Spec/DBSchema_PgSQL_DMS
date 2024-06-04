@@ -87,7 +87,12 @@ BEGIN
     -- Compute the new stats
     -----------------------------------------------------
 
-    INSERT INTO Tmp_TaskStepStatusHistory (Posting_Time, Step_Tool, State, Step_Count)
+    INSERT INTO Tmp_TaskStepStatusHistory (
+        Posting_Time,
+        Step_Tool,
+        State,
+        Step_Count
+    )
     SELECT CURRENT_TIMESTAMP AS Posting_Time, Tool, State, COUNT(job) AS Step_Count
     FROM cap.t_task_steps
     GROUP BY Tool, State;
@@ -103,11 +108,11 @@ BEGIN
     SELECT COUNT(*)
     INTO _identicalStatCount
     FROM Tmp_TaskStepStatusHistory NewStats
-         INNER JOIN ( SELECT Step_Tool,
-                             State,
-                             Step_Count
-                      FROM cap.t_task_step_status_history
-                      WHERE Posting_Time = _mostRecentPostingTime
+         INNER JOIN (SELECT Step_Tool,
+                            State,
+                            Step_Count
+                     FROM cap.t_task_step_status_history
+                     WHERE Posting_Time = _mostRecentPostingTime
                     ) RecentStats
            ON NewStats.Step_Tool = RecentStats.Step_Tool AND
               NewStats.State = RecentStats.State AND
@@ -176,7 +181,12 @@ BEGIN
         RETURN;
     End If;
 
-    INSERT INTO cap.t_task_step_status_history (posting_time, step_tool, state, step_count)
+    INSERT INTO cap.t_task_step_status_history (
+        posting_time,
+        step_tool,
+        state,
+        step_count
+    )
     SELECT Posting_Time, Step_Tool, State, Step_Count
     FROM Tmp_TaskStepStatusHistory
     ORDER BY Step_Tool, State;

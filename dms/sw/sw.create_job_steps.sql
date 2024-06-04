@@ -277,7 +277,11 @@ BEGIN
         End If;
 
         If _debugMode And _existingJob <> 0 Then
-            INSERT INTO Tmp_Jobs (job, priority, script, State, Dataset, Dataset_ID, DataPkgID, Results_Directory_Name)
+            INSERT INTO Tmp_Jobs (
+                Job, Priority, Script,
+                State, Dataset, Dataset_ID,
+                DataPkgID, Results_Directory_Name
+            )
             SELECT job, priority, script, State, Dataset, Dataset_ID, Data_Pkg_ID, NULL
             FROM sw.t_jobs
             WHERE job = _existingJob;
@@ -326,7 +330,11 @@ BEGIN
             RETURN;
         End If;
 
-        INSERT INTO Tmp_Jobs (job, priority, script, State, Dataset, Dataset_ID, DataPkgID, Results_Directory_Name)
+        INSERT INTO Tmp_Jobs (
+            Job, Priority, Script,
+            State, Dataset, Dataset_ID,
+            DataPkgID, Results_Directory_Name
+        )
         SELECT job, priority, script, State, Dataset, Dataset_ID, Data_Pkg_ID, Results_Folder_Name
         FROM sw.t_jobs
         WHERE job = _existingJob;

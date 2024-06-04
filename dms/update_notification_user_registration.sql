@@ -131,14 +131,14 @@ BEGIN
         ORDER BY EntityTypeID
     LOOP
         If _notifyUser::citext = 'Yes' Then
-            If Not Exists ( SELECT user_id
-                            FROM t_notification_entity_user
-                            WHERE user_id = _userID AND
-                                  entity_type_id = _entityTypeID
+            If Not Exists (SELECT user_id
+                           FROM t_notification_entity_user
+                           WHERE user_id = _userID AND
+                                 entity_type_id = _entityTypeID
                           )
             Then
                 INSERT INTO t_notification_entity_user (user_id, entity_type_id)
-                VALUES(_userID, _entityTypeID);
+                VALUES (_userID, _entityTypeID);
             End If;
 
             CONTINUE;

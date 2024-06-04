@@ -415,7 +415,7 @@ BEGIN
                     value,
                     last_affected
                 )
-                VALUES(_statEntry.Category, _statEntry.Label, _value, CURRENT_TIMESTAMP);
+                VALUES (_statEntry.Category, _statEntry.Label, _value, CURRENT_TIMESTAMP);
             End If;
 
         END LOOP;

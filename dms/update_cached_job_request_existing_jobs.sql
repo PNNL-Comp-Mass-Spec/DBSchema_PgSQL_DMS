@@ -153,7 +153,7 @@ BEGIN
             Job        int NOT NULL
         );
 
-        CREATE INDEX IX_TmpRequestsAndExistingJobs ON Tmp_RequestsAndExistingJobs ( Request_ID, Job );
+        CREATE INDEX IX_TmpRequestsAndExistingJobs ON Tmp_RequestsAndExistingJobs (Request_ID, Job);
 
         INSERT INTO Tmp_RequestsAndExistingJobs (request_id, job)
         SELECT AJR.request_id,

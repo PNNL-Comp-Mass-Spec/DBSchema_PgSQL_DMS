@@ -288,7 +288,7 @@ BEGIN
                 SELECT Trim(XmlQ.section), Trim(XmlQ.name), Trim(XmlQ.value)
                 FROM (
                     SELECT xmltable.*
-                    FROM ( SELECT ('<params>' || _jobParamXML::text || '</params>')::xml AS rooted_xml
+                    FROM (SELECT ('<params>' || _jobParamXML::text || '</params>')::xml AS rooted_xml
                          ) Src,
                          XMLTABLE('//params/Param'
                                   PASSING Src.rooted_xml
@@ -313,16 +313,16 @@ BEGIN
                 If _paramsUpdated Then
                     SELECT xml_item
                     INTO _jobParamXML
-                    FROM ( SELECT
-                             XMLAGG(XMLELEMENT(
-                                    NAME "Param",
-                                    XMLATTRIBUTES(
-                                        Section AS "Section",
-                                        Name AS "Name",
-                                        Value AS "Value"))
-                                    ORDER BY Section, Name
-                                   ) AS xml_item
-                           FROM Tmp_Job_Params
+                    FROM (SELECT
+                            XMLAGG(XMLELEMENT(
+                                   NAME "Param",
+                                   XMLATTRIBUTES(
+                                       Section AS "Section",
+                                       Name AS "Name",
+                                       Value AS "Value"))
+                                   ORDER BY Section, Name
+                                  ) AS xml_item
+                          FROM Tmp_Job_Params
                         ) AS LookupQ;
                 End If;
 
@@ -343,7 +343,7 @@ BEGIN
 
                 SELECT Value
                 INTO _transferFolderPath
-                FROM sw.get_job_param_table_local( _job)
+                FROM sw.get_job_param_table_local(_job)
                 WHERE Name = 'TransferFolderPath';
 
                 If Coalesce(_transferFolderPath, '') <> '' Then
@@ -435,7 +435,7 @@ BEGIN
             INTO _logEntryID
             FROM sw.t_log_entries
             WHERE Position (_exceptionMessage IN message) > 0 AND
-                  Abs( Extract(epoch from (CURRENT_TIMESTAMP - Entered)) ) < 15;
+                  Abs(Extract(epoch from (CURRENT_TIMESTAMP - Entered))) < 15;
 
             If FOUND Then
                 CALL public.alter_entered_by_user ('sw', 't_log_entries', 'entry_id', _logEntryID, _callingUser, _entryDateColumnName => 'entered', _message => _alterEnteredByMessage);

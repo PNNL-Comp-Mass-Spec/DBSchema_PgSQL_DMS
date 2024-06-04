@@ -100,7 +100,7 @@ BEGIN
     -- Job parameters
     ---------------------------------------------------
 
-    INSERT INTO Tmp_Param_Tab ( Section, Name, Value)
+    INSERT INTO Tmp_Param_Tab (Section, Name, Value)
     VALUES ('JobParameters', 'Dataset_ID', _datasetID),
            ('JobParameters', 'Dataset', _dataset),
            ('JobParameters', 'Storage_Server_Name', _storageServer),
@@ -115,33 +115,33 @@ BEGIN
     -- Convert columns of data from V_DMS_Dataset_Metadata into rows added to Tmp_Param_Tab
     ---------------------------------------------------
 
-    INSERT INTO Tmp_Param_Tab ( section, name, value)
+    INSERT INTO Tmp_Param_Tab (section, name, value)
     SELECT 'JobParameters' AS Section,
            UnpivotQ.Name,
            UnpivotQ.Value
-    FROM ( SELECT type AS dataset_type,
-                  directory,
-                  method,
-                  capture_exclusion_window::text,
-                  timestamp_text(created) AS created,
-                  source_vol,
-                  source_path,
-                  storage_vol,
-                  storage_path,
-                  storage_vol_external,
-                  archive_server,
-                  archive_path,
-                  archive_network_share_path,
-                  eus_instrument_id::text AS eus_instrument_id,
-                  eus_proposal_id::text AS eus_proposal_id,
-                  eus_operator_id::text AS eus_operator_id,
-                  operator_username,
-                  timestamp_text(acq_time_start) AS acq_time_start,
-                  timestamp_text(acq_time_end) AS acq_time_end,
-                  timestamp_text(request_run_start) AS request_run_start,
-                  timestamp_text(request_run_finish) AS request_run_finish
-           FROM cap.V_DMS_Dataset_Metadata
-           WHERE Dataset_ID = _datasetID) AS m
+    FROM (SELECT type AS dataset_type,
+                 directory,
+                 method,
+                 capture_exclusion_window::text,
+                 timestamp_text(created) AS created,
+                 source_vol,
+                 source_path,
+                 storage_vol,
+                 storage_path,
+                 storage_vol_external,
+                 archive_server,
+                 archive_path,
+                 archive_network_share_path,
+                 eus_instrument_id::text AS eus_instrument_id,
+                 eus_proposal_id::text AS eus_proposal_id,
+                 eus_operator_id::text AS eus_operator_id,
+                 operator_username,
+                 timestamp_text(acq_time_start) AS acq_time_start,
+                 timestamp_text(acq_time_end) AS acq_time_end,
+                 timestamp_text(request_run_start) AS request_run_start,
+                 timestamp_text(request_run_finish) AS request_run_finish
+          FROM cap.V_DMS_Dataset_Metadata
+          WHERE Dataset_ID = _datasetID) AS m
          CROSS JOIN LATERAL (
            VALUES
                 ('Dataset_Type', m.dataset_type),
@@ -230,7 +230,7 @@ BEGIN
     SELECT Trim(XmlQ.section), Trim(XmlQ.name), Trim(XmlQ.value)
     FROM (
         SELECT xmltable.section, xmltable.name, xmltable.value
-        FROM ( SELECT _paramXML AS params
+        FROM (SELECT _paramXML AS params
              ) Src,
              XMLTABLE('//sections/section/item'
                       PASSING Src.params
@@ -275,15 +275,15 @@ BEGIN
 
     SELECT Transfer_Directory_Path
     INTO _transferDirectoryPath
-    FROM ( SELECT DISTINCT TStor.vol_name_client AS Storage_Vol_External,
-                           public.combine_paths(TStor.vol_name_client, Xfer.Client) AS Transfer_Directory_Path
-           FROM public.t_storage_path AS TStor
-                CROSS JOIN ( SELECT Client
-                             FROM public.V_Misc_Paths
-                             WHERE path_function = 'AnalysisXfer'
-                             LIMIT 1) AS Xfer
-           WHERE Coalesce(TStor.vol_name_client, '') <> '' AND
-                 TStor.vol_name_client <> '(na)'
+    FROM (SELECT DISTINCT TStor.vol_name_client AS Storage_Vol_External,
+                          public.combine_paths(TStor.vol_name_client, Xfer.Client) AS Transfer_Directory_Path
+          FROM public.t_storage_path AS TStor
+               CROSS JOIN (SELECT Client
+                           FROM public.V_Misc_Paths
+                           WHERE path_function = 'AnalysisXfer'
+                           LIMIT 1) AS Xfer
+          WHERE Coalesce(TStor.vol_name_client, '') <> '' AND
+                TStor.vol_name_client <> '(na)'
          ) DirectoryQ
     WHERE Storage_Vol_External = _storageVolExternal;
 

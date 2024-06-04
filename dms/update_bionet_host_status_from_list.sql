@@ -84,11 +84,11 @@ BEGIN
         UPDATE Tmp_Hosts
         SET Host = Substring(FilterQ.HostAndIP, 1, AtSignLoc - 1),
             IP   = Substring(FilterQ.HostAndIP, AtSignLoc + 1, 16)
-        FROM ( SELECT Entry_ID,
-                      Host AS HostAndIP,
-                      Position('@' In Host) AS AtSignLoc
-               FROM Tmp_Hosts
-               WHERE Host SIMILAR TO '%@[0-9]%' ) FilterQ
+        FROM (SELECT Entry_ID,
+                     Host AS HostAndIP,
+                     Position('@' In Host) AS AtSignLoc
+              FROM Tmp_Hosts
+              WHERE Host SIMILAR TO '%@[0-9]%' ) FilterQ
         WHERE FilterQ.Entry_ID = Tmp_Hosts.Entry_ID;
 
         -- Remove suffix .bionet if present

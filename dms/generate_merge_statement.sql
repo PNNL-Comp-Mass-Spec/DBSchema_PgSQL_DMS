@@ -211,8 +211,8 @@ BEGIN
                FROM information_schema.columns
                WHERE table_schema = _sourceSchema AND
                      table_name = _tableName AND
-                     is_identity = 'YES') Then
-
+                     is_identity = 'YES')
+    Then
         INSERT INTO Tmp_SQL (value) VALUES ('');
         INSERT INTO Tmp_SQL (value) VALUES ('-- Use OVERRIDING SYSTEM VALUE to insert an explicit value for the identity column, for example:');
         INSERT INTO Tmp_SQL (value) VALUES ('');
@@ -351,7 +351,7 @@ BEGIN
         --   WHERE ((Coalesce(Source.ColumnA, 0) <> Coalesce(Target.ColumnA, 1))) OR
         --         ((Coalesce(Source.ColumnA, 'BogusNonWordValue12345') <> Coalesce(Target.ColumnA, 'BogusNonWordValue67890')))
         --
-        -- Comparison option #2 (contributed by WileCau at http://stackoverflow.com/questions/1075142/how-to-compare-values-which-may-both-be-null-is-t-sql )
+        -- Comparison option #2 (contributed by WileCau at http://stackoverflow.com/questions/1075142/how-to-compare-values-which-may-both-be-null-is-t-sql)
         -- NullIf returns Null if the two values are equal, or returns the first value if the fields are not equal
         --
         -- This expression is a bit hard to follow, but it's a compact way to compare two fields to see if they are equal

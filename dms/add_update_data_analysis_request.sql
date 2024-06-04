@@ -168,9 +168,8 @@ BEGIN
                           ON UOP.operation_id = UO.operation_id
                    WHERE U.Status = 'Active' AND
                          UO.operation = 'DMS_Data_Analysis_Request' AND
-                         Username = _callingUser::citext
-                  ) Then
-
+                         Username = _callingUser::citext)
+        Then
               _allowUpdateEstimatedAnalysisTime := true;
         End If;
 
@@ -315,7 +314,7 @@ BEGIN
                        INNER JOIN Tmp_BatchIDs
                          ON RR.batch_id = Tmp_BatchIDs.batch_id
                   WHERE NOT Coalesce(work_package, '')::citext IN ('', 'na', 'none')
-                  GROUP BY work_package ) StatsQ
+                  GROUP BY work_package) StatsQ
             ORDER BY Requests DESC
             LIMIT 1;
 
@@ -483,7 +482,7 @@ BEGIN
                        INNER JOIN t_campaign C
                          ON E.campaign_id = C.campaign_id
                   WHERE RR.batch_id = _representativeBatchID
-                  GROUP BY C.campaign ) StatsQ
+                  GROUP BY C.campaign) StatsQ
             ORDER BY StatsQ.Experiments DESC
             LIMIT 1;
 
@@ -497,7 +496,7 @@ BEGIN
                        INNER JOIN t_organisms Org
                          ON E.organism_id = Org.organism_id
                   WHERE RR.batch_id = _representativeBatchID
-                  GROUP BY Org.organism ) StatsQ
+                  GROUP BY Org.organism) StatsQ
             ORDER BY StatsQ.Organisms DESC
             LIMIT 1;
 
@@ -507,7 +506,7 @@ BEGIN
                          COUNT(RR.request_id) AS Requests
                   FROM t_requested_run RR
                   WHERE RR.batch_id = _representativeBatchID
-                  GROUP BY RR.eus_proposal_id ) StatsQ
+                  GROUP BY RR.eus_proposal_id) StatsQ
             ORDER BY StatsQ.Requests DESC
             LIMIT 1;
 
@@ -524,14 +523,14 @@ BEGIN
                        INNER JOIN t_campaign C
                          ON E.campaign_id = C.campaign_id
                   WHERE DPD.data_pkg_id = _dataPackageID
-                  GROUP BY C.campaign ) StatsQ
+                  GROUP BY C.campaign) StatsQ
             ORDER BY StatsQ.Experiments DESC
             LIMIT 1;
 
             SELECT organism
             INTO _organism
             FROM (SELECT Org.organism AS Organism,
-                         COUNT(E.organism_id ) AS Organisms
+                         COUNT(E.organism_id) AS Organisms
                   FROM dpkg.t_data_package_datasets DPD
                        INNER JOIN t_dataset DS
                          ON DPD.dataset_id = DS.dataset_id
@@ -540,7 +539,7 @@ BEGIN
                        INNER JOIN t_organisms Org
                          ON E.organism_id = Org.organism_id
                   WHERE DPD.data_pkg_id = _dataPackageID
-                  GROUP BY Org.organism ) StatsQ
+                  GROUP BY Org.organism) StatsQ
             ORDER BY StatsQ.Organisms DESC
             LIMIT 1;
 
@@ -554,7 +553,7 @@ BEGIN
                        INNER JOIN t_requested_run RR
                          ON DS.dataset_id = RR.dataset_id
                   WHERE DPD.data_pkg_id = _dataPackageID
-                  GROUP BY RR.eus_proposal_id ) StatsQ
+                  GROUP BY RR.eus_proposal_id) StatsQ
             ORDER BY StatsQ.Requests DESC
             LIMIT 1;
 

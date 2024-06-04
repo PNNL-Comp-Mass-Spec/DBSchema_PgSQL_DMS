@@ -126,7 +126,7 @@ BEGIN
         DELETE FROM t_mts_mt_dbs_cached target
         WHERE NOT EXISTS (SELECT source.mt_db_id
                           FROM mts.t_mt_dbs AS source
-                          WHERE target.mt_db_id = source.mt_db_id );
+                          WHERE target.mt_db_id = source.mt_db_id);
 
         GET DIAGNOSTICS _mergeDeleteCount = ROW_COUNT;
 

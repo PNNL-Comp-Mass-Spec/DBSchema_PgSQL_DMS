@@ -231,9 +231,9 @@ BEGIN
 
     SELECT string_agg(Role, ', ' ORDER BY Role)
     INTO _list
-    FROM ( SELECT DISTINCT Role
-           FROM Tmp_TeamMembers
-           WHERE Role_ID IS NULL ) LookupQ;
+    FROM (SELECT DISTINCT Role
+          FROM Tmp_TeamMembers
+          WHERE Role_ID IS NULL) LookupQ;
 
     If _list <> '' Then
         If Position(',' In _list) > 0 Then
@@ -263,7 +263,7 @@ BEGIN
     INSERT INTO t_research_team_membership (
         team_id,
         role_id,
-        user_id )
+        user_id)
     SELECT DISTINCT _researchTeamID,
            Role_ID,
            User_ID

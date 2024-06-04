@@ -291,7 +291,14 @@ BEGIN
             Duration,
             Instrument
         )
-        VALUES (_index + 1, 0, 'Interval', _endOfPrevious, _startOfNext, _interval, _instrument );
+        VALUES (
+            _index + 1, 0,
+            'Interval',
+            _endOfPrevious,
+            _startOfNext,
+            _interval,
+            _instrument
+        );
 
         _index := _index + _seqIncrement;
     END LOOP;

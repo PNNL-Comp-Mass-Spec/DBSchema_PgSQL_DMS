@@ -171,8 +171,10 @@ BEGIN
     -- in 'Waiting' state and add to scratch list
     ---------------------------------------------------
 
-    INSERT INTO Tmp_Steplist (Job, Step, Tool, Priority, Total, Evaluated, Triggered, Shared, signature, Output_Folder_Name,
-                              completion_code, completion_message, evaluation_code, Evaluation_Message)
+    INSERT INTO Tmp_Steplist (
+        Job, Step, Tool, Priority, Total, Evaluated, Triggered, Shared, signature, Output_Folder_Name,
+        Completion_Code, Completion_Message, Evaluation_Code, Evaluation_Message
+    )
     SELECT JSD.job,
            JSD.step,
            JS.tool,
@@ -210,8 +212,10 @@ BEGIN
     -- to scratch list
     ---------------------------------------------------
 
-    INSERT INTO Tmp_Steplist (Job, Step, Tool, Priority, Total, Evaluated, Triggered, Shared, signature, Output_Folder_Name,
-                              completion_code, completion_message, evaluation_code, Evaluation_Message)
+    INSERT INTO Tmp_Steplist (
+        Job, Step, Tool, Priority, Total, Evaluated, Triggered, Shared, signature, Output_Folder_Name,
+        Completion_Code, Completion_Message, Evaluation_Code, Evaluation_Message
+    )
     SELECT JS.job,
            JS.step,
            JS.tool,
@@ -564,7 +568,7 @@ BEGIN
                                     NOT tool IN (SELECT step_tool
                                                  FROM sw.t_step_tools
                                                  WHERE shared_result_version > 0 AND
-                                                       disable_output_folder_name_override_on_skip > 0 )
+                                                       disable_output_folder_name_override_on_skip > 0)
                                     )
                                THEN input_folder_name
                                ELSE output_folder_name

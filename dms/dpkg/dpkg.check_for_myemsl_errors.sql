@@ -73,12 +73,12 @@ BEGIN
                     ELSE 0
                END)
     INTO _dataPkgFolderUploads, _duplicateUploads
-    FROM ( SELECT data_pkg_id,
-                  subfolder,
-                  COUNT(entry_id) AS UploadAttempts
-           FROM dpkg.t_myemsl_uploads
-           WHERE entered BETWEEN _startDate AND _endDate
-           GROUP BY data_pkg_id, subfolder
+    FROM (SELECT data_pkg_id,
+                 subfolder,
+                 COUNT(entry_id) AS UploadAttempts
+          FROM dpkg.t_myemsl_uploads
+          WHERE entered BETWEEN _startDate AND _endDate
+          GROUP BY data_pkg_id, subfolder
          ) UploadsByDataPkgAndFolder;
 
     If _uploadAttempts > 0 Then

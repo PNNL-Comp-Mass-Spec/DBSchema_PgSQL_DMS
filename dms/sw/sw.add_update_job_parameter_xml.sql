@@ -213,7 +213,7 @@ BEGIN
     SELECT Trim(XmlQ.section), Trim(XmlQ.name), Trim(XmlQ.value), 'Unchanged'
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT ('<params>' || _xmlParameters || '</params>')::xml AS rooted_xml
+        FROM (SELECT ('<params>' || _xmlParameters || '</params>')::xml AS rooted_xml
              ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
@@ -331,17 +331,17 @@ BEGIN
 
     RETURN QUERY
     SELECT xml_item, true AS Success, '' AS message
-    FROM ( SELECT
-             XMLAGG(XMLELEMENT(
-                    NAME "Param",
-                    XMLATTRIBUTES(
-                        section AS "Section",
-                        name AS "Name",
-                        value AS "Value"))
-                    ORDER BY section, name
-                   ) AS xml_item
-           FROM Tmp_Job_Params_Updated
-           WHERE State <> _deletedFlag
+    FROM (SELECT
+            XMLAGG(XMLELEMENT(
+                   NAME "Param",
+                   XMLATTRIBUTES(
+                       section AS "Section",
+                       name AS "Name",
+                       value AS "Value"))
+                   ORDER BY section, name
+                  ) AS xml_item
+          FROM Tmp_Job_Params_Updated
+          WHERE State <> _deletedFlag
         ) AS LookupQ;
 
     DROP TABLE Tmp_Job_Params_Updated;

@@ -64,12 +64,12 @@ BEGIN
                    ON T.Script = AJ.script_for_completed_job AND
                       AJ.enabled = 1
             WHERE T.State = 3 AND
-                  NOT EXISTS ( SELECT CompareQ.job
-                               FROM cap.t_tasks CompareQ
-                               WHERE CompareQ.script = AJ.script_for_new_job AND
-                                     CompareQ.dataset = T.dataset AND
-                                     ( NOT (AJ.script_for_completed_job = 'LCDatasetCapture' AND AJ.script_for_new_job = 'ArchiveUpdate')
-                                       OR CompareQ.results_folder_name = 'LC' )
+                  NOT EXISTS (SELECT CompareQ.job
+                              FROM cap.t_tasks CompareQ
+                              WHERE CompareQ.script = AJ.script_for_new_job AND
+                                    CompareQ.dataset = T.dataset AND
+                                    (NOT (AJ.script_for_completed_job = 'LCDatasetCapture' AND AJ.script_for_new_job = 'ArchiveUpdate')
+                                     OR CompareQ.results_folder_name = 'LC')
                              )
             ORDER BY T.dataset, AJ.script_for_new_job
         LOOP
@@ -111,12 +111,12 @@ BEGIN
            ON T.Script = AJ.script_for_completed_job AND
               AJ.enabled = 1
     WHERE T.State = 3 AND
-          NOT EXISTS ( SELECT CompareQ.job
-                       FROM cap.t_tasks CompareQ
-                       WHERE CompareQ.script = AJ.script_for_new_job AND
-                             CompareQ.dataset = T.dataset AND
-                             ( NOT (AJ.script_for_completed_job = 'LCDatasetCapture' AND AJ.script_for_new_job = 'ArchiveUpdate')
-                               OR CompareQ.results_folder_name = 'LC' )
+          NOT EXISTS (SELECT CompareQ.job
+                      FROM cap.t_tasks CompareQ
+                      WHERE CompareQ.script = AJ.script_for_new_job AND
+                            CompareQ.dataset = T.dataset AND
+                            (NOT (AJ.script_for_completed_job = 'LCDatasetCapture' AND AJ.script_for_new_job = 'ArchiveUpdate') OR
+                             CompareQ.results_folder_name = 'LC')
                      );
 
 END

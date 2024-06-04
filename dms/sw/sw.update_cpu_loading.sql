@@ -65,16 +65,16 @@ BEGIN
     FROM sw.t_machines M
          LEFT OUTER JOIN sw.t_local_processors LP
            ON M.machine = LP.machine
-         LEFT OUTER JOIN ( SELECT JS.processor,
-                                  JS.state,
-                                  ST.uses_all_cores,
-                                  JS.cpu_load,
-                                  JS.actual_cpu_load,
-                                  JS.memory_usage_mb,
-                                  Coalesce(JS.remote_info_id, 0) AS Remote_Info_ID
-                           FROM sw.t_job_steps JS
-                                INNER JOIN sw.t_step_tools ST
-                                  ON ST.step_tool = JS.tool ) JobStepsQ
+         LEFT OUTER JOIN (SELECT JS.processor,
+                                 JS.state,
+                                 ST.uses_all_cores,
+                                 JS.cpu_load,
+                                 JS.actual_cpu_load,
+                                 JS.memory_usage_mb,
+                                 Coalesce(JS.remote_info_id, 0) AS Remote_Info_ID
+                          FROM sw.t_job_steps JS
+                               INNER JOIN sw.t_step_tools ST
+                                 ON ST.step_tool = JS.tool) JobStepsQ
            ON LP.processor_name = JobStepsQ.processor
     GROUP BY M.machine;
 

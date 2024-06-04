@@ -137,11 +137,10 @@ BEGIN
 
     If _archiveFunction::citext <> 'Active' Then
 
-        If Exists ( SELECT archive_path_id
-                    FROM t_archive_path
-                    WHERE archive_path_id = _archivePathIDValue AND archive_path_function = 'Active'
-                  ) Then
-
+        If Exists (SELECT archive_path_id
+                   FROM t_archive_path
+                   WHERE archive_path_id = _archivePathIDValue AND archive_path_function = 'Active')
+        Then
             RAISE EXCEPTION 'Cannot set archive path to non Active for instrument "%"', _instrumentName;
         End If;
     End If;
@@ -158,8 +157,8 @@ BEGIN
                  INNER JOIN t_archive_path ArchPath
                    ON InstName.instrument_id = ArchPath.instrument_id AND
                       InstName.instrument = _instrumentName AND
-                      ArchPath.archive_path_function = 'Active') Then
-
+                      ArchPath.archive_path_function = 'Active')
+    Then
         UPDATE t_archive_path
         SET archive_path_function = 'Old'
         WHERE archive_path_id IN (

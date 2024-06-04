@@ -303,8 +303,8 @@ BEGIN
 
                 If _comment::citext IS DISTINCT FROM _currentComment Or
                    _propMode IS DISTINCT FROM _currentExportMode Or
-                   _currentStateName::citext = 'Complete' And _stateName::citext = 'No export' Then
-
+                   _currentStateName::citext = 'Complete' And _stateName::citext = 'No export'
+                Then
                     If Not _infoOnly Then
                         UPDATE t_analysis_job
                         SET comment          = _comment,
@@ -581,22 +581,22 @@ BEGIN
                      t_organisms Org ON AJ.organism_id = Org.organism_id INNER JOIN
                      -- t_analysis_job_state AJS ON AJ.job_state_id = AJS.job_state_id INNER JOIN
                      Tmp_DatasetInfo ON Tmp_DatasetInfo.dataset_name = DS.dataset
-                WHERE ( _preventDuplicatesIgnoresNoExport     AND NOT AJ.job_state_id IN (5, 13, 14) OR
-                        Not _preventDuplicatesIgnoresNoExport AND AJ.job_state_id <> 5
+                WHERE (_preventDuplicatesIgnoresNoExport     AND NOT AJ.job_state_id IN (5, 13, 14) OR
+                       NOT _preventDuplicatesIgnoresNoExport AND AJ.job_state_id <> 5
                       ) AND
                       AJT.analysis_tool = _toolName::citext AND
                       AJ.param_file_name = _paramFileName::citext AND
                       AJ.settings_file_name = _settingsFileName::citext AND
                       (
-                        ( _protCollNameList::citext = 'na' AND
-                          AJ.organism_db_name = _organismDBName::citext AND
-                          Org.organism = Coalesce(_organismName::citext, Org.organism)
+                        (_protCollNameList::citext = 'na' AND
+                         AJ.organism_db_name = _organismDBName::citext AND
+                         Org.organism = Coalesce(_organismName::citext, Org.organism)
                         ) OR
-                        ( _protCollNameList::citext <> 'na' AND
-                          AJ.protein_collection_list = Coalesce(_protCollNameList::citext, AJ.protein_collection_list) AND
-                           AJ.protein_options_list = Coalesce(_protCollOptionsList::citext, AJ.protein_options_list)
+                        (_protCollNameList::citext <> 'na' AND
+                         AJ.protein_collection_list = Coalesce(_protCollNameList::citext, AJ.protein_collection_list) AND
+                         AJ.protein_options_list = Coalesce(_protCollOptionsList::citext, AJ.protein_options_list)
                         ) OR
-                        ( AJT.org_db_required = 0 )
+                        (AJT.org_db_required = 0)
                       );
 
                 If _showDebug Then

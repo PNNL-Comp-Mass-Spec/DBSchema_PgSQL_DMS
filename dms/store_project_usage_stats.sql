@@ -167,58 +167,58 @@ BEGIN
     -----------------------------------------
 
     MERGE INTO Tmp_Project_Usage_Stats AS t
-    USING ( SELECT _startdate AS Start_Date,
-                   _endDate AS End_Date,
-                   _endDateYear AS The_Year,
-                   _endDateWeek AS Week_Of_Year,
-                   EUSPro.Proposal_ID,
-                   RR.work_package,
-                   CASE
-                       WHEN CURRENT_TIMESTAMP >= EUSPro.Proposal_Start_Date AND
-                            CURRENT_TIMESTAMP <= EUSPro.Proposal_End_Date
-                       THEN 1
-                       ELSE 0
-                   END AS Proposal_Active,
-                   CASE
-                       WHEN EUSPro.Proposal_Type IN ('Resource Owner') THEN 1                                             -- Resource Owner
-                       WHEN EUSPro.Proposal_Type IN ('Proprietary', 'Proprietary Public', 'Proprietary_Public') THEN 2    -- Proprietary
-                       WHEN EUSPro.Proposal_Type IN ('Capacity') THEN 4                                                   -- Capacity (replaces Proprietary Public)
-                       WHEN EUSPro.Proposal_Type IN ('Partner') THEN 5                                                    -- Partner
-                       WHEN EUSPro.Proposal_Type IN ('Staff Time') THEN 6                                                 -- Staff Time
-                       WHEN NOT EUSPro.Proposal_Type IN ('Capacity', 'Partner', 'Proprietary', 'Proprietary Public', 'Proprietary_Public', 'Resource Owner', 'Staff Time') THEN 3  -- EMSL_User
-                       ELSE 0                                                                                             -- Unknown
-                   END AS Project_Type_ID,
-                   0 AS Samples,
-                   0 AS Datasets,
-                   COUNT(J.job) AS Jobs,
-                   RR.eus_usage_type_id,
-                   EUSPro.proposal_type,
-                   MIN(EUSUsers.name_fm) AS Proposal_User,
-                   MIN(InstName.instrument) AS Instrument_First,
-                   MAX(InstName.instrument) AS Instrument_Last,
-                   MIN(AnTool.analysis_tool) AS Job_Tool_First,
-                   MAX(AnTool.analysis_tool) AS Job_Tool_Last
-             FROM t_instrument_name InstName
-                  INNER JOIN t_dataset DS
-                    ON InstName.instrument_id = DS.instrument_id
-                  INNER JOIN t_requested_run RR
-                    ON DS.dataset_id = RR.dataset_id
-                  INNER JOIN t_analysis_job J
-                    ON J.dataset_id = DS.dataset_id AND
-                       J.start BETWEEN _startDate AND _endDate
-                  INNER JOIN t_analysis_job_request AJR
-                    ON AJR.request_id = J.request_id AND
-                       AJR.request_id > 1
-                  INNER JOIN t_analysis_tool AnTool
-                    ON J.analysis_tool_id = AnTool.analysis_tool_id
-                  LEFT OUTER JOIN t_eus_users EUSUsers
-                                  INNER JOIN t_requested_run_eus_users RRUsers
-                                    ON EUSUsers.person_id = RRUsers.eus_person_id
-                    ON RR.request_id = RRUsers.request_id
-                  LEFT OUTER JOIN t_eus_proposals EUSPro
-                    ON RR.eus_proposal_id = EUSPro.proposal_id
-             GROUP BY EUSPro.Proposal_ID, RR.work_package, RR.eus_usage_type_id, EUSPro.Proposal_Type,
-                      EUSPro.proposal_start_date, EUSPro.proposal_end_date
+    USING (SELECT _startdate AS Start_Date,
+                  _endDate AS End_Date,
+                  _endDateYear AS The_Year,
+                  _endDateWeek AS Week_Of_Year,
+                  EUSPro.Proposal_ID,
+                  RR.work_package,
+                  CASE
+                      WHEN CURRENT_TIMESTAMP >= EUSPro.Proposal_Start_Date AND
+                           CURRENT_TIMESTAMP <= EUSPro.Proposal_End_Date
+                      THEN 1
+                      ELSE 0
+                  END AS Proposal_Active,
+                  CASE
+                      WHEN EUSPro.Proposal_Type IN ('Resource Owner') THEN 1                                             -- Resource Owner
+                      WHEN EUSPro.Proposal_Type IN ('Proprietary', 'Proprietary Public', 'Proprietary_Public') THEN 2    -- Proprietary
+                      WHEN EUSPro.Proposal_Type IN ('Capacity') THEN 4                                                   -- Capacity (replaces Proprietary Public)
+                      WHEN EUSPro.Proposal_Type IN ('Partner') THEN 5                                                    -- Partner
+                      WHEN EUSPro.Proposal_Type IN ('Staff Time') THEN 6                                                 -- Staff Time
+                      WHEN NOT EUSPro.Proposal_Type IN ('Capacity', 'Partner', 'Proprietary', 'Proprietary Public', 'Proprietary_Public', 'Resource Owner', 'Staff Time') THEN 3  -- EMSL_User
+                      ELSE 0                                                                                             -- Unknown
+                  END AS Project_Type_ID,
+                  0 AS Samples,
+                  0 AS Datasets,
+                  COUNT(J.job) AS Jobs,
+                  RR.eus_usage_type_id,
+                  EUSPro.proposal_type,
+                  MIN(EUSUsers.name_fm) AS Proposal_User,
+                  MIN(InstName.instrument) AS Instrument_First,
+                  MAX(InstName.instrument) AS Instrument_Last,
+                  MIN(AnTool.analysis_tool) AS Job_Tool_First,
+                  MAX(AnTool.analysis_tool) AS Job_Tool_Last
+           FROM t_instrument_name InstName
+                INNER JOIN t_dataset DS
+                  ON InstName.instrument_id = DS.instrument_id
+                INNER JOIN t_requested_run RR
+                  ON DS.dataset_id = RR.dataset_id
+                INNER JOIN t_analysis_job J
+                  ON J.dataset_id = DS.dataset_id AND
+                     J.start BETWEEN _startDate AND _endDate
+                INNER JOIN t_analysis_job_request AJR
+                  ON AJR.request_id = J.request_id AND
+                     AJR.request_id > 1
+                INNER JOIN t_analysis_tool AnTool
+                  ON J.analysis_tool_id = AnTool.analysis_tool_id
+                LEFT OUTER JOIN t_eus_users EUSUsers
+                                INNER JOIN t_requested_run_eus_users RRUsers
+                                  ON EUSUsers.person_id = RRUsers.eus_person_id
+                  ON RR.request_id = RRUsers.request_id
+                LEFT OUTER JOIN t_eus_proposals EUSPro
+                  ON RR.eus_proposal_id = EUSPro.proposal_id
+           GROUP BY EUSPro.Proposal_ID, RR.work_package, RR.eus_usage_type_id, EUSPro.Proposal_Type,
+                     EUSPro.proposal_start_date, EUSPro.proposal_end_date
           ) AS s
     ON (t.The_Year = s.The_Year AND
         t.Week_Of_Year = s.Week_Of_Year AND
@@ -249,49 +249,49 @@ BEGIN
     -----------------------------------------
 
     MERGE INTO Tmp_Project_Usage_Stats AS t
-    USING ( SELECT _startdate AS Start_Date,
-                   _endDate AS End_Date,
-                   _endDateYear AS The_Year,
-                   _endDateWeek AS Week_Of_Year,
-                   EUSPro.Proposal_ID,
-                   SPR.Work_Package,
-                   CASE
-                       WHEN CURRENT_TIMESTAMP >= EUSPro.Proposal_Start_Date AND
-                            CURRENT_TIMESTAMP <= EUSPro.Proposal_End_Date
-                       THEN 1
-                       ELSE 0
-                   END AS Proposal_Active,
-                   CASE
-                       WHEN EUSPro.Proposal_Type IN ('Resource Owner') THEN 1                                             -- Resource Owner
-                       WHEN EUSPro.Proposal_Type IN ('Proprietary', 'Proprietary Public', 'Proprietary_Public') THEN 2    -- Proprietary
-                       WHEN EUSPro.Proposal_Type IN ('Capacity') THEN 4                                                   -- Capacity (replaces Proprietary Public)
-                       WHEN EUSPro.Proposal_Type IN ('Partner') THEN 5                                                    -- Partner
-                       WHEN EUSPro.Proposal_Type IN ('Staff Time') THEN 6                                                 -- Staff Time
-                       WHEN NOT EUSPro.Proposal_Type IN ('Capacity', 'Partner', 'Proprietary', 'Proprietary Public', 'Proprietary_Public', 'Resource Owner', 'Staff Time') THEN 3  -- EMSL_User
-                       ELSE 0                                                                                             -- Unknown
-                   END AS Project_Type_ID,
-                   COUNT(DISTINCT exp_id) AS Samples,
-                   0 AS Datasets,
-                   0 AS Jobs,
-                   UsageType.eus_usage_type_id,
-                   EUSPro.proposal_type,
-                   MIN(EUSUsers.name_fm) AS Proposal_User,
-                   '' AS Instrument_First,
-                   '' AS Instrument_Last,
-                   '' AS Job_Tool_First,
-                   '' AS Job_Tool_Last
-            FROM t_sample_prep_request SPR
-                 INNER JOIN t_eus_proposals EUSPro
-                   ON SPR.eus_proposal_id = EUSPro.proposal_id
-                 INNER JOIN t_eus_usage_type UsageType
-                   ON SPR.eus_usage_type = UsageType.eus_usage_type
-                 LEFT OUTER JOIN t_experiments
-                   ON SPR.prep_request_id = t_experiments.sample_prep_request_id
-                 LEFT OUTER JOIN t_eus_users AS EUSUsers
-                   ON SPR.eus_user_id = EUSUsers.person_id
-            WHERE t_experiments.created BETWEEN _startDate and _endDate
-            GROUP BY EUSPro.proposal_id, SPR.work_package, EUSPro.proposal_start_date, EUSPro.Proposal_End_Date,
-                     EUSPro.proposal_type, SPR.eus_user_id, UsageType.eus_usage_type_id
+    USING (SELECT _startdate AS Start_Date,
+                  _endDate AS End_Date,
+                  _endDateYear AS The_Year,
+                  _endDateWeek AS Week_Of_Year,
+                  EUSPro.Proposal_ID,
+                  SPR.Work_Package,
+                  CASE
+                      WHEN CURRENT_TIMESTAMP >= EUSPro.Proposal_Start_Date AND
+                           CURRENT_TIMESTAMP <= EUSPro.Proposal_End_Date
+                      THEN 1
+                      ELSE 0
+                  END AS Proposal_Active,
+                  CASE
+                      WHEN EUSPro.Proposal_Type IN ('Resource Owner') THEN 1                                             -- Resource Owner
+                      WHEN EUSPro.Proposal_Type IN ('Proprietary', 'Proprietary Public', 'Proprietary_Public') THEN 2    -- Proprietary
+                      WHEN EUSPro.Proposal_Type IN ('Capacity') THEN 4                                                   -- Capacity (replaces Proprietary Public)
+                      WHEN EUSPro.Proposal_Type IN ('Partner') THEN 5                                                    -- Partner
+                      WHEN EUSPro.Proposal_Type IN ('Staff Time') THEN 6                                                 -- Staff Time
+                      WHEN NOT EUSPro.Proposal_Type IN ('Capacity', 'Partner', 'Proprietary', 'Proprietary Public', 'Proprietary_Public', 'Resource Owner', 'Staff Time') THEN 3  -- EMSL_User
+                      ELSE 0                                                                                             -- Unknown
+                  END AS Project_Type_ID,
+                  COUNT(DISTINCT exp_id) AS Samples,
+                  0 AS Datasets,
+                  0 AS Jobs,
+                  UsageType.eus_usage_type_id,
+                  EUSPro.proposal_type,
+                  MIN(EUSUsers.name_fm) AS Proposal_User,
+                  '' AS Instrument_First,
+                  '' AS Instrument_Last,
+                  '' AS Job_Tool_First,
+                  '' AS Job_Tool_Last
+           FROM t_sample_prep_request SPR
+                INNER JOIN t_eus_proposals EUSPro
+                  ON SPR.eus_proposal_id = EUSPro.proposal_id
+                INNER JOIN t_eus_usage_type UsageType
+                  ON SPR.eus_usage_type = UsageType.eus_usage_type
+                LEFT OUTER JOIN t_experiments
+                  ON SPR.prep_request_id = t_experiments.sample_prep_request_id
+                LEFT OUTER JOIN t_eus_users AS EUSUsers
+                  ON SPR.eus_user_id = EUSUsers.person_id
+           WHERE t_experiments.created BETWEEN _startDate and _endDate
+           GROUP BY EUSPro.proposal_id, SPR.work_package, EUSPro.proposal_start_date, EUSPro.Proposal_End_Date,
+                    EUSPro.proposal_type, SPR.eus_user_id, UsageType.eus_usage_type_id
          ) AS s
     ON (t.The_Year = s.The_Year AND
         t.Week_Of_Year = s.Week_Of_Year AND

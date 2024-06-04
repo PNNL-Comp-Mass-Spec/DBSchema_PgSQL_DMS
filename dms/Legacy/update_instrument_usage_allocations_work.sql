@@ -131,13 +131,13 @@ BEGIN
     -----------------------------------------------------------
 
     MERGE INTO t_instrument_allocation AS Target
-    USING ( SELECT Proposal,
-                   InstGroup,
-                   Coalesce(public.try_cast(Allocation, 0.0), 0) AS Allocation,
-                   Comment,
-                   FY,
-                   Operation
-            FROM Tmp_Allocation_Operations
+    USING (SELECT Proposal,
+                  InstGroup,
+                  Coalesce(public.try_cast(Allocation, 0.0), 0) AS Allocation,
+                  Comment,
+                  FY,
+                  Operation
+           FROM Tmp_Allocation_Operations
           ) AS Source
     ON (Source.Proposal = Target.proposal_id AND
         Source.InstGroup = Target.allocation_tag AND

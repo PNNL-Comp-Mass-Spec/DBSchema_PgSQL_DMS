@@ -71,11 +71,11 @@ BEGIN
     -----------------------------------------------------------
 
     If Coalesce(_factorList, '') = '' Then
-        If Exists ( SELECT RR.request_id
-                    FROM t_requested_run RR
-                         INNER JOIN t_dataset DS
-                           ON RR.dataset_id = DS.dataset_id
-                    WHERE RR.batch_id = _batchID)
+        If Exists (SELECT RR.request_id
+                   FROM t_requested_run RR
+                        INNER JOIN t_dataset DS
+                          ON RR.dataset_id = DS.dataset_id
+                   WHERE RR.batch_id = _batchID)
         Then
             RAISE INFO 'The datasets for requested runs associated with batch ID % all have null Acq_Time_Start values', _batchID;
         Else

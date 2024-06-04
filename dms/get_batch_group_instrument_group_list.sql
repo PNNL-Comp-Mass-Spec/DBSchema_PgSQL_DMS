@@ -23,11 +23,11 @@ DECLARE
 BEGIN
     SELECT string_agg(LookupQ.instrument_group, ', ' ORDER BY LookupQ.instrument_group)
     INTO _result
-    FROM ( SELECT DISTINCT RR.instrument_group
-           FROM t_requested_run_batches RRB
-                LEFT OUTER JOIN t_requested_run RR
-                  ON RRB.batch_id = RR.batch_id
-           WHERE RRB.batch_group_id = _batchGroupID) AS LookupQ;
+    FROM (SELECT DISTINCT RR.instrument_group
+          FROM t_requested_run_batches RRB
+               LEFT OUTER JOIN t_requested_run RR
+                 ON RRB.batch_id = RR.batch_id
+          WHERE RRB.batch_group_id = _batchGroupID) AS LookupQ;
 
     RETURN Coalesce(_result, '');
 END

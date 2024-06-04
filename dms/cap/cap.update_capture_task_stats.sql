@@ -56,7 +56,7 @@ BEGIN
         Instrument text NOT NULL,
         Year       int NOT NULL,
         Jobs       int NOT NULL,
-        PRIMARY KEY ( Script, Instrument, Year )
+        PRIMARY KEY (Script, Instrument, Year)
     );
 
     ---------------------------------------------------
@@ -144,7 +144,12 @@ BEGIN
     INTO _countAtStart
     FROM cap.t_capture_task_stats;
 
-    INSERT INTO cap.t_capture_task_stats (script, instrument, year, jobs)
+    INSERT INTO cap.t_capture_task_stats (
+        script,
+        instrument,
+        year,
+        jobs
+    )
     SELECT Src.script, Src.instrument, Src.year, Src.Jobs
     FROM Tmp_Capture_Task_Stats Src
     ON CONFLICT (script, instrument, year)

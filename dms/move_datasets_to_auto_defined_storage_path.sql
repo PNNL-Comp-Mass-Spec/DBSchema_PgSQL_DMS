@@ -205,7 +205,12 @@ BEGIN
                     SET storage_path_ID = _storagePathIDNew
                     WHERE dataset_id = _datasetInfo.DatasetID;
 
-                    INSERT INTO t_dataset_storage_move_log (dataset_id, storage_path_old, storage_path_new, move_cmd)
+                    INSERT INTO t_dataset_storage_move_log (
+                        dataset_id,
+                        storage_path_old,
+                        storage_path_new,
+                        move_cmd
+                    )
                     VALUES (_datasetInfo.DatasetID, _datasetInfo.StoragePathID, _storagePathIDNew, _oldAndNewPaths);
 
                     RAISE INFO '  moved storage path from % to %', _datasetInfo.StoragePathID, _storagePathIDNew;
@@ -266,7 +271,12 @@ BEGIN
                 SET storage_path_id = _archivePathIDNew
                 WHERE dataset_id = _datasetInfo.DatasetID;
 
-                INSERT INTO t_dataset_storage_move_log (dataset_id, archive_path_old, archive_path_new, move_cmd)
+                INSERT INTO t_dataset_storage_move_log (
+                    dataset_id,
+                    archive_path_old,
+                    archive_path_new,
+                    move_cmd
+                )
                 VALUES (_datasetInfo.DatasetID, _archivePathID, _archivePathIDNew, _oldAndNewPaths);
 
                 RAISE INFO '  moved archive path from % to %', _datasetInfo.StoragePathID, _storagePathIDNew;
@@ -274,8 +284,9 @@ BEGIN
 
             _moveCount := _moveCount + 1;
 
-            If _storagePathIDNew <> 0 And _datasetInfo.StoragePathID <> _storagePathIDNew OR
-               _archivePathIDNew <> 0 And _archivePathID <> _archivePathIDNew Then
+            If _storagePathIDNew <> 0 And _datasetInfo.StoragePathID <> _storagePathIDNew Or
+               _archivePathIDNew <> 0 And _archivePathID <> _archivePathIDNew
+            Then
                 RAISE INFO '';
             End If;
         END LOOP;

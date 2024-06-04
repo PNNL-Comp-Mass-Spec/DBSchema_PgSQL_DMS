@@ -281,7 +281,7 @@ BEGIN
                INNER JOIN t_analysis_tool Tool
                  ON AJ.analysis_tool_id = Tool.analysis_tool_id
           WHERE (_analysisToolNameFilter = '' OR Tool.analysis_tool ILIKE _analysisToolNameFilter) AND
-                (Not _ignoreJobsCreatedBeforeDisposition OR AJ.dataset_unreviewed = 0 )
+                (Not _ignoreJobsCreatedBeforeDisposition OR AJ.dataset_unreviewed = 0)
          ) JL
     WHERE DTP.dataset_id = JL.dataset_id AND
           DTP.Process_Dataset;

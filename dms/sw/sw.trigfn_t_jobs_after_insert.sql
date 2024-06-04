@@ -17,8 +17,11 @@ CREATE OR REPLACE FUNCTION sw.trigfn_t_jobs_after_insert() RETURNS trigger
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
-    INSERT INTO sw.t_job_events
-        (job, target_state, prev_target_state)
+    INSERT INTO sw.t_job_events (
+        job,
+        target_state,
+        prev_target_state
+    )
     SELECT inserted.job, inserted.State as New_State, 0 as Old_State
     FROM inserted
     WHERE inserted.State <> 0

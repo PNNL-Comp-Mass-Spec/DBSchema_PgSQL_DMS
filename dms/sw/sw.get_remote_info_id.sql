@@ -60,7 +60,7 @@ BEGIN
             ---------------------------------------------------
 
             MERGE INTO sw.t_remote_info AS target
-            USING ( SELECT _remoteInfo AS Remote_Info
+            USING (SELECT _remoteInfo AS Remote_Info
                   ) AS Source
             ON (target.remote_info = source.remote_info)
             WHEN NOT MATCHED THEN

@@ -219,28 +219,28 @@ BEGIN
     -----------------------------------------------
 
     MERGE INTO t_analysis_job_psm_stats AS target
-    USING ( SELECT _job AS Job,
-                   _msgfThreshold AS MSGF_Threshold,
-                   _fdrThreshold AS FDR_Threshold,
-                   _msgfThresholdIsEValue AS MSGF_Threshold_Is_EValue,
-                   _spectraSearched AS Spectra_Searched,
-                   _totalPSMs AS Total_PSMs_MSGF,
-                   _uniquePeptides AS Unique_Peptides_MSGF,
-                   _uniqueProteins AS Unique_Proteins_MSGF,
-                   _totalPSMsFDRFilter AS Total_PSMs_FDR,
-                   _uniquePeptidesFDRFilter AS Unique_Peptides_FDR,
-                   _uniqueProteinsFDRFilter AS Unique_Proteins_FDR,
-                   _percentMSnScansNoPSM AS Percent_MSn_Scans_No_PSM,
-                   _maximumScanGapAdjacentMSn AS Maximum_Scan_Gap_Adjacent_MSn,
-                   _missedCleavageRatio AS Missed_Cleavage_Ratio_FDR,
-                   _trypticPeptides AS Tryptic_Peptides_FDR,
-                   _keratinPeptides AS Keratin_Peptides_FDR,
-                   _trypsinPeptides AS Trypsin_Peptides_FDR,
-                   _uniqueAcetylPeptidesFDR AS Acetyl_Peptides_FDR,
-                   _uniqueUbiquitinPeptidesFDR AS Ubiquitin_Peptides_FDR,
-                   _dynamicReporterIon AS Dynamic_Reporter_Ion,
-                   _percentPSMsMissingNTermReporterIon AS Percent_PSMs_Missing_NTerm_Reporter_Ion,
-                   _percentPSMsMissingReporterIon AS Percent_PSMs_Missing_Reporter_Ion
+    USING (SELECT _job AS Job,
+                  _msgfThreshold AS MSGF_Threshold,
+                  _fdrThreshold AS FDR_Threshold,
+                  _msgfThresholdIsEValue AS MSGF_Threshold_Is_EValue,
+                  _spectraSearched AS Spectra_Searched,
+                  _totalPSMs AS Total_PSMs_MSGF,
+                  _uniquePeptides AS Unique_Peptides_MSGF,
+                  _uniqueProteins AS Unique_Proteins_MSGF,
+                  _totalPSMsFDRFilter AS Total_PSMs_FDR,
+                  _uniquePeptidesFDRFilter AS Unique_Peptides_FDR,
+                  _uniqueProteinsFDRFilter AS Unique_Proteins_FDR,
+                  _percentMSnScansNoPSM AS Percent_MSn_Scans_No_PSM,
+                  _maximumScanGapAdjacentMSn AS Maximum_Scan_Gap_Adjacent_MSn,
+                  _missedCleavageRatio AS Missed_Cleavage_Ratio_FDR,
+                  _trypticPeptides AS Tryptic_Peptides_FDR,
+                  _keratinPeptides AS Keratin_Peptides_FDR,
+                  _trypsinPeptides AS Trypsin_Peptides_FDR,
+                  _uniqueAcetylPeptidesFDR AS Acetyl_Peptides_FDR,
+                  _uniqueUbiquitinPeptidesFDR AS Ubiquitin_Peptides_FDR,
+                  _dynamicReporterIon AS Dynamic_Reporter_Ion,
+                  _percentPSMsMissingNTermReporterIon AS Percent_PSMs_Missing_NTerm_Reporter_Ion,
+                  _percentPSMsMissingReporterIon AS Percent_PSMs_Missing_Reporter_Ion
           ) AS Source
     ON (target.job = Source.job)
     WHEN MATCHED THEN
@@ -330,11 +330,11 @@ BEGIN
         -----------------------------------------------
 
         MERGE INTO t_analysis_job_psm_stats_phospho AS target
-        USING ( SELECT _job AS Job,
-                       _uniquePhosphopeptideCountFDR AS Phosphopeptides,
-                       _uniquePhosphopeptidesCTermK AS CTerm_K_Phosphopeptides,
-                       _uniquePhosphopeptidesCTermR AS CTerm_R_Phosphopeptides,
-                       _missedCleavageRatioPhospho AS MissedCleavageRatio
+        USING (SELECT _job AS Job,
+                      _uniquePhosphopeptideCountFDR AS Phosphopeptides,
+                      _uniquePhosphopeptidesCTermK AS CTerm_K_Phosphopeptides,
+                      _uniquePhosphopeptidesCTermR AS CTerm_R_Phosphopeptides,
+                      _missedCleavageRatioPhospho AS MissedCleavageRatio
               ) AS Source
         ON (target.job = Source.job)
         WHEN MATCHED THEN

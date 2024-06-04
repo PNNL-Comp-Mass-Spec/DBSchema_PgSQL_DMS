@@ -20,13 +20,13 @@ BEGIN
 
     UPDATE sw.t_job_steps_history
     SET most_recent_entry = CASE WHEN LookupQ.SaveRank = 1 THEN 1 ELSE 0 END
-    FROM ( SELECT H.job,
-                  H.step,
-                  H.saved,
-                  Row_Number() OVER (PARTITION BY H.job, H.step ORDER BY H.saved DESC) AS SaveRank
-           FROM sw.t_job_steps_history H
-                INNER JOIN inserted
-                  ON H.job = inserted.job AND H.step = inserted.step
+    FROM (SELECT H.job,
+                 H.step,
+                 H.saved,
+                 Row_Number() OVER (PARTITION BY H.job, H.step ORDER BY H.saved DESC) AS SaveRank
+          FROM sw.t_job_steps_history H
+               INNER JOIN inserted
+                 ON H.job = inserted.job AND H.step = inserted.step
          ) LookupQ
     WHERE LookupQ.job = sw.t_job_Steps_History.job AND
           LookupQ.step = sw.t_job_Steps_History.step AND

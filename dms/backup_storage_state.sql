@@ -38,10 +38,11 @@ BEGIN
     -- Populate t_storage_path_bkup
     ---------------------------------------------------
 
-    INSERT INTO t_storage_path_bkup
-       (storage_path_id, storage_path, vol_name_client,
-       vol_name_server, storage_path_function, instrument,
-       storage_path_code, description)
+    INSERT INTO t_storage_path_bkup (
+        storage_path_id, storage_path, vol_name_client,
+        vol_name_server, storage_path_function, instrument,
+        storage_path_code, description
+    )
     SELECT storage_path_id, storage_path, vol_name_client,
        vol_name_server, storage_path_function, instrument,
        storage_path_code, description
@@ -57,12 +58,17 @@ BEGIN
     -- Populate t_instrument_name_bkup
     ---------------------------------------------------
 
-    INSERT INTO t_instrument_name_bkup
-       (instrument, instrument_id, instrument_class, source_path_id,
-       storage_path_id, capture_method,
-       room_number,
-       description,
-       created)
+    INSERT INTO t_instrument_name_bkup (
+        instrument,
+        instrument_id,
+        instrument_class,
+        source_path_id,
+        storage_path_id,
+        capture_method,
+        room_number,
+        description,
+        created
+    )
     SELECT instrument,
            instrument_id,
            instrument_class,

@@ -215,7 +215,15 @@ BEGIN
 
         _currentLocation := 'Add row to Tmp_Jobs';
 
-        INSERT INTO Tmp_Jobs (Job, Priority, Script, State, Dataset, Dataset_ID, Results_Directory_Name)
+        INSERT INTO Tmp_Jobs (
+            Job,
+            Priority,
+            Script,
+            State,
+            Dataset,
+            Dataset_ID,
+            Results_Directory_Name
+        )
         VALUES (_job, _priority, _scriptName, 1, _datasetName, _datasetID, NULL);
 
         ---------------------------------------------------
@@ -438,7 +446,7 @@ BEGIN
 
             SELECT Value
             INTO _transferFolderPath
-            FROM sw.get_job_param_table_local( _job)
+            FROM sw.get_job_param_table_local(_job)
             WHERE Name = 'TransferFolderPath';
 
             If Coalesce(_transferFolderPath, '') <> '' Then
@@ -494,7 +502,10 @@ BEGIN
             If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'sw' AND tablename::citext = 't_debug_tmp_jobs') Then
                 DELETE FROM sw.t_debug_tmp_jobs;
 
-                INSERT INTO sw.t_debug_tmp_jobs (Job, Priority, Script, State, Dataset, Dataset_ID, Results_Directory_Name)
+                INSERT INTO sw.t_debug_tmp_jobs (
+                    Job, Priority, Script, State,
+                    Dataset, Dataset_ID, Results_Directory_Name
+                )
                 SELECT Job, Priority, Script, State, Dataset, Dataset_ID, Results_Directory_Name
                 FROM Tmp_Jobs;
             Else
@@ -510,14 +521,19 @@ BEGIN
             If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'sw' AND tablename::citext = 't_debug_tmp_job_steps') Then
                 DELETE FROM sw.t_debug_tmp_job_steps;
 
-                INSERT INTO sw.t_debug_tmp_job_steps (Job, Step, Tool, CPU_Load, Memory_Usage_MB, Dependencies, Shared_Result_Version, Filter_Version, Signature, State,
-                                                      Input_Directory_Name, Output_Directory_Name, Special_Instructions)
-                SELECT Job, Step, Tool, CPU_Load, Memory_Usage_MB, Dependencies, Shared_Result_Version, Filter_Version, Signature, State,
+                INSERT INTO sw.t_debug_tmp_job_steps (
+                    Job, Step, Tool, CPU_Load, Memory_Usage_MB, Dependencies,
+                    Shared_Result_Version, Filter_Version, Signature, State,
+                    Input_Directory_Name, Output_Directory_Name, Special_Instructions
+                )
+                SELECT Job, Step, Tool, CPU_Load, Memory_Usage_MB, Dependencies,
+                       Shared_Result_Version, Filter_Version, Signature, State,
                        Input_Directory_Name, Output_Directory_Name, Special_Instructions
                 FROM Tmp_Job_Steps;
             Else
                 CREATE TABLE sw.t_debug_tmp_job_steps AS
-                SELECT Job, Step, Tool, CPU_Load, Memory_Usage_MB, Dependencies, Shared_Result_Version, Filter_Version, Signature, State,
+                SELECT Job, Step, Tool, CPU_Load, Memory_Usage_MB, Dependencies,
+                       Shared_Result_Version, Filter_Version, Signature, State,
                        Input_Directory_Name, Output_Directory_Name, Special_Instructions
                 FROM Tmp_Job_Steps;
             End If;
@@ -529,7 +545,10 @@ BEGIN
             If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'sw' AND tablename::citext = 't_debug_tmp_job_step_dependencies') Then
                 DELETE FROM sw.t_debug_tmp_job_step_dependencies;
 
-                INSERT INTO sw.t_debug_tmp_job_step_dependencies (Job, Step, Target_Step, Condition_Test, Test_Value, Enable_Only)
+                INSERT INTO sw.t_debug_tmp_job_step_dependencies (
+                    Job, Step, Target_Step,
+                    Condition_Test, Test_Value, Enable_Only
+                )
                 SELECT Job, Step, Target_Step, Condition_Test, Test_Value, Enable_Only
                 FROM Tmp_Job_Step_Dependencies;
             Else

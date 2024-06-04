@@ -108,7 +108,8 @@ BEGIN
     SELECT Trim(XmlQ.section), Trim(XmlQ.name), Trim(XmlQ.value), Coalesce(XmlQ.required, 'No') AS Requied
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT ('<params>' || _paramDefinition::text || '</params>')::xml AS rooted_xml ) Src,
+        FROM (SELECT ('<params>' || _paramDefinition::text || '</params>')::xml AS rooted_xml
+             ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
                       COLUMNS section  text PATH '@Section',
@@ -133,7 +134,8 @@ BEGIN
     SELECT Trim(XmlQ.section), Trim(XmlQ.name), Trim(XmlQ.value)
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT ('<params>' || _jobParamXML::text || '</params>')::xml AS rooted_xml ) Src,
+        FROM (SELECT ('<params>' || _jobParamXML::text || '</params>')::xml AS rooted_xml
+             ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
                       COLUMNS section text PATH '@Section',
@@ -227,7 +229,8 @@ BEGIN
 
         If _organismDBName <> '' And
            public.validate_na_parameter(_protCollNameList) = 'na' And
-           public.validate_na_parameter(_protCollOptionsList) = 'na' Then
+           public.validate_na_parameter(_protCollOptionsList) = 'na'
+        Then
             _usingLegacyFASTA := true;
         End If;
 
@@ -347,16 +350,16 @@ BEGIN
 
             SELECT xml_item
             INTO _jobParamXML
-            FROM ( SELECT
-                     XMLAGG(XMLELEMENT(
-                            NAME "Param",
-                            XMLATTRIBUTES(
-                                section AS "Section",
-                                name AS "Name",
-                                value AS "Value"))
-                            ORDER BY section, name
-                           ) AS xml_item
-                   FROM Tmp_JobParameters
+            FROM (SELECT
+                    XMLAGG(XMLELEMENT(
+                           NAME "Param",
+                           XMLATTRIBUTES(
+                               section AS "Section",
+                               name AS "Name",
+                               value AS "Value"))
+                           ORDER BY section, name
+                          ) AS xml_item
+                  FROM Tmp_JobParameters
                 ) AS LookupQ;
 
             _jobParam := _jobParamXML::text;

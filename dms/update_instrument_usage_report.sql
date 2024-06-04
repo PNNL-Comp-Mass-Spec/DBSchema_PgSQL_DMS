@@ -247,7 +247,7 @@ BEGIN
             SELECT XmlQ.Identifier, Trim(XmlQ.Field), Trim(XmlQ.Value)
             FROM (
                 SELECT xmltable.*
-                FROM ( SELECT _xml AS rooted_xml
+                FROM (SELECT _xml AS rooted_xml
                      ) Src,
                      XMLTABLE('//root/r'
                               PASSING Src.rooted_xml

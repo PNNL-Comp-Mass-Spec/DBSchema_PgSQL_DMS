@@ -87,7 +87,7 @@ BEGIN
               FROM (SELECT lc_column_ID,
                            dataset,
                            created,
-                           Row_Number() OVER (Partition BY lc_column_ID ORDER BY created DESC ) AS DatasetRank
+                           Row_Number() OVER (Partition BY lc_column_ID ORDER BY created DESC) AS DatasetRank
                     FROM t_dataset
                     WHERE lc_column_ID IN (SELECT ID FROM Tmp_LCColumns)
                    ) RankQ

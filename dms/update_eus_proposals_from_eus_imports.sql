@@ -141,9 +141,11 @@ BEGIN
         -- Add new proposal types to t_eus_proposal_type
         ---------------------------------------------------
 
-        INSERT INTO t_eus_proposal_type (proposal_type,
-                                         proposal_type_name,
-                                         abbreviation)
+        INSERT INTO t_eus_proposal_type (
+            proposal_type,
+            proposal_type_name,
+            abbreviation
+        )
         SELECT DISTINCT EUP.proposal_type,
                         EUP.proposal_type,
                         Replace(EUP.proposal_type, ' ', '')

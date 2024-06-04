@@ -175,7 +175,7 @@ BEGIN
     SELECT Trim(XmlQ.Name), Trim(XmlQ.ValueText)
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT _resultsXML AS rooted_xml
+        FROM (SELECT _resultsXML AS rooted_xml
              ) Src,
              XMLTABLE('//Quameter_Results/Measurements/Measurement'
                       PASSING Src.rooted_xml
@@ -254,10 +254,10 @@ BEGIN
 
     UPDATE Tmp_Measurements Target
     SET Value = FilterQ.Value
-    FROM ( SELECT Name,
-                  ValueText,
-                  public.try_cast(ValueText, null::float8) AS Value
-           FROM Tmp_Measurements
+    FROM (SELECT Name,
+                 ValueText,
+                 public.try_cast(ValueText, null::float8) AS Value
+          FROM Tmp_Measurements
          ) FilterQ
     WHERE Target.Name = FilterQ.Name AND
           NOT FilterQ.Value IS NULL;
@@ -276,18 +276,19 @@ BEGIN
     -- Use a Crosstab to extract out the known columns
     -----------------------------------------------
 
-    INSERT INTO Tmp_KnownMetrics ( Dataset_ID,
-                                   XIC_WideFrac, XIC_FWHM_Q1, XIC_FWHM_Q2, XIC_FWHM_Q3, XIC_Height_Q2, XIC_Height_Q3, XIC_Height_Q4,
-                                   RT_Duration, RT_TIC_Q1, RT_TIC_Q2, RT_TIC_Q3, RT_TIC_Q4,
-                                   RT_MS_Q1, RT_MS_Q2, RT_MS_Q3, RT_MS_Q4,
-                                   RT_MSMS_Q1, RT_MSMS_Q2, RT_MSMS_Q3, RT_MSMS_Q4,
-                                   MS1_TIC_Change_Q2, MS1_TIC_Change_Q3, MS1_TIC_Change_Q4,
-                                   MS1_TIC_Q2, MS1_TIC_Q3, MS1_TIC_Q4,
-                                   MS1_Count, MS1_Freq_Max, MS1_Density_Q1, MS1_Density_Q2, MS1_Density_Q3,
-                                   MS2_Count, MS2_Freq_Max, MS2_Density_Q1, MS2_Density_Q2, MS2_Density_Q3,
-                                   MS2_PrecZ_1, MS2_PrecZ_2, MS2_PrecZ_3, MS2_PrecZ_4, MS2_PrecZ_5, MS2_PrecZ_more,
-                                   MS2_PrecZ_likely_1, MS2_PrecZ_likely_multi
-                                 )
+    INSERT INTO Tmp_KnownMetrics (
+        Dataset_ID,
+        XIC_WideFrac, XIC_FWHM_Q1, XIC_FWHM_Q2, XIC_FWHM_Q3, XIC_Height_Q2, XIC_Height_Q3, XIC_Height_Q4,
+        RT_Duration, RT_TIC_Q1, RT_TIC_Q2, RT_TIC_Q3, RT_TIC_Q4,
+        RT_MS_Q1, RT_MS_Q2, RT_MS_Q3, RT_MS_Q4,
+        RT_MSMS_Q1, RT_MSMS_Q2, RT_MSMS_Q3, RT_MSMS_Q4,
+        MS1_TIC_Change_Q2, MS1_TIC_Change_Q3, MS1_TIC_Change_Q4,
+        MS1_TIC_Q2, MS1_TIC_Q3, MS1_TIC_Q4,
+        MS1_Count, MS1_Freq_Max, MS1_Density_Q1, MS1_Density_Q2, MS1_Density_Q3,
+        MS2_Count, MS2_Freq_Max, MS2_Density_Q1, MS2_Density_Q2, MS2_Density_Q3,
+        MS2_PrecZ_1, MS2_PrecZ_2, MS2_PrecZ_3, MS2_PrecZ_4, MS2_PrecZ_5, MS2_PrecZ_more,
+        MS2_PrecZ_likely_1, MS2_PrecZ_likely_multi
+    )
     SELECT DatasetID,
            "XIC_WideFrac", "XIC_FWHM_Q1", "XIC_FWHM_Q2", "XIC_FWHM_Q3", "XIC_Height_Q2", "XIC_Height_Q3", "XIC_Height_Q4",
            "RT_Duration", "RT_TIC_Q1", "RT_TIC_Q2", "RT_TIC_Q3", "RT_TIC_Q4",
@@ -386,20 +387,20 @@ BEGIN
     -----------------------------------------------
 
     MERGE INTO t_dataset_qc AS Target
-    USING ( SELECT M.Dataset_ID,
-                   DI.Job AS Quameter_Job,
-                   XIC_WideFrac, XIC_FWHM_Q1, XIC_FWHM_Q2, XIC_FWHM_Q3, XIC_Height_Q2, XIC_Height_Q3, XIC_Height_Q4,
-                   RT_Duration, RT_TIC_Q1, RT_TIC_Q2, RT_TIC_Q3, RT_TIC_Q4,
-                   RT_MS_Q1, RT_MS_Q2, RT_MS_Q3, RT_MS_Q4,
-                   RT_MSMS_Q1, RT_MSMS_Q2, RT_MSMS_Q3, RT_MSMS_Q4,
-                   MS1_TIC_Change_Q2, MS1_TIC_Change_Q3, MS1_TIC_Change_Q4,
-                   MS1_TIC_Q2, MS1_TIC_Q3, MS1_TIC_Q4,
-                   MS1_Count, MS1_Freq_Max, MS1_Density_Q1, MS1_Density_Q2, MS1_Density_Q3,
-                   MS2_Count, MS2_Freq_Max, MS2_Density_Q1, MS2_Density_Q2, MS2_Density_Q3,
-                   MS2_PrecZ_1, MS2_PrecZ_2, MS2_PrecZ_3, MS2_PrecZ_4, MS2_PrecZ_5, MS2_PrecZ_more,
-                   MS2_PrecZ_likely_1, MS2_PrecZ_likely_multi
-            FROM Tmp_KnownMetrics M INNER JOIN
-                 Tmp_DatasetInfo DI ON M.dataset_id = DI.dataset_id
+    USING (SELECT M.Dataset_ID,
+                  DI.Job AS Quameter_Job,
+                  XIC_WideFrac, XIC_FWHM_Q1, XIC_FWHM_Q2, XIC_FWHM_Q3, XIC_Height_Q2, XIC_Height_Q3, XIC_Height_Q4,
+                  RT_Duration, RT_TIC_Q1, RT_TIC_Q2, RT_TIC_Q3, RT_TIC_Q4,
+                  RT_MS_Q1, RT_MS_Q2, RT_MS_Q3, RT_MS_Q4,
+                  RT_MSMS_Q1, RT_MSMS_Q2, RT_MSMS_Q3, RT_MSMS_Q4,
+                  MS1_TIC_Change_Q2, MS1_TIC_Change_Q3, MS1_TIC_Change_Q4,
+                  MS1_TIC_Q2, MS1_TIC_Q3, MS1_TIC_Q4,
+                  MS1_Count, MS1_Freq_Max, MS1_Density_Q1, MS1_Density_Q2, MS1_Density_Q3,
+                  MS2_Count, MS2_Freq_Max, MS2_Density_Q1, MS2_Density_Q2, MS2_Density_Q3,
+                  MS2_PrecZ_1, MS2_PrecZ_2, MS2_PrecZ_3, MS2_PrecZ_4, MS2_PrecZ_5, MS2_PrecZ_more,
+                  MS2_PrecZ_likely_1, MS2_PrecZ_likely_multi
+           FROM Tmp_KnownMetrics M INNER JOIN
+                Tmp_DatasetInfo DI ON M.dataset_id = DI.dataset_id
           ) AS source
     ON (Target.dataset_id = Source.dataset_id)
     WHEN MATCHED THEN

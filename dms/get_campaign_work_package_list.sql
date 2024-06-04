@@ -23,15 +23,15 @@ DECLARE
 BEGIN
     SELECT string_agg(LookupQ.WorkPackage, ';' ORDER BY LookupQ.WorkPackage)
     INTO _result
-    FROM ( SELECT DISTINCT RR.work_package AS WorkPackage
-               FROM t_requested_run RR
-                    INNER JOIN t_dataset DS
-                      ON RR.dataset_id = DS.dataset_id
-                    INNER JOIN t_experiments E
-                      ON DS.exp_id = E.exp_id
-                    INNER JOIN t_campaign C
-                      ON E.campaign_id = C.campaign_id
-               WHERE C.campaign = _campaignName::citext
+    FROM (SELECT DISTINCT RR.work_package AS WorkPackage
+          FROM t_requested_run RR
+               INNER JOIN t_dataset DS
+                 ON RR.dataset_id = DS.dataset_id
+               INNER JOIN t_experiments E
+                 ON DS.exp_id = E.exp_id
+               INNER JOIN t_campaign C
+                 ON E.campaign_id = C.campaign_id
+          WHERE C.campaign = _campaignName::citext
          ) LookupQ;
 
     RETURN Coalesce(_result, '');

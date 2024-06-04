@@ -99,10 +99,12 @@ BEGIN
 
         _startDate := CURRENT_DATE - make_interval(days => _searchWindowDays);
 
-        INSERT INTO Tmp_WPInfo (Proposal_ID,
-                                Work_Package,
-                                Requests,
-                                Usage_Rank)
+        INSERT INTO Tmp_WPInfo (
+            Proposal_ID,
+            Work_Package,
+            Requests,
+            Usage_Rank
+        )
         SELECT Proposal_ID,
                Work_Package,
                Requests,
@@ -180,9 +182,11 @@ BEGIN
 
         -- Find requested runs to update
 
-        INSERT INTO Tmp_ReqRunsToUpdate (Request_ID,
-                                         Proposal_ID,
-                                         Work_Package)
+        INSERT INTO Tmp_ReqRunsToUpdate (
+            Request_ID,
+            Proposal_ID,
+            Work_Package
+        )
         SELECT RR.request_id,
                EUSPro.proposal_id,
                RR.work_package

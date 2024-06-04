@@ -144,41 +144,41 @@ BEGIN
         Steps                   = Source.Steps,
         Steps_Completed         = Source.Steps_Completed,
         Current_Runtime_Minutes = Source.Total_Runtime_Minutes
-    FROM ( SELECT ProgressQ.Job,
-                  ProgressQ.Steps,
-                  ProgressQ.Steps_Completed,
-                  ProgressQ.WeightedProgressSum / WeightSumQ.WeightSum AS Progress_Overall,
-                  ProgressQ.Total_Runtime_Minutes
-           FROM ( SELECT JS.Job,
-                         COUNT(JS.step) AS Steps,
-                         SUM(CASE WHEN JS.State IN (3, 5) THEN 1 ELSE 0 END) AS Steps_Completed,
-                         SUM(CASE WHEN JS.State = 3 THEN 0
-                                  ELSE JS.Job_Progress * Tools.Avg_Runtime_Minutes
-                             END) AS WeightedProgressSum,
-                         SUM(RunTime_Minutes) AS Total_Runtime_Minutes
-                  FROM sw.v_job_steps JS
-                       INNER JOIN sw.t_step_tools Tools
-                         ON JS.Tool = Tools.step_tool
-                       INNER JOIN ( SELECT Job
-                                    FROM Tmp_JobsToUpdate
-                                    WHERE State = 2
-                                  ) JTU ON JS.Job = JTU.Job
-                  GROUP BY JS.Job
-                ) ProgressQ
-                INNER JOIN ( SELECT JS.Job,
-                                    SUM(Tools.Avg_Runtime_Minutes) AS WeightSum
-                             FROM sw.v_job_steps JS
-                                  INNER JOIN sw.t_step_tools Tools
-                                    ON JS.Tool = Tools.step_tool
-                                  INNER JOIN ( SELECT Job
-                                               FROM Tmp_JobsToUpdate
-                                               WHERE State = 2
-                                             ) JTU ON JS.Job = JTU.Job
-                             WHERE JS.State <> 3
-                             GROUP BY JS.Job
-                           ) WeightSumQ
-                  ON ProgressQ.Job = WeightSumQ.Job AND
-                     WeightSumQ.WeightSum > 0
+    FROM (SELECT ProgressQ.Job,
+                 ProgressQ.Steps,
+                 ProgressQ.Steps_Completed,
+                 ProgressQ.WeightedProgressSum / WeightSumQ.WeightSum AS Progress_Overall,
+                 ProgressQ.Total_Runtime_Minutes
+          FROM (SELECT JS.Job,
+                       COUNT(JS.step) AS Steps,
+                       SUM(CASE WHEN JS.State IN (3, 5) THEN 1 ELSE 0 END) AS Steps_Completed,
+                       SUM(CASE WHEN JS.State = 3 THEN 0
+                                ELSE JS.Job_Progress * Tools.Avg_Runtime_Minutes
+                           END) AS WeightedProgressSum,
+                       SUM(RunTime_Minutes) AS Total_Runtime_Minutes
+                FROM sw.v_job_steps JS
+                     INNER JOIN sw.t_step_tools Tools
+                       ON JS.Tool = Tools.step_tool
+                     INNER JOIN (SELECT Job
+                                 FROM Tmp_JobsToUpdate
+                                 WHERE State = 2
+                                ) JTU ON JS.Job = JTU.Job
+                GROUP BY JS.Job
+               ) ProgressQ
+               INNER JOIN (SELECT JS.Job,
+                                  SUM(Tools.Avg_Runtime_Minutes) AS WeightSum
+                           FROM sw.v_job_steps JS
+                                INNER JOIN sw.t_step_tools Tools
+                                  ON JS.Tool = Tools.step_tool
+                                INNER JOIN (SELECT Job
+                                            FROM Tmp_JobsToUpdate
+                                            WHERE State = 2
+                                           ) JTU ON JS.Job = JTU.Job
+                           WHERE JS.State <> 3
+                           GROUP BY JS.Job
+                          ) WeightSumQ
+                 ON ProgressQ.Job = WeightSumQ.Job AND
+                    WeightSumQ.WeightSum > 0
          ) Source
     WHERE Source.Job = Target.Job;
 
@@ -208,16 +208,16 @@ BEGIN
                             THEN Current_Runtime_Minutes * 100.0 / RunningStepsQ.Runtime_Predicted_Minutes
                             ELSE Progress_New
                        END
-    FROM ( SELECT JS.Job,
-                  MAX(JS.RunTime_Predicted_Hours * 60) AS RunTime_Predicted_Minutes
-           FROM sw.v_job_steps JS
-                INNER JOIN ( SELECT Job
-                             FROM Tmp_JobsToUpdate
-                             WHERE State = 2 ) JTU
-                  ON JS.Job = JTU.Job
-           WHERE JS.RunTime_Minutes > 30 AND
-                 JS.State IN (4, 9)        -- Running or Running_Remote
-           GROUP BY JS.Job
+    FROM (SELECT JS.Job,
+                 MAX(JS.RunTime_Predicted_Hours * 60) AS RunTime_Predicted_Minutes
+          FROM sw.v_job_steps JS
+               INNER JOIN (SELECT Job
+                           FROM Tmp_JobsToUpdate
+                           WHERE State = 2) JTU
+                 ON JS.Job = JTU.Job
+          WHERE JS.RunTime_Minutes > 30 AND
+                JS.State IN (4, 9)        -- Running or Running_Remote
+          GROUP BY JS.Job
          ) RunningStepsQ
     WHERE Target.Job = RunningStepsQ.Job AND
           RunningStepsQ.RunTime_Predicted_Minutes > Target.Runtime_Predicted_Minutes;

@@ -326,7 +326,7 @@ BEGIN
                 SET Batch_Group_ID = null
                 WHERE Batch_Group_ID = _id AND
                       NOT t_requested_run_batches.Batch_Group_ID IN (SELECT Batch_ID
-                                                                     FROM Tmp_BatchIDs );
+                                                                     FROM Tmp_BatchIDs);
             End If;
 
             -- Add a reference to this batch group to the batches in the list

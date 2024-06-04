@@ -243,7 +243,7 @@ BEGIN
                          Replace(Replace(Replace(Coalesce(xmltable.step, ''), 'Yes (', ''), 'No (', ''), ')', '') AS Step
                   FROM (SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
                         FROM sw.t_job_parameters
-                        WHERE sw.t_job_parameters.job = _job ) Src,
+                        WHERE sw.t_job_parameters.job = _job) Src,
                             XMLTABLE('//params/Param'
                                PASSING Src.rooted_xml
                                COLUMNS section citext PATH '@Section',

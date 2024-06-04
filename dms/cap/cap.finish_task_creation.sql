@@ -47,12 +47,12 @@ BEGIN
 
     UPDATE Tmp_Job_Steps
     SET Dependencies = T.dependencies
-    FROM ( SELECT Step,
-                  COUNT(Job) AS dependencies
-           FROM Tmp_Job_Step_Dependencies
-           WHERE Job = _job
-           GROUP BY Step
-        ) AS T
+    FROM (SELECT Step,
+                 COUNT(Job) AS dependencies
+          FROM Tmp_Job_Step_Dependencies
+          WHERE Job = _job
+          GROUP BY Step
+         ) AS T
     WHERE Tmp_Job_Steps.Job = _job AND
           T.Step = Tmp_Job_Steps.Step;
     --
@@ -89,12 +89,12 @@ BEGIN
 
     UPDATE Tmp_Jobs
     SET Results_Directory_Name = LookupQ.Output_Directory_Name
-    FROM ( SELECT Job, Output_Directory_Name
-           FROM Tmp_Job_Steps
-           WHERE Job = _job AND
-                 Special_Instructions = 'Job_Results'
-           ORDER BY Step
-           LIMIT 1
+    FROM (SELECT Job, Output_Directory_Name
+          FROM Tmp_Job_Steps
+          WHERE Job = _job AND
+                Special_Instructions = 'Job_Results'
+          ORDER BY Step
+          LIMIT 1
          ) LookupQ
     WHERE Tmp_Jobs.Job = LookupQ.Job;
 

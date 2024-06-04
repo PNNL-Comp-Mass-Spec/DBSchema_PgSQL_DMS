@@ -58,24 +58,24 @@ BEGIN
     -- Delete job step dependencies for job steps that are not yet completed
     DELETE FROM sw.t_job_step_dependencies JSD
     WHERE EXISTS
-        ( SELECT 1
-          FROM sw.t_job_steps JS
-               INNER JOIN Tmp_Job_Steps
-                 ON JS.job = Tmp_Job_Steps.job AND
-                    JS.step = Tmp_Job_Steps.step
-          WHERE JSD.job = JS.job AND
-                JSD.step = JS.step AND
-                JS.state <> 5            -- 5=Complete
+        (SELECT 1
+         FROM sw.t_job_steps JS
+              INNER JOIN Tmp_Job_Steps
+                ON JS.job = Tmp_Job_Steps.job AND
+                   JS.step = Tmp_Job_Steps.step
+         WHERE JSD.job = JS.job AND
+               JSD.step = JS.step AND
+               JS.state <> 5            -- 5=Complete
         );
 
     -- Delete job steps that are not yet completed
     DELETE FROM sw.t_job_steps JS
     WHERE EXISTS
-        ( SELECT 1
-          FROM Tmp_Job_Steps
-          WHERE JS.Job = Tmp_Job_Steps.Job AND
-                JS.Step = Tmp_Job_Steps.Step AND
-                JS.State <> 5            -- 5=Complete
+        (SELECT 1
+         FROM Tmp_Job_Steps
+         WHERE JS.Job = Tmp_Job_Steps.Job AND
+               JS.Step = Tmp_Job_Steps.Step AND
+               JS.State <> 5            -- 5=Complete
         );
 
     ---------------------------------------------------

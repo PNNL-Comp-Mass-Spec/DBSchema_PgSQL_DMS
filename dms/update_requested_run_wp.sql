@@ -177,9 +177,11 @@ BEGIN
                 RAISE EXCEPTION '%', _message;
             End If;
 
-            INSERT INTO Tmp_ReqRunsToUpdate (Request_ID,
-                                             Request_Name,
-                                             Work_Package)
+            INSERT INTO Tmp_ReqRunsToUpdate (
+                Request_ID,
+                Request_Name,
+                Work_Package
+            )
             SELECT RR.request_id,
                    RR.request_name,
                    RR.work_package
@@ -206,9 +208,11 @@ BEGIN
             End If;
         Else
             -- Find active requested runs that use _oldWorkPackage
-            INSERT INTO Tmp_ReqRunsToUpdate (Request_ID,
-                                             Request_Name,
-                                             Work_Package)
+            INSERT INTO Tmp_ReqRunsToUpdate (
+                Request_ID,
+                Request_Name,
+                Work_Package
+            )
             SELECT request_id,
                    request_name,
                    work_package

@@ -77,9 +77,9 @@ BEGIN
         Else
 
             MERGE INTO t_cached_experiment_components AS t
-            USING ( SELECT _experimentID AS Exp_ID,
-                           _biomaterialList AS Biomaterial_List,
-                           _refCompoundList AS Reference_Compound_List
+            USING (SELECT _experimentID AS Exp_ID,
+                          _biomaterialList AS Biomaterial_List,
+                          _refCompoundList AS Reference_Compound_List
                   ) AS s
             ON (t.exp_id = s.exp_id)
             WHEN MATCHED AND
@@ -90,8 +90,8 @@ BEGIN
                     reference_compound_list = s.reference_compound_list,
                     last_affected = CURRENT_TIMESTAMP
             WHEN NOT MATCHED THEN
-                INSERT(exp_id, Biomaterial_List, reference_compound_list)
-                VALUES(s.exp_id, s.Biomaterial_List, s.reference_compound_list);
+                INSERT (exp_id, Biomaterial_List, reference_compound_list)
+                VALUES (s.exp_id, s.Biomaterial_List, s.reference_compound_list);
 
         End If;
 
@@ -134,25 +134,25 @@ BEGIN
     FROM t_experiment_biomaterial ExpBiomaterial
          INNER JOIN t_biomaterial B
            ON ExpBiomaterial.Biomaterial_ID = B.Biomaterial_ID
-         INNER JOIN ( SELECT Exp_ID
-                      FROM t_experiment_biomaterial
-                      GROUP BY Exp_ID
-                      HAVING COUNT(biomaterial_id) = 1 ) FilterQ
+         INNER JOIN (SELECT Exp_ID
+                     FROM t_experiment_biomaterial
+                     GROUP BY Exp_ID
+                     HAVING COUNT(biomaterial_id) = 1) FilterQ
            ON ExpBiomaterial.Exp_ID = FilterQ.Exp_ID;
 
     -- Add mapping info for experiments with only one reference compound
 
-    INSERT INTO Tmp_ExperimentRefCompounds (exp_id, Reference_Compound_List, Items)
+    INSERT INTO Tmp_ExperimentRefCompounds (Exp_ID, Reference_Compound_List, Items)
     SELECT ERC.exp_id,
            RC.id_name,
            1 AS Items
     FROM t_experiment_reference_compounds ERC
          INNER JOIN t_reference_compound RC
            ON ERC.compound_id = RC.compound_id
-         INNER JOIN ( SELECT exp_id
-                      FROM t_experiment_reference_compounds
-                      GROUP BY exp_id
-                      HAVING COUNT(compound_id) = 1 ) FilterQ
+         INNER JOIN (SELECT exp_id
+                     FROM t_experiment_reference_compounds
+                     GROUP BY exp_id
+                     HAVING COUNT(compound_id) = 1) FilterQ
            ON ERC.exp_id = FilterQ.exp_id;
 
     -- Add experiments with multiple biomaterial itesm
@@ -275,8 +275,8 @@ BEGIN
         ------------------------------------------------
 
         MERGE INTO t_cached_experiment_components AS t
-        USING ( SELECT exp_id, Biomaterial_List
-                FROM Tmp_ExperimentBiomaterial
+        USING (SELECT exp_id, Biomaterial_List
+               FROM Tmp_ExperimentBiomaterial
               ) AS s
         ON (t.exp_id = s.exp_id)
         WHEN MATCHED AND t.Biomaterial_List IS DISTINCT FROM s.Biomaterial_List THEN
@@ -284,16 +284,16 @@ BEGIN
                 Biomaterial_List = s.Biomaterial_List,
                 last_affected = CURRENT_TIMESTAMP
         WHEN NOT MATCHED THEN
-            INSERT(exp_id, Biomaterial_List)
-            VALUES(s.exp_id, s.Biomaterial_List);
+            INSERT (exp_id, Biomaterial_List)
+            VALUES (s.exp_id, s.Biomaterial_List);
 
         ------------------------------------------------
         -- Update reference compound lists
         ------------------------------------------------
 
         MERGE INTO t_cached_experiment_components AS t
-        USING ( SELECT exp_id, reference_compound_list
-                FROM Tmp_ExperimentRefCompounds
+        USING (SELECT exp_id, reference_compound_list
+               FROM Tmp_ExperimentRefCompounds
               ) AS s
         ON (t.exp_id = s.exp_id)
         WHEN MATCHED AND t.reference_compound_list IS DISTINCT FROM s.reference_compound_list THEN
@@ -301,8 +301,8 @@ BEGIN
                 reference_compound_list = s.reference_compound_list,
                 last_affected = CURRENT_TIMESTAMP
         WHEN NOT MATCHED THEN
-            INSERT(exp_id, reference_compound_list)
-            VALUES(s.exp_id, s.reference_compound_list);
+            INSERT (exp_id, reference_compound_list)
+            VALUES (s.exp_id, s.reference_compound_list);
 
         ------------------------------------------------
         -- Assure that Biomaterial_List and Reference_Compound_List are Null for experiments not in the temp tables
@@ -310,16 +310,16 @@ BEGIN
 
         UPDATE t_cached_experiment_components Target
         SET Biomaterial_List = NULL
-        WHERE NOT EXISTS ( SELECT 1
-                           FROM Tmp_ExperimentBiomaterial Src
-                           WHERE Target.Exp_ID = Src.Exp_ID) AND
+        WHERE NOT EXISTS (SELECT 1
+                          FROM Tmp_ExperimentBiomaterial Src
+                          WHERE Target.Exp_ID = Src.Exp_ID) AND
               NOT Target.Biomaterial_List IS NULL;
 
         UPDATE t_cached_experiment_components Target
         SET Reference_Compound_List = NULL
-        WHERE NOT EXISTS ( SELECT 1
-                           FROM Tmp_ExperimentRefCompounds Src
-                           WHERE Target.Exp_ID = Src.Exp_ID) AND
+        WHERE NOT EXISTS (SELECT 1
+                          FROM Tmp_ExperimentRefCompounds Src
+                          WHERE Target.Exp_ID = Src.Exp_ID) AND
               NOT Target.Reference_Compound_List IS NULL;
     End If;
 

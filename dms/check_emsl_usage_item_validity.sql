@@ -12,11 +12,11 @@ CREATE OR REPLACE FUNCTION public.check_emsl_usage_item_validity(_seq integer) R
 **
 **  Example usage:
 **      SELECT *
-**      FROM ( SELECT Src.seq,
-**                    check_emsl_usage_item_validity(Src.seq) AS Result
-**             FROM t_emsl_instrument_usage_report Src
-**             WHERE Src.seq Between 600 AND 1000 OR
-**                   Src.seq Between 574291 AND 599883 ) CheckQ
+**      FROM (SELECT Src.seq,
+**                   check_emsl_usage_item_validity(Src.seq) AS Result
+**            FROM t_emsl_instrument_usage_report Src
+**            WHERE Src.seq Between 600 AND 1000 OR
+**                  Src.seq Between 574291 AND 599883) CheckQ
 **      WHERE char_length(CheckQ.Result) > 0
 **      ORDER BY seq;
 **
@@ -100,7 +100,8 @@ BEGIN
     End If;
 
     If Not _proposalInfo.proposalID Is Null And _instrumentUsage.usage = 'ONSITE' And
-       Not (_instrumentUsage.start Between _proposalInfo.proposalStartDate And _proposalInfo.proposalEndDate) Then
+       Not (_instrumentUsage.start Between _proposalInfo.proposalStartDate And _proposalInfo.proposalEndDate)
+    Then
         _message := public.append_to_text(_message, 'Run start not between proposal start/end dates', _delimiter => ', ');
     End If;
 
@@ -108,11 +109,11 @@ BEGIN
         If _instrumentUsage.users Like '%,%' Then
             SELECT COUNT(*)
             INTO _hits
-            FROM public.parse_delimited_list ( _instrumentUsage.users )
-                 INNER JOIN ( SELECT proposal_id,
-                                     person_id
-                              FROM t_eus_proposal_users
-                              WHERE proposal_id = _instrumentUsage.proposal ) ProposalUsers
+            FROM public.parse_delimited_list (_instrumentUsage.users)
+                 INNER JOIN (SELECT proposal_id,
+                                    person_id
+                             FROM t_eus_proposal_users
+                             WHERE proposal_id = _instrumentUsage.proposal) ProposalUsers
                    ON ProposalUsers.person_id = public.try_cast(Value, 0);
         Else
             SELECT COUNT(proposal_id)

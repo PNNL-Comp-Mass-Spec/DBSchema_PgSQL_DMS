@@ -23,14 +23,14 @@ DECLARE
 BEGIN
     SELECT string_agg(instrument, ', ' ORDER BY instrument)
     INTO _result
-    FROM ( SELECT DISTINCT InstName.instrument AS Instrument
-           FROM t_requested_run RR
-                INNER JOIN t_dataset DS
-                  ON RR.dataset_id = DS.dataset_id
-                INNER JOIN t_instrument_name InstName
-                  ON DS.instrument_id = InstName.instrument_id
-           WHERE RR.batch_id = _batchID AND RR.batch_id <> 0
-          ) LookupQ;
+    FROM (SELECT DISTINCT InstName.instrument AS Instrument
+          FROM t_requested_run RR
+               INNER JOIN t_dataset DS
+                 ON RR.dataset_id = DS.dataset_id
+               INNER JOIN t_instrument_name InstName
+                 ON DS.instrument_id = InstName.instrument_id
+          WHERE RR.batch_id = _batchID AND RR.batch_id <> 0
+         ) LookupQ;
 
     RETURN Coalesce(_result, '');
 END

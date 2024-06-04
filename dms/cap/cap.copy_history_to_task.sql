@@ -293,8 +293,8 @@ BEGIN
                              ) DeleteQ
                     ON TSD.job = DeleteQ.job AND
                        TSD.step = DeleteQ.step
-             WHERE target.job = TSD.job AND
-                   target.step = TSD.step
+              WHERE target.job = TSD.job AND
+                    target.step = TSD.step
             );
 
         -- Check whether this capture task job has entries in t_task_step_dependencies_history

@@ -538,7 +538,7 @@ BEGIN
             Precursor_Charge_Min, Precursor_Charge_Max,
             Static_Cys_Carbamidomethyl, Static_Mods, Dynamic_Mods,
             Max_Dynamic_Mods, Settings_Hash
-            )
+        )
         VALUES (
                 _libraryName,
                 _libraryStateId,

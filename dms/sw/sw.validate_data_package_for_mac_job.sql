@@ -110,20 +110,20 @@ BEGIN
             MASIC = SourceQ.MASIC,
             MSGFPlus = SourceQ.MSGFPlus,
             SEQUEST = SourceQ.SEQUEST
-        FROM ( SELECT DS.dataset,
-                      SUM(CASE WHEN T.analysis_tool = 'Decon2LS_V2' THEN 1 ELSE 0 END) AS Decon2LS_V2,
-                      SUM(CASE WHEN T.analysis_tool = 'MASIC_Finnigan' AND J.param_file_name ILIKE '%ReporterTol%' THEN 1 ELSE 0 END) AS MASIC,
-                      SUM(CASE WHEN T.analysis_tool ILIKE 'MSGFPlus%' THEN 1 ELSE 0 END) AS MSGFPlus,
-                      SUM(CASE WHEN T.analysis_tool ILIKE 'SEQUEST%' THEN 1 ELSE 0 END) AS SEQUEST
-               FROM dpkg.t_data_package_analysis_jobs AS DPD
-                    INNER JOIN public.t_analysis_job J
-                      ON DPD.job = J.job
-                    INNER JOIN public.t_dataset DS
-                      ON J.dataset_id = DS.dataset_id
-                    INNER JOIN public.t_analysis_tool T
-                      ON J.analysis_tool_id = T.analysis_tool_id
-               WHERE DPD.data_pkg_id = _dataPackageID
-               GROUP BY DS.dataset
+        FROM (SELECT DS.dataset,
+                     SUM(CASE WHEN T.analysis_tool = 'Decon2LS_V2' THEN 1 ELSE 0 END) AS Decon2LS_V2,
+                     SUM(CASE WHEN T.analysis_tool = 'MASIC_Finnigan' AND J.param_file_name ILIKE '%ReporterTol%' THEN 1 ELSE 0 END) AS MASIC,
+                     SUM(CASE WHEN T.analysis_tool ILIKE 'MSGFPlus%' THEN 1 ELSE 0 END) AS MSGFPlus,
+                     SUM(CASE WHEN T.analysis_tool ILIKE 'SEQUEST%' THEN 1 ELSE 0 END) AS SEQUEST
+              FROM dpkg.t_data_package_analysis_jobs AS DPD
+                   INNER JOIN public.t_analysis_job J
+                     ON DPD.job = J.job
+                   INNER JOIN public.t_dataset DS
+                     ON J.dataset_id = DS.dataset_id
+                   INNER JOIN public.t_analysis_tool T
+                     ON J.analysis_tool_id = T.analysis_tool_id
+              WHERE DPD.data_pkg_id = _dataPackageID
+              GROUP BY DS.dataset
              ) SourceQ
         WHERE Tmp_DataPackageItems.Dataset = SourceQ.dataset;
 

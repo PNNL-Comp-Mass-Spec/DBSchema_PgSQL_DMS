@@ -52,7 +52,10 @@ BEGIN
     -- Populate Tmp_Jobs using T_Jobs
     ---------------------------------------------------
 
-    INSERT INTO Tmp_Jobs (job, priority, script, state, dataset, dataset_id, results_directory_name)
+    INSERT INTO Tmp_Jobs (
+        job, priority, script, state,
+        dataset, dataset_id, results_directory_name
+    )
     SELECT job, priority, script, state, dataset, dataset_id, results_folder_name
     FROM sw.t_jobs
     WHERE job = _job;

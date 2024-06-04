@@ -126,7 +126,12 @@ BEGIN
             locked citext NULL
         );
 
-        INSERT INTO Tmp_BlockingInfo ( request_id, cart_name, cart_config_name, cart_column)
+        INSERT INTO Tmp_BlockingInfo (
+            request_id,
+            cart_name,
+            cart_config_name,
+            cart_column
+        )
         SELECT XmlQ.request_id, Trim(XmlQ.cart), Trim(XmlQ.cart_config), Trim(XmlQ.cart_column)
         FROM (
             SELECT xmltable.*

@@ -75,12 +75,12 @@ BEGIN
     SELECT COUNT(*), Sum(CASE WHEN UploadAttempts > 1 THEN 1 ELSE 0 END)
     INTO _datasetFolderUploads,
          _duplicateUploads
-    FROM ( SELECT dataset_id,
-                  subfolder,
-                  COUNT(entry_id) AS UploadAttempts
-           FROM cap.t_myemsl_uploads
-           WHERE entered BETWEEN _startDate AND _endDate
-           GROUP BY dataset_id, subfolder
+    FROM (SELECT dataset_id,
+                 subfolder,
+                 COUNT(entry_id) AS UploadAttempts
+          FROM cap.t_myemsl_uploads
+          WHERE entered BETWEEN _startDate AND _endDate
+          GROUP BY dataset_id, subfolder
          ) UploadsByDatasetAndFolder;
 
     If _uploadAttempts > 0 Then

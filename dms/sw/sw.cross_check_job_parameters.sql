@@ -61,8 +61,8 @@ BEGIN
            ON OJS.job = NJS.job AND
               OJS.step = NJS.step
     WHERE OJS.Job = _job AND
-          ( NOT OJS.signature IS NULL OR
-            NOT NJS.signature IS NULL
+          (NOT OJS.signature IS NULL OR
+           NOT NJS.signature IS NULL
           );
 
     _message := Trim(Replace(Coalesce(_message, ''), ';;', ';'));

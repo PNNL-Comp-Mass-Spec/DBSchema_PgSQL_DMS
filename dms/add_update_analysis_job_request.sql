@@ -471,7 +471,6 @@ BEGIN
            _protCollOptionsList ILike '%decoy%' And
            Not _paramFileName ILike '%_NoDecoy%'
         Then
-
             _protCollOptionsList := 'seq_direction=forward,filetype=fasta';
 
             If Coalesce(_message, '') = '' And _toolName ILike 'MSGFPlus%' Then

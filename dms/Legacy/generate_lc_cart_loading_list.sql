@@ -79,7 +79,7 @@ BEGIN
     -- Populate temporary table with active requested runs assigned to this cart
     ---------------------------------------------------
 
-    INSERT INTO Tmp_XR ( request_id, cart_column_id )
+    INSERT INTO Tmp_XR (request_id, cart_column_id)
     SELECT RR.request_id,
            RR.cart_column      -- Cart column ID: null for all requested runs since 2020-09-24
     FROM t_requested_run RR
@@ -285,7 +285,7 @@ BEGIN
     UPDATE Tmp_XF
     SET blankSeq = CountQ.BlankSeq
     FROM (SELECT RankSrc.seq,
-                 Row_Number() OVER ( ORDER BY RankSrc.Seq ) AS BlankSeq
+                 Row_Number() OVER (ORDER BY RankSrc.Seq) AS BlankSeq
           FROM Tmp_XF RankSrc
           WHERE RankSrc.request_id = 0) CountQ
     WHERE Tmp_XF.request_id = 0 AND

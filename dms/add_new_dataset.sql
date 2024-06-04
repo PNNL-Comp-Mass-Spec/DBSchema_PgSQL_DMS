@@ -165,7 +165,7 @@ BEGIN
     SELECT Trim(XmlQ.name), Trim(XmlQ.value)
         FROM (
             SELECT xmltable.*
-            FROM ( SELECT _xml AS rooted_xml
+            FROM (SELECT _xml AS rooted_xml
                  ) Src,
                  XMLTABLE('//Dataset/Parameter'
                           PASSING Src.rooted_xml

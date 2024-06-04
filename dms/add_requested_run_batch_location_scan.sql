@@ -209,7 +209,7 @@ BEGIN
         MERGE INTO t_requested_run_batch_location_history AS t
         USING (SELECT _locationID AS location_id, batch_id
                FROM Tmp_BatchIDs) AS s
-        ON (t.batch_id = s.batch_id AND t.location_id = s.location_id )
+        ON (t.batch_id = s.batch_id AND t.location_id = s.location_id)
         WHEN MATCHED AND (t.first_scan_date < _scanDate OR t.last_scan_date IS NULL OR t.last_scan_date < _scanDate) THEN
             UPDATE SET
                 last_scan_date =   CASE

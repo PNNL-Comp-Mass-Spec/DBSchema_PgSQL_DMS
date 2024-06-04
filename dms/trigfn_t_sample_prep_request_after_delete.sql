@@ -23,10 +23,11 @@ BEGIN
 
     -- Add entries to t_sample_prep_request_updates for each entry deleted from t_sample_prep_request
     INSERT INTO t_sample_prep_request_updates (
-            request_id,
-            system_account,
-            beginning_state_ID,
-            end_state_id)
+        request_id,
+        system_account,
+        beginning_state_ID,
+        end_state_id
+    )
     SELECT deleted.prep_request_id,
            format('%s; %s', public.get_user_login_without_domain(''), COALESCE(deleted.Request_Name, 'Unknown Request')),
            deleted.state_id,

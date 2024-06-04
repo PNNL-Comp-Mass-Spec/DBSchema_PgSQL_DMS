@@ -65,17 +65,17 @@ BEGIN
 
     SELECT SourceQ.dataset_id, SourceQ.job
     INTO _bestJobByDataset
-    FROM ( SELECT DS.dataset_id,
-                  J.job AS Job,
-                  Row_Number() OVER (PARTITION BY J.dataset_id ORDER BY J.job DESC) AS JobRank
-           FROM t_dataset DS
-                INNER JOIN t_analysis_job J
-                  ON J.dataset_id = DS.dataset_id
-                INNER JOIN t_analysis_tool Tool
-                  ON Tool.analysis_tool_id = J.analysis_tool_id AND
-                     Tool.tool_base_name = 'Decon2LS'
-           WHERE J.dataset_id = OLD.dataset_id AND
-                 J.job_state_id IN (2, 4)
+    FROM (SELECT DS.dataset_id,
+                 J.job AS Job,
+                 Row_Number() OVER (PARTITION BY J.dataset_id ORDER BY J.job DESC) AS JobRank
+          FROM t_dataset DS
+               INNER JOIN t_analysis_job J
+                 ON J.dataset_id = DS.dataset_id
+               INNER JOIN t_analysis_tool Tool
+                 ON Tool.analysis_tool_id = J.analysis_tool_id AND
+                    Tool.tool_base_name = 'Decon2LS'
+          WHERE J.dataset_id = OLD.dataset_id AND
+                J.job_state_id IN (2, 4)
          ) SourceQ
     WHERE SourceQ.jobRank = 1;
 

@@ -157,10 +157,10 @@ BEGIN
            _eventType
     FROM Tmp_AnalysisJobRequests
     WHERE Earliest_Job_Start BETWEEN _window AND _now AND
-          NOT EXISTS ( SELECT 1
-                       FROM t_notification_event TNE
-                       WHERE TNE.target_id = Tmp_AnalysisJobRequests.Request_ID AND
-                             TNE.event_type_id = _eventType );
+          NOT EXISTS (SELECT 1
+                      FROM t_notification_event TNE
+                      WHERE TNE.target_id = Tmp_AnalysisJobRequests.Request_ID AND
+                            TNE.event_type_id = _eventType);
 
     ---------------------------------------------------
     -- Event type 5, is 'Analysis Job Request Finish'
@@ -174,10 +174,10 @@ BEGIN
     FROM Tmp_AnalysisJobRequests
     WHERE Total_Jobs = Completed_Jobs AND
           Latest_Job_Finish BETWEEN _window AND _now AND
-          NOT EXISTS ( SELECT 1
-                       FROM t_notification_event TNE
-                       WHERE TNE.target_id = Tmp_AnalysisJobRequests.Request_ID AND
-                             TNE.event_type_id = _eventType );
+          NOT EXISTS (SELECT 1
+                      FROM t_notification_event TNE
+                      WHERE TNE.target_id = Tmp_AnalysisJobRequests.Request_ID AND
+                            TNE.event_type_id = _eventType);
 
     If _infoOnly Then
 
@@ -229,10 +229,10 @@ BEGIN
         SELECT Tmp_NewEvents.event_type_id,
                Tmp_NewEvents.target_id
         FROM Tmp_NewEvents
-        WHERE NOT EXISTS ( SELECT TNE.target_id
-                           FROM t_notification_event TNE
-                           WHERE TNE.target_id = Tmp_NewEvents.target_id AND
-                                 TNE.event_type_id = Tmp_NewEvents.event_type_id );
+        WHERE NOT EXISTS (SELECT TNE.target_id
+                          FROM t_notification_event TNE
+                          WHERE TNE.target_id = Tmp_NewEvents.target_id AND
+                                TNE.event_type_id = Tmp_NewEvents.event_type_id);
 
         If _deleteOldEvents Then
 

@@ -113,7 +113,7 @@ BEGIN
 
     _colList := ' ''x'' AS sel, batch_id, experiment, dataset, name, status, request';
 
-    SELECT make_factor_crosstab_sql ( _colList )
+    SELECT make_factor_crosstab_sql (_colList)
     INTO _sql;
 
     -----------------------------------------

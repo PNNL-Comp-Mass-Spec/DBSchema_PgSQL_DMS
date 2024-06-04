@@ -59,7 +59,8 @@ BEGIN
     SELECT Trim(XmlQ.section), Trim(XmlQ.name), Trim(XmlQ.value)
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT ('<params>' || _jobParamXML::text || '</params>')::xml AS rooted_xml ) Src,
+        FROM (SELECT ('<params>' || _jobParamXML::text || '</params>')::xml AS rooted_xml
+             ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
                       COLUMNS section text PATH '@Section',
@@ -166,16 +167,16 @@ BEGIN
     If _paramsUpdated Then
         SELECT xml_item
         INTO _jobParamXML
-        FROM ( SELECT
-                 XMLAGG(XMLELEMENT(
-                        NAME "Param",
-                        XMLATTRIBUTES(
-                            section AS "Section",
-                            name AS "Name",
-                            value AS "Value"))
-                        ORDER BY section, name
-                       ) AS xml_item
-               FROM Tmp_Job_Params
+        FROM (SELECT
+                XMLAGG(XMLELEMENT(
+                       NAME "Param",
+                       XMLATTRIBUTES(
+                           section AS "Section",
+                           name AS "Name",
+                           value AS "Value"))
+                       ORDER BY section, name
+                      ) AS xml_item
+              FROM Tmp_Job_Params
             ) AS LookupQ;
 
         If _debugMode Then

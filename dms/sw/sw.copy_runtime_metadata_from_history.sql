@@ -83,7 +83,12 @@ BEGIN
     -- Populate a temporary table with jobs to process
     ---------------------------------------------------
 
-    INSERT INTO Tmp_Jobs (Job, Update_Required, Invalid, Mismatch_Results_Transfer)
+    INSERT INTO Tmp_Jobs (
+        Job,
+        Update_Required,
+        Invalid,
+        Mismatch_Results_Transfer
+    )
     SELECT Value AS Job, false, false, false
     FROM public.parse_delimited_integer_list(_jobList);
 

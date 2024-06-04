@@ -41,7 +41,7 @@ BEGIN
            ON RR.batch_id = RRB.batch_id
          INNER JOIN t_experiments E
            ON RR.exp_id = E.exp_id
-         INNER JOIN ( SELECT Value FROM public.parse_delimited_integer_list(_itemList)) RequestQ
+         INNER JOIN (SELECT Value FROM public.parse_delimited_integer_list(_itemList)) RequestQ
            ON RR.request_id = RequestQ.Value;
 
 END

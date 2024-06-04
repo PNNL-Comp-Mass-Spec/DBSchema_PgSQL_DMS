@@ -48,14 +48,14 @@ BEGIN
         MERGE INTO t_protein_collection_usage AS target
         USING (SELECT DISTINCT protein_collection_id AS ID, Collection_Name AS Name
                FROM pc.V_Protein_Collections_by_Organism
-            ) AS Source ( Protein_Collection_ID, Name)
+            ) AS Source (Protein_Collection_ID, Name)
         ON (target.protein_collection_id = source.protein_collection_id)
-        WHEN MATCHED AND ( Target.name <> Source.name ) THEN
+        WHEN MATCHED AND (Target.name <> Source.name) THEN
             UPDATE Set
                   name = Source.name
         WHEN NOT MATCHED THEN
-            INSERT ( protein_collection_id, name, job_usage_count)
-            VALUES ( Source.protein_collection_id, Source.name, 0)
+            INSERT (protein_collection_id, name, job_usage_count)
+            VALUES (Source.protein_collection_id, Source.name, 0)
         ;
 
         -- Delete rows from t_protein_collection_usage that are not in V_Protein_Collections_by_Organism

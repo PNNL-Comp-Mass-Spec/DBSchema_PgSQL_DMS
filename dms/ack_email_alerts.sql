@@ -52,7 +52,7 @@ BEGIN
 
     INSERT INTO Tmp_AlertIDs (AlertID)
     SELECT Value
-    FROM public.parse_delimited_integer_list ( _alertIDs );
+    FROM public.parse_delimited_integer_list (_alertIDs);
 
     SELECT COUNT(*)
     INTO _alertCountToUpdate

@@ -68,7 +68,7 @@ BEGIN
 
     _managerList := ARRAY (
                         SELECT NameQ.manager_name
-                        FROM ( SELECT unnest( _managerSpecList ) AS manager_name ) AS NameQ
+                        FROM (SELECT unnest(_managerSpecList) AS manager_name) AS NameQ
                         WHERE NOT NameQ.manager_name SIMILAR TO '%[%]%' AND NOT NameQ.manager_name SIMILAR TO '%\[%'
                     );
 
@@ -78,11 +78,11 @@ BEGIN
             'SELECT ARRAY ('
                     'SELECT mgr_name '
                     'FROM mc.t_mgrs '
-                    'WHERE mgr_name SIMILAR TO $1 )');
+                    'WHERE mgr_name SIMILAR TO $1)');
 
     FOR _managerFilter IN
         SELECT NameQ.manager_name
-        FROM ( SELECT unnest( _managerSpecList ) AS manager_name ) AS NameQ
+        FROM (SELECT unnest(_managerSpecList) AS manager_name) AS NameQ
         WHERE NameQ.manager_name SIMILAR TO '%[%]%' OR NameQ.manager_name SIMILAR TO '%\[%'
     LOOP
         EXECUTE _s
@@ -100,7 +100,7 @@ BEGIN
 
     If _remove_unknown_managers = 0 Then
         RETURN QUERY
-        SELECT DISTINCT unnest( _managerList );
+        SELECT DISTINCT unnest(_managerList);
 
         RETURN;
     End If;
@@ -111,7 +111,7 @@ BEGIN
 
     _managerList := ARRAY (
                         SELECT mc.t_mgrs.mgr_name
-                        FROM ( SELECT unnest( _managerList ) AS manager_name ) AS NameQ
+                        FROM (SELECT unnest(_managerList) AS manager_name) AS NameQ
                              INNER JOIN mc.t_mgrs
                                ON NameQ.manager_name::citext = mc.t_mgrs.mgr_name
                     );
@@ -123,7 +123,7 @@ BEGIN
     End If;
 
     RETURN QUERY
-    SELECT DISTINCT unnest( _managerList );
+    SELECT DISTINCT unnest(_managerList);
 END
 $_$;
 

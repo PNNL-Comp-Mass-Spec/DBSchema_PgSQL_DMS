@@ -63,10 +63,10 @@ BEGIN
            state_id + 10
     FROM t_sample_prep_request
     WHERE state_changed > _window AND
-          NOT EXISTS ( SELECT 1
-                       FROM t_notification_event AS TNE
-                       WHERE TNE.target_id = t_sample_prep_request.prep_request_id AND
-                             TNE.event_type_id = (t_sample_prep_request.state_id + 10) );
+          NOT EXISTS (SELECT 1
+                      FROM t_notification_event AS TNE
+                      WHERE TNE.target_id = t_sample_prep_request.prep_request_id AND
+                            TNE.event_type_id = t_sample_prep_request.state_id + 10);
 
     If _infoOnly Then
 
@@ -115,10 +115,10 @@ BEGIN
         SELECT Tmp_NewEvents.event_type_id,
                Tmp_NewEvents.target_id
         FROM Tmp_NewEvents
-        WHERE NOT EXISTS ( SELECT TNE.target_id
-                           FROM t_notification_event TNE
-                           WHERE TNE.target_id = Tmp_NewEvents.target_id AND
-                                 TNE.event_type_id = Tmp_NewEvents.event_type_id );
+        WHERE NOT EXISTS (SELECT TNE.target_id
+                          FROM t_notification_event TNE
+                          WHERE TNE.target_id = Tmp_NewEvents.target_id AND
+                                TNE.event_type_id = Tmp_NewEvents.event_type_id);
 
         If _deleteOldEvents Then
 

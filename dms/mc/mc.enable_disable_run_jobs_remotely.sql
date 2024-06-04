@@ -353,7 +353,7 @@ BEGIN
                         _activeStateDescription);
 
         If _countUnchanged <> 0 Then
-            _message := format ('%s (%s %s already set to %s )',
+            _message := format ('%s (%s %s already set to %s)',
                             _message,
                             _countUnchanged,
                             public.check_plural(_countUnchanged, 'manager was', 'managers were'),

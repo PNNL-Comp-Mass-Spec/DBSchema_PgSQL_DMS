@@ -1296,13 +1296,13 @@ BEGIN
             FROM Tmp_Residues;
 
             If Exists(
-                    SELECT *
+                    SELECT Mod_Name
                     FROM Tmp_ModsToStore
                     WHERE Mod_Name = _modName AND
                           Mass_Correction_ID = _massCorrectionID AND
                           Mod_Type_Symbol = _modTypeSymbolToStore AND
                           Residue_Symbol = _residueSymbol AND
-                          Abs(Monoisotopic_Mass - _modMass) < 0.0001 ) THEN
+                          Abs(Monoisotopic_Mass - _modMass) < 0.0001) THEN
 
                 -- Mod already stored; skip it
                 RAISE INFO '';
@@ -1458,8 +1458,17 @@ BEGIN
             WHERE param_file_id = _paramFileID;
         End If;
 
-        INSERT INTO t_param_file_mass_mods (residue_id, local_symbol_id, mass_correction_id, Param_File_ID, Mod_Type_Symbol, MaxQuant_Mod_ID)
-        SELECT residue_id, local_symbol_id, mass_correction_id, _paramFileID, Mod_Type_Symbol, MaxQuant_Mod_ID
+        INSERT INTO t_param_file_mass_mods (
+            residue_id, local_symbol_id,
+            mass_correction_id, param_file_id,
+            mod_type_symbol, maxquant_mod_id
+        )
+        SELECT Residue_ID,
+               Local_Symbol_ID,
+               Mass_Correction_ID,
+               _paramFileID,
+               Mod_Type_Symbol,
+               MaxQuant_Mod_ID
         FROM Tmp_ModsToStore;
 
         RAISE INFO 'Mods stored in t_param_file_mass_mods for param file ID %', _paramFileID;

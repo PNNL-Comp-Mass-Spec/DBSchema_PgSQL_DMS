@@ -83,16 +83,16 @@ BEGIN
 
     SELECT xml_item
     INTO _xmlParameters
-    FROM ( SELECT
-             XMLAGG(XMLELEMENT(
-                    NAME "Param",
-                    XMLATTRIBUTES(
-                        section AS "Section",
-                        name AS "Name",
-                        value AS "Value"))
-                    ORDER BY section, name
-                   ) AS xml_item
-           FROM Tmp_Task_Parameters
+    FROM (SELECT
+            XMLAGG(XMLELEMENT(
+                   NAME "Param",
+                   XMLATTRIBUTES(
+                       section AS "Section",
+                       name AS "Name",
+                       value AS "Value"))
+                   ORDER BY section, name
+                  ) AS xml_item
+          FROM Tmp_Task_Parameters
         ) AS LookupQ;
 
     DROP TABLE Tmp_Task_Parameters;

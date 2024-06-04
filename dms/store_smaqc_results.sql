@@ -200,7 +200,7 @@ BEGIN
     SELECT Trim(XmlQ.Name), Trim(XmlQ.ValueText)
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT _resultsXML AS rooted_xml
+        FROM (SELECT _resultsXML AS rooted_xml
              ) Src,
              XMLTABLE('//SMAQC_Results/Measurements/Measurement'
                       PASSING Src.rooted_xml
@@ -273,11 +273,11 @@ BEGIN
 
     UPDATE Tmp_Measurements Target
     SET Value = FilterQ.Value
-    FROM ( SELECT Name,
-                  ValueText,
-                  public.try_cast(ValueText, null::float8) AS Value
-           FROM Tmp_Measurements
-           WHERE NOT public.try_cast(ValueText, null::float8) IS NULL
+    FROM (SELECT Name,
+                 ValueText,
+                 public.try_cast(ValueText, null::float8) AS Value
+          FROM Tmp_Measurements
+          WHERE NOT public.try_cast(ValueText, null::float8) IS NULL
          ) FilterQ
     WHERE Target.Name = FilterQ.Name;
 
@@ -295,16 +295,17 @@ BEGIN
     -- Use a Crosstab to extract out the known columns
     -----------------------------------------------
 
-    INSERT INTO Tmp_KnownMetrics ( Dataset_ID,
-                                   C_1A, C_1B, C_2A, C_2B, C_3A, C_3B, C_4A, C_4B, C_4C,
-                                   DS_1A, DS_1B, DS_2A, DS_2B, DS_3A, DS_3B,
-                                   IS_1A, IS_1B, IS_2, IS_3A, IS_3B, IS_3C,
-                                   MS1_1, MS1_2A, MS1_2B, MS1_3A, MS1_3B, MS1_5A, MS1_5B, MS1_5C, MS1_5D,
-                                   MS2_1, MS2_2, MS2_3, MS2_4A, MS2_4B, MS2_4C, MS2_4D,
-                                   P_1A, P_1B, P_2A, P_2B, P_2C, P_3, Phos_2A, Phos_2C,
-                                   Keratin_2A, Keratin_2C, P_4A, P_4B, Trypsin_2A, Trypsin_2C,
-                                   MS2_Rep_Ion_All, MS2_Rep_Ion_1Missing, MS2_Rep_Ion_2Missing, MS2_Rep_Ion_3Missing
-                                 )
+    INSERT INTO Tmp_KnownMetrics (
+        Dataset_ID,
+        C_1A, C_1B, C_2A, C_2B, C_3A, C_3B, C_4A, C_4B, C_4C,
+        DS_1A, DS_1B, DS_2A, DS_2B, DS_3A, DS_3B,
+        IS_1A, IS_1B, IS_2, IS_3A, IS_3B, IS_3C,
+        MS1_1, MS1_2A, MS1_2B, MS1_3A, MS1_3B, MS1_5A, MS1_5B, MS1_5C, MS1_5D,
+        MS2_1, MS2_2, MS2_3, MS2_4A, MS2_4B, MS2_4C, MS2_4D,
+        P_1A, P_1B, P_2A, P_2B, P_2C, P_3, Phos_2A, Phos_2C,
+        Keratin_2A, Keratin_2C, P_4A, P_4B, Trypsin_2A, Trypsin_2C,
+        MS2_Rep_Ion_All, MS2_Rep_Ion_1Missing, MS2_Rep_Ion_2Missing, MS2_Rep_Ion_3Missing
+    )
     SELECT _datasetID,
            ct."C_1A", ct."C_1B", ct."C_2A", ct."C_2B", ct."C_3A", ct."C_3B", ct."C_4A", ct."C_4B", ct."C_4C",
            ct."DS_1A", ct."DS_1B", ct."DS_2A", ct."DS_2B", ct."DS_3A", ct."DS_3B",
@@ -626,19 +627,19 @@ BEGIN
     -----------------------------------------------
 
     MERGE INTO t_dataset_qc AS target
-    USING ( SELECT M.dataset_id,
-                   DI.SMAQC_Job,
-                   DI.psm_source_job,
-                   c_1a, c_1b, c_2a, C_2B, C_3A, C_3B, C_4A, C_4B, C_4C,
-                   ds_1a, ds_1b, ds_2a, DS_2B, DS_3A, DS_3B,
-                   is_1a, is_1b, is_2, IS_3A, IS_3B, IS_3C,
-                   ms1_1, ms1_2a, ms1_2b, MS1_3A, MS1_3B, MS1_5A, MS1_5B, MS1_5C, MS1_5D,
-                   ms2_1, ms2_2, ms2_3, MS2_4A, MS2_4B, MS2_4C, MS2_4D,
-                   p_1a, p_1b, p_2a, P_2B, P_2C, P_3, Phos_2A, Phos_2C,
-                   keratin_2a, keratin_2c, p_4a, P_4B, Trypsin_2A, Trypsin_2C,
-                   ms2_rep_ion_all, ms2_rep_ion_1missing, ms2_rep_ion_2missing, MS2_rep_ion_3Missing
-            FROM Tmp_KnownMetrics M INNER JOIN
-                 Tmp_DatasetInfo DI ON M.dataset_id = DI.dataset_id
+    USING (SELECT M.dataset_id,
+                  DI.SMAQC_Job,
+                  DI.psm_source_job,
+                  c_1a, c_1b, c_2a, C_2B, C_3A, C_3B, C_4A, C_4B, C_4C,
+                  ds_1a, ds_1b, ds_2a, DS_2B, DS_3A, DS_3B,
+                  is_1a, is_1b, is_2, IS_3A, IS_3B, IS_3C,
+                  ms1_1, ms1_2a, ms1_2b, MS1_3A, MS1_3B, MS1_5A, MS1_5B, MS1_5C, MS1_5D,
+                  ms2_1, ms2_2, ms2_3, MS2_4A, MS2_4B, MS2_4C, MS2_4D,
+                  p_1a, p_1b, p_2a, P_2B, P_2C, P_3, Phos_2A, Phos_2C,
+                  keratin_2a, keratin_2c, p_4a, P_4B, Trypsin_2A, Trypsin_2C,
+                  ms2_rep_ion_all, ms2_rep_ion_1missing, ms2_rep_ion_2missing, MS2_rep_ion_3Missing
+           FROM Tmp_KnownMetrics M INNER JOIN
+                Tmp_DatasetInfo DI ON M.dataset_id = DI.dataset_id
           ) AS Source
     ON (target.dataset_id = Source.dataset_id)
     WHEN MATCHED THEN

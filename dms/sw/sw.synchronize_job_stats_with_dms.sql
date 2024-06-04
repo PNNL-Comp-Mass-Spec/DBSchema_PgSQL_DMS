@@ -82,8 +82,8 @@ BEGIN
         INSERT INTO Tmp_JobsToProcess (job)
         SELECT sw.t_jobs.job
         FROM sw.t_jobs
-             INNER JOIN ( SELECT Value AS Job
-                          FROM public.parse_delimited_integer_list(_jobListToProcess)
+             INNER JOIN (SELECT Value AS Job
+                         FROM public.parse_delimited_integer_list(_jobListToProcess)
                         ) ValueQ
             ON sw.t_jobs.job = ValueQ.job
         WHERE sw.t_jobs.state IN (4, 5);
@@ -110,17 +110,17 @@ BEGIN
 
         RAISE INFO '';
 
-        If Not Exists ( SELECT sw.t_jobs.Job
-                        FROM sw.t_jobs
-                             INNER JOIN public.t_analysis_job Target
-                               ON sw.t_jobs.job = Target.job
-                             INNER JOIN Tmp_JobsToProcess JTP
-                               ON sw.t_jobs.job = JTP.job
-                             INNER JOIN sw.V_Job_Processing_Time JobProcTime
-                               ON sw.t_jobs.job = JobProcTime.job
-                        WHERE Abs(Extract(epoch from (sw.t_jobs.start  - Coalesce(Target.start,  _defaultDate))) ) > 1 OR   -- Start or Finish times differ by more than 1 second
-                              Abs(Extract(epoch from (sw.t_jobs.finish - Coalesce(Target.finish, _defaultDate))) ) > 1 OR
-                              Abs(Coalesce(Target.processing_time_minutes, 0) - JobProcTime.Processing_Time_Minutes) > 0.1  -- Processing time differs by more than 6 seconds
+        If Not Exists (SELECT sw.t_jobs.Job
+                       FROM sw.t_jobs
+                            INNER JOIN public.t_analysis_job Target
+                              ON sw.t_jobs.job = Target.job
+                            INNER JOIN Tmp_JobsToProcess JTP
+                              ON sw.t_jobs.job = JTP.job
+                            INNER JOIN sw.V_Job_Processing_Time JobProcTime
+                              ON sw.t_jobs.job = JobProcTime.job
+                       WHERE Abs(Extract(epoch from (sw.t_jobs.start  - Coalesce(Target.start,  _defaultDate))) ) > 1 OR   -- Start or Finish times differ by more than 1 second
+                             Abs(Extract(epoch from (sw.t_jobs.finish - Coalesce(Target.finish, _defaultDate))) ) > 1 OR
+                             Abs(Coalesce(Target.processing_time_minutes, 0) - JobProcTime.Processing_Time_Minutes) > 0.1  -- Processing time differs by more than 6 seconds
                       )
         Then
             _message := 'No jobs in sw.t_jobs with state 4 or 5 have start/finish times or processing times that disagree with public.t_analysis_job';

@@ -19,14 +19,13 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_organisms_after_update() RETURNS trig
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    INSERT INTO t_organisms_change_history
-        (
-            organism_id, organism, description, short_name,
-            domain, kingdom, phylum, class, "order",
-            family, genus, species, strain,
-            newt_id_list, ncbi_taxonomy_id,
-            active, entered, entered_by
-        )
+    INSERT INTO t_organisms_change_history (
+        organism_id, organism, description, short_name,
+        domain, kingdom, phylum, class, "order",
+        family, genus, species, strain,
+        newt_id_list, ncbi_taxonomy_id,
+        active, entered, entered_by
+    )
     SELECT NEW.organism_id, NEW.organism, NEW.description, NEW.short_name,
            NEW.domain, NEW.kingdom, NEW.phylum, NEW.class, NEW."order",
            NEW.family, NEW.genus, NEW.species, NEW.strain,

@@ -156,13 +156,13 @@ BEGIN
             Dataset_ID,
             Results_Directory_Name
         )
-        VALUES(_job,
-               _priority,
-               _scriptName,
-               1,           -- State
-               _datasetName,
-               _datasetID,
-               NULL);
+        VALUES (_job,
+                _priority,
+                _scriptName,
+                1,           -- State
+                _datasetName,
+                _datasetID,
+                NULL);
 
         ---------------------------------------------------
         -- Save capture task job parameters as XML into temp table
@@ -236,15 +236,16 @@ BEGIN
                   Comment,
                   Storage_Server
                 )
-            VALUES
-                ( _priority,
-                  _scriptName,
-                  1,            -- State
-                  _datasetName,
-                  _datasetID,
-                  NULL,
-                  _comment,
-                  NULL)
+            VALUES (
+                _priority,
+                _scriptName,
+                1,            -- State
+                _datasetName,
+                _datasetID,
+                NULL,
+                _comment,
+                NULL
+            )
             RETURNING job
             INTO _job;
 
@@ -292,9 +293,11 @@ BEGIN
             If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'cap' AND tablename::citext = 't_debug_tmp_task_steps') Then
                 DELETE FROM cap.t_debug_tmp_task_steps;
 
-                INSERT INTO cap.t_debug_tmp_task_steps (Job, Step, Tool, CPU_Load, Dependencies, Filter_Version, Signature, State,
-                                                       Input_Directory_Name, Output_Directory_Name, Processor,
-                                                       Special_Instructions, Holdoff_Interval_Minutes, Retry_Count, Next_Try)
+                INSERT INTO cap.t_debug_tmp_task_steps (
+                    Job, Step, Tool, CPU_Load, Dependencies, Filter_Version, Signature, State,
+                    Input_Directory_Name, Output_Directory_Name, Processor,
+                    Special_Instructions, Holdoff_Interval_Minutes, Retry_Count, Next_Try
+                )
                 SELECT Job, Step, Tool, CPU_Load, Dependencies, Filter_Version, Signature, State,
                        Input_Directory_Name, Output_Directory_Name, Processor,
                        Special_Instructions, Holdoff_Interval_Minutes, Retry_Count, Next_Try
@@ -313,8 +316,12 @@ BEGIN
             If Exists (SELECT tablename FROM pg_tables WHERE schemaname::citext = 'cap' AND tablename::citext = 't_debug_tmp_task_step_dependencies') Then
                 DELETE FROM cap.t_debug_tmp_task_step_dependencies;
 
-                INSERT INTO cap.t_debug_tmp_task_step_dependencies (Job, Step, Target_Step, Condition_Test, Test_Value, Enable_Only)
-                SELECT Job, Step, Target_Step, Condition_Test, Test_Value, Enable_Only
+                INSERT INTO cap.t_debug_tmp_task_step_dependencies (
+                    Job, Step, Target_Step,
+                    Condition_Test, Test_Value, Enable_Only
+                )
+                SELECT Job, Step, Target_Step,
+                       Condition_Test, Test_Value, Enable_Only
                 FROM Tmp_Job_Step_Dependencies;
             Else
                 CREATE TABLE cap.t_debug_tmp_task_step_dependencies AS

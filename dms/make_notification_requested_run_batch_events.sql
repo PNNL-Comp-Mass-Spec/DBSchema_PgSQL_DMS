@@ -184,11 +184,10 @@ BEGIN
     FROM Tmp_RequestedRunBatches
     WHERE Num_Datasets > 0 AND
           Earliest_Dataset BETWEEN _window AND _now AND
-          NOT EXISTS ( SELECT 1
-                       FROM t_notification_event TNE
-                       WHERE TNE.target_id = Tmp_RequestedRunBatches.Batch_ID
-                             AND
-                             TNE.event_type_id = _eventType );
+          NOT EXISTS (SELECT 1
+                      FROM t_notification_event TNE
+                      WHERE TNE.target_id = Tmp_RequestedRunBatches.Batch_ID AND
+                            TNE.event_type_id = _eventType);
 
     ---------------------------------------------------
     -- Event 'Requested Run Batch Finish'
@@ -205,11 +204,10 @@ BEGIN
     FROM Tmp_RequestedRunBatches
     WHERE Num_Datasets = Num_Requests AND
           Latest_Dataset BETWEEN _window AND _now AND
-          NOT EXISTS ( SELECT 1
-                       FROM t_notification_event TNE
-                       WHERE TNE.target_id = Tmp_RequestedRunBatches.Batch_ID
-                             AND
-                             TNE.event_type_id = _eventType );
+          NOT EXISTS (SELECT 1
+                      FROM t_notification_event TNE
+                      WHERE TNE.target_id = Tmp_RequestedRunBatches.Batch_ID AND
+                            TNE.event_type_id = _eventType);
 
     ---------------------------------------------------
     -- Event 'Requested Run Batch Acq Time Ready'
@@ -226,10 +224,10 @@ BEGIN
     FROM Tmp_RequestedRunBatches
     WHERE Num_Requests = Num_Datasets_With_Start_Time AND
           Latest_Dataset BETWEEN _window AND _now AND
-          NOT EXISTS ( SELECT 1
-                       FROM t_notification_event TNE
-                       WHERE TNE.target_id = Tmp_RequestedRunBatches.Batch_ID AND
-                             TNE.event_type_id = _eventType );
+          NOT EXISTS (SELECT 1
+                      FROM t_notification_event TNE
+                      WHERE TNE.target_id = Tmp_RequestedRunBatches.Batch_ID AND
+                            TNE.event_type_id = _eventType);
 
     If _infoOnly Then
 
@@ -280,10 +278,10 @@ BEGIN
         SELECT Tmp_NewEvents.event_type_id,
                Tmp_NewEvents.target_id
         FROM Tmp_NewEvents
-        WHERE NOT EXISTS ( SELECT TNE.target_id
-                           FROM t_notification_event TNE
-                           WHERE TNE.target_id = Tmp_NewEvents.target_id AND
-                                 TNE.event_type_id = Tmp_NewEvents.event_type_id );
+        WHERE NOT EXISTS (SELECT TNE.target_id
+                          FROM t_notification_event TNE
+                          WHERE TNE.target_id = Tmp_NewEvents.target_id AND
+                                TNE.event_type_id = Tmp_NewEvents.event_type_id);
 
         If _deleteOldEvents Then
 

@@ -51,27 +51,27 @@ BEGIN
     --   '<Param Section="JobParameters" Name="DatasetStoragePath" Value="\\proto-8\QEHFX03\2022_2\"/>'
 
     SELECT unnest(xpath('//params/Param', rooted_xml))::text
-    FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
-           FROM sw.t_job_parameters
-           WHERE job = _job
+    FROM (SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
+          FROM sw.t_job_parameters
+          WHERE job = _job
          ) Src;
 
     -- Obtain a single parameter:
     --   '<Param Section="JobParameters" Name="DatasetStoragePath" Value="\\proto-8\QEHFX03\2022_2\"/>'
 
     SELECT unnest(xpath('//params/Param[@Name="DatasetStoragePath"]', rooted_xml))::text
-    FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
-           FROM sw.t_job_parameters
-           WHERE job = _job
+    FROM (SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
+          FROM sw.t_job_parameters
+          WHERE job = _job
          ) Src;
 
     -- Obtain the parameter value:
     --   '\\proto-8\QEHFX03\2022_2\'
 
     SELECT unnest(xpath('//params/Param[@Name="DatasetStoragePath"]/@Value', rooted_xml))::text
-    FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
-           FROM sw.t_job_parameters
-           WHERE job = _job
+    FROM (SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
+          FROM sw.t_job_parameters
+          WHERE job = _job
          ) Src;
     */
 
@@ -106,7 +106,7 @@ BEGIN
     SELECT _job AS Job, Trim(XmlQ.section)::citext, Trim(XmlQ.name)::citext, Trim(XmlQ.value)::citext
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT ('<params>' || _xmlParameters::text || '</params>')::xml as rooted_xml
+        FROM (SELECT ('<params>' || _xmlParameters::text || '</params>')::xml AS rooted_xml
              ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml

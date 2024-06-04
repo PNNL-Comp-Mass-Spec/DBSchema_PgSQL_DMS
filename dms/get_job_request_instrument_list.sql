@@ -24,13 +24,13 @@ DECLARE
 BEGIN
     SELECT string_agg(LookupQ.instrument, ', ' ORDER BY LookupQ.instrument)
     INTO _result
-    FROM ( SELECT DISTINCT InstName.instrument
-           FROM t_analysis_job_request_datasets AJRD
-                INNER JOIN t_dataset DS
-                  ON AJRD.dataset_id = DS.dataset_id
-                INNER JOIN t_instrument_name InstName
-                  ON DS.instrument_id = InstName.instrument_id
-           WHERE AJRD.request_id = _requestID
+    FROM (SELECT DISTINCT InstName.instrument
+          FROM t_analysis_job_request_datasets AJRD
+               INNER JOIN t_dataset DS
+                 ON AJRD.dataset_id = DS.dataset_id
+               INNER JOIN t_instrument_name InstName
+                 ON DS.instrument_id = InstName.instrument_id
+          WHERE AJRD.request_id = _requestID
          ) LookupQ;
 
     If _result = '' Then

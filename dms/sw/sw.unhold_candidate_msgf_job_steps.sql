@@ -50,11 +50,11 @@ BEGIN
     -- Look for job steps in state 7 (Holding)
     -----------------------------------------------------------
 
-    If Not Exists ( SELECT JS.job, JS.step
-                    FROM sw.t_job_steps JS
-                    WHERE JS.state = 7 AND
-                          JS.tool = _stepTool::citext) Then
-
+    If Not Exists (SELECT JS.job, JS.step
+                   FROM sw.t_job_steps JS
+                   WHERE JS.state = 7 AND
+                         JS.tool = _stepTool::citext)
+    Then
         _message := format('No job steps in sw.t_job_steps have state 7 for tool %s', _stepTool);
 
         RAISE INFO '';
@@ -78,8 +78,8 @@ BEGIN
     _jobsToRelease := _targetCandidates - _candidateSteps;
 
     If _targetCandidates = 1 And _jobsToRelease > 0 Or
-       _targetCandidates > 1 And _jobsToRelease > 1 Then
-
+       _targetCandidates > 1 And _jobsToRelease > 1
+    Then
         -----------------------------------------------------------
         -- Un-hold _jobsToRelease jobs
         -----------------------------------------------------------
@@ -89,18 +89,18 @@ BEGIN
             tool_version_id = 1,            -- 1=Unknown
             next_try = CURRENT_TIMESTAMP,
             remote_info_id = 1              -- 1=Unknown
-        FROM ( SELECT JS.job,
-                      JS.step
-               FROM sw.t_job_steps JS
-                    INNER JOIN sw.t_job_steps ExtractQ
-                      ON JS.job = ExtractQ.job AND
-                         ExtractQ.tool = 'DataExtractor'
-               WHERE JS.state = 7 AND
-                     JS.tool = _stepTool::citext AND
-                     ExtractQ.state = 5 AND
-                     ExtractQ.tool_version_id >= 82
-               ORDER BY job DESC
-               LIMIT _jobsToRelease
+        FROM (SELECT JS.job,
+                     JS.step
+              FROM sw.t_job_steps JS
+                   INNER JOIN sw.t_job_steps ExtractQ
+                     ON JS.job = ExtractQ.job AND
+                        ExtractQ.tool = 'DataExtractor'
+              WHERE JS.state = 7 AND
+                    JS.tool = _stepTool::citext AND
+                    ExtractQ.state = 5 AND
+                    ExtractQ.tool_version_id >= 82
+              ORDER BY job DESC
+              LIMIT _jobsToRelease
              ) ReleaseQ
         WHERE sw.t_job_steps.job = ReleaseQ.job AND
               sw.t_job_steps.step = ReleaseQ.step AND

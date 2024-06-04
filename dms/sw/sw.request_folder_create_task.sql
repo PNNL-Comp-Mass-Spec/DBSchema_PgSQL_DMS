@@ -160,18 +160,18 @@ BEGIN
 
         SELECT xml_item::text
         INTO _parameters
-        FROM ( SELECT
-                XMLELEMENT(name "root",
-                   XMLELEMENT(name "package", source_id),
-                   XMLELEMENT(name "Path_Local_Root", path_local_root),
-                   XMLELEMENT(name "Path_Shared_Root", path_shared_root),
-                   XMLELEMENT(name "Path_Folder", path_folder),
-                   XMLELEMENT(name "cmd", command),
-                   XMLELEMENT(name "Source_DB", source_db),
-                   XMLELEMENT(name "Source_Table", source_table)
-                        ) AS xml_item
-               FROM sw.t_data_folder_create_queue
-               WHERE entry_id = _taskID
+        FROM (SELECT
+               XMLELEMENT(name "root",
+                  XMLELEMENT(name "package", source_id),
+                  XMLELEMENT(name "Path_Local_Root", path_local_root),
+                  XMLELEMENT(name "Path_Shared_Root", path_shared_root),
+                  XMLELEMENT(name "Path_Folder", path_folder),
+                  XMLELEMENT(name "cmd", command),
+                  XMLELEMENT(name "Source_DB", source_db),
+                  XMLELEMENT(name "Source_Table", source_table)
+                       ) AS xml_item
+              FROM sw.t_data_folder_create_queue
+              WHERE entry_id = _taskID
             ) AS LookupQ;
 
         If _infoOnly Then

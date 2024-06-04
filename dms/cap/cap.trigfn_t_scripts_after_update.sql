@@ -20,8 +20,12 @@ CREATE OR REPLACE FUNCTION cap.trigfn_t_scripts_after_update() RETURNS trigger
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
-    INSERT INTO cap.t_scripts_history
-        (script_id, script, results_tag, contents)
+    INSERT INTO cap.t_scripts_history (
+        script_id,
+        script,
+        results_tag,
+        contents
+    )
     SELECT NEW.script_id, NEW.script, NEW.results_tag, NEW.contents;
 
     RETURN null;

@@ -33,13 +33,12 @@ BEGIN
        OLD.state_id = NEW.state_id And
        Not _username In ('postgres', 'msdadmin') Then
 
-        INSERT INTO t_sample_prep_request_updates
-            (
-                request_id,
-                system_account,
-                beginning_state_ID,
-                end_state_id
-            )
+        INSERT INTO t_sample_prep_request_updates (
+            request_id,
+            system_account,
+            beginning_state_ID,
+            end_state_id
+        )
         SELECT NEW.prep_request_id,
                public.get_user_login_without_domain(''),
                OLD.state_id,

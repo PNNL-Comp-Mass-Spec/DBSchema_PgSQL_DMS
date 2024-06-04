@@ -63,7 +63,7 @@ BEGIN
     CREATE TEMP TABLE Tmp_JobsToDelete (
         Job   int NOT NULL,
         Saved timestamp NOT NULL,
-        PRIMARY KEY ( Job, Saved )
+        PRIMARY KEY (Job, Saved)
     );
 
     ---------------------------------------------------
@@ -243,8 +243,8 @@ BEGIN
                                       (SELECT entry_id
                                        FROM (SELECT entry_id,
                                              Row_Number() OVER (PARTITION BY machine ORDER BY entry_id DESC) AS RowRank
-                                             FROM sw.t_machine_status_history ) RankQ
-                                       WHERE RowRank > 1000 )
+                                             FROM sw.t_machine_status_history) RankQ
+                                       WHERE RowRank > 1000)
                              GROUP BY machine
                             ) FilterQ
                    ON H.entry_id = FilterQ.entry_id

@@ -66,7 +66,12 @@ BEGIN
     -- Action for add mode
     ---------------------------------------------------
 
-    INSERT INTO pc.t_annotation_types (type_name, description, example, authority_id)
+    INSERT INTO pc.t_annotation_types (
+        type_name,
+        description,
+        example,
+        authority_id
+    )
     VALUES (_name, _description, _example, _authID)
     RETURNING annotation_type_id
     INTO _annotationTypeID;

@@ -289,7 +289,7 @@ BEGIN
         -- Preview all of the datasets and experiments that would be deleted
         SELECT Dataset_ID, Dataset AS Dataset_to_Delete, Created
         FROM Tmp_DatasetsToDelete
-        ORDER BY Dataset_ID DESC
+        ORDER BY Dataset_ID DESC;
 
         SELECT E.Exp_ID,
                E.Experiment AS Experiment_to_Delete,
@@ -301,7 +301,7 @@ BEGIN
         FROM Tmp_ExperimentsToDelete E
              LEFT OUTER JOIN t_experiment_groups EG
                ON E.Exp_ID = EG.parent_exp_id
-        ORDER BY Exp_ID DESC
+        ORDER BY Exp_ID DESC;
 
         SELECT job AS Job_to_Delete,
                Tmp_JobsToDelete.created AS Created,
@@ -311,7 +311,7 @@ BEGIN
                ON Tmp_JobsToDelete.job = J.job
              INNER JOIN t_analysis_tool T
                ON J.analysis_tool_id = T.analysis_tool_id
-        ORDER BY Tmp_JobsToDelete.job DESC
+        ORDER BY Tmp_JobsToDelete.job DESC;
 
         ---------------------------------------------------
         -- Count old log messages

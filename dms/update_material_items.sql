@@ -263,7 +263,13 @@ BEGIN
         -- Populate material item list with items contained by containers given in input list, if applicable
         ---------------------------------------------------
 
-        INSERT INTO Tmp_Material_Items (IDWithTag, ID, itemType, itemName, itemContainer)
+        INSERT INTO Tmp_Material_Items (
+            IDWithTag,
+            ID,
+            itemType,
+            itemName,
+            itemContainer
+        )
         SELECT format('%s:%s', T.Item_Type, T.Item_ID),
                T.Item_ID,
                T.Item_Type,    -- B for Biomaterial, E for experiment, R for RefCompound

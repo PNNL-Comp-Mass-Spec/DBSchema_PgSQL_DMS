@@ -172,7 +172,7 @@ BEGIN
                   U.dataset_id IN (SELECT J.dataset_id
                                    FROM public.t_analysis_job J
                                         INNER JOIN Tmp_IDsToUpdate U
-                                          ON J.job = U.EntityID ) AND
+                                          ON J.job = U.EntityID) AND
                   cap.t_task_steps.Tool IN ('ArchiveVerify') AND
                   cap.t_task_steps.State = 3 AND
                   U.error_code = 0;

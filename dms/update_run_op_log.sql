@@ -124,7 +124,8 @@ BEGIN
         SELECT XmlQ.request, Trim(XmlQ.usage), Trim(XmlQ.proposal), Trim(XmlQ.emsl_user)
         FROM (
             SELECT xmltable.*
-            FROM ( SELECT ('<updates>' || _xml::text || '</updates>')::xml as rooted_xml ) Src,
+            FROM (SELECT ('<updates>' || _xml::text || '</updates>')::xml AS rooted_xml
+                 ) Src,
                  XMLTABLE('//updates/run'
                           PASSING Src.rooted_xml
                           COLUMNS request   int  PATH '@request',
@@ -156,7 +157,8 @@ BEGIN
         SELECT XmlQ.request, Trim(XmlQ.note)
         FROM (
             SELECT xmltable.*
-            FROM ( SELECT ('<updates>' || _xml::text || '</updates>')::xml as rooted_xml ) Src,
+            FROM (SELECT ('<updates>' || _xml::text || '</updates>')::xml AS rooted_xml
+                 ) Src,
                  XMLTABLE('//updates/interval'
                           PASSING Src.rooted_xml
                           COLUMNS request int  PATH '@id',

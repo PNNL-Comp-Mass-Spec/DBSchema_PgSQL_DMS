@@ -174,28 +174,29 @@ BEGIN
         _currentLocation := 'Populate temp table Tmp_Processor_Status_Info';
 
         WITH Src (StatusXML) AS (SELECT _statusXML)
-        INSERT INTO Tmp_Processor_Status_Info (Processor_Name,
-                                               Mgr_Status,
-                                               Status_Date,
-                                               Last_Start_Time,
-                                               CPU_Utilization,
-                                               Free_Memory_MB,
-                                               Process_ID,
-                                               Most_Recent_Error_Message,
-                                               Step_Tool,
-                                               Task_Status,
-                                               Duration_Minutes,
-                                               Progress,
-                                               Current_Operation,
-                                               Task_Detail_Status,
-                                               Job,
-                                               Job_Step,
-                                               Dataset,
-                                               Most_Recent_Log_Message,
-                                               Most_Recent_Job_Info,
-                                               Spectrum_Count,
-                                               Monitor_Processor,
-                                               Remote_Status_Location
+        INSERT INTO Tmp_Processor_Status_Info (
+            Processor_Name,
+            Mgr_Status,
+            Status_Date,
+            Last_Start_Time,
+            CPU_Utilization,
+            Free_Memory_MB,
+            Process_ID,
+            Most_Recent_Error_Message,
+            Step_Tool,
+            Task_Status,
+            Duration_Minutes,
+            Progress,
+            Current_Operation,
+            Task_Detail_Status,
+            Job,
+            Job_Step,
+            Dataset,
+            Most_Recent_Log_Message,
+            Most_Recent_Job_Info,
+            Spectrum_Count,
+            Monitor_Processor,
+            Remote_Status_Location
         )
         SELECT ManagerInfoQ.Processor_Name, ManagerInfoQ.Mgr_Status, ManagerInfoQ.Status_Date,
                ManagerInfoQ.Last_Start_Time, ManagerInfoQ.CPU_Utilization,
@@ -380,7 +381,7 @@ BEGIN
 
         -- Old: Compute the difference for our time zone vs. UTC, in hours
         --
-        -- SELECT Abs(Extract( timezone from CURRENT_TIMESTAMP) / 3600)
+        -- SELECT Abs(Extract(timezone from CURRENT_TIMESTAMP) / 3600)
         -- INTO _hourOffset;
 
         -- Convert from text-based UTC date to local timestamp

@@ -380,7 +380,11 @@ BEGIN
 
         _currentLocation := 'Populate Tmp_Scan_Types';
 
-        INSERT INTO Tmp_Scan_Types (ScanType, ScanCount, ScanFilter)
+        INSERT INTO Tmp_Scan_Types (
+            ScanType,
+            ScanCount,
+            ScanFilter
+        )
         SELECT public.trim_whitespace(XmlQ.ScanType), public.try_cast(XmlQ.ScanCount, 0), Trim(XmlQ.ScanFilter)
         FROM (
             SELECT xmltable.*
@@ -400,7 +404,12 @@ BEGIN
 
         _currentLocation := 'Populate Tmp_Instrument_Files';
 
-        INSERT INTO Tmp_Instrument_Files (InstFilePath, InstFileHash, InstFileHashType, InstFileSize)
+        INSERT INTO Tmp_Instrument_Files (
+            InstFilePath,
+            InstFileHash,
+            InstFileHashType,
+            InstFileSize
+        )
         SELECT public.trim_whitespace(XmlQ.InstFilePath), Trim(XmlQ.InstFileHash), Trim(XmlQ.InstFileHashType), XmlQ.InstFileSize
         FROM (
             SELECT xmltable.*
@@ -456,9 +465,10 @@ BEGIN
         If _instrumentFileCount > 0 Then
             _currentLocation := 'Look for duplicate datasets: populate Tmp_Duplicate_Datasets';
 
-            INSERT INTO Tmp_Duplicate_Datasets (dataset_id,
-                                               MatchingFileCount,
-                                               allow_duplicates)
+            INSERT INTO Tmp_Duplicate_Datasets (
+                Dataset_ID,
+                MatchingFileCount,
+                Allow_Duplicates)
             SELECT DSFiles.dataset_id,
                    COUNT(dataset_file_id) AS MatchingFiles,
                    false AS Allow_Duplicates
@@ -468,17 +478,23 @@ BEGIN
             WHERE DSFiles.dataset_id <> _datasetID AND DSFiles.deleted = false AND DSFiles.file_size_bytes > 0
             GROUP BY DSFiles.dataset_id;
 
-            If Exists (SELECT Dataset_ID FROM Tmp_Duplicate_Datasets WHERE MatchingFileCount >= _instrumentFileCount) Then
+            If Exists (SELECT Dataset_ID
+                       FROM Tmp_Duplicate_Datasets
+                       WHERE MatchingFileCount >= _instrumentFileCount
+            ) Then
                 _currentLocation := 'Look for duplicate datasets: set Allow_Duplicates to true in Tmp_Duplicate_Datasets';
 
                 UPDATE Tmp_Duplicate_Datasets
                 SET Allow_Duplicates = true
                 FROM t_dataset_files Src
-                WHERE Tmp_Duplicate_Datasets.dataset_id = Src.dataset_id AND Src.allow_duplicates;
+                WHERE Tmp_Duplicate_Datasets.Dataset_ID = Src.dataset_id AND Src.allow_duplicates;
             End If;
 
-            If Exists (SELECT Dataset_ID FROM Tmp_Duplicate_Datasets WHERE MatchingFileCount >= _instrumentFileCount AND NOT Allow_Duplicates) Then
-
+            If Exists (SELECT Dataset_ID
+                       FROM Tmp_Duplicate_Datasets
+                       WHERE MatchingFileCount >= _instrumentFileCount AND
+                             NOT Allow_Duplicates)
+            Then
                 _currentLocation := 'Duplicate dataset found; determine duplicate dataset ID';
 
                 SELECT Dataset_ID
@@ -932,7 +948,12 @@ BEGIN
         DELETE FROM t_dataset_scan_types
         WHERE dataset_id = _datasetID;
 
-        INSERT INTO t_dataset_scan_types (dataset_id, scan_type, scan_count, scan_filter)
+        INSERT INTO t_dataset_scan_types (
+            dataset_id,
+            scan_type,
+            scan_count,
+            scan_filter
+        )
         SELECT _datasetID AS Dataset_ID, ScanType, ScanCount, ScanFilter
         FROM Tmp_Scan_Types
         ORDER BY ScanType;

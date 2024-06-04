@@ -87,7 +87,7 @@ BEGIN
                MIN(RR.request_id) AS RequestIDFirst,
                MAX(RR.request_id) AS RequestIDFirst
         FROM (SELECT Distinct value AS request_id
-              FROM public.parse_delimited_integer_list ( _reqRunIDList )
+              FROM public.parse_delimited_integer_list (_reqRunIDList)
              ) AS RequestQ
              INNER JOIN T_Requested_Run RR
                ON RequestQ.request_id = RR.request_id

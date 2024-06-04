@@ -40,9 +40,9 @@ BEGIN
     -- Does entry already exist?
     ---------------------------------------------------
 
-    If Not Exists ( SELECT protein_collection_id
-                    FROM pc.t_protein_collections
-                    WHERE protein_collection_id = _proteinCollectionID )
+    If Not Exists (SELECT protein_collection_id
+                   FROM pc.t_protein_collections
+                   WHERE protein_collection_id = _proteinCollectionID)
     Then
         _message := format('Protein collection ID not found: %s', _proteinCollectionID);
         RAISE WARNING '%', _message;
@@ -51,10 +51,10 @@ BEGIN
         RETURN;
     End If;
 
-    If Exists ( SELECT passphrase_id
-                FROM pc.t_encrypted_collection_passphrases
-                WHERE passphrase = _encryptionPassphrase AND
-                      protein_collection_id = _proteinCollectionID )
+    If Exists (SELECT passphrase_id
+               FROM pc.t_encrypted_collection_passphrases
+               WHERE passphrase = _encryptionPassphrase AND
+                     protein_collection_id = _proteinCollectionID)
     Then
         _message := format('Protein collection ID %s already hass a passphrase in pc.t_encrypted_collection_passphrases', _proteinCollectionID);
         RAISE WARNING '%', _message;
@@ -78,7 +78,7 @@ BEGIN
     INSERT INTO pc.t_encrypted_collection_passphrases (
         passphrase,
         protein_collection_id
-    ) VALUES(
+    ) VALUES (
         _encryptionPassphrase,
         _proteinCollectionID
     )

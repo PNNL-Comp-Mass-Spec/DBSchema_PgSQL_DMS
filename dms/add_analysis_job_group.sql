@@ -359,7 +359,6 @@ BEGIN
            _protCollOptionsList ILike '%decoy%' And
            Not _paramFileName ILike '%_NoDecoy%'
         Then
-
             _protCollOptionsList := 'seq_direction=forward,filetype=fasta';
 
             If Coalesce(_message, '') = '' And _toolName ILike 'MSGFPlus%' Then
@@ -440,20 +439,20 @@ BEGIN
             WHERE NOT AJ.job_state_id IN (5) AND
                   AJT.analysis_tool = _toolName::citext AND
                   AJ.param_file_name = _paramFileName::citext AND
-                  ( AJ.settings_file_name = _settingsFileName::citext OR
-                    AJ.settings_file_name = 'na' AND
-                    _settingsFileName::citext = 'Decon2LS_DefSettings.xml'
+                  (AJ.settings_file_name = _settingsFileName::citext OR
+                   AJ.settings_file_name = 'na' AND
+                   _settingsFileName::citext = 'Decon2LS_DefSettings.xml'
                   )
                   AND
                   (
-                    ( _protCollNameList::citext = 'na' AND
-                      AJ.organism_db_name = _organismDBName::citext AND
-                      Org.organism = Coalesce(_organismName::citext, Org.organism)
+                    (_protCollNameList::citext = 'na' AND
+                     AJ.organism_db_name = _organismDBName::citext AND
+                     Org.organism = Coalesce(_organismName::citext, Org.organism)
                     )
                     OR
-                    ( _protCollNameList::citext <> 'na' AND
-                      AJ.protein_collection_list = Coalesce(_protCollNameList::citext, AJ.protein_collection_list) AND
-                      AJ.protein_options_list = Coalesce(_protCollOptionsList::citext, AJ.protein_options_list)
+                    (_protCollNameList::citext <> 'na' AND
+                     AJ.protein_collection_list = Coalesce(_protCollNameList::citext, AJ.protein_collection_list) AND
+                     AJ.protein_options_list = Coalesce(_protCollOptionsList::citext, AJ.protein_options_list)
                     )
                     OR
                     AJT.org_db_required = 0

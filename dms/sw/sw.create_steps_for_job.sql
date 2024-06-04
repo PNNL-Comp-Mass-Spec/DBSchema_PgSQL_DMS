@@ -49,7 +49,7 @@ BEGIN
     SELECT string_agg(XmlQ.Tool, ', ' ORDER BY XmlQ.Tool)
     INTO _missingTools
     FROM (SELECT Trim(xmltable.tool)::citext AS Tool
-          FROM (SELECT _scriptXML AS ScriptXML ) Src,
+          FROM (SELECT _scriptXML AS ScriptXML) Src,
                XMLTABLE('//JobScript/Step'
                         PASSING Src.ScriptXML
                         COLUMNS step                 int  PATH '@Number',
@@ -126,7 +126,7 @@ BEGIN
         _job AS Job
     FROM (
         SELECT xmltable.*
-        FROM (SELECT _scriptXML AS ScriptXML ) Src,
+        FROM (SELECT _scriptXML AS ScriptXML) Src,
              XMLTABLE('//JobScript/Step/Depends_On'
                       PASSING Src.ScriptXML
                       COLUMNS step           int  PATH '../@Number',

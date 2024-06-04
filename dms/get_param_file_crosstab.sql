@@ -140,7 +140,12 @@ BEGIN
     -- match _parameterFileFilter (which will be '%' if it was '')
     -----------------------------------------------------------
 
-    INSERT INTO Tmp_ParamFileInfo (param_file_id, date_created, date_modified, Job_Usage_Count)
+    INSERT INTO Tmp_ParamFileInfo (
+        Param_File_ID,
+        Date_Created,
+        Date_Modified,
+        Job_Usage_Count
+    )
     SELECT PF.param_file_id, PF.date_created, PF.date_modified, PF.job_usage_count
     FROM t_param_files PF
          INNER JOIN t_analysis_tool AnTool

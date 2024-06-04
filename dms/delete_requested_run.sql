@@ -165,7 +165,7 @@ BEGIN
             Cart_Id, Cart_Config_Id, Cart_Column, Separation_Group, Mrm_Attachment,
             Dataset_Id, Origin, State_Name, Request_Name_Code, Vialing_Conc, Vialing_Vol, Location_Id,
             Queue_State, Queue_Instrument_Id, Queue_Date, Entered, Updated, Updated_By, Deleted_By
-            )
+        )
         SELECT Request_Id, Request_Name, Requester_Username, Comment, Created, Instrument_Group,
                Request_Type_Id, Instrument_Setting, Special_Instructions, Wellplate, Well, Priority, Note, Exp_Id,
                Request_Run_Start, Request_Run_Finish, Request_Internal_Standard, Work_Package, Batch_Id,
@@ -182,7 +182,11 @@ BEGIN
         -- Add any factors to t_deleted_factor
         ---------------------------------------------------
 
-        INSERT INTO t_deleted_factor (Factor_ID, Type, Target_ID, Name, Value, Last_Updated, Deleted_By, Deleted_Requested_Run_Entry_ID)
+        INSERT INTO t_deleted_factor (
+            Factor_ID, Type, Target_ID,
+            Name, Value, Last_Updated,
+            Deleted_By, Deleted_Requested_Run_Entry_ID
+        )
         SELECT Factor_ID, Type, Target_ID, Name, Value, Last_Updated, _deletedBy, _deletedRequestedRunEntryID
         FROM T_Factor
         WHERE Type = 'Run_Request' AND

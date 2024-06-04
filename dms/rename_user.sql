@@ -268,7 +268,7 @@ BEGIN
                  INNER JOIN (SELECT Src.Entity,
                                     MAX(Src.ItemRank) AS Total_Items
                              FROM owned_entities Src
-                             GROUP BY Src.Entity, Src.Username ) StatsQ
+                             GROUP BY Src.Entity, Src.Username) StatsQ
                    ON Src.Entity = StatsQ.Entity
             WHERE Src.ItemRank <= 25
             ORDER BY Src.Sort, Src.Entity_Name

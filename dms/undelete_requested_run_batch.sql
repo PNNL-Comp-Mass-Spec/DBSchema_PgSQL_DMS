@@ -150,13 +150,13 @@ BEGIN
         ---------------------------------------------------
 
         INSERT INTO T_Requested_Run_Batches (
-                Batch_ID, Batch, Description, Owner_User_ID, Created, Locked,
-                Last_Ordered, Requested_Batch_Priority, Actual_Batch_Priority,
-                Requested_Completion_Date, Justification_for_High_Priority, Comment,
-                -- Deprecated in January 2024
-                -- Requested_Instrument_Group,
-                Batch_Group_ID, Batch_Group_Order
-            )
+            Batch_ID, Batch, Description, Owner_User_ID, Created, Locked,
+            Last_Ordered, Requested_Batch_Priority, Actual_Batch_Priority,
+            Requested_Completion_Date, Justification_for_High_Priority, Comment,
+            -- Deprecated in January 2024
+            -- Requested_Instrument_Group,
+            Batch_Group_ID, Batch_Group_Order
+        )
         OVERRIDING SYSTEM VALUE
         SELECT Batch_ID, Batch, Description, Owner_User_ID, Created, Locked,
                Last_Ordered, Requested_Batch_Priority, Actual_Batch_Priority,

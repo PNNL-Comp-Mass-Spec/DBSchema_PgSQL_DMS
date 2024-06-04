@@ -54,7 +54,7 @@ CREATE VIEW sw.v_processor_tool_crosstab AS
            PTG.Group_Name,
            PTG.Group_ID,
            PTGD.Tool_Name,
-           Min(PTGD.Priority) AS Priority
+           MIN(PTGD.Priority) AS Priority
     FROM sw.t_machines M
              INNER JOIN sw.t_local_processors LP
                ON M.Machine = LP.Machine

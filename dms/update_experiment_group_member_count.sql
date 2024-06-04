@@ -37,9 +37,9 @@ BEGIN
 
         UPDATE t_experiment_groups EG
         SET member_count = LookupQ.MemberCount
-        FROM ( SELECT group_id, COUNT(exp_id) AS MemberCount
-               FROM t_experiment_group_members
-               GROUP BY group_id) LookupQ
+        FROM (SELECT group_id, COUNT(exp_id) AS MemberCount
+              FROM t_experiment_group_members
+              GROUP BY group_id) LookupQ
         WHERE EG.group_id = LookupQ.group_id AND
               EG.member_count <> LookupQ.MemberCount;
         --

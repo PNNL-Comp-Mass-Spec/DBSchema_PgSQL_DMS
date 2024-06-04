@@ -596,7 +596,7 @@ BEGIN
                 ---------------------------------------------------
 
                 INSERT INTO t_experiment_group_members (group_id, exp_id)
-                VALUES ( _groupID, _newExpID );
+                VALUES (_groupID, _newExpID);
 
                 ---------------------------------------------------
                 -- Append Experiment ID to _experimentIDList and _materialIDList
@@ -620,9 +620,8 @@ BEGIN
 
                 If Exists (SELECT plex_exp_id
                            FROM t_experiment_plex_members
-                           WHERE plex_exp_id = _parentExperimentInfo.ParentExperimentID
-                          ) Then
-
+                           WHERE plex_exp_id = _parentExperimentInfo.ParentExperimentID)
+                Then
                     INSERT INTO t_experiment_plex_members (
                         plex_exp_id,
                         channel,
@@ -643,9 +642,7 @@ BEGIN
 
                         CALL public.alter_entered_by_user ('public', 't_experiment_plex_members_history', 'plex_exp_id', _newExpID, _callingUser, _message => _alterEnteredByMessage);
                     End If;
-
                 End If;
-
             End If;
 
             If _mode = 'add' Then

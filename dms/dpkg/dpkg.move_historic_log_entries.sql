@@ -80,7 +80,13 @@ BEGIN
           message LIKE 'Updated EUS_Proposal_ID, EUS_Instrument_ID, and/or Instrument name for % data package%';
 
     -- Copy entries into the historic log table
-    INSERT INTO logdms.t_log_entries_data_package (entry_id, posted_by, Entered, type, message)
+    INSERT INTO logdms.t_log_entries_data_package (
+        entry_id,
+        posted_by,
+        entered,
+        type,
+        message
+    )
     SELECT entry_id, posted_by, Entered, type, message
     FROM dpkg.t_log_entries
     WHERE Entered < _cutoffDateTime

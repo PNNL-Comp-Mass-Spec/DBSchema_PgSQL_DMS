@@ -382,12 +382,11 @@ BEGIN
 
         If _orgGenus::citext   In ('unknown', 'na', 'none') And
            _orgSpecies::citext In ('unknown', 'na', 'none') And
-           _orgStrain::citext  In ('unknown', 'na', 'none') Then
-
+           _orgStrain::citext  In ('unknown', 'na', 'none')
+        Then
             _orgGenus   := 'na';
             _orgSpecies := 'na';
             _orgStrain  := 'na';
-
         End If;
 
         ---------------------------------------------------

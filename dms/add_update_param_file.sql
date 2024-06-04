@@ -254,10 +254,11 @@ BEGIN
             DROP TABLE Tmp_Mods_Precheck;
 
             If _paramfileMassMods <> '' And (
-                _mode IN ('add', 'previewadd') OR
+                _mode IN ('add', 'previewadd') Or
                 _mode = 'update' And _replaceExistingMassMods = 1 Or
-                _mode = 'update' And _replaceExistingMassMods = 0 AND Not Exists (SELECT param_file_id FROM t_param_file_mass_mods WHERE param_file_id = _paramFileID)) Then
-
+                _mode = 'update' And _replaceExistingMassMods = 0 AND
+                Not Exists (SELECT param_file_id FROM t_param_file_mass_mods WHERE param_file_id = _paramFileID))
+            Then
                 ---------------------------------------------------
                 -- Validate the mods by calling Store_Param_File_Mass_Mods with @paramFileID = 0
                 ---------------------------------------------------
@@ -284,9 +285,7 @@ BEGIN
                     End If;
 
                 End If;
-
             End If;
-
         End If;
 
         ---------------------------------------------------
@@ -382,8 +381,8 @@ BEGIN
 
         If Not _exceptionMessage Like '%already exists%' And
            Not _exceptionMessage Like '%must be specified%' And
-           Not _exceptionMessage Like '%is used by%' Then
-
+           Not _exceptionMessage Like '%is used by%'
+        Then
             _logMessage := format('%s; Param file %s', _exceptionMessage, _paramFileName);
 
             _message := local_error_handler (

@@ -43,8 +43,11 @@ BEGIN
         RETURN null;
     End If;
 
-    INSERT INTO sw.t_job_events
-        (job, target_state, prev_target_state)
+    INSERT INTO sw.t_job_events (
+        job,
+        target_state,
+        prev_target_state
+    )
     SELECT deleted.job, 0 as New_State, deleted.State as Old_State
     FROM deleted
     ORDER BY deleted.job;

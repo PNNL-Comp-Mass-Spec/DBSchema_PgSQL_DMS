@@ -88,22 +88,22 @@ BEGIN
     -- Import entries from EMSL instrument usage table
     -- for given month and year into working table
 
-    INSERT INTO Tmp_T_Working
-    ( Dataset_ID,
-      EMSL_Inst_ID,
-      DMS_Instrument,
-      Type,
-      Proposal,
-      Usage,
-      Users,
-      Run_or_Interval_Start,
-      Duration_Seconds,
-      Year,
-      Month,
-      Dataset_ID_Acq_Overlap,
-      Comment,
-      Operator,
-      Seq
+    INSERT INTO Tmp_T_Working (
+        Dataset_ID,
+        EMSL_Inst_ID,
+        DMS_Instrument,
+        Type,
+        Proposal,
+        Usage,
+        Users,
+        Run_or_Interval_Start,
+        Duration_Seconds,
+        Year,
+        Month,
+        Dataset_ID_Acq_Overlap,
+        Comment,
+        Operator,
+        Seq
     )
     SELECT InstUsage.dataset_id,
            InstUsage.emsl_inst_id,

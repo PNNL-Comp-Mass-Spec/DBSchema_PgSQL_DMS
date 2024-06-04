@@ -83,19 +83,18 @@ BEGIN
         shared_result_version
     )
     SELECT ScriptQ.step, Trim(ScriptQ.tool), Trim(ScriptQ.special_instructions), StepTools.shared_result_version   --, t1::text AS ScriptXML
-    FROM ( SELECT XmlTableA.*
-           FROM sw.t_scripts Src,
-               LATERAL unnest((
-                   SELECT
-                       xpath('//JobScript', contents)
-               )) t1,
-               XMLTABLE('//JobScript/Step'
-                                 PASSING t1
-                                 COLUMNS step                 int    PATH '@Number',
-                                         tool                 citext PATH '@Tool',
-                                         special_instructions text   PATH '@Special',
-                                         parent_steps         xml    PATH 'Depends_On') AS XmlTableA
-            WHERE Src.script = _script::citext
+    FROM (SELECT XmlTableA.*
+          FROM sw.t_scripts Src,
+              LATERAL unnest((                          -- Yes, two parentheses are required here
+                  SELECT xpath('//JobScript', contents)
+              )) t1,
+              XMLTABLE('//JobScript/Step'
+                                PASSING t1
+                                COLUMNS step                 int    PATH '@Number',
+                                        tool                 citext PATH '@Tool',
+                                        special_instructions text   PATH '@Special',
+                                        parent_steps         xml    PATH 'Depends_On') AS XmlTableA
+           WHERE Src.script = _script::citext
           ) ScriptQ
           INNER JOIN sw.t_step_tools StepTools
             ON ScriptQ.tool = StepTools.step_tool
@@ -120,9 +119,8 @@ BEGIN
     FOR _scriptStep IN
         SELECT XmlTableA.step, Trim(XmlTableA.tool) AS tool, XmlTableA.parent_steps::text
         FROM sw.t_scripts Src,
-            LATERAL unnest((
-                SELECT
-                    xpath('//JobScript', Src.contents)
+            LATERAL unnest((                                -- Yes, two parentheses are required here
+                SELECT xpath('//JobScript', Src.contents)
             )) t1,
             XMLTABLE('//JobScript/Step'
                               PASSING t1
@@ -146,7 +144,7 @@ BEGIN
                           CASE WHEN Coalesce(XmlTableA.enable_only, 0) > 0 THEN ' [style=dotted]' ELSE '' END
                    ) AS script_line,
                    1 AS seq
-            FROM ( SELECT ('<root>' || _scriptStep.parent_steps || '</root>')::xml AS rooted_xml
+            FROM (SELECT ('<root>' || _scriptStep.parent_steps || '</root>')::xml AS rooted_xml
                  ) Src,
                  XMLTABLE('//root/Depends_On'
                           PASSING Src.rooted_xml

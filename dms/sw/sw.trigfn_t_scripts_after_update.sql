@@ -20,9 +20,20 @@ CREATE OR REPLACE FUNCTION sw.trigfn_t_scripts_after_update() RETURNS trigger
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
-    INSERT INTO sw.t_scripts_history
-        (script_id, script, results_tag, contents, parameters, backfill_to_dms)
-    SELECT NEW.script_id, NEW.script, NEW.results_tag, NEW.contents, NEW.parameters, NEW.backfill_to_dms;
+    INSERT INTO sw.t_scripts_history (
+        script_id,
+        script,
+        results_tag,
+        contents,
+        parameters,
+        backfill_to_dms
+    )
+    SELECT NEW.script_id,
+           NEW.script,
+           NEW.results_tag,
+           NEW.contents,
+           NEW.parameters,
+           NEW.backfill_to_dms;
 
     RETURN null;
 END

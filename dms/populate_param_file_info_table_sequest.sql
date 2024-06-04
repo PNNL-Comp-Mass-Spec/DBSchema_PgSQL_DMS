@@ -116,9 +116,9 @@ BEGIN
 
     UPDATE Tmp_ParamFileInfo PFI
     SET Enzyme = Coalesce(Enz.Enzyme_Name, PFI.Enzyme)
-    FROM ( SELECT Param_File_ID, public.try_cast(Enzyme, null::int) AS EnzymeID
-           FROM Tmp_ParamFileInfo
-           WHERE NOT public.try_cast(Enzyme, null::int) IS NULL
+    FROM (SELECT Param_File_ID, public.try_cast(Enzyme, null::int) AS EnzymeID
+          FROM Tmp_ParamFileInfo
+          WHERE NOT public.try_cast(Enzyme, null::int) IS NULL
          ) UpdateListQ
          LEFT OUTER JOIN t_enzymes Enz
            ON UpdateListQ.EnzymeID = Enz.sequest_enzyme_index

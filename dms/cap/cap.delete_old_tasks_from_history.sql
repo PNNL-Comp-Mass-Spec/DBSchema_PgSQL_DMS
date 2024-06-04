@@ -58,7 +58,7 @@ BEGIN
     CREATE TEMP TABLE Tmp_JobsToDelete (
         Job   int NOT NULL,
         Saved timestamp NOT NULL,
-        PRIMARY KEY ( Job, Saved )
+        PRIMARY KEY (Job, Saved)
     );
 
     ---------------------------------------------------

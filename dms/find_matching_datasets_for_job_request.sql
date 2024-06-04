@@ -113,14 +113,14 @@ BEGIN
           AJ.param_file_name = _jobRequestInfo.ParamFileName AND
           AJ.settings_file_name = _jobRequestInfo.SettingsFileName AND
           (
-            ( _jobRequestInfo.ProteinCollectionList = 'na' AND
-              AJ.organism_db_name = _jobRequestInfo.OrganismDBName AND
-              Org.organism = Coalesce(_jobRequestInfo.OrganismName, Org.organism)
+            (_jobRequestInfo.ProteinCollectionList = 'na' AND
+             AJ.organism_db_name = _jobRequestInfo.OrganismDBName AND
+             Org.organism = Coalesce(_jobRequestInfo.OrganismName, Org.organism)
             )
             OR
-            ( _jobRequestInfo.ProteinCollectionList <> 'na' AND
-              AJ.protein_collection_list = Coalesce(_jobRequestInfo.ProteinCollectionList, AJ.protein_collection_list) AND
-              AJ.protein_options_list = Coalesce(_jobRequestInfo.ProteinOptionsList, AJ.protein_options_list)
+            (_jobRequestInfo.ProteinCollectionList <> 'na' AND
+             AJ.protein_collection_list = Coalesce(_jobRequestInfo.ProteinCollectionList, AJ.protein_collection_list) AND
+             AJ.protein_options_list = Coalesce(_jobRequestInfo.ProteinOptionsList, AJ.protein_options_list)
             )
           )
     GROUP BY DS.dataset;

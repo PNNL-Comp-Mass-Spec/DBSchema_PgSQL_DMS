@@ -46,11 +46,11 @@ BEGIN
     SELECT COUNT(*),
            MIN(FilterQ.dataset_id)
     INTO _datasetCount, _firstDatasetID
-    FROM ( SELECT dataset_id
-           FROM t_requested_run
-           WHERE NOT dataset_id IS NULL
-           GROUP BY dataset_id
-           HAVING COUNT(request_id) > 1 ) FilterQ;
+    FROM (SELECT dataset_id
+          FROM t_requested_run
+          WHERE NOT dataset_id IS NULL
+          GROUP BY dataset_id
+          HAVING COUNT(request_id) > 1) FilterQ;
 
     If _datasetCount > 0 Then
 

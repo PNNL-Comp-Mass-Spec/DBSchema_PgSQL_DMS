@@ -508,10 +508,10 @@ BEGIN
             WHERE DS.dataset = _datasetName::citext;
 
             If FOUND And (
-              Coalesce(_existingEusProposal, '') <> _eusProposalID OR
-              Coalesce(_existingEusUsageType, '') <> _eusUsageType OR
-              Coalesce(_existingEusUser, '') <> _eusUsersList) Then
-
+              Coalesce(_existingEusProposal, '') <> _eusProposalID Or
+              Coalesce(_existingEusUsageType, '') <> _eusUsageType Or
+              Coalesce(_existingEusUser, '') <> _eusUsersList)
+            Then
                 CALL public.add_update_requested_run (
                                 _requestName                 => _requestName,
                                 _experimentName              => _experimentName,

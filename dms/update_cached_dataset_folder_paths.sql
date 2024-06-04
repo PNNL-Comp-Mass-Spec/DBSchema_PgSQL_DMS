@@ -62,19 +62,21 @@ BEGIN
     If _processingMode In (0, 1) Then
         SELECT MIN(dataset_id)
         INTO _minimumDatasetID
-        FROM ( SELECT dataset_id
-               FROM t_dataset
-               ORDER BY dataset_id DESC
-               LIMIT 10000) LookupQ;
+        FROM (SELECT dataset_id
+              FROM t_dataset
+              ORDER BY dataset_id DESC
+              LIMIT 10000) LookupQ;
     End If;
 
     ------------------------------------------------
     -- Add new datasets to t_cached_dataset_folder_paths
     ------------------------------------------------
 
-    INSERT INTO t_cached_dataset_folder_paths (dataset_id,
-                                               dataset_row_version,
-                                               update_required )
+    INSERT INTO t_cached_dataset_folder_paths (
+        dataset_id,
+        dataset_row_version,
+        update_required
+    )
     SELECT DS.dataset_id,
            DS.xmin,
            1 AS UpdateRequired
@@ -252,36 +254,36 @@ BEGIN
             ------------------------------------------------
 
             MERGE INTO t_cached_dataset_folder_paths AS target
-            USING ( SELECT DS.dataset_id,
-                           DS.xmin AS XMin_Dataset,
-                           SPath.xmin AS XMin_SPath,
-                           Coalesce(public.combine_paths(SPath.vol_name_client,
-                                    public.combine_paths(SPath.storage_path, Coalesce(DS.folder_name, DS.Dataset))), '') AS Dataset_Folder_Path,
-                           CASE WHEN AP.network_share_path IS NULL
-                                THEN ''
-                                ELSE public.combine_paths(AP.network_share_path,
-                                                          Coalesce(DS.folder_name, DS.Dataset))
-                           END AS Archive_Folder_Path,
-                           format('\\MyEMSL\%s', public.combine_paths(SPath.storage_path, Coalesce(DS.folder_name, DS.Dataset))) AS MyEMSL_Path_Flag,
-                           -- Old: format('%s%s/', SPath.url, Coalesce(DS.folder_name, DS.Dataset)) AS Dataset_URL
-                           format('%s%s/',
-                                  CASE WHEN SPath.storage_path_function LIKE '%inbox%'
-                                       THEN ''
-                                       ELSE format('%s%s%s/%s', SPH.URL_Prefix, SPH.Host_Name, SPH.DNS_Suffix, Replace(storage_path, '\', '/'))
-                                  END,
-                                  Coalesce(DS.folder_name, DS.dataset)) AS Dataset_URL
-                    FROM t_dataset DS
-                         INNER JOIN t_cached_dataset_folder_paths DFP
-                           ON DFP.dataset_id = DS.dataset_id
-                         LEFT OUTER JOIN t_storage_path SPath
-                           ON SPath.storage_path_id = DS.storage_path_id
-                         LEFT OUTER JOIN t_storage_path_hosts SPH
-                           ON SPath.machine_name = SPH.machine_name
-                         LEFT OUTER JOIN t_dataset_archive DA
-                                         INNER JOIN t_archive_path AP
-                                           ON DA.storage_path_id = AP.archive_path_id
-                           ON DS.dataset_id = DA.dataset_id
-                    WHERE DS.dataset_id BETWEEN _datasetIdStart AND _datasetIdEnd
+            USING (SELECT DS.dataset_id,
+                          DS.xmin AS XMin_Dataset,
+                          SPath.xmin AS XMin_SPath,
+                          Coalesce(public.combine_paths(SPath.vol_name_client,
+                                   public.combine_paths(SPath.storage_path, Coalesce(DS.folder_name, DS.Dataset))), '') AS Dataset_Folder_Path,
+                          CASE WHEN AP.network_share_path IS NULL
+                               THEN ''
+                               ELSE public.combine_paths(AP.network_share_path,
+                                                         Coalesce(DS.folder_name, DS.Dataset))
+                          END AS Archive_Folder_Path,
+                          format('\\MyEMSL\%s', public.combine_paths(SPath.storage_path, Coalesce(DS.folder_name, DS.Dataset))) AS MyEMSL_Path_Flag,
+                          -- Old: format('%s%s/', SPath.url, Coalesce(DS.folder_name, DS.Dataset)) AS Dataset_URL
+                          format('%s%s/',
+                                 CASE WHEN SPath.storage_path_function LIKE '%inbox%'
+                                      THEN ''
+                                      ELSE format('%s%s%s/%s', SPH.URL_Prefix, SPH.Host_Name, SPH.DNS_Suffix, Replace(storage_path, '\', '/'))
+                                 END,
+                                 Coalesce(DS.folder_name, DS.dataset)) AS Dataset_URL
+                   FROM t_dataset DS
+                        INNER JOIN t_cached_dataset_folder_paths DFP
+                          ON DFP.dataset_id = DS.dataset_id
+                        LEFT OUTER JOIN t_storage_path SPath
+                          ON SPath.storage_path_id = DS.storage_path_id
+                        LEFT OUTER JOIN t_storage_path_hosts SPH
+                          ON SPath.machine_name = SPH.machine_name
+                        LEFT OUTER JOIN t_dataset_archive DA
+                                        INNER JOIN t_archive_path AP
+                                          ON DA.storage_path_id = AP.archive_path_id
+                          ON DS.dataset_id = DA.dataset_id
+                   WHERE DS.dataset_id BETWEEN _datasetIdStart AND _datasetIdEnd
                   ) AS Source
             ON (target.dataset_id = source.dataset_id)
             WHEN MATCHED AND

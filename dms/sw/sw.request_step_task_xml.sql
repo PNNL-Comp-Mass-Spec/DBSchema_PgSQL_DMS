@@ -293,9 +293,9 @@ BEGIN
             _returnCode := _jobNotAvailableErrorCode;
 
             INSERT INTO sw.t_sp_usage (posted_by, processor_id, calling_user)
-            VALUES('Request_Step_Task_XML',
-                   NULL,
-                   format('%s (Invalid processor: %s)', SESSION_USER, _processorName));
+            VALUES ('Request_Step_Task_XML',
+                    NULL,
+                    format('%s (Invalid processor: %s)', SESSION_USER, _processorName));
 
             RETURN;
         End If;
@@ -403,7 +403,8 @@ BEGIN
                 cpu_load, memory_usage_mb,
                 Tool_Priority, GP, max_job_priority,
                 Exceeds_Available_CPU_Load,
-                Exceeds_Available_Memory)
+                Exceeds_Available_Memory
+            )
             SELECT PTG.group_name,
                    PTGD.tool_name,
                    ST.cpu_load,
@@ -679,8 +680,8 @@ BEGIN
                              M.proc_tool_group_id = PTGD.group_id
                    WHERE LP.Processor_Name = _processorName AND
                          PTGD.enabled > 0 AND
-                         PTGD.tool_name = 'Results_Transfer') Then
-
+                         PTGD.tool_name = 'Results_Transfer')
+        Then
             _currentLocation := 'Populate Tmp_CandidateJobSteps: Look for Results_Transfer candidates';
 
             -- Look for Results_Transfer candidates
@@ -1040,7 +1041,7 @@ BEGIN
             --                  TJ.storage_server,
             --                  TJ.dataset_id
             --           FROM sw.t_jobs TJ
-            --        WHERE TJ.state <> 8 ) J
+            --        WHERE TJ.state <> 8) J
             --        INNER JOIN sw.t_job_steps JS
             --            ON J.job = JS.job
             --          INNER JOIN (-- Viable processors/step tools combinations (with CPU loading and processor group information)
@@ -1339,7 +1340,7 @@ BEGIN
                       CJS.Association_Type = 99 AND
                       NOT EXISTS (SELECT job
                                   FROM sw.t_local_job_processors
-                                  WHERE processor = _processorName );
+                                  WHERE processor = _processorName);
             End If;
 
         End If;

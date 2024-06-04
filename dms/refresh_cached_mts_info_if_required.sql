@@ -206,20 +206,20 @@ BEGIN
             UPDATE t_mts_pt_dbs_cached Target
             SET msms_jobs = StatsQ.msms_jobs,
                 sic_jobs = StatsQ.sic_jobs
-            FROM ( SELECT PTDBs.Peptide_DB_Name,
-                          PTDBs.Server_Name,
-                          SUM(CASE WHEN Coalesce(DBJobs.Result_Type, '') LIKE '%Peptide_Hit' THEN 1
-                                    ELSE 0
-                              END) AS MSMS_Jobs,
-                          SUM(CASE
-                                  WHEN Coalesce(DBJobs.Result_Type, '') = 'SIC' THEN 1
-                                  ELSE 0
-                              END) AS SIC_Jobs
-                   FROM t_mts_pt_dbs_cached PTDBs
-                        LEFT OUTER JOIN t_mts_pt_db_jobs_cached DBJobs
-                          ON PTDBs.peptide_db_name = DBJobs.peptide_db_name AND
-                             PTDBs.server_name = DBJobs.server_name
-                   GROUP BY PTDBs.peptide_db_name, PTDBs.server_name
+            FROM (SELECT PTDBs.Peptide_DB_Name,
+                         PTDBs.Server_Name,
+                         SUM(CASE WHEN Coalesce(DBJobs.Result_Type, '') LIKE '%Peptide_Hit' THEN 1
+                                   ELSE 0
+                             END) AS MSMS_Jobs,
+                         SUM(CASE
+                                 WHEN Coalesce(DBJobs.Result_Type, '') = 'SIC' THEN 1
+                                 ELSE 0
+                             END) AS SIC_Jobs
+                  FROM t_mts_pt_dbs_cached PTDBs
+                       LEFT OUTER JOIN t_mts_pt_db_jobs_cached DBJobs
+                         ON PTDBs.peptide_db_name = DBJobs.peptide_db_name AND
+                            PTDBs.server_name = DBJobs.server_name
+                  GROUP BY PTDBs.peptide_db_name, PTDBs.server_name
                  ) StatsQ
             WHERE Target.peptide_db_name = StatsQ.peptide_db_name AND
                   Target.server_name = StatsQ.server_name AND
@@ -231,22 +231,22 @@ BEGIN
             UPDATE t_mts_mt_dbs_cached Target
             SET msms_jobs = StatsQ.msms_jobs,
                 ms_jobs = StatsQ.ms_jobs
-            FROM ( SELECT MTDBs.MT_DB_Name,
-                          MTDBs.Server_Name,
-                          SUM(CASE
-                                  WHEN Coalesce(DBJobs.result_type, '') LIKE '%Peptide_Hit' THEN 1
-                                  ELSE 0
-                              END) AS MSMS_Jobs,
-                          SUM(CASE
-                                  WHEN Coalesce(DBJobs.result_type, '') = 'HMMA_Peak' THEN 1
-                                  ELSE 0
-                              END) AS MS_Jobs
-                   FROM t_mts_mt_dbs_cached MTDBs
-                        LEFT OUTER JOIN t_mts_mt_db_jobs_cached DBJobs
-                          ON MTDBs.mt_db_name = DBJobs.mt_db_name
-                             AND
-                             MTDBs.server_name = DBJobs.server_name
-                   GROUP BY MTDBs.mt_db_name, MTDBs.server_name
+            FROM (SELECT MTDBs.MT_DB_Name,
+                         MTDBs.Server_Name,
+                         SUM(CASE
+                                 WHEN Coalesce(DBJobs.result_type, '') LIKE '%Peptide_Hit' THEN 1
+                                 ELSE 0
+                             END) AS MSMS_Jobs,
+                         SUM(CASE
+                                 WHEN Coalesce(DBJobs.result_type, '') = 'HMMA_Peak' THEN 1
+                                 ELSE 0
+                             END) AS MS_Jobs
+                  FROM t_mts_mt_dbs_cached MTDBs
+                       LEFT OUTER JOIN t_mts_mt_db_jobs_cached DBJobs
+                         ON MTDBs.mt_db_name = DBJobs.mt_db_name
+                            AND
+                            MTDBs.server_name = DBJobs.server_name
+                  GROUP BY MTDBs.mt_db_name, MTDBs.server_name
                  ) StatsQ
             WHERE Target.mt_db_name = StatsQ.mt_db_name AND
                   Target.server_name = StatsQ.server_name AND

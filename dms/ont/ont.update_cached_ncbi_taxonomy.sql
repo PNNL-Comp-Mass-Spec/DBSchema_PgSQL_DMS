@@ -202,8 +202,8 @@ BEGIN
         FROM ont.t_ncbi_taxonomy_cached AS TaxIDs
         WHERE TaxIDs.synonyms > 0) s
     WHERE t.tax_id = s.tax_id AND
-          Coalesce( NULLIF(t.synonym_list, s.synonym_list),
-                    NULLIF(s.synonym_list, t.synonym_list)) IS NOT NULL;
+          Coalesce(NULLIF(t.synonym_list, s.synonym_list),
+                   NULLIF(s.synonym_list, t.synonym_list)) IS NOT NULL;
     --
     GET DIAGNOSTICS _updateCount = ROW_COUNT;
 

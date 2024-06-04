@@ -413,10 +413,9 @@ BEGIN
         If _datasetName::citext In (
            'Archive', 'Dispositioned', 'Processed', 'Reprocessed', 'Not-Dispositioned',
            'High-pH', 'NotDispositioned', 'Yufeng', 'Uploaded', 'Sequence', 'Sequences',
-           'Peptide', 'BadData') Then
-
+           'Peptide', 'BadData')
+        Then
             RAISE EXCEPTION 'Dataset name is too generic; be more specific';
-
         End If;
 
         ---------------------------------------------------
@@ -656,12 +655,11 @@ BEGIN
                      INNER JOIN t_instrument_group_allowed_ds_type IGADST
                        ON ING.instrument_group = IGADST.instrument_group
                 WHERE InstName.instrument = _instrumentName AND
-                      IGADST.dataset_type::citext = 'IMS-HMS-HMSn' ) Then
-
+                      IGADST.dataset_type::citext = 'IMS-HMS-HMSn')
+            Then
                 -- This is an IMS MS/MS dataset
                 _msType := 'IMS-HMS-HMSn';
                 _datasetTypeID := public.get_dataset_type_id(_msType);
-
             Else
                 -- Not an IMS dataset; change _datasetTypeID to zero so that the default dataset type is used
                 _datasetTypeID := 0;
@@ -772,7 +770,8 @@ BEGIN
 
             If _eusProposalID <> '' Or _eusUsageType <> '' Or _eusUsersList <> '' Then
                 If (_eusUsageType::citext = '(lookup)' And _eusProposalID::citext = '(lookup)' And _eusUsersList::citext = '(lookup)') Or
-                   (_eusUsageType::citext = '(ignore)') Then
+                   (_eusUsageType::citext = '(ignore)')
+                Then
                     _warning := '';
                 Else
                     _warning := format('Warning: ignoring proposal ID, usage type, and user list since request %s was specified', _requestID);

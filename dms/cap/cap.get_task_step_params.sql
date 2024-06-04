@@ -118,15 +118,16 @@ BEGIN
                    xmltable.value,
                    xmltable.step,
                    Coalesce(public.try_cast(xmltable.step, null::int), 0) AS StepNumber
-            FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
-                   FROM cap.t_task_parameters
-                   WHERE cap.t_task_parameters.job = _job ) Src,
-                       XMLTABLE('//params/Param'
-                          PASSING Src.rooted_xml
-                          COLUMNS section text PATH '@Section',
-                                  name    text PATH '@Name',
-                                  value   text PATH '@Value',
-                                  step    text PATH '@Step')
+            FROM (SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
+                  FROM cap.t_task_parameters
+                  WHERE cap.t_task_parameters.job = _job
+                 ) Src,
+                 XMLTABLE('//params/Param'
+                    PASSING Src.rooted_xml
+                    COLUMNS section text PATH '@Section',
+                            name    text PATH '@Name',
+                            value   text PATH '@Value',
+                            step    text PATH '@Step')
          ) XmlQ
     WHERE XmlQ.step IS NULL OR XmlQ.StepNumber = _step;
 

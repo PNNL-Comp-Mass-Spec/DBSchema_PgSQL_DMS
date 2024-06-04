@@ -50,40 +50,40 @@ BEGIN
            RankQ.Subsequent_Run,
            RankQ.Proximity_Rank::int,
            RankQ.Diff_Days
-    FROM ( SELECT LookupQ.Dataset,
-                  LookupQ.Acq_Time_Start,
-                  LookupQ.LC_Column_ID,
-                  LookupQ.Instrument_id,
-                  LookupQ.QC_Dataset,
-                  LookupQ.Diff_Hours / 24.0 AS Diff_Days,
-                  LookupQ.Subsequent_Run,
-                  Row_Number() OVER (PARTITION BY LookupQ.Dataset, LookupQ.Subsequent_Run ORDER BY Abs(LookupQ.Diff_Hours)) AS Proximity_Rank
-           FROM ( SELECT DS.Dataset,
-                         COALESCE(DS.Acq_Time_Start, DS.created) AS Acq_Time_Start,
-                         DS.LC_Column_ID,
-                         DS.Instrument_id,
-                         QCDatasets.dataset AS QC_Dataset,
-                         Extract(epoch from QCDatasets.Acq_Time - COALESCE(DS.Acq_Time_Start, DS.created)) / 3600 AS Diff_Hours,
-                         CASE WHEN Extract(epoch from QCDatasets.Acq_Time - COALESCE(DS.Acq_Time_Start, DS.created)) < 0
-                         THEN 0
-                         ELSE 1
-                         END AS Subsequent_Run
-                  FROM public.t_dataset DS
-                       INNER JOIN ( SELECT QCD.dataset,
-                                           COALESCE(QCD.Acq_Time_Start, QCD.created) AS Acq_Time,
-                                           QCD.instrument_id,
-                                           QCD.lc_column_ID
-                                    FROM public.t_dataset QCD
-                                    WHERE (QCD.dataset LIKE 'qc_shew%' OR
-                                           QCD.dataset LIKE 'qc_mam%' OR
-                                           QCD.dataset LIKE 'qc_pp_mcf%') AND
-                                          COALESCE(QCD.Acq_Time_Start, QCD.created) BETWEEN _qcStartDate AND _qcEndDate
-                                  ) QCDatasets
-                         ON DS.instrument_id = QCDatasets.instrument_id AND
-                            DS.lc_column_ID = QCDatasets.lc_column_ID AND
-                            DS.dataset <> QCDatasets.dataset
-                  WHERE COALESCE(DS.Acq_Time_Start, DS.created) BETWEEN _startDate AND _EndDate
-                ) LookupQ
+    FROM (SELECT LookupQ.Dataset,
+                 LookupQ.Acq_Time_Start,
+                 LookupQ.LC_Column_ID,
+                 LookupQ.Instrument_id,
+                 LookupQ.QC_Dataset,
+                 LookupQ.Diff_Hours / 24.0 AS Diff_Days,
+                 LookupQ.Subsequent_Run,
+                 Row_Number() OVER (PARTITION BY LookupQ.Dataset, LookupQ.Subsequent_Run ORDER BY Abs(LookupQ.Diff_Hours)) AS Proximity_Rank
+          FROM (SELECT DS.Dataset,
+                       COALESCE(DS.Acq_Time_Start, DS.created) AS Acq_Time_Start,
+                       DS.LC_Column_ID,
+                       DS.Instrument_id,
+                       QCDatasets.dataset AS QC_Dataset,
+                       Extract(epoch from QCDatasets.Acq_Time - COALESCE(DS.Acq_Time_Start, DS.created)) / 3600 AS Diff_Hours,
+                       CASE WHEN Extract(epoch from QCDatasets.Acq_Time - COALESCE(DS.Acq_Time_Start, DS.created)) < 0
+                       THEN 0
+                       ELSE 1
+                       END AS Subsequent_Run
+                FROM public.t_dataset DS
+                     INNER JOIN (SELECT QCD.dataset,
+                                        COALESCE(QCD.Acq_Time_Start, QCD.created) AS Acq_Time,
+                                        QCD.instrument_id,
+                                        QCD.lc_column_ID
+                                 FROM public.t_dataset QCD
+                                 WHERE (QCD.dataset LIKE 'qc_shew%' OR
+                                        QCD.dataset LIKE 'qc_mam%' OR
+                                        QCD.dataset LIKE 'qc_pp_mcf%') AND
+                                       COALESCE(QCD.Acq_Time_Start, QCD.created) BETWEEN _qcStartDate AND _qcEndDate
+                                ) QCDatasets
+                       ON DS.instrument_id = QCDatasets.instrument_id AND
+                          DS.lc_column_ID = QCDatasets.lc_column_ID AND
+                          DS.dataset <> QCDatasets.dataset
+                WHERE COALESCE(DS.Acq_Time_Start, DS.created) BETWEEN _startDate AND _EndDate
+               ) LookupQ
          ) RankQ
          INNER JOIN public.t_instrument_name InstName
            ON InstName.Instrument_ID = RankQ.instrument_id

@@ -86,11 +86,13 @@ BEGIN
         End If;
     End If;
 
-    INSERT INTO t_email_alerts ( posted_by,
-                                 posting_time,
-                                 alert_type,
-                                 message,
-                                 recipients )
+    INSERT INTO t_email_alerts (
+        posted_by,
+        posting_time,
+        alert_type,
+        message,
+        recipients
+    )
     VALUES (_postedBy, CURRENT_TIMESTAMP, _type, _message, _recipients);
 
     If _postMessageToLogEntries Then

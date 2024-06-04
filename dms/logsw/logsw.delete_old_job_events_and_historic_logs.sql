@@ -74,25 +74,25 @@ BEGIN
         CREATE TEMP TABLE Tmp_JobEventIDs (
             Event_ID int NOT NULL,
             Entered  timestamp NOT NULL,
-            PRIMARY KEY ( Event_ID )
+            PRIMARY KEY (Event_ID)
         );
 
         CREATE TEMP TABLE Tmp_JobStepEventIDs (
             Event_ID int NOT NULL,
             Entered  timestamp NOT NULL,
-            PRIMARY KEY ( Event_ID )
+            PRIMARY KEY (Event_ID)
         );
 
         CREATE TEMP TABLE Tmp_ProcessingLogEventIDs (
             Event_ID int NOT NULL,
             Entered  timestamp NOT NULL,
-            PRIMARY KEY ( Event_ID )
+            PRIMARY KEY (Event_ID)
         );
 
         CREATE TEMP TABLE Tmp_HistoricLogIDs (
             Entry_ID int NOT NULL,
             Entered  timestamp NOT NULL,
-            PRIMARY KEY ( Entry_ID, Entered )
+            PRIMARY KEY (Entry_ID, Entered)
         );
 
         CREATE TEMP TABLE Tmp_EventsToDelete (

@@ -97,10 +97,11 @@ BEGIN
        OLD.contents::text IS DISTINCT FROM NEW.contents::text Then
 
         INSERT INTO t_settings_files_xml_history (
-                event_action, settings_file_id,
-                analysis_tool, file_name,
-                description, contents,
-                entered, entered_by )
+            event_action, settings_file_id,
+            analysis_tool, file_name,
+            description, contents,
+            entered, entered_by
+        )
         SELECT 'Update' AS event_action, NEW.settings_file_id,
                NEW.analysis_tool, NEW.file_name,
                NEW.description, NEW.contents,

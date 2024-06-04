@@ -123,7 +123,7 @@ BEGIN
     SELECT Trim(XmlQ.Name), Trim(XmlQ.ValueText)
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT _resultsXML AS rooted_xml
+        FROM (SELECT _resultsXML AS rooted_xml
              ) Src,
              XMLTABLE('//QCART_Results/Measurements/Measurement'
                       PASSING Src.rooted_xml
@@ -196,11 +196,11 @@ BEGIN
 
     UPDATE Tmp_Measurements Target
     SET Value = FilterQ.Value
-    FROM ( SELECT Name,
-                  ValueText,
-                  public.try_cast(ValueText, null::float8) AS Value
-           FROM Tmp_Measurements
-           WHERE NOT public.try_cast(ValueText, null::float8) IS NULL
+    FROM (SELECT Name,
+                 ValueText,
+                 public.try_cast(ValueText, null::float8) AS Value
+          FROM Tmp_Measurements
+          WHERE NOT public.try_cast(ValueText, null::float8) IS NULL
          ) FilterQ
     WHERE Target.Name = FilterQ.Name;
 
@@ -218,9 +218,10 @@ BEGIN
     -- Use a Crosstab to extract out the known columns
     -----------------------------------------------
 
-    INSERT INTO Tmp_KnownMetrics ( Dataset_ID,
-                                   QCART
-                                 )
+    INSERT INTO Tmp_KnownMetrics (
+        Dataset_ID,
+        QCART
+    )
     SELECT _datasetID,
            ct."QCART"
     FROM crosstab(
@@ -348,10 +349,10 @@ BEGIN
     -----------------------------------------------
 
     MERGE INTO t_dataset_qc AS target
-    USING ( SELECT M.dataset_id,
-                   M.qcart
-            FROM Tmp_KnownMetrics M INNER JOIN
-                 Tmp_DatasetInfo DI ON M.dataset_id = DI.dataset_id
+    USING (SELECT M.dataset_id,
+                  M.qcart
+           FROM Tmp_KnownMetrics M INNER JOIN
+                Tmp_DatasetInfo DI ON M.dataset_id = DI.dataset_id
           ) AS Source
     ON (target.dataset_id = Source.dataset_id)
     WHEN MATCHED THEN

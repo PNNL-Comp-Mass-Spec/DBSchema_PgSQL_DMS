@@ -184,7 +184,7 @@ BEGIN
                Trim(xmltable.Device_Serial_Number)    AS Device_Serial_Number,
                Trim(xmltable.Device_Software_Version) AS Device_Software_Version,
                public.trim_whitespace(xmltable.Device_Description) AS Device_Description
-        FROM ( SELECT _datasetInfoXML AS rooted_xml
+        FROM (SELECT _datasetInfoXML AS rooted_xml
              ) Src,
              XMLTABLE('//DatasetInfo/AcquisitionInfo/DeviceList/Device'
                       PASSING Src.rooted_xml

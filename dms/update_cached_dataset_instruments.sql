@@ -47,13 +47,13 @@ BEGIN
 
     If _datasetId > 0 And Not _infoOnly Then
         MERGE INTO t_cached_dataset_stats AS t
-        USING ( SELECT DS.dataset_id,
-                       DS.instrument_id AS Instrument_ID,
-                       InstName.instrument AS Instrument
-                FROM t_dataset DS
-                     INNER JOIN t_instrument_name InstName
-                       ON DS.instrument_id = InstName.instrument_id
-                WHERE DS.dataset_id = _datasetId
+        USING (SELECT DS.dataset_id,
+                      DS.instrument_id AS Instrument_ID,
+                      InstName.instrument AS Instrument
+               FROM t_dataset DS
+                    INNER JOIN t_instrument_name InstName
+                      ON DS.instrument_id = InstName.instrument_id
+               WHERE DS.dataset_id = _datasetId
               ) AS s
         ON (t.dataset_id = s.dataset_id)
         WHEN MATCHED AND
@@ -63,8 +63,8 @@ BEGIN
                 instrument_id = s.instrument_id,
                 instrument = s.instrument
         WHEN NOT MATCHED THEN
-            INSERT(dataset_id, instrument_id, instrument)
-            VALUES(s.dataset_id, s.instrument_id, s.instrument);
+            INSERT (dataset_id, instrument_id, instrument)
+            VALUES (s.dataset_id, s.instrument_id, s.instrument);
 
         RETURN;
     End If;
@@ -137,9 +137,11 @@ BEGIN
             -- Add new datasets
             ------------------------------------------------
 
-            INSERT INTO t_cached_dataset_stats (dataset_id,
-                                                instrument_id,
-                                                instrument)
+            INSERT INTO t_cached_dataset_stats (
+                dataset_id,
+                instrument_id,
+                instrument
+            )
             SELECT DS.dataset_id,
                    DS.instrument_id,
                    InstName.instrument
@@ -206,12 +208,12 @@ BEGIN
                    s.instrument AS Instrument_Name_New,
                    'Dataset to update in t_instrument_name' AS Status
             FROM t_cached_dataset_stats t
-                 INNER JOIN ( SELECT DS.dataset_id,
-                                     DS.instrument_id AS Instrument_ID,
-                                     InstName.instrument AS Instrument
-                              FROM t_dataset DS
-                                   INNER JOIN t_instrument_name InstName
-                                     ON DS.instrument_id = InstName.instrument_id ) s
+                 INNER JOIN (SELECT DS.dataset_id,
+                                    DS.instrument_id AS Instrument_ID,
+                                    InstName.instrument AS Instrument
+                             FROM t_dataset DS
+                                  INNER JOIN t_instrument_name InstName
+                                    ON DS.instrument_id = InstName.instrument_id) s
                    ON t.dataset_id = s.dataset_id
             WHERE (t.instrument_id <> s.instrument_id OR t.instrument <> s.instrument) AND
                   (_datasetId = 0 OR s.dataset_id = _datasetId)
@@ -243,12 +245,12 @@ BEGIN
     ------------------------------------------------
 
     MERGE INTO t_cached_dataset_stats AS t
-    USING ( SELECT DS.dataset_id,
-                   DS.instrument_id AS Instrument_ID,
-                   InstName.instrument AS Instrument
-            FROM t_dataset DS
-                 INNER JOIN t_instrument_name InstName
-                   ON DS.instrument_id = InstName.instrument_id
+    USING (SELECT DS.dataset_id,
+                  DS.instrument_id AS Instrument_ID,
+                  InstName.instrument AS Instrument
+           FROM t_dataset DS
+                INNER JOIN t_instrument_name InstName
+                  ON DS.instrument_id = InstName.instrument_id
           ) AS s
     ON (t.dataset_id = s.dataset_id)
     WHEN MATCHED AND
@@ -258,8 +260,8 @@ BEGIN
             instrument_id = s.instrument_id,
             instrument = s.instrument
     WHEN NOT MATCHED THEN
-        INSERT(dataset_id, instrument_id, instrument)
-        VALUES(s.dataset_id, s.instrument_id, s.instrument);
+        INSERT (dataset_id, instrument_id, instrument)
+        VALUES (s.dataset_id, s.instrument_id, s.instrument);
     --
     GET DIAGNOSTICS _updateCount = ROW_COUNT;
 

@@ -46,7 +46,7 @@ BEGIN
     _result := Trim(Substring(_text, _startPosition, char_length(_text) ));
 
     -- Determine the position of the first space, semicolon, colon, comma, or forward slash
-    SELECT Min(MatchPosition)
+    SELECT MIN(MatchPosition)
     INTO _matchPosition
     FROM (
         SELECT unnest(
@@ -61,7 +61,7 @@ BEGIN
     WHERE MatchPosition > 0;
 
     If Coalesce(_matchPosition, 0) > 0 And char_length(_result) > 1 Then
-        _result := Trim(Substring(_result, 1, _matchPosition - 1 ));
+        _result := Trim(Substring(_result, 1, _matchPosition - 1));
     End If;
 
     RETURN _result;

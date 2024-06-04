@@ -44,11 +44,11 @@ BEGIN
 
     RETURN QUERY
     SELECT FilterQ.ValueText::int
-    FROM (  SELECT Trim(SplitQ.Value) ValueText
-            FROM (  SELECT regexp_split_to_table(_delimitedList, _delimiter) AS Value
-            ) SplitQ
-            WHERE COALESCE(Trim(SplitQ.Value), '') ~ '^\d+$'
-        ) FilterQ;
+    FROM (SELECT Trim(SplitQ.Value) ValueText
+          FROM (SELECT regexp_split_to_table(_delimitedList, _delimiter) AS Value
+               ) SplitQ
+          WHERE COALESCE(Trim(SplitQ.Value), '') ~ '^\d+$'
+         ) FilterQ;
 
 END
 $_$;

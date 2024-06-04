@@ -166,10 +166,12 @@ BEGIN
             _returnCode := 'U5202';
             RETURN;
         Else
-            INSERT INTO T_Deleted_Requested_Run_Batch (Batch_ID, Batch, Description, Owner_User_ID, Created, Locked,
-                                                       Last_Ordered, Requested_Batch_Priority, Actual_Batch_Priority,
-                                                       Requested_Completion_Date, Justification_for_High_Priority, Comment,
-                                                       Batch_Group_ID, Batch_Group_Order)
+            INSERT INTO T_Deleted_Requested_Run_Batch (
+                Batch_ID, Batch, Description, Owner_User_ID, Created, Locked,
+                Last_Ordered, Requested_Batch_Priority, Actual_Batch_Priority,
+                Requested_Completion_Date, Justification_for_High_Priority, Comment,
+                Batch_Group_ID, Batch_Group_Order
+            )
             SELECT Batch_ID, Batch, Description, Owner_User_ID, Created, Locked,
                    Last_Ordered, Requested_Batch_Priority, Actual_Batch_Priority,
                    Requested_Completion_Date, Justification_for_High_Priority, Comment,

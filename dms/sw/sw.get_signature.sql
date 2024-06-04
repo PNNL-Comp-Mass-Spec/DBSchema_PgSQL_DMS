@@ -61,7 +61,7 @@ BEGIN
             entered,
             last_used
         )
-        VALUES(_pattern, _settings, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        VALUES (_pattern, _settings, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
         RETURNING reference
         INTO _reference;
 

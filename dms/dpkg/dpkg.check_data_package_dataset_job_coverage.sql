@@ -70,12 +70,12 @@ BEGIN
              INNER JOIN public.t_dataset DS
                ON DPD.Dataset_ID = DS.Dataset_ID
         WHERE DPD.data_pkg_id = _packageID AND
-              NOT EXISTS ( SELECT J.dataset_id
-                           FROM public.t_analysis_job AS J
-                                INNER JOIN public.t_analysis_tool Tool
-                                  ON J.analysis_tool_id = Tool.analysis_tool_id AND
-                                     Tool.analysis_tool = _tool::citext
-                           WHERE J.dataset_id = DPD.dataset_id
+              NOT EXISTS (SELECT J.dataset_id
+                          FROM public.t_analysis_job AS J
+                               INNER JOIN public.t_analysis_tool Tool
+                                 ON J.analysis_tool_id = Tool.analysis_tool_id AND
+                                    Tool.analysis_tool = _tool::citext
+                          WHERE J.dataset_id = DPD.dataset_id
                          );
     End If;
 

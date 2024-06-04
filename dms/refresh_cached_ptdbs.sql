@@ -118,7 +118,7 @@ BEGIN
         DELETE FROM t_mts_pt_dbs_cached target
         WHERE NOT EXISTS (SELECT source.peptide_db_id
                           FROM mts.t_pt_dbs AS source
-                          WHERE target.peptide_db_id = source.peptide_db_id );
+                          WHERE target.peptide_db_id = source.peptide_db_id);
 
         GET DIAGNOSTICS _mergeDeleteCount = ROW_COUNT;
 

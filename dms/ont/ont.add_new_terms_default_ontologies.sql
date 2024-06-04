@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_terms_default_ontologies(_infoonly boolea
 **      CL, GO, MI (PSI_MI), MOD (PSI_Mod), PRIDE, NEWT, and DOID
 **
 **  Usage:
-**      SELECT * FROM ont.add_new_terms_default_ontologies( _infoOnly => false, _previewSql => false);
+**      SELECT * FROM ont.add_new_terms_default_ontologies(_infoOnly => false, _previewSql => false);
 **
 **  Auth:   mem
 **  Date:   05/13/2013 mem - Initial Version

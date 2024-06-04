@@ -1877,7 +1877,7 @@ BEGIN
             SELECT string_agg(DataPackageID::text, ',' ORDER BY DataPackageID)
             INTO _dataPackageList
             FROM (SELECT DISTINCT DataPackageID
-                  FROM Tmp_DataPackageItems ) AS ListQ;
+                  FROM Tmp_DataPackageItems) AS ListQ;
 
             CALL dpkg.update_data_package_eus_info (
                         _dataPackageList,

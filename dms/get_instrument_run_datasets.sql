@@ -141,7 +141,15 @@ BEGIN
             Duration,
             Instrument
         )
-        VALUES (_index + 1, 0, 'Interval', _endOfPrevious, _startOfNext, _interval, _instrument );
+        VALUES (
+            _index + 1,
+            0,
+            'Interval',
+            _endOfPrevious,
+            _startOfNext,
+            _interval,
+            _instrument
+        );
 
         _index := _index + 2;
     END LOOP;
@@ -191,25 +199,26 @@ BEGIN
         Work_Package = LookupQ.work_package,
         EUS_Proposal = LookupQ.eus_proposal_id,
         EUS_Usage = LookupQ.eus_usage_type
-    FROM ( SELECT t_dataset.dataset_id,
-                  t_dataset_state_name.dataset_state,
-                  t_dataset_rating_name.dataset_rating,
-                  t_lc_column.lc_column,
-                  t_requested_run.request_id ,
-                  t_requested_run.work_package,
-                  t_requested_run.eus_proposal_id,
-                  t_eus_usage_type.eus_usage_type
-           FROM t_dataset
-                INNER JOIN t_dataset_state_name
-                  ON t_dataset.dataset_state_id = t_dataset_state_name.dataset_state_id
-                INNER JOIN t_dataset_rating_name
-                  ON t_dataset.dataset_rating_id = t_dataset_rating_name.dataset_rating_id
-                INNER JOIN t_lc_column
-                  ON t_dataset.lc_column_id = t_lc_column.lc_column_id
-                LEFT OUTER JOIN t_requested_run
-                  ON t_dataset.dataset_id = t_requested_run.dataset_id
-                LEFT OUTER JOIN t_eus_usage_type
-                  ON t_requested_run.eus_usage_type_id = t_eus_usage_type.eus_usage_type_id ) LookupQ
+    FROM (SELECT t_dataset.dataset_id,
+                 t_dataset_state_name.dataset_state,
+                 t_dataset_rating_name.dataset_rating,
+                 t_lc_column.lc_column,
+                 t_requested_run.request_id ,
+                 t_requested_run.work_package,
+                 t_requested_run.eus_proposal_id,
+                 t_eus_usage_type.eus_usage_type
+          FROM t_dataset
+               INNER JOIN t_dataset_state_name
+                 ON t_dataset.dataset_state_id = t_dataset_state_name.dataset_state_id
+               INNER JOIN t_dataset_rating_name
+                 ON t_dataset.dataset_rating_id = t_dataset_rating_name.dataset_rating_id
+               INNER JOIN t_lc_column
+                 ON t_dataset.lc_column_id = t_lc_column.lc_column_id
+               LEFT OUTER JOIN t_requested_run
+                 ON t_dataset.dataset_id = t_requested_run.dataset_id
+               LEFT OUTER JOIN t_eus_usage_type
+                 ON t_requested_run.eus_usage_type_id = t_eus_usage_type.eus_usage_type_id
+         ) LookupQ
     WHERE Tmp_TX.ID = LookupQ.Dataset_ID;
 
     RETURN QUERY

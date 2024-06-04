@@ -104,14 +104,13 @@ BEGIN
     -- Validate that _datasetType is appropriate for this analysis tool
     ---------------------------------------------------
 
-    If Not Exists ( SELECT ADT.analysis_tool_id
-                    FROM t_analysis_tool_allowed_dataset_type ADT
-                         INNER JOIN t_analysis_tool Tool
-                           ON ADT.analysis_tool_id = Tool.analysis_tool_id
-                    WHERE Tool.analysis_tool = _predefineInfo.AnalysisToolName AND
-                          ADT.dataset_type = _datasetType::citext
-        ) Then
-
+    If Not Exists (SELECT ADT.analysis_tool_id
+                   FROM t_analysis_tool_allowed_dataset_type ADT
+                        INNER JOIN t_analysis_tool Tool
+                          ON ADT.analysis_tool_id = Tool.analysis_tool_id
+                   WHERE Tool.analysis_tool = _predefineInfo.AnalysisToolName AND
+                         ADT.dataset_type = _datasetType::citext)
+    Then
         -- Dataset type is not allowed for this tool
         _useRule := false;
         _ruleAction := 'Skip';

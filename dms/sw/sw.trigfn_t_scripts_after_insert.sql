@@ -17,8 +17,14 @@ CREATE OR REPLACE FUNCTION sw.trigfn_t_scripts_after_insert() RETURNS trigger
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL;
 
-    INSERT INTO sw.T_Scripts_History
-        (script_id, script, results_tag, contents, parameters, backfill_to_dms)
+    INSERT INTO sw.T_Scripts_History (
+        script_id,
+        script,
+        results_tag,
+        contents,
+        parameters,
+        backfill_to_dms
+    )
     SELECT script_id, script, results_tag, contents, parameters, backfill_to_dms
     FROM inserted
     ORDER BY inserted.script_id;

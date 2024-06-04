@@ -233,7 +233,7 @@ BEGIN
         INSERT INTO Tmp_EUS_Users (person_id)
         SELECT EUS_Person_ID
         FROM (SELECT value AS EUS_Person_ID
-              FROM public.parse_delimited_integer_list ( _eusUsersList )
+              FROM public.parse_delimited_integer_list (_eusUsersList)
              ) SourceQ
              INNER JOIN t_eus_users
                ON SourceQ.EUS_Person_ID = t_eus_users.person_id;

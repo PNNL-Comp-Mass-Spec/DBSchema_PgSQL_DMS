@@ -288,10 +288,10 @@ BEGIN
             SELECT string_agg(Entry_ID::text, ',' ORDER BY Entry_ID),
                    string_agg(Job::text,      ',' ORDER BY Entry_ID)
             INTO _entryIDList, _jobList
-            FROM ( SELECT Entry_ID, Job
-                   FROM Tmp_StaleUploads
-                   ORDER BY Entry_ID
-                   LIMIT 20) FilterQ;
+            FROM (SELECT Entry_ID, Job
+                  FROM Tmp_StaleUploads
+                  ORDER BY Entry_ID
+                  LIMIT 20) FilterQ;
 
             -- MyEMSL upload tasks 1633334,1633470,1633694 for capture task jobs 3789097,3789252,3789798 have been unverified for over 45 days; error_code set to 101
             _message := format('MyEMSL upload tasks %s for capture task jobs %s have been',_entryIDList, _jobList);

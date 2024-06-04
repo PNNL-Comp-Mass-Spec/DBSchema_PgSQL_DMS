@@ -30,9 +30,9 @@ BEGIN
 
     UPDATE t_instrument_name
     SET source_path_id = RankQ.storage_path_id
-    FROM ( SELECT SPath.instrument, SPath.storage_path_id, Row_Number() OVER (PARTITION BY Instrument ORDER BY storage_path_id DESC) AS RowNum
-           FROM t_storage_path SPath
-           WHERE SPath.storage_path_function = 'inbox') RankQ
+    FROM (SELECT SPath.instrument, SPath.storage_path_id, Row_Number() OVER (PARTITION BY Instrument ORDER BY storage_path_id DESC) AS RowNum
+          FROM t_storage_path SPath
+          WHERE SPath.storage_path_function = 'inbox') RankQ
     WHERE T_Instrument_Name.instrument = RankQ.instrument AND
           RankQ.RowNum = 1 AND
           source_path_id <> RankQ.storage_path_id;
@@ -55,9 +55,9 @@ BEGIN
 
     UPDATE t_instrument_name
     SET storage_path_ID = RankQ.storage_path_id
-    FROM ( SELECT SPath.instrument, SPath.storage_path_id, Row_Number() OVER (PARTITION BY Instrument ORDER BY storage_path_id DESC) AS RowNum
-           FROM t_storage_path SPath
-           WHERE SPath.storage_path_function = 'raw-storage') RankQ
+    FROM (SELECT SPath.instrument, SPath.storage_path_id, Row_Number() OVER (PARTITION BY Instrument ORDER BY storage_path_id DESC) AS RowNum
+          FROM t_storage_path SPath
+          WHERE SPath.storage_path_function = 'raw-storage') RankQ
     WHERE T_Instrument_Name.instrument = RankQ.instrument AND
           RankQ.RowNum = 1 AND
           t_instrument_name.storage_path_ID <> RankQ.storage_path_id;

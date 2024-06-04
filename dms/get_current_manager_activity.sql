@@ -79,12 +79,12 @@ BEGIN
                RankQ.What,
                RankQ.Start,
                'Analysis Jobs' AS Source
-        FROM ( SELECT format('Analysis: %s', Processor) AS Who,
-                      format('Processing job %s, step %s, tool %s', job, step, tool) AS What,
-                      Start,
-                      Row_Number() OVER (PARTITION BY Processor ORDER BY Start DESC) AS StartRank
-               FROM sw.t_job_steps
-               WHERE State = 4
+        FROM (SELECT format('Analysis: %s', Processor) AS Who,
+                     format('Processing job %s, step %s, tool %s', job, step, tool) AS What,
+                     Start,
+                     Row_Number() OVER (PARTITION BY Processor ORDER BY Start DESC) AS StartRank
+              FROM sw.t_job_steps
+              WHERE State = 4
              ) RankQ
         WHERE RankQ.StartRank = 1;
 
@@ -98,12 +98,12 @@ BEGIN
                RankQ.What,
                RankQ.Start,
                'Capture Tasks' AS Source
-        FROM ( SELECT format('Capture: %s', Processor) AS Who,
-                      format('Processing task %s, step %s, tool %s', job, step, tool) AS What,
-                      Start,
-                      Row_Number() OVER (PARTITION BY Processor ORDER BY Start DESC) AS StartRank
-               FROM sw.t_job_steps
-               WHERE State = 4
+        FROM (SELECT format('Capture: %s', Processor) AS Who,
+                     format('Processing task %s, step %s, tool %s', job, step, tool) AS What,
+                     Start,
+                     Row_Number() OVER (PARTITION BY Processor ORDER BY Start DESC) AS StartRank
+              FROM sw.t_job_steps
+              WHERE State = 4
              ) RankQ
         WHERE RankQ.StartRank = 1;
 
@@ -132,19 +132,19 @@ BEGIN
            'Idle' AS What,
            M.Most_Recent_Start,
            'Analysis Jobs' AS Source
-    FROM (  -- Get distinct list of analysis managers that have been active within the date range
-            SELECT UnionQ.processor, Max(Most_Recent_Start) AS Most_Recent_Start
-            FROM ( SELECT processor, Max(Coalesce(Start, make_date(1970, 1, 1))) AS Most_Recent_Start
-                   FROM sw.t_job_steps
-                   WHERE Start BETWEEN _startDate AND _endDate
-                   GROUP BY processor
-                   UNION
-                   SELECT processor, Max(Coalesce(Start, make_date(1970, 1, 1))) AS Most_Recent_Start
-                   FROM sw.t_job_steps_history
-                   WHERE Start BETWEEN _startDate AND _endDate
-                   GROUP BY processor
-                ) UnionQ
-            GROUP BY UnionQ.processor
+    FROM (-- Get distinct list of analysis managers that have been active within the date range
+          SELECT UnionQ.processor, MAX(Most_Recent_Start) AS Most_Recent_Start
+          FROM (SELECT processor, MAX(Coalesce(Start, make_date(1970, 1, 1))) AS Most_Recent_Start
+                FROM sw.t_job_steps
+                WHERE Start BETWEEN _startDate AND _endDate
+                GROUP BY processor
+                UNION
+                SELECT processor, MAX(Coalesce(Start, make_date(1970, 1, 1))) AS Most_Recent_Start
+                FROM sw.t_job_steps_history
+                WHERE Start BETWEEN _startDate AND _endDate
+                GROUP BY processor
+              ) UnionQ
+          GROUP BY UnionQ.processor
         ) M;
 
     -- Update actively running processors
@@ -153,17 +153,17 @@ BEGIN
     SET Who = T.Who,
         What = T.What,
         Status_Date = T.Start
-    FROM ( SELECT RankQ.Who,
-                  RankQ.What,
-                  RankQ.Start
-           FROM ( SELECT format('Analysis: %s', Processor) AS Who,
-                         format('Processing job %s, step %s, tool %s', job, step, tool) AS What,
-                         Start,
-                         Row_Number() OVER (PARTITION BY Processor ORDER BY Start DESC) AS StartRank
-                  FROM sw.t_job_steps
-                  WHERE State = 4 AND Start BETWEEN _startDate AND _endDate
-                ) RankQ
-           WHERE RankQ.StartRank = 1
+    FROM (SELECT RankQ.Who,
+                 RankQ.What,
+                 RankQ.Start
+          FROM (SELECT format('Analysis: %s', Processor) AS Who,
+                       format('Processing job %s, step %s, tool %s', job, step, tool) AS What,
+                       Start,
+                       Row_Number() OVER (PARTITION BY Processor ORDER BY Start DESC) AS StartRank
+                FROM sw.t_job_steps
+                WHERE State = 4 AND Start BETWEEN _startDate AND _endDate
+               ) RankQ
+          WHERE RankQ.StartRank = 1
          ) T
     WHERE M.Who = T.Who;
 
@@ -179,19 +179,19 @@ BEGIN
            'Idle' AS What,
            M.Most_Recent_Start,
            'Capture Tasks' AS Source
-    FROM (  -- Get distinct list of analysis managers that have been active within the date range
-            SELECT UnionQ.processor, Max(Most_Recent_Start) AS Most_Recent_Start
-            FROM ( SELECT processor, Max(Coalesce(Start, make_date(1970, 1, 1))) AS Most_Recent_Start
-                   FROM cap.t_task_steps
-                   WHERE Start BETWEEN _startDate AND _endDate
-                   GROUP BY processor
-                   UNION
-                   SELECT processor, Max(Coalesce(Start, make_date(1970, 1, 1))) AS Most_Recent_Start
-                   FROM cap.t_task_steps_history
-                   WHERE Start BETWEEN _startDate AND _endDate
-                   GROUP BY processor
-                ) UnionQ
-            GROUP BY UnionQ.processor
+    FROM (-- Get distinct list of analysis managers that have been active within the date range
+          SELECT UnionQ.processor, MAX(Most_Recent_Start) AS Most_Recent_Start
+          FROM (SELECT processor, MAX(Coalesce(Start, make_date(1970, 1, 1))) AS Most_Recent_Start
+                FROM cap.t_task_steps
+                WHERE Start BETWEEN _startDate AND _endDate
+                GROUP BY processor
+                UNION
+                SELECT processor, MAX(Coalesce(Start, make_date(1970, 1, 1))) AS Most_Recent_Start
+                FROM cap.t_task_steps_history
+                WHERE Start BETWEEN _startDate AND _endDate
+                GROUP BY processor
+              ) UnionQ
+          GROUP BY UnionQ.processor
         ) M;
 
     -- Update actively running processors
@@ -200,17 +200,17 @@ BEGIN
     SET Who = T.Who,
         What = T.What,
         Status_Date = T.Start
-    FROM ( SELECT RankQ.Who,
-                  RankQ.What,
-                  RankQ.Start
-           FROM ( SELECT format('Capture: %s', Processor) AS Who,
-                         format('Processing task %s, step %s, tool %s', job, step, tool) AS What,
-                         Start,
-                         Row_Number() OVER (PARTITION BY Processor ORDER BY Start DESC) AS StartRank
-                  FROM cap.t_task_steps
-                  WHERE State = 4 AND Start BETWEEN _startDate AND _endDate
-                ) RankQ
-           WHERE RankQ.StartRank = 1
+    FROM (SELECT RankQ.Who,
+                 RankQ.What,
+                 RankQ.Start
+          FROM (SELECT format('Capture: %s', Processor) AS Who,
+                       format('Processing task %s, step %s, tool %s', job, step, tool) AS What,
+                       Start,
+                       Row_Number() OVER (PARTITION BY Processor ORDER BY Start DESC) AS StartRank
+                FROM cap.t_task_steps
+                WHERE State = 4 AND Start BETWEEN _startDate AND _endDate
+               ) RankQ
+          WHERE RankQ.StartRank = 1
          ) T
     WHERE M.Who = T.Who;
 

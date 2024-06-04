@@ -38,7 +38,7 @@ CREATE OR REPLACE FUNCTION timetable.add_job(job_name text, job_schedule timetab
 **      - @every 5 minutes
 **      - @every 10 seconds
 **      - @after 3 minutes
-**      - @reboot means to run the chain when PostgreSQL first starts, e.g. to clear the timetable log table ( timetable.log)
+**      - @reboot means to run the chain when PostgreSQL first starts, e.g. to clear the timetable log table (timetable.log)
 **
 **      Useful website for creating cron schedules:
 **      https://cron.help

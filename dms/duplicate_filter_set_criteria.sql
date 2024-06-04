@@ -76,7 +76,7 @@ BEGIN
     -- Validate that _destFilterSetID is defined in t_filter_sets
     -----------------------------------------
 
-    If Not Exists (SELECT filter_set_id FROM t_filter_sets WHERE filter_set_id = _destFilterSetID ) Then
+    If Not Exists (SELECT filter_set_id FROM t_filter_sets WHERE filter_set_id = _destFilterSetID) Then
         _message := format('filter set ID %s not found in t_filter_sets; make an entry in that table for this filter set before calling this procedure', _destFilterSetID);
         RAISE WARNING '%', _message;
 
@@ -88,7 +88,7 @@ BEGIN
     -- Validate that no groups exist for _destFilterSetID
     -----------------------------------------
 
-    If Exists (SELECT filter_set_id FROM t_filter_set_criteria_groups WHERE filter_set_id = _destFilterSetID ) Then
+    If Exists (SELECT filter_set_id FROM t_filter_set_criteria_groups WHERE filter_set_id = _destFilterSetID) Then
         _message := format('Existing groups were found for filter set ID %s; this is not allowed', _destFilterSetID);
         RAISE WARNING '%', _message;
 

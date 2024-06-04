@@ -53,8 +53,8 @@ BEGIN
        OLD.batch_id           <> NEW.batch_id Or
        OLD.request_name_code  IS DISTINCT FROM NEW.request_name_code Or
        OLD.request_type_id    IS DISTINCT FROM NEW.request_type_id Or
-       OLD.separation_group   IS DISTINCT FROM NEW.separation_group Then
-
+       OLD.separation_group   IS DISTINCT FROM NEW.separation_group
+    Then
         SELECT batch, created, batch_group_id
         INTO _batchInfo
         FROM t_requested_run_batches

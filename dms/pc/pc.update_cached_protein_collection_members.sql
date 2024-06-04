@@ -69,14 +69,14 @@ BEGIN
         Processed boolean NOT NULL
     );
 
-    CREATE UNIQUE INDEX IX_Tmp_ProteinCollections ON Tmp_ProteinCollections ( Protein_Collection_ID );
-    CREATE INDEX IX_Tmp_ProteinCollections_Processed ON Tmp_ProteinCollections ( Processed ) INCLUDE (Protein_Collection_ID);
+    CREATE UNIQUE INDEX IX_Tmp_ProteinCollections ON Tmp_ProteinCollections (Protein_Collection_ID);
+    CREATE INDEX IX_Tmp_ProteinCollections_Processed ON Tmp_ProteinCollections (Processed) INCLUDE (Protein_Collection_ID);
 
     CREATE TEMP TABLE Tmp_CurrentIDs (
         Protein_Collection_ID int NOT NULL
     );
 
-    CREATE UNIQUE INDEX IX_Tmp_CurrentIDs ON Tmp_CurrentIDs ( Protein_Collection_ID );
+    CREATE UNIQUE INDEX IX_Tmp_CurrentIDs ON Tmp_CurrentIDs (Protein_Collection_ID);
 
     CREATE TEMP TABLE Tmp_ProteinCollectionMembers (
         Protein_Collection_ID int NOT NULL,
@@ -401,8 +401,8 @@ BEGIN
 
         If Not Exists (SELECT Protein_Collection_ID
                        FROM Tmp_ProteinCollections
-                       WHERE NOT Processed) Then
-
+                       WHERE NOT Processed)
+        Then
             If _showDebug Then
                 RAISE INFO '';
                 RAISE INFO 'All collections have been processed';

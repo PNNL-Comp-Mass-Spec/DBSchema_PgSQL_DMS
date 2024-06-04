@@ -206,10 +206,11 @@ BEGIN
 
         -- Add a new row to t_dataset
 
-        INSERT INTO t_dataset (dataset, operator_username, comment, created, instrument_id, lc_column_id, dataset_type_id,
-                               wellplate, well, separation_type, dataset_state_id, last_affected, folder_name, storage_path_id,
-                               exp_id, internal_standard_id, dataset_rating_id, ds_prep_server_name,
-                               acq_time_start, acq_time_end, scan_count, file_size_bytes, file_info_last_modified, interval_to_next_ds
+        INSERT INTO t_dataset (
+            dataset, operator_username, comment, created, instrument_id, lc_column_id, dataset_type_id,
+            wellplate, well, separation_type, dataset_state_id, last_affected, folder_name, storage_path_id,
+            exp_id, internal_standard_id, dataset_rating_id, ds_prep_server_name,
+            acq_time_start, acq_time_end, scan_count, file_size_bytes, file_info_last_modified, interval_to_next_ds
         )
         SELECT _datasetNew AS Dataset_Name,
                operator_username,

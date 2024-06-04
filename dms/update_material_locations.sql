@@ -140,7 +140,7 @@ BEGIN
         SELECT Trim(XmlQ.Location), Trim(XmlQ.ID), Trim(XmlQ.Action), Trim(XmlQ.Value)
         FROM (
             SELECT xmltable.*
-            FROM ( SELECT _xml AS rooted_xml
+            FROM (SELECT _xml AS rooted_xml
                  ) Src,
                  XMLTABLE('//root/r'
                           PASSING Src.rooted_xml

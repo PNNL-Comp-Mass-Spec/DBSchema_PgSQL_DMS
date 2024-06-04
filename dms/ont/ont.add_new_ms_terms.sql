@@ -257,13 +257,13 @@ BEGIN
                 t.term_name <> s.term_name OR
                 t.identifier <> s.identifier OR
                 t.is_leaf <> s.is_leaf OR
-                Coalesce( NULLIF(t.parent_term_type, s.parent_term_type),
-                          NULLIF(s.parent_term_type, t.parent_term_type)) IS Not Null OR
+                Coalesce(NULLIF(t.parent_term_type, s.parent_term_type),
+                         NULLIF(s.parent_term_type, t.parent_term_type)) IS Not Null OR
                 t.parent_term_name <> s.parent_term_name OR
-                Coalesce( NULLIF(t.grandparent_term_type, s.grandparent_term_type),
-                          NULLIF(s.grandparent_term_type, t.grandparent_term_type)) IS Not Null OR
-                Coalesce( NULLIF(t.grandparent_term_name, s.grandparent_term_name),
-                          NULLIF(s.grandparent_term_name, t.grandparent_term_name)) IS Not Null
+                Coalesce(NULLIF(t.grandparent_term_type, s.grandparent_term_type),
+                         NULLIF(s.grandparent_term_type, t.grandparent_term_type)) IS Not Null OR
+                Coalesce(NULLIF(t.grandparent_term_name, s.grandparent_term_name),
+                         NULLIF(s.grandparent_term_name, t.grandparent_term_name)) IS Not Null
               );
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
@@ -274,9 +274,11 @@ BEGIN
         -- Add new rows
         ---------------------------------------------------
 
-        INSERT INTO ont.t_cv_ms (term_pk, term_name, identifier, is_leaf,
-                                  parent_term_type, parent_term_name, parent_term_id,
-                                  grandparent_term_type, grandparent_term_name, grandparent_term_id)
+        INSERT INTO ont.t_cv_ms (
+            term_pk, term_name, identifier, is_leaf,
+            parent_term_type, parent_term_name, parent_term_id,
+            grandparent_term_type, grandparent_term_name, grandparent_term_id
+        )
         SELECT s.term_pk, s.term_name, s.identifier, s.is_leaf,
                s.parent_term_type, s.parent_term_name, s.parent_term_id,
                s.grandparent_term_type, s.grandparent_term_name, s.grandparent_term_id

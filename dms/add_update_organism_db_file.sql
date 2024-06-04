@@ -114,13 +114,13 @@ BEGIN
 
     MERGE INTO t_organism_db_file AS target
     USING (SELECT _fastaFileName AS FileName,
-                  _organismID AS OrganismID,
-                  'Auto-created' AS Description,
-                  0 AS Active,
-                  _numProteins AS NumProteins,
-                  _numResidues AS NumResidues,
-                  _fileSizeKB AS FileSizeKB,
-                  1 AS Valid
+               _organismID AS OrganismID,
+               'Auto-created' AS Description,
+               0 AS Active,
+               _numProteins AS NumProteins,
+               _numResidues AS NumResidues,
+               _fileSizeKB AS FileSizeKB,
+               1 AS Valid
           ) AS Source
     ON (target.file_name = source.FileName)
     WHEN MATCHED THEN

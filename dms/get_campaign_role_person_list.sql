@@ -35,19 +35,19 @@ BEGIN
     If Not _campaignID Is Null And Not _role Is Null Then
         SELECT string_agg(LookupQ.Value, ', ' ORDER BY LookupQ.Value)
         INTO _result
-        FROM (  SELECT CASE WHEN _mode::citext IN ('PRN', 'USERNAME')
-                            THEN U.username
-                            ELSE U.name_with_username
-                       END AS Value
-                FROM T_Research_Team_Roles R
-                     INNER JOIN T_Research_Team_Membership M
-                       ON R.role_id = M.role_id
-                     INNER JOIN T_Users U
-                       ON M.user_id = U.user_id
-                     INNER JOIN T_Campaign C
-                       ON M.team_id = C.research_team
-                WHERE C.campaign_id = _campaignID AND
-                      R.role = _role::citext
+        FROM (SELECT CASE WHEN _mode::citext IN ('PRN', 'USERNAME')
+                          THEN U.username
+                          ELSE U.name_with_username
+                     END AS Value
+              FROM T_Research_Team_Roles R
+                   INNER JOIN T_Research_Team_Membership M
+                     ON R.role_id = M.role_id
+                   INNER JOIN T_Users U
+                     ON M.user_id = U.user_id
+                   INNER JOIN T_Campaign C
+                     ON M.team_id = C.research_team
+              WHERE C.campaign_id = _campaignID AND
+                    R.role = _role::citext
              ) LookupQ;
     End If;
 

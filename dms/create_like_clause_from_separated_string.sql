@@ -48,9 +48,9 @@ BEGIN
         End If;
 
         If _useSimilarTo Then
-            _result := format('%s((%s Similar To ''%s''))', _result, _fieldName, _currentValue );
+            _result := format('%s((%s Similar To ''%s''))', _result, _fieldName, _currentValue);
         Else
-            _result := format('%s((%s ILike ''%s''))',       _result, _fieldName, _currentValue );
+            _result := format('%s((%s ILike ''%s''))',      _result, _fieldName, _currentValue);
         End If;
 
     END LOOP;

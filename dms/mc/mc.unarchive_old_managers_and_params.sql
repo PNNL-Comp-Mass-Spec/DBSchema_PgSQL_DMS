@@ -221,12 +221,13 @@ BEGIN
     RAISE INFO 'Insert into t_mgrs';
 
     INSERT INTO mc.t_mgrs (
-                         mgr_id,
-                         mgr_name,
-                         mgr_type_id,
-                         param_value_changed,
-                         control_from_website,
-                         comment )
+        mgr_id,
+        mgr_name,
+        mgr_type_id,
+        param_value_changed,
+        control_from_website,
+        comment
+    )
     OVERRIDING SYSTEM VALUE
     SELECT M.mgr_id,
            M.mgr_name,
@@ -250,13 +251,14 @@ BEGIN
     RAISE INFO 'Insert into t_param_value';
 
     INSERT INTO mc.t_param_value (
-             entry_id,
-             param_type_id,
-             value,
-             mgr_id,
-             comment,
-             last_affected,
-             entered_by )
+        entry_id,
+        param_type_id,
+        value,
+        mgr_id,
+        comment,
+        last_affected,
+        entered_by
+    )
     OVERRIDING SYSTEM VALUE
     SELECT PV.entry_id,
            PV.param_type_id,

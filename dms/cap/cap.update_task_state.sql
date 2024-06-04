@@ -264,7 +264,7 @@ BEGIN
                   FROM cap.t_task_steps
                   WHERE state IN (2, 3, 4, 5, 13)) AND
           NOT Job IN (SELECT Job FROM cap.t_task_steps WHERE state = 6) AND
-          NOT Job In (SELECT Job FROM Tmp_ChangedJobs);
+          NOT Job IN (SELECT Job FROM Tmp_ChangedJobs);
     --
     GET DIAGNOSTICS _matchCount = ROW_COUNT;
 

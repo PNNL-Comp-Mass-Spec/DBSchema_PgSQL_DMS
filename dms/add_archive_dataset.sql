@@ -156,14 +156,14 @@ BEGIN
         purge_policy,
         purge_priority
     )
-    VALUES(_datasetID,
-           1,
-           1,
-           _archivePathID,
-           CURRENT_TIMESTAMP,
-           CURRENT_TIMESTAMP + make_interval(months => _purgeHoldoffMonths),
-           _purgePolicy,
-           _purgePriority);
+    VALUES (_datasetID,
+            1,
+            1,
+            _archivePathID,
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP + make_interval(months => _purgeHoldoffMonths),
+            _purgePolicy,
+            _purgePriority);
 
 END
 $$;

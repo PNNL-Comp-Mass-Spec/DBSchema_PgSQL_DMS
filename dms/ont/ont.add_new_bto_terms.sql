@@ -168,12 +168,12 @@ BEGIN
         WHERE t.term_pk = s.term_pk AND
               t.parent_term_id = s.parent_term_id AND
               Coalesce(t.grandparent_term_id, '') = Coalesce(s.grandparent_term_id, '') AND
-              ( t.term_name <> s.term_name OR
-                t.identifier <> s.identifier OR
-                t.is_leaf <> s.is_leaf OR
-                t.synonyms <> s.synonyms OR
-                t.parent_term_name <> s.parent_term_name OR
-                t.grandparent_term_name IS DISTINCT FROM s.grandparent_term_name
+              (t.term_name <> s.term_name OR
+               t.identifier <> s.identifier OR
+               t.is_leaf <> s.is_leaf OR
+               t.synonyms <> s.synonyms OR
+               t.parent_term_name <> s.parent_term_name OR
+               t.grandparent_term_name IS DISTINCT FROM s.grandparent_term_name
               );
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
@@ -184,9 +184,11 @@ BEGIN
         -- Add new rows
         ---------------------------------------------------
 
-        INSERT INTO ont.t_cv_bto (term_pk, term_name, identifier, is_leaf, synonyms,
-                                  parent_term_name, parent_term_id,
-                                  grandparent_term_name, grandparent_term_id)
+        INSERT INTO ont.t_cv_bto (
+            term_pk, term_name, identifier, is_leaf, synonyms,
+            parent_term_name, parent_term_id,
+            grandparent_term_name, grandparent_term_id
+        )
         SELECT s.term_pk, s.term_name, s.identifier, s.is_leaf, s.synonyms,
                s.parent_term_name, s.parent_term_id,
                s.grandparent_term_name, s.grandparent_term_id
@@ -293,10 +295,11 @@ BEGIN
                     FROM Tmp_InvalidTermNames s
                 LOOP
 
-                    If Exists (Select *
+                    If Exists (SELECT t.identifier
                                FROM ont.t_cv_bto t
                                WHERE t.identifier = _invalidTerm.identifier AND
-                                     Not t.entry_id IN (Select d.entry_id FROM Tmp_IDsToDelete d)) Then
+                                     NOT t.entry_id IN (SELECT d.entry_id FROM Tmp_IDsToDelete d))
+                    Then
                         -- Safe to delete
                         DELETE FROM ont.t_cv_bto t
                         WHERE t.identifier = _invalidTerm.Identifier AND
@@ -379,13 +382,13 @@ BEGIN
                  t.parent_term_id = s.parent_term_id AND
                  Coalesce(t.grandparent_term_id, '') = Coalesce(s.grandparent_term_id, '')
         WHERE s.matches_existing = 1 AND
-              ( t.term_name <> s.term_name OR
-                t.identifier <> s.identifier OR
-                t.is_leaf <> s.is_leaf OR
-                t.synonyms <> s.synonyms OR
-                t.parent_term_name <> s.parent_term_name OR
-                t.grandparent_term_name IS DISTINCT FROM s.grandparent_term_name
-               )
+              (t.term_name <> s.term_name OR
+               t.identifier <> s.identifier OR
+               t.is_leaf <> s.is_leaf OR
+               t.synonyms <> s.synonyms OR
+               t.parent_term_name <> s.parent_term_name OR
+               t.grandparent_term_name IS DISTINCT FROM s.grandparent_term_name
+              )
         UNION
         SELECT 'New item to add'::citext AS Item_Type,
                0 AS entry_id,

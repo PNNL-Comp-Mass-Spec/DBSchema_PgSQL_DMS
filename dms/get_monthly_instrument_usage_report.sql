@@ -128,12 +128,12 @@ BEGIN
             FROM t_instrument_name InstName
                  INNER JOIN t_emsl_dms_instrument_mapping InstMapping
                    ON InstName.instrument_id = InstMapping.dms_instrument_id
-                 INNER JOIN ( SELECT InstMapping.eus_instrument_id
-                              FROM t_instrument_name InstName
-                                   INNER JOIN t_emsl_dms_instrument_mapping InstMapping
-                                     ON InstName.instrument_id = InstMapping.dms_instrument_id
-                              GROUP BY InstMapping.eus_instrument_id
-                              HAVING COUNT(InstMapping.dms_instrument_id) > 1
+                 INNER JOIN (SELECT InstMapping.eus_instrument_id
+                             FROM t_instrument_name InstName
+                                  INNER JOIN t_emsl_dms_instrument_mapping InstMapping
+                                    ON InstName.instrument_id = InstMapping.dms_instrument_id
+                             GROUP BY InstMapping.eus_instrument_id
+                             HAVING COUNT(InstMapping.dms_instrument_id) > 1
                             ) LookupQ
                    ON InstMapping.eus_instrument_id = LookupQ.eus_instrument_id
             WHERE InstName.instrument = _instrument::citext;
@@ -876,16 +876,16 @@ BEGIN
                    _yearValue AS Year,
                    _monthValue AS Month ,
                    0 AS Dataset_ID
-            FROM ( SELECT MIN(U.Start) AS Start,
-                          U.Type,
-                          SUM(CASE
-                                  WHEN U.Type = 'Interval' THEN U.Interval
-                                  ELSE U.Duration
-                              END) AS Minutes,
-                          U.Proposal,
-                          U.Usage
-                   FROM Tmp_InstrumentUsage U
-                   GROUP BY U.Type, U.Usage, U.Proposal
+            FROM (SELECT MIN(U.Start) AS Start,
+                         U.Type,
+                         SUM(CASE
+                                 WHEN U.Type = 'Interval' THEN U.Interval
+                                 ELSE U.Duration
+                             END) AS Minutes,
+                         U.Proposal,
+                         U.Usage
+                  FROM Tmp_InstrumentUsage U
+                  GROUP BY U.Type, U.Usage, U.Proposal
                  ) SumQ
             ORDER BY SumQ.Type, SumQ.Usage, SumQ.Proposal;
 

@@ -248,7 +248,13 @@ BEGIN
 
     -- New or held jobs are available
     If _debugMode Then
-        INSERT INTO Tmp_JobDebugMessages (Message, Job, Script, DMS_State, Pipeline_State)
+        INSERT INTO Tmp_JobDebugMessages (
+            Message,
+            Job,
+            Script,
+            DMS_State,
+            Pipeline_State
+        )
         SELECT 'New or Held Jobs', J.job, J.script, J.state, T.state
         FROM Tmp_DMSJobs J
              LEFT OUTER JOIN sw.t_jobs T
@@ -345,7 +351,12 @@ BEGIN
         End If;
 
         If _debugMode Then
-            INSERT INTO Tmp_JobDebugMessages (Message, job, script, DMS_State, Pipeline_State)
+            INSERT INTO Tmp_JobDebugMessages (
+                Message,
+                Job,
+                Script,
+                DMS_State,
+                Pipeline_State)
             SELECT 'Jobs to Reset', J.job, J.script, J.state, T.state
             FROM Tmp_ResetJobs R INNER JOIN Tmp_DMSJobs J ON R.job = J.job
                  INNER JOIN sw.t_jobs T ON J.job = T.job
@@ -396,8 +407,8 @@ BEGIN
         ---------------------------------------------------
 
         INSERT INTO sw.t_jobs (
-            job, priority, script, State, Dataset, Dataset_ID, Transfer_Folder_Path,
-            comment, special_processing, storage_server, owner_username, Data_Pkg_ID
+            job, priority, script, state, dataset, dataset_id, transfer_folder_path,
+            comment, special_processing, storage_server, owner_username, data_pkg_id
         )
         SELECT DJ.job, DJ.priority, DJ.script, 0 AS State, DJ.Dataset, DJ.Dataset_ID, DJ.Transfer_Folder_Path,
                DJ.comment, DJ.special_processing, sw.extract_server_name(DJ.transfer_folder_path) AS Storage_Server, DJ.Owner_Username, 0 AS Data_Pkg_ID
@@ -449,7 +460,13 @@ BEGIN
         -- Resume or reset jobs
 
         If _debugMode Then
-            INSERT INTO Tmp_JobDebugMessages (Message, job, script, DMS_State, Pipeline_State)
+            INSERT INTO Tmp_JobDebugMessages (
+                Message,
+                Job,
+                Script,
+                DMS_State,
+                Pipeline_State
+            )
             SELECT 'Jobs to Resume', J.job, J.script, J.state, T.state
             FROM Tmp_JobsToResumeOrReset R
                  INNER JOIN Tmp_DMSJobs J
@@ -463,7 +480,13 @@ BEGIN
     End If;
 
     If _debugMode Then
-        INSERT INTO Tmp_JobDebugMessages (Message, job, script, DMS_State, Pipeline_State)
+        INSERT INTO Tmp_JobDebugMessages (
+            Message,
+            Job,
+            Script,
+            DMS_State,
+            Pipeline_State
+        )
         SELECT 'Jobs to Suspend', J.job, J.script, J.state, T.state
         FROM sw.t_jobs T
              INNER JOIN Tmp_DMSJobs J
@@ -603,8 +626,8 @@ BEGIN
              INNER JOIN Tmp_JobsToResumeOrReset RJ
                ON DJ.Job = RJ.Job
         WHERE J.Job = DJ.Job AND
-              ( Coalesce(J.Comment, '') <> Coalesce(DJ.Comment,'') OR
-                Coalesce(J.Special_Processing, '') <> Coalesce(DJ.Special_Processing, '')
+              (Coalesce(J.Comment, '') <> Coalesce(DJ.Comment,'') OR
+               Coalesce(J.Special_Processing, '') <> Coalesce(DJ.Special_Processing, '')
               );
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;

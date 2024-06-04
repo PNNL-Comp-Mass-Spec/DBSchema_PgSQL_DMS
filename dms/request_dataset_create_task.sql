@@ -152,33 +152,33 @@ BEGIN
 
             SELECT xml_item::text
             INTO _parameters
-            FROM ( SELECT
-                     XMLELEMENT(name "root",
-                       XMLELEMENT(name "dataset", dataset),
-                       XMLELEMENT(name "experiment", experiment),
-                       XMLELEMENT(name "instrument", instrument),
-                       XMLELEMENT(name "separation_type", separation_type),
-                       XMLELEMENT(name "lc_cart", lc_cart),
-                       XMLELEMENT(name "lc_cart_config", lc_cart_config),
-                       XMLELEMENT(name "lc_column", lc_column),
-                       XMLELEMENT(name "wellplate", wellplate),
-                       XMLELEMENT(name "well", well),
-                       XMLELEMENT(name "dataset_type", dataset_type),
-                       XMLELEMENT(name "operator_username", operator_username),
-                       XMLELEMENT(name "ds_creator_username", ds_creator_username),
-                       XMLELEMENT(name "comment", comment),
-                       XMLELEMENT(name "interest_rating", interest_rating),
-                       XMLELEMENT(name "request", request),
-                       XMLELEMENT(name "work_package", work_package),
-                       XMLELEMENT(name "eus_usage_type", eus_usage_type),
-                       XMLELEMENT(name "eus_proposal_id", eus_proposal_id),
-                       XMLELEMENT(name "eus_users", eus_users),
-                       XMLELEMENT(name "capture_share_name", capture_share_name),
-                       XMLELEMENT(name "capture_subdirectory", capture_subdirectory),
-                       XMLELEMENT(name "command", command)
-                            ) AS xml_item
-                   FROM public.t_dataset_create_queue
-                   WHERE entry_id = _entryID
+            FROM (SELECT
+                    XMLELEMENT(name "root",
+                      XMLELEMENT(name "dataset", dataset),
+                      XMLELEMENT(name "experiment", experiment),
+                      XMLELEMENT(name "instrument", instrument),
+                      XMLELEMENT(name "separation_type", separation_type),
+                      XMLELEMENT(name "lc_cart", lc_cart),
+                      XMLELEMENT(name "lc_cart_config", lc_cart_config),
+                      XMLELEMENT(name "lc_column", lc_column),
+                      XMLELEMENT(name "wellplate", wellplate),
+                      XMLELEMENT(name "well", well),
+                      XMLELEMENT(name "dataset_type", dataset_type),
+                      XMLELEMENT(name "operator_username", operator_username),
+                      XMLELEMENT(name "ds_creator_username", ds_creator_username),
+                      XMLELEMENT(name "comment", comment),
+                      XMLELEMENT(name "interest_rating", interest_rating),
+                      XMLELEMENT(name "request", request),
+                      XMLELEMENT(name "work_package", work_package),
+                      XMLELEMENT(name "eus_usage_type", eus_usage_type),
+                      XMLELEMENT(name "eus_proposal_id", eus_proposal_id),
+                      XMLELEMENT(name "eus_users", eus_users),
+                      XMLELEMENT(name "capture_share_name", capture_share_name),
+                      XMLELEMENT(name "capture_subdirectory", capture_subdirectory),
+                      XMLELEMENT(name "command", command)
+                           ) AS xml_item
+                  FROM public.t_dataset_create_queue
+                  WHERE entry_id = _entryID
                 ) AS LookupQ;
 
             If _infoOnly Then

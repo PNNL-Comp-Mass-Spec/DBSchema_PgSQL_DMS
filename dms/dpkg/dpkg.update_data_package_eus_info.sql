@@ -193,7 +193,7 @@ BEGIN
                 FROM dpkg.t_data_package_eus_proposals
                 WHERE data_pkg_id IN (SELECT Data_Pkg_ID
                                       FROM Tmp_DataPackagesToUpdate
-                                      WHERE Best_EUS_Proposal_ID IS NULL )
+                                      WHERE Best_EUS_Proposal_ID IS NULL)
                ) RankQ
           WHERE RankQ.IdRank = 1
          ) FilterQ
@@ -249,9 +249,9 @@ BEGIN
         instrument        = Coalesce(Best_Instrument_Name,   instrument)
     FROM Tmp_DataPackagesToUpdate Src
     WHERE DP.data_pkg_id = Src.Data_Pkg_ID AND
-          ( Coalesce(DP.EUS_Proposal_ID, '') <> Src.Best_EUS_Proposal_ID OR
-            Not Src.Best_EUS_Instrument_ID IS NULL AND DP.EUS_Instrument_ID IS DISTINCT FROM Src.Best_EUS_Instrument_ID OR
-            Coalesce(DP.Instrument, '') <> Src.Best_Instrument_Name
+          (Coalesce(DP.EUS_Proposal_ID, '') <> Src.Best_EUS_Proposal_ID OR
+           NOT Src.Best_EUS_Instrument_ID IS NULL AND DP.EUS_Instrument_ID IS DISTINCT FROM Src.Best_EUS_Instrument_ID OR
+           Coalesce(DP.Instrument, '') <> Src.Best_Instrument_Name
           );
     --
     GET DIAGNOSTICS _updateCount = ROW_COUNT;

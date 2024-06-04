@@ -97,7 +97,7 @@ BEGIN
 
     _colList := 'request, name, status, batch, experiment, dataset, instrument, cart, lc_col, block, run_order';
 
-    SELECT make_factor_crosstab_sql ( _colList, _viewName => 'V_Requested_Run_Unified_List_Ex')
+    SELECT make_factor_crosstab_sql (_colList, _viewName => 'V_Requested_Run_Unified_List_Ex')
     INTO _sql;
 
     -----------------------------------------

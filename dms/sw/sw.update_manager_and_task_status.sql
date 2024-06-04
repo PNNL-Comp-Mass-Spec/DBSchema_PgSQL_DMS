@@ -102,7 +102,12 @@ BEGIN
     -- Check whether this processor is missing from sw.t_processor_status
     If Not Exists (SELECT processor_name FROM sw.t_processor_status WHERE processor_name = _mgrName) Then
         -- Processor is missing; add it
-        INSERT INTO sw.t_processor_status (processor_name, mgr_status, task_status, Task_Detail_Status)
+        INSERT INTO sw.t_processor_status (
+            processor_name,
+            mgr_status,
+            task_status,
+            Task_Detail_Status
+        )
         VALUES (_mgrName, _mgrStatus, _taskStatus, _taskDetailStatus);
     End If;
 

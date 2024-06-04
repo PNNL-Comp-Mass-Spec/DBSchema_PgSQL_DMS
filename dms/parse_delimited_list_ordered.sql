@@ -74,7 +74,7 @@ BEGIN
 
     RETURN QUERY
     SELECT (Row_Number() OVER ())::int AS entry_id, Trim(SplitQ.Value) AS ValueText
-    FROM ( SELECT regexp_split_to_table(_delimitedList, _delimiter) AS Value
+    FROM (SELECT regexp_split_to_table(_delimitedList, _delimiter) AS Value
          ) SplitQ
     WHERE COALESCE(Trim(SplitQ.Value), '') <> ''
     LIMIT _maxRows;

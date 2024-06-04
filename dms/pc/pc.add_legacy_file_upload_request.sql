@@ -102,7 +102,7 @@ BEGIN
         date_requested,
         authentication_hash
     )
-    VALUES(_legacyFileID, _legacyFileName, CURRENT_TIMESTAMP, _authenticationHash)
+    VALUES (_legacyFileID, _legacyFileName, CURRENT_TIMESTAMP, _authenticationHash)
     RETURNING upload_request_id
     INTO _requestID;
 

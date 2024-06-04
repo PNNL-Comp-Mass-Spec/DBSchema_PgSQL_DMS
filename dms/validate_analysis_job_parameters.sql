@@ -304,10 +304,10 @@ BEGIN
                             'Please use tool MSGFPlus_MzML instead (for example requests, '
                             'see https://dms2.pnl.gov/analysis_job_request/report/-/-/-/-/StartsWith__MSGFPlus_MzML_SplitFasta/-/- )';
 
-            ElsIf _mode = 'reset' And ( _toolName::citext SIMILAR TO 'MAC[_]%' Or
-                                        _toolName::citext = 'MaxQuant_DataPkg' Or
-                                        _toolName::citext = 'MSFragger_DataPkg' Or
-                                        _toolName::citext = 'DiaNN_DataPkg'
+            ElsIf _mode = 'reset' And (_toolName::citext SIMILAR TO 'MAC[_]%' Or
+                                       _toolName::citext = 'MaxQuant_DataPkg' Or
+                                       _toolName::citext = 'MSFragger_DataPkg' Or
+                                       _toolName::citext = 'DiaNN_DataPkg'
                                       ) Then
 
                 _message := format('%s %s must be reset by clicking Edit on the Pipeline Job Detail report',
@@ -365,7 +365,7 @@ BEGIN
                                                FROM t_analysis_tool AnTool
                                                     INNER JOIN t_analysis_tool_allowed_instrument_class AIC
                                                       ON AnTool.analysis_tool_id = AIC.analysis_tool_id
-                                               WHERE AnTool.analysis_tool = _toolName::citext );
+                                               WHERE AnTool.analysis_tool = _toolName::citext);
 
         If Coalesce(_datasetList, '') <> '' Then
             _message := format('The instrument class for the following datasets is not compatible with the analysis tool: "%s"', _datasetList);
@@ -394,7 +394,7 @@ BEGIN
                                            FROM t_analysis_tool_allowed_dataset_type ADT
                                                 INNER JOIN t_analysis_tool Tool
                                                   ON ADT.analysis_tool_id = Tool.analysis_tool_id
-                                           WHERE Tool.analysis_tool = _toolName::citext );
+                                           WHERE Tool.analysis_tool = _toolName::citext);
 
         If _datasetList <> '' Then
             _message := format('The dataset type for the following datasets is not compatible with the analysis tool: "%s"', _datasetList);
@@ -465,9 +465,8 @@ BEGIN
                                     INNER JOIN t_analysis_tool ToolList
                                       ON PF.param_file_type_id = ToolList.param_file_type_id
                                WHERE PF.param_file_name = _paramFileName::citext AND
-                                     ToolList.analysis_tool = _toolName::citext
-                              ) Then
-
+                                     ToolList.analysis_tool = _toolName::citext)
+                Then
                     SELECT ToolList.analysis_tool
                     INTO _paramFileTool
                     FROM t_param_files PF
@@ -541,9 +540,8 @@ BEGIN
             If Not Exists (SELECT file_name
                            FROM V_Settings_File_Picklist SFP
                            WHERE SFP.File_Name = _settingsFileName::citext AND
-                                 SFP.Analysis_Tool = _toolName::citext
-                          ) Then
-
+                                 SFP.Analysis_Tool = _toolName::citext)
+            Then
                 SELECT SFP.analysis_tool
                 INTO _settingsFileTool
                 FROM V_Settings_File_Picklist SFP
@@ -581,8 +579,8 @@ BEGIN
                 If Exists (SELECT DI.dataset_id
                            FROM Tmp_DatasetInfo INNER JOIN
                                 t_dataset_info DI ON DI.dataset_id = Tmp_DatasetInfo.dataset_id
-                           WHERE DI.Profile_Scan_Count_MSn > 0
-                          ) Then
+                           WHERE DI.Profile_Scan_Count_MSn > 0)
+                Then
                     _profileModeMSn := 1;
                 End If;
 
@@ -779,14 +777,13 @@ BEGIN
                         'BP_Sediment_Genomes_Jansson_stop-to-stop_6frames.fasta',
                         'GOs_PredictedByClustering_2009-02-11.fasta',
                         'Shew_MR1_GOs_Meso_2009-02-11.fasta',
-                        'Switchgrass_Rhiz_MG-RAST_metagenome_DecoyWithContams_2013-10-10.fasta') Then
-
-                    If Not ( _paramFileName ILike '%PartTryp_NoMods%' Or
-                             _paramFileName ILike '%PartTryp_StatCysAlk.txt' Or
-                             _paramFileName::citext SIMILAR TO '%PartTryp_StatCysAlk_[0-9]%ppm%' Or
-                             _paramFileName::citext SIMILAR TO '%[_]Tryp[_]%'
-                            ) Then
-
+                        'Switchgrass_Rhiz_MG-RAST_metagenome_DecoyWithContams_2013-10-10.fasta')
+                Then
+                    If Not (_paramFileName ILike '%PartTryp_NoMods%' Or
+                            _paramFileName ILike '%PartTryp_StatCysAlk.txt' Or
+                            _paramFileName::citext SIMILAR TO '%PartTryp_StatCysAlk_[0-9]%ppm%' Or
+                            _paramFileName::citext SIMILAR TO '%[_]Tryp[_]%')
+                    Then
                         _message := format('Legacy fasta file "%s" is very large (%s); you must choose a parameter file that is fully tryptic (MSGFPlus_Tryp_) '
                                            'or is partially tryptic but has no dynamic mods (MSGFPlus_PartTryp_NoMods)',
                                             _organismDBName, _sizeDescription);
@@ -809,8 +806,8 @@ BEGIN
                     'uniref90_2013-02-14.fasta',
                     'Uniprot_ArchaeaBacteriaFungi_SprotTrembl_2014-4-16.fasta',
                     'Kansas_metagenome_12902_TrypPig_Bov_2014-11-25.fasta',
-                    'HoplandAll_assembled_Tryp_Pig_Bov_2015-04-06.fasta') Then
-
+                    'HoplandAll_assembled_Tryp_Pig_Bov_2015-04-06.fasta')
+                Then
                     SELECT COUNT(mod_entry_id)
                     INTO _dynModCount
                     FROM V_Param_File_Mass_Mods

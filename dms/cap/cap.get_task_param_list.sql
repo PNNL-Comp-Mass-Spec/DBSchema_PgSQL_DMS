@@ -54,9 +54,9 @@ BEGIN
     INTO _result
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
-               FROM cap.T_task_Parameters
-               WHERE job = _job
+        FROM (SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
+              FROM cap.T_task_Parameters
+              WHERE job = _job
              ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml

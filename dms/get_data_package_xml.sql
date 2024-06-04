@@ -90,27 +90,27 @@ BEGIN
 
         SELECT xml_item
         INTO _paramXML
-        FROM ( SELECT
-                 XMLAGG(XMLELEMENT(
-                        NAME package,
-                        XMLATTRIBUTES(
-                            DP.data_pkg_id AS id,
-                            DP.package_name AS name,
-                            DP.description,
-                            DP.owner_username AS owner,
-                            DP.path_team AS team,
-                            DP.state,
-                            DP.package_type,
-                            Coalesce(DP.requester, '') AS requester,
-                            DP.total_item_count AS total,
-                            DP.analysis_job_item_count AS jobs,
-                            DP.dataset_item_count AS datasets,
-                            DP.experiment_item_count AS experiments,
-                            DP.biomaterial_item_count AS biomaterial,
-                            DP.created::date::text AS created))
-                       ) AS xml_item
-               FROM dpkg.t_data_package AS DP
-               WHERE DP.data_pkg_id = _dataPackageID
+        FROM (SELECT
+                XMLAGG(XMLELEMENT(
+                       NAME package,
+                       XMLATTRIBUTES(
+                           DP.data_pkg_id AS id,
+                           DP.package_name AS name,
+                           DP.description,
+                           DP.owner_username AS owner,
+                           DP.path_team AS team,
+                           DP.state,
+                           DP.package_type,
+                           Coalesce(DP.requester, '') AS requester,
+                           DP.total_item_count AS total,
+                           DP.analysis_job_item_count AS jobs,
+                           DP.dataset_item_count AS datasets,
+                           DP.experiment_item_count AS experiments,
+                           DP.biomaterial_item_count AS biomaterial,
+                           DP.created::date::text AS created))
+                      ) AS xml_item
+              FROM dpkg.t_data_package AS DP
+              WHERE DP.data_pkg_id = _dataPackageID
             ) AS LookupQ;
 
         _result := format('%s    %s%s  %s%s',
@@ -128,23 +128,23 @@ BEGIN
 
         SELECT xml_item
         INTO _experimentXML
-        FROM ( SELECT
-                 XMLAGG(XMLELEMENT(
-                        NAME experiment,
-                        XMLATTRIBUTES(
-                            DPE.experiment_id,
-                            EX.experiment,
-                            Org.organism,
-                            C.campaign,
-                            EX.created,
-                            Coalesce(EX.reason, '') AS reason,
-                            Coalesce(DPE.package_comment, '') AS package_comment))
-                       ) AS xml_item
-               FROM dpkg.t_data_package_experiments AS DPE
-                    INNER JOIN t_experiments EX ON DPE.Experiment_ID = EX.exp_id
-                    INNER JOIN t_campaign C ON C.campaign_id = EX.campaign_id
-                    INNER JOIN public.t_organisms Org ON Org.organism_id = EX.organism_id
-               WHERE DPE.data_pkg_id = _dataPackageID
+        FROM (SELECT
+                XMLAGG(XMLELEMENT(
+                       NAME experiment,
+                       XMLATTRIBUTES(
+                           DPE.experiment_id,
+                           EX.experiment,
+                           Org.organism,
+                           C.campaign,
+                           EX.created,
+                           Coalesce(EX.reason, '') AS reason,
+                           Coalesce(DPE.package_comment, '') AS package_comment))
+                      ) AS xml_item
+              FROM dpkg.t_data_package_experiments AS DPE
+                   INNER JOIN t_experiments EX ON DPE.Experiment_ID = EX.exp_id
+                   INNER JOIN t_campaign C ON C.campaign_id = EX.campaign_id
+                   INNER JOIN public.t_organisms Org ON Org.organism_id = EX.organism_id
+              WHERE DPE.data_pkg_id = _dataPackageID
             ) AS LookupQ;
 
         If Coalesce(_experimentXML::text, '') = '' Then
@@ -169,24 +169,23 @@ BEGIN
 
         SELECT xml_item
         INTO _datasetXML
-        FROM ( SELECT
-                 XMLAGG(XMLELEMENT(
-                        NAME dataset,
-                        XMLATTRIBUTES(
-                            DS.dataset_id,
-                            DS.dataset,
-                            -- EX.experiment,
-                            DS.exp_id AS Experiment_ID,
-                            InstName.instrument,
-                            DS.created,
-                            Coalesce(DPD.package_comment, '') AS package_comment))
-                       ) AS xml_item
-               FROM dpkg.t_data_package_datasets AS DPD
-                    INNER JOIN t_dataset AS DS ON DS.Dataset_ID = DPD.Dataset_ID
-                    INNER JOIN t_instrument_name InstName ON DS.instrument_id = InstName.instrument_id
-               WHERE DPD.data_pkg_id = _dataPackageID
+        FROM (SELECT
+                XMLAGG(XMLELEMENT(
+                       NAME dataset,
+                       XMLATTRIBUTES(
+                           DS.dataset_id,
+                           DS.dataset,
+                           -- EX.experiment,
+                           DS.exp_id AS Experiment_ID,
+                           InstName.instrument,
+                           DS.created,
+                           Coalesce(DPD.package_comment, '') AS package_comment))
+                      ) AS xml_item
+              FROM dpkg.t_data_package_datasets AS DPD
+                   INNER JOIN t_dataset AS DS ON DS.Dataset_ID = DPD.Dataset_ID
+                   INNER JOIN t_instrument_name InstName ON DS.instrument_id = InstName.instrument_id
+              WHERE DPD.data_pkg_id = _dataPackageID
             ) AS LookupQ;
-
 
         If Coalesce(_datasetXML::text, '') = '' Then
             _result := format('%s  %s%s',
@@ -210,26 +209,26 @@ BEGIN
 
         SELECT xml_item
         INTO _jobXML
-        FROM ( SELECT
-                 XMLAGG(XMLELEMENT(
-                        NAME job,
-                        XMLATTRIBUTES(
-                            DPJ.job,
-                            AJ.dataset_id,
-                            T.analysis_tool AS tool,
-                            AJ.param_file_name AS parameter_file,
-                            AJ.settings_file_name AS settings_file,
-                            Coalesce(AJ.protein_collection_list, '') AS protein_collection_list,
-                            Coalesce(AJ.protein_options_list, '') AS protein_options,
-                            Coalesce(AJ.comment, '') AS comment,
-                            Coalesce(AJS.job_state, '') AS state,
-                            Coalesce(DPJ.package_comment, '') AS package_comment))
-                       ) AS xml_item
-               FROM dpkg.t_data_package_analysis_jobs AS DPJ
-                    INNER JOIN t_analysis_job AJ ON DPJ.job = AJ.job
-                    INNER JOIN t_analysis_tool T ON AJ.analysis_tool_id = T.analysis_tool_id
-                    INNER JOIN t_analysis_job_state AJS ON AJ.job_state_id = AJS.job_state_id
-               WHERE DPJ.data_pkg_id = _dataPackageID
+        FROM (SELECT
+                XMLAGG(XMLELEMENT(
+                       NAME job,
+                       XMLATTRIBUTES(
+                           DPJ.job,
+                           AJ.dataset_id,
+                           T.analysis_tool AS tool,
+                           AJ.param_file_name AS parameter_file,
+                           AJ.settings_file_name AS settings_file,
+                           Coalesce(AJ.protein_collection_list, '') AS protein_collection_list,
+                           Coalesce(AJ.protein_options_list, '') AS protein_options,
+                           Coalesce(AJ.comment, '') AS comment,
+                           Coalesce(AJS.job_state, '') AS state,
+                           Coalesce(DPJ.package_comment, '') AS package_comment))
+                      ) AS xml_item
+              FROM dpkg.t_data_package_analysis_jobs AS DPJ
+                   INNER JOIN t_analysis_job AJ ON DPJ.job = AJ.job
+                   INNER JOIN t_analysis_tool T ON AJ.analysis_tool_id = T.analysis_tool_id
+                   INNER JOIN t_analysis_job_state AJS ON AJ.job_state_id = AJS.job_state_id
+              WHERE DPJ.data_pkg_id = _dataPackageID
             ) AS LookupQ;
 
         If Coalesce(_jobXML::text, '') = '' Then
@@ -258,15 +257,15 @@ BEGIN
 
         SELECT xml_item
         INTO _dpPathXML
-        FROM ( SELECT
-                 XMLAGG(XMLELEMENT(
-                        NAME data_package_path,
-                        XMLATTRIBUTES(
-                            share_path,
-                            storage_path_relative))
-                       ) AS xml_item
-               FROM dpkg.V_Data_Package_Export AS DPE
-               WHERE ID = _dataPackageID
+        FROM (SELECT
+                XMLAGG(XMLELEMENT(
+                       NAME data_package_path,
+                       XMLATTRIBUTES(
+                           share_path,
+                           storage_path_relative))
+                      ) AS xml_item
+              FROM dpkg.V_Data_Package_Export AS DPE
+              WHERE ID = _dataPackageID
             ) AS LookupQ;
 
         _result := format('%s    %s%s', _result, Coalesce(_dpPathXML::text, ''), _newline);
@@ -277,20 +276,20 @@ BEGIN
 
         SELECT xml_item
         INTO _dsPathXML
-        FROM ( SELECT
-                 XMLAGG(XMLELEMENT(
-                        NAME dataset_path,
-                        XMLATTRIBUTES(
-                            DS.dataset_id,
-                            DFP.dataset_folder_path,
-                            DFP.archive_folder_path,
-                            DFP.myemsl_path_flag,
-                            DFP.dataset_url))
-                       ) AS xml_item
-               FROM dpkg.t_data_package_datasets AS DPD
-                    INNER JOIN t_dataset AS DS ON DS.Dataset_ID = DPD.Dataset_ID
-                    INNER JOIN t_cached_dataset_folder_paths AS DFP ON DFP.dataset_id = DS.Dataset_ID
-               WHERE DPD.data_pkg_id = _dataPackageID
+        FROM (SELECT
+                XMLAGG(XMLELEMENT(
+                       NAME dataset_path,
+                       XMLATTRIBUTES(
+                           DS.dataset_id,
+                           DFP.dataset_folder_path,
+                           DFP.archive_folder_path,
+                           DFP.myemsl_path_flag,
+                           DFP.dataset_url))
+                      ) AS xml_item
+              FROM dpkg.t_data_package_datasets AS DPD
+                   INNER JOIN t_dataset AS DS ON DS.Dataset_ID = DPD.Dataset_ID
+                   INNER JOIN t_cached_dataset_folder_paths AS DFP ON DFP.dataset_id = DS.Dataset_ID
+              WHERE DPD.data_pkg_id = _dataPackageID
             ) AS LookupQ;
 
         If Coalesce(_dsPathXML::text, '') <> '' Then
@@ -303,20 +302,20 @@ BEGIN
 
         SELECT xml_item
         INTO _jobPathXML
-        FROM ( SELECT
-                 XMLAGG(XMLELEMENT(
-                        NAME job_path,
-                        XMLATTRIBUTES(
-                            DPJ.job,
-                            DFP.dataset_folder_path || '\' || AJ.results_folder_name AS folder_path,
-                            DFP.archive_folder_path || '\' || AJ.results_folder_name AS archive_path,
-                            DFP.myemsl_path_flag    || '\' || AJ.results_folder_name AS myemsl_path))
-                       ) AS xml_item
-               FROM dpkg.t_data_package_analysis_jobs AS DPJ
-                    INNER JOIN t_analysis_job AJ ON DPJ.job = AJ.job
-                    INNER JOIN t_dataset AS DS ON DS.dataset_id = DPJ.dataset_id
-                    INNER JOIN t_cached_dataset_folder_paths AS DFP ON DFP.dataset_id = DS.Dataset_ID
-               WHERE DPJ.data_pkg_id = _dataPackageID
+        FROM (SELECT
+                XMLAGG(XMLELEMENT(
+                       NAME job_path,
+                       XMLATTRIBUTES(
+                           DPJ.job,
+                           DFP.dataset_folder_path || '\' || AJ.results_folder_name AS folder_path,
+                           DFP.archive_folder_path || '\' || AJ.results_folder_name AS archive_path,
+                           DFP.myemsl_path_flag    || '\' || AJ.results_folder_name AS myemsl_path))
+                      ) AS xml_item
+              FROM dpkg.t_data_package_analysis_jobs AS DPJ
+                   INNER JOIN t_analysis_job AJ ON DPJ.job = AJ.job
+                   INNER JOIN t_dataset AS DS ON DS.dataset_id = DPJ.dataset_id
+                   INNER JOIN t_cached_dataset_folder_paths AS DFP ON DFP.dataset_id = DS.Dataset_ID
+              WHERE DPJ.data_pkg_id = _dataPackageID
             ) AS LookupQ;
 
         If Coalesce(_jobPathXML::text, '') = '' Then

@@ -56,7 +56,7 @@ BEGIN
         Dataset_Name text
     );
 
-    CREATE UNIQUE INDEX IX_Tmp_DatasetList ON Tmp_DatasetList ( Dataset_Name );
+    CREATE UNIQUE INDEX IX_Tmp_DatasetList ON Tmp_DatasetList (Dataset_Name);
 
     ---------------------------------------------------
     -- Populate the table

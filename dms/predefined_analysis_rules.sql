@@ -405,7 +405,8 @@ BEGIN
         Protein_Collections, Protein_Options,
         Organism_DB,
         Special_Processing,
-        Priority)
+        Priority
+    )
     SELECT C.predefine_level, C.predefine_sequence, C.predefine_id, C.next_level,
            CASE WHEN C.Trigger_Before_Disposition = 1
                 THEN 'Before Disposition'

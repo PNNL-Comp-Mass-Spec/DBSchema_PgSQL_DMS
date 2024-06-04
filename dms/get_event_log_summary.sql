@@ -173,12 +173,12 @@ BEGIN
            (CASE WHEN COUNT(event_id) > 0 THEN format('Errors Detected: %s', COUNT(event_id)) ELSE '' END)::citext AS Value
     FROM public.t_event_log
     WHERE Entered BETWEEN _startDate And _endDate AND
-          ( Target_Type = 4 AND Target_State = 5 OR
-            Target_Type = 4 AND Target_State = 8 OR
-            Target_Type = 6 AND Target_State = 6 OR
-            Target_Type = 6 AND Target_State = 8 OR
-            Target_Type = 5 AND Target_State = 5 OR
-            Target_Type = 5 AND Target_State = 7
+          (Target_Type = 4 AND Target_State = 5 OR
+           Target_Type = 4 AND Target_State = 8 OR
+           Target_Type = 6 AND Target_State = 6 OR
+           Target_Type = 6 AND Target_State = 8 OR
+           Target_Type = 5 AND Target_State = 5 OR
+           Target_Type = 5 AND Target_State = 7
           )
     UNION
     SELECT 1.51 AS SortKey,
@@ -216,10 +216,10 @@ BEGIN
                  THEN format('Errors / Warnings: %s', StatsQ.Errors + StatsQ.Warnings)
                  ELSE ''
             END)::citext AS Value
-    FROM (  SELECT SUM(CASE WHEN type = 'Error'   THEN 1 ELSE 0 END) AS Errors,
-                   SUM(CASE WHEN type = 'Warning' THEN 1 ELSE 0 END) AS Warnings
-            FROM public.t_log_entries
-            WHERE entered BETWEEN _startDate And _endDate AND type IN ('Error', 'Warning')
+    FROM (SELECT SUM(CASE WHEN type = 'Error'   THEN 1 ELSE 0 END) AS Errors,
+                 SUM(CASE WHEN type = 'Warning' THEN 1 ELSE 0 END) AS Warnings
+          FROM public.t_log_entries
+          WHERE entered BETWEEN _startDate And _endDate AND type IN ('Error', 'Warning')
          ) StatsQ
     UNION
     SELECT 6.1 AS SortKey, '  Warnings' AS Label, COUNT(entry_id)::citext AS Value

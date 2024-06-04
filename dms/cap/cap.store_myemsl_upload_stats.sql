@@ -245,7 +245,7 @@ BEGIN
             error_code,
             entered
         )
-        VALUES( _job,
+        VALUES (_job,
                 _datasetID,
                 _subfolder,
                 _fileCountNew,
@@ -280,7 +280,7 @@ BEGIN
             errorcode,
             entered
         )
-        VALUES( _job,
+        VALUES (_job,
                 _datasetID,
                 _subfolder,
                 _fileCountNew,

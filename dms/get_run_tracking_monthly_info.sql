@@ -136,15 +136,17 @@ BEGIN
     -- Get datasets whose start time falls within month
     ---------------------------------------------------
 
-    INSERT INTO Tmp_TX ( Seq,
-                         ID,
-                         Dataset,
-                         Day,
-                         Time_Start,
-                         Time_End,
-                         Duration,
-                         Interval_Minutes,
-                         Instrument )
+    INSERT INTO Tmp_TX (
+        Seq,
+        ID,
+        Dataset,
+        Day,
+        Time_Start,
+        Time_End,
+        Duration,
+        Interval_Minutes,
+        Instrument
+    )
     SELECT (_seqIncrement * ((Row_Number() OVER (ORDER BY TD.acq_time_start ASC)) - 1) + 1) + _seqOffset AS seq,
            TD.dataset_id AS id,
            TD.dataset AS dataset,
@@ -210,16 +212,18 @@ BEGIN
 
         -- Add preceeding dataset record (with truncated duration/interval) at beginning of results
 
-        INSERT INTO Tmp_TX ( Seq,
-                             Dataset,
-                             ID,
-                             Day,
-                             Time_Start,
-                             Time_End,
-                             Duration,
-                             Interval_Minutes,
-                             Instrument )
-        VALUES( _firstRunSeq - 1,               -- seq
+        INSERT INTO Tmp_TX (
+            Seq,
+            Dataset,
+            ID,
+            Day,
+            Time_Start,
+            Time_End,
+            Duration,
+            Interval_Minutes,
+            Instrument
+        )
+        VALUES (_firstRunSeq - 1,               -- seq
                 _preceedingDataset.Dataset,
                 _preceedingDataset.ID,
                 1,                              -- Day of month

@@ -54,14 +54,14 @@ BEGIN
         INTO _rowCount
         FROM public.t_log_entries
         WHERE entered < _cutoffDateTime AND
-             ( message IN ('Archive or update complete for all available tasks',
-                           'Verfication complete for all available tasks',
-                           'Capture complete for all available tasks') OR
-               message LIKE '%: No Data Files to import.' OR
-               message LIKE '%: Completed task'           OR
-               posted_by = 'backup_dms_dbs'             AND type = 'Normal' AND message LIKE 'DB Backup Complete (LogBU%' OR
-               posted_by = 'rebuild_fragmented_indices' AND type = 'Normal' AND message LIKE 'Reindexed % due to Fragmentation%'
-               );
+             (message IN ('Archive or update complete for all available tasks',
+                          'Verfication complete for all available tasks',
+                          'Capture complete for all available tasks') OR
+              message LIKE '%: No Data Files to import.' OR
+              message LIKE '%: Completed task'           OR
+              posted_by = 'backup_dms_dbs'             AND type = 'Normal' AND message LIKE 'DB Backup Complete (LogBU%' OR
+              posted_by = 'rebuild_fragmented_indices' AND type = 'Normal' AND message LIKE 'Reindexed % due to Fragmentation%'
+             );
 
         If _rowCount > 0 Then
             RAISE INFO 'Would delete % unimportant % from public.t_log_entries (using threshold %)',
@@ -94,14 +94,14 @@ BEGIN
     -- Delete log entries that we do not want to move to the DMS Historic Log DB
     DELETE FROM public.t_log_entries
     WHERE entered < _cutoffDateTime AND
-         ( message IN ('Archive or update complete for all available tasks',
-                       'Verfication complete for all available tasks',
-                       'Capture complete for all available tasks') OR
-           message LIKE '%: No Data Files to import.' OR
-           message LIKE '%: Completed task'           OR
-           posted_by = 'backup_dms_dbs'             AND type = 'Normal' AND message LIKE 'DB Backup Complete (LogBU%' OR
-           posted_by = 'rebuild_fragmented_indices' AND type = 'Normal' AND message LIKE 'Reindexed % due to Fragmentation%'
-           );
+         (message IN ('Archive or update complete for all available tasks',
+                      'Verfication complete for all available tasks',
+                      'Capture complete for all available tasks') OR
+          message LIKE '%: No Data Files to import.' OR
+          message LIKE '%: Completed task'           OR
+          posted_by = 'backup_dms_dbs'             AND type = 'Normal' AND message LIKE 'DB Backup Complete (LogBU%' OR
+          posted_by = 'rebuild_fragmented_indices' AND type = 'Normal' AND message LIKE 'Reindexed % due to Fragmentation%'
+         );
 
     -- Copy entries into the historic log tables
     INSERT INTO logdms.t_log_entries (entry_id, posted_by, entered, type, message)

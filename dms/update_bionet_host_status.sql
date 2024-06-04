@@ -108,10 +108,10 @@ BEGIN
                         ELSE ''
                    END AS New_Last_Online
             FROM t_bionet_hosts Target
-                 INNER JOIN ( SELECT host,
-                                     MAX(MostRecentDataset) AS MostRecentDataset
-                              FROM Tmp_Hosts
-                              GROUP BY host ) Src
+                 INNER JOIN (SELECT host,
+                                    MAX(MostRecentDataset) AS MostRecentDataset
+                             FROM Tmp_Hosts
+                             GROUP BY host) Src
                    ON Target.host = Src.host
             ORDER BY Target.Host
         LOOP
@@ -136,10 +136,10 @@ BEGIN
                       THEN Src.MostRecentDataset
                       ELSE Target.Last_Online
                       END
-    FROM ( SELECT Host,
-                  MAX(MostRecentDataset) AS MostRecentDataset
-           FROM Tmp_Hosts
-           GROUP BY Host ) Src
+    FROM (SELECT Host,
+                 MAX(MostRecentDataset) AS MostRecentDataset
+          FROM Tmp_Hosts
+          GROUP BY Host) Src
     WHERE Target.Host = Src.Host;
     --
     GET DIAGNOSTICS _updateCount = ROW_COUNT;

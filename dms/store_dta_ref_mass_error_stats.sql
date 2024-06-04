@@ -125,7 +125,7 @@ BEGIN
     SELECT Trim(XmlQ.Name), Trim(XmlQ.ValueText)
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT _resultsXML AS rooted_xml
+        FROM (SELECT _resultsXML AS rooted_xml
              ) Src,
              XMLTABLE('//DTARef_MassErrorStats/Measurements/Measurement'
                       PASSING Src.rooted_xml
@@ -198,11 +198,11 @@ BEGIN
 
     UPDATE Tmp_Measurements Target
     SET Value = FilterQ.Value
-    FROM ( SELECT Name,
-                  ValueText,
-                  public.try_cast(ValueText, null::float8) AS Value
-           FROM Tmp_Measurements
-           WHERE NOT public.try_cast(ValueText, null::float8) IS NULL
+    FROM (SELECT Name,
+                 ValueText,
+                 public.try_cast(ValueText, null::float8) AS Value
+          FROM Tmp_Measurements
+          WHERE NOT public.try_cast(ValueText, null::float8) IS NULL
          ) FilterQ
     WHERE Target.Name = FilterQ.Name;
 
@@ -220,10 +220,11 @@ BEGIN
     -- Use a Crosstab to extract out the known columns
     -----------------------------------------------
 
-    INSERT INTO Tmp_KnownMetrics ( Dataset_ID,
-                                   Mass_Error_PPM,
-                                   Mass_Error_PPM_Refined
-                                 )
+    INSERT INTO Tmp_KnownMetrics (
+        Dataset_ID,
+        Mass_Error_PPM,
+        Mass_Error_PPM_Refined
+    )
     SELECT _datasetID,
            ct."MassErrorPPM",
            ct."MassErrorPPM_Refined"
@@ -356,12 +357,12 @@ BEGIN
     -----------------------------------------------
 
     MERGE INTO t_dataset_qc AS Target
-    USING ( SELECT DI.dataset_id,
-                   DI.psm_source_job,
-                   M.mass_error_ppm,
-                   M.mass_error_ppm_refined
-            FROM Tmp_KnownMetrics M INNER JOIN
-                 Tmp_DatasetInfo DI ON M.dataset_id = DI.dataset_id
+    USING (SELECT DI.dataset_id,
+                  DI.psm_source_job,
+                  M.mass_error_ppm,
+                  M.mass_error_ppm_refined
+           FROM Tmp_KnownMetrics M INNER JOIN
+                Tmp_DatasetInfo DI ON M.dataset_id = DI.dataset_id
           ) AS Source
     ON (Target.dataset_id = Source.dataset_id)
     WHEN MATCHED THEN

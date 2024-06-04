@@ -120,9 +120,11 @@ BEGIN
 
         -- Insert new values
 
-        INSERT INTO t_aux_info_value (target_id,
-                                      aux_description_id,
-                                      value )
+        INSERT INTO t_aux_info_value (
+            target_id,
+            aux_description_id,
+            value
+        )
         SELECT _destEntityID AS Target_ID,
                aux_description_id,
                value
@@ -156,9 +158,11 @@ BEGIN
 
         -- Insert new values
 
-        INSERT INTO t_aux_info_value (target_id,
-                                      aux_description_id,
-                                      value )
+        INSERT INTO t_aux_info_value (
+            target_id,
+            aux_description_id,
+            value
+        )
         SELECT _destEntityID AS Target_ID,
                aux_description_id,
                value
@@ -188,9 +192,11 @@ BEGIN
                                      FROM V_Aux_Info_Definition
                                      WHERE Target = _targetName);
 
-        INSERT INTO t_aux_info_value (target_id,
-                                      aux_description_id,
-                                      value )
+        INSERT INTO t_aux_info_value (
+            target_id,
+            aux_description_id,
+            value
+        )
         SELECT _destEntityID AS Target_ID,
                aux_description_id,
                value

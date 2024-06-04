@@ -25,25 +25,25 @@ DECLARE
 BEGIN
     SELECT string_agg(LookupQ.PlexMemberInfo, '|' ORDER BY LookupQ.channel)
     INTO _list
-    FROM ( SELECT PlexMembers.channel,
-                  format('%s:%s:%s:%s:%s',
-                          Coalesce(ReporterIons.tag_name, PlexMembers.channel::text),
-                          PlexMembers.exp_id,
-                          ChannelExperiment.experiment,
-                          ChannelType.channel_type_name,
-                          Coalesce(PlexMembers.comment, '')) AS PlexMemberInfo
-           FROM t_experiment_plex_members PlexMembers
-                INNER JOIN t_experiments ChannelExperiment
-                  ON PlexMembers.exp_id = ChannelExperiment.exp_id
-                INNER JOIN t_experiment_plex_channel_type_name ChannelType
-                  ON PlexMembers.channel_type_id = ChannelType.channel_type_id
-                INNER JOIN t_experiments E
-                  ON PlexMembers.plex_exp_id = E.exp_id
-                LEFT OUTER JOIN t_sample_labelling_reporter_ions ReporterIons
-                  ON PlexMembers.channel = ReporterIons.channel AND
-                     E.labelling = ReporterIons.label
-           WHERE PlexMembers.plex_exp_id = _plexExperimentID
-           ) LookupQ;
+    FROM (SELECT PlexMembers.channel,
+                 format('%s:%s:%s:%s:%s',
+                         Coalesce(ReporterIons.tag_name, PlexMembers.channel::text),
+                         PlexMembers.exp_id,
+                         ChannelExperiment.experiment,
+                         ChannelType.channel_type_name,
+                         Coalesce(PlexMembers.comment, '')) AS PlexMemberInfo
+          FROM t_experiment_plex_members PlexMembers
+               INNER JOIN t_experiments ChannelExperiment
+                 ON PlexMembers.exp_id = ChannelExperiment.exp_id
+               INNER JOIN t_experiment_plex_channel_type_name ChannelType
+                 ON PlexMembers.channel_type_id = ChannelType.channel_type_id
+               INNER JOIN t_experiments E
+                 ON PlexMembers.plex_exp_id = E.exp_id
+               LEFT OUTER JOIN t_sample_labelling_reporter_ions ReporterIons
+                 ON PlexMembers.channel = ReporterIons.channel AND
+                    E.labelling = ReporterIons.label
+          WHERE PlexMembers.plex_exp_id = _plexExperimentID
+         ) LookupQ;
 
     If Coalesce(_list, '') = '' Then
         _result := _headerRow;

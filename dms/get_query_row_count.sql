@@ -107,7 +107,12 @@ BEGIN
     INTO _rowCount;
 
     If _queryID <= 0 Then
-        INSERT INTO t_query_row_counts (object_name, where_clause, row_count, usage)
+        INSERT INTO t_query_row_counts (
+            object_name,
+            where_clause,
+            row_count,
+            usage
+        )
         VALUES (_objectName, _whereClause, _rowCount, 1);
 
         RETURN _rowCount;

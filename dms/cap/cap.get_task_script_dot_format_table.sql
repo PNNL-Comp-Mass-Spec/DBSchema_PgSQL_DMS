@@ -41,11 +41,10 @@ BEGIN
     --   </JobScript>
 
     INSERT INTO Tmp_ScriptSteps (step, tool)
-    SELECT XmlTableA.step, Trim(XmlTableA.tool)   --, t1::text AS ScriptXML
+    SELECT XmlTableA.step, Trim(XmlTableA.tool)     --, t1::text AS ScriptXML
     FROM cap.t_scripts Src,
-        LATERAL unnest((
-            SELECT
-                xpath('//JobScript', contents)
+        LATERAL unnest((                            -- Yes, two parentheses are required here
+            SELECT xpath('//JobScript', contents)
         )) t1,
         XMLTABLE('//JobScript/Step'
                           PASSING t1
@@ -69,9 +68,8 @@ BEGIN
     FOR _scriptStep IN
         SELECT XmlTableA.step, Trim(XmlTableA.tool) AS tool, XmlTableA.parent_steps::text
         FROM cap.t_scripts Src,
-            LATERAL unnest((
-                SELECT
-                    xpath('//JobScript', Src.contents)
+            LATERAL unnest((                                -- Yes, two parentheses are required here
+                SELECT xpath('//JobScript', Src.contents)
             )) t1,
             XMLTABLE('//JobScript/Step'
                               PASSING t1
@@ -93,7 +91,7 @@ BEGIN
                           _scriptStep.step
                    ) AS script_line,
                    1 AS seq
-            FROM ( SELECT ('<root>' || _scriptStep.parent_steps || '</root>')::xml AS rooted_xml
+            FROM (SELECT ('<root>' || _scriptStep.parent_steps || '</root>')::xml AS rooted_xml
                  ) Src,
                  XMLTABLE('//root/Depends_On'
                           PASSING Src.rooted_xml

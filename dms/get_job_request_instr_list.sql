@@ -22,13 +22,13 @@ BEGIN
 
     SELECT string_agg(Instrument, ', ' ORDER BY Instrument)
     INTO _list
-    FROM ( SELECT DISTINCT InstName.instrument AS Instrument
-           FROM t_analysis_job_request_datasets AJRD
-                  INNER JOIN t_dataset DS
-                    ON AJRD.dataset_id = DS.dataset_id
-                  INNER JOIN t_instrument_name InstName
-                    ON DS.instrument_id = InstName.instrument_id
-           WHERE AJRD.request_id = _requestID) TX;
+    FROM (SELECT DISTINCT InstName.instrument AS Instrument
+          FROM t_analysis_job_request_datasets AJRD
+                 INNER JOIN t_dataset DS
+                   ON AJRD.dataset_id = DS.dataset_id
+                 INNER JOIN t_instrument_name InstName
+                   ON DS.instrument_id = InstName.instrument_id
+          WHERE AJRD.request_id = _requestID) TX;
 
     If Coalesce(_list, '') = '' Then
         _list := '(none)';

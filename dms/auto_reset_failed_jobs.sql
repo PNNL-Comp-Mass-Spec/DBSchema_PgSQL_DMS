@@ -121,8 +121,10 @@ BEGIN
         -- Populate a temporary table with jobs that failed within the last _windowHours hours
         ---------------------------------------------------
 
-        INSERT INTO Tmp_FailedJobs (Job, Step, Step_Tool, Job_State, Step_State,
-                                    Processor, Comment, Job_Finish, Settings_File, Analysis_Tool)
+        INSERT INTO Tmp_FailedJobs (
+            Job, Step, Step_Tool, Job_State, Step_State,
+            Processor, Comment, Job_Finish, Settings_File, Analysis_Tool
+        )
         SELECT J.job,
                JS.step,
                JS.tool,
@@ -148,8 +150,10 @@ BEGIN
         -- the processor is reporting Stopped_Error in T_Processor_Status
         ---------------------------------------------------
 
-        INSERT INTO Tmp_FailedJobs (Job, Step, Step_Tool, Job_State, Step_State,
-                                    Processor, comment, Job_Finish, Settings_File, Analysis_Tool)
+        INSERT INTO Tmp_FailedJobs (
+            Job, Step, Step_Tool, Job_State, Step_State,
+            Processor, comment, Job_Finish, Settings_File, Analysis_Tool
+        )
         SELECT J.job,
                JS.step,
                JS.tool,
@@ -468,7 +472,7 @@ BEGIN
 
                     CALL post_log_entry ('Warning', _logMessage, 'Auto_Reset_Failed_Jobs');
 
-                    CALL mc.set_manager_error_cleanup_mode ( _managerList => _jobInfo.Processor, _cleanupMode => 1);
+                    CALL mc.set_manager_error_cleanup_mode (_managerList => _jobInfo.Processor, _cleanupMode => 1);
                 Else
                     RAISE INFO 'Call mc.set_manager_error_cleanup_mode (_managerList => %, _cleanupMode => 1)', _jobInfo.Processor;
                 End If;

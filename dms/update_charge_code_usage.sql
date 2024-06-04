@@ -148,7 +148,7 @@ BEGIN
                                                          FROM T_Sample_Prep_Request SPR
                                                               INNER JOIN T_Charge_Code CC
                                                                 ON SPR.Work_Package = CC.Charge_Code
-                                                         GROUP BY CC.Charge_Code ) StatsQ
+                                                         GROUP BY CC.Charge_Code) StatsQ
                                                    WHERE StatsQ.SPR_Usage > 0 AND
                                                          StatsQ.Charge_Code = CC.Charge_Code)
                                 );

@@ -290,7 +290,12 @@ BEGIN
         _campaignsFoundOrCreated := false;
     End If;
 
-    INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
+    INSERT INTO T_Tmp_Results (
+        item_type,
+        item_name,
+        item_id,
+        action
+    )
     SELECT 'Campaign', campaign_name, campaign_id, _action
     FROM T_Tmp_Campaigns
     ORDER BY campaign_id;
@@ -330,7 +335,10 @@ BEGIN
 
     ElsIf _createItems Then
         -- Create the experiments
-        INSERT INTO t_experiments (experiment, researcher_username, organism_id, campaign_id, labelling)
+        INSERT INTO t_experiments (
+            experiment, researcher_username,
+            organism_id, campaign_id, labelling
+        )
         SELECT E.experiment_name, _username, _organismID, E.campaign_id, 'None'
         FROM T_Tmp_Experiments E
         ORDER BY E.experiment_name;
@@ -354,7 +362,12 @@ BEGIN
         _experimentsFoundOrCreated := false;
     End If;
 
-    INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
+    INSERT INTO T_Tmp_Results (
+        item_type,
+        item_name,
+        item_id,
+        action
+    )
     SELECT 'Experiment', experiment_name, experiment_id, _action
     FROM T_Tmp_Experiments
     ORDER BY experiment_id;
@@ -394,8 +407,14 @@ BEGIN
 
     ElsIf _createItems Then
         -- Create the datasets
-        INSERT INTO t_dataset (dataset, operator_username, instrument_id, exp_id, folder_name, dataset_type_id, lc_column_id, storage_path_id)
-        SELECT D.dataset_name, _username, _instrumentID, _experimentID, D.dataset_name, _datasetTypeID, _lcColumnID, _storagePathID
+        INSERT INTO t_dataset (
+            dataset, operator_username, instrument_id,
+            exp_id, folder_name, dataset_type_id,
+            lc_column_id, storage_path_id
+        )
+        SELECT D.dataset_name, _username, _instrumentID,
+               _experimentID, D.dataset_name, _datasetTypeID,
+               _lcColumnID, _storagePathID
         FROM T_Tmp_Datasets D
         ORDER BY D.dataset_name;
 
@@ -418,7 +437,12 @@ BEGIN
         _datasetsFoundOrCreated := false;
     End If;
 
-    INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
+    INSERT INTO T_Tmp_Results (
+        item_type,
+        item_name,
+        item_id,
+        action
+    )
     SELECT 'Dataset', dataset_name, dataset_id, _action
     FROM T_Tmp_Datasets
     ORDER BY dataset_id;
@@ -459,8 +483,14 @@ BEGIN
         END LOOP;
 
         -- Create the analysis jobs
-        INSERT INTO t_analysis_job (job, analysis_tool_id, param_file_name, settings_file_name, organism_id, dataset_id)
-        SELECT J.job, _analysisToolInfo.analysis_tool_id, _paramFileName, _settingsFileName, _organismID, J.dataset_id
+        INSERT INTO t_analysis_job (
+            job, analysis_tool_id,
+            param_file_name, settings_file_name,
+            organism_id, dataset_id
+        )
+        SELECT J.job, _analysisToolInfo.analysis_tool_id,
+               _paramFileName, _settingsFileName,
+               _organismID, J.dataset_id
         FROM T_Tmp_Jobs J
         ORDER BY J.dataset_id;
 
@@ -478,7 +508,12 @@ BEGIN
         _jobsFoundOrCreated := false;
     End If;
 
-    INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
+    INSERT INTO T_Tmp_Results (
+        item_type,
+        item_name,
+        item_id,
+        action
+    )
     SELECT 'Analysis Job', 'Job ' || j.job::text || ' for dataset ' || D.dataset_name, j.job, _action
     FROM T_Tmp_Jobs J
          LEFT OUTER JOIN T_Tmp_Datasets D
@@ -489,8 +524,20 @@ BEGIN
     -- Create / find unit test plex mappings
     -----------------------------------------------------------------
 
-    INSERT INTO T_Tmp_Experiment_Plex_Members (plex_exp_id, channel, exp_id, channel_type_id, comment, mapping_defined)
-    SELECT _experimentID, RankQ.RowNum - 1, RankQ.experiment_id, 1, 'Unit test plex', false
+    INSERT INTO T_Tmp_Experiment_Plex_Members (
+        plex_exp_id,
+        channel,
+        exp_id,
+        channel_type_id,
+        comment,
+        mapping_defined
+    )
+    SELECT _experimentID,
+           RankQ.RowNum - 1,
+           RankQ.experiment_id,
+           1,
+           'Unit test plex',
+           false
     FROM (SELECT experiment_id, Row_Number() OVER (ORDER BY experiment_id) AS RowNum
           FROM T_Tmp_Experiments) RankQ
     WHERE RankQ.RowNum > 1
@@ -513,7 +560,13 @@ BEGIN
     ElsIf _createItems Then
 
         -- Add missing items to t_experiment_plex_members
-        INSERT INTO t_experiment_plex_members (plex_exp_id, channel, exp_id, channel_type_id, comment)
+        INSERT INTO t_experiment_plex_members (
+            plex_exp_id,
+            channel,
+            exp_id,
+            channel_type_id,
+            comment
+        )
         SELECT PM.plex_exp_id, PM.channel, PM.exp_id, PM.channel_type_id, PM.comment
         FROM T_Tmp_Experiment_Plex_Members PM
         WHERE NOT PM.mapping_defined;
@@ -525,8 +578,16 @@ BEGIN
         _plexMappingFoundOrCreated := false;
     End If;
 
-    INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-    SELECT 'Experiment Plex Map', 'plex_exp_id ' || PM.plex_exp_id::text || ', channel ' || PM.channel, PM.exp_id, _action
+    INSERT INTO T_Tmp_Results (
+        item_type,
+        item_name,
+        item_id,
+        action
+    )
+    SELECT 'Experiment Plex Map',
+           'plex_exp_id ' || PM.plex_exp_id::text || ', channel ' || PM.channel,
+           PM.exp_id,
+           _action
     FROM T_Tmp_Experiment_Plex_Members PM
     ORDER BY PM.channel;
 
@@ -544,8 +605,14 @@ BEGIN
 
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-            INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-            VALUES ('Campaign', 'Update state', 0, 'Toggled active/inactive state for ' || _myRowCount::text || ' campaigns');
+            INSERT INTO T_Tmp_Results (
+                item_type,
+                item_name,
+                item_id,
+                action
+            )
+            VALUES ('Campaign', 'Update state', 0,
+                    'Toggled active/inactive state for ' || _myRowCount::text || ' campaigns');
         End If;
 
         If _experimentsFoundOrCreated Then
@@ -556,8 +623,14 @@ BEGIN
 
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-            INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-            VALUES ('Experiment', 'Update state', 0, 'Toggled active/inactive state for ' || _myRowCount::text || ' experiments');
+            INSERT INTO T_Tmp_Results (
+                item_type,
+                item_name,
+                item_id,
+                action
+            )
+            VALUES ('Experiment', 'Update state', 0,
+                    'Toggled active/inactive state for ' || _myRowCount::text || ' experiments');
         End If;
 
         If _datasetsFoundOrCreated Then
@@ -571,8 +644,14 @@ BEGIN
 
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-            INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-            VALUES ('Dataset', 'Update state', 0, 'Updated state for ' || _myRowCount::text || ' datasets');
+            INSERT INTO T_Tmp_Results (
+                item_type,
+                item_name,
+                item_id,
+                action
+            )
+            VALUES ('Dataset', 'Update state', 0,
+                    'Updated state for ' || _myRowCount::text || ' datasets');
 
             UPDATE t_dataset
             SET dataset_rating_id = CASE WHEN dataset_rating_id = 2 THEN 5
@@ -584,8 +663,14 @@ BEGIN
 
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-            INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-            VALUES ('Dataset', 'Update rating', 0, 'Updated rating for ' || _myRowCount::text || ' datasets');
+            INSERT INTO T_Tmp_Results (
+                item_type,
+                item_name,
+                item_id,
+                action
+            )
+            VALUES ('Dataset', 'Update rating', 0,
+                    'Updated rating for ' || _myRowCount::text || ' datasets');
         End If;
 
         If _jobsFoundOrCreated Then
@@ -599,8 +684,14 @@ BEGIN
 
             GET DIAGNOSTICS _myRowCount = ROW_COUNT;
 
-            INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-            VALUES ('Job', 'Update state', 0, 'Updated state for ' || _myRowCount::text || ' jobs');
+            INSERT INTO T_Tmp_Results (
+                item_type,
+                item_name,
+                item_id,
+                action
+            )
+            VALUES ('Job', 'Update state', 0,
+                    'Updated state for ' || _myRowCount::text || ' jobs');
         End If;
 
     End If;
@@ -611,8 +702,14 @@ BEGIN
 
     If _renameItems Then
         -- ToDo: rename items
-        INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-        VALUES ('ToDo', 'Rename items', 0, 'Rename datasets, experiments, campaigns, etc.');
+        INSERT INTO T_Tmp_Results (
+            item_type,
+            item_name,
+            item_id,
+            action
+        )
+        VALUES ('ToDo', 'Rename items', 0,
+                'Rename datasets, experiments, campaigns, etc.');
     End If;
 
     -----------------------------------------------------------------
@@ -645,18 +742,37 @@ BEGIN
                       entered >= CURRENT_TIMESTAMP - INTERVAL '30 seconds';
 
                 If FOUND Then
-                    INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-                    SELECT Distinct 'Plex Mapping', 'Delete items', plex_exp_id, 'Logged deletion of ' || _myRowCount::text || ' plex mappings to t_experiment_plex_members_history'
+                    INSERT INTO T_Tmp_Results (
+                        item_type,
+                        item_name,
+                        item_id,
+                        action
+                    )
+                    SELECT DISTINCT 'Plex Mapping', 'Delete items', plex_exp_id,
+                                    'Logged deletion of ' || _myRowCount::text || ' plex mappings to t_experiment_plex_members_history'
                     FROM T_Tmp_Experiment_Plex_Members;
                 Else
-                    INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
-                    SELECT Distinct 'Plex Mapping', 'Delete items', plex_exp_id, 'Error: did not log deletion of plex mappings to t_experiment_plex_members_history'
+                    INSERT INTO T_Tmp_Results (
+                        item_type,
+                        item_name,
+                        item_id,
+                        action,
+                        comment
+                    )
+                    SELECT DISTINCT 'Plex Mapping', 'Delete items', plex_exp_id,
+                                    'Error: did not log deletion of plex mappings to t_experiment_plex_members_history'
                     FROM T_Tmp_Experiment_Plex_Members;
                 End If;
 
             Else
-                INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-                SELECT Distinct 'Plex Mapping', 'Delete items', 0, 'Nothing to delete: plex_exp_id ' || plex_exp_id::text || ' not found in t_experiment_plex_members'
+                INSERT INTO T_Tmp_Results (
+                    item_type,
+                    item_name,
+                    item_id,
+                    action
+                )
+                SELECT DISTINCT 'Plex Mapping', 'Delete items', 0,
+                                'Nothing to delete: plex_exp_id ' || plex_exp_id::text || ' not found in t_experiment_plex_members'
                 FROM T_Tmp_Experiment_Plex_Members;
             End If;
 
@@ -677,18 +793,36 @@ BEGIN
                       entered >= CURRENT_TIMESTAMP - INTERVAL '30 seconds';
 
                 If FOUND Then
-                    INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-                    SELECT 'Job', 'Delete items', 0, 'Logged deletion of ' || _myRowCount::text || ' jobs to t_event_log (IDs ' || MIN(job)::text || ' to ' || MAX(job) || ')'
+                    INSERT INTO T_Tmp_Results (
+                        item_type,
+                        item_name,
+                        item_id,
+                        action
+                    )
+                    SELECT 'Job', 'Delete items', 0,
+                           'Logged deletion of ' || _myRowCount::text || ' jobs to t_event_log (IDs ' || MIN(job)::text || ' to ' || MAX(job) || ')'
                     FROM T_Tmp_Jobs;
                 Else
-                    INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
-                    SELECT 'Job', 'Delete items', 0, 'Error: did not log deletion of jobs to t_event_log (IDs ' || MIN(job)::text || ' to ' || MAX(job) || ')'
+                    INSERT INTO T_Tmp_Results (
+                        item_type,
+                        item_name,
+                        item_id,
+                        action
+                    )
+                    SELECT 'Job', 'Delete items', 0,
+                           'Error: did not log deletion of jobs to t_event_log (IDs ' || MIN(job)::text || ' to ' || MAX(job) || ')'
                     FROM T_Tmp_Jobs;
                 End If;
 
             Else
-                INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-                SELECT 'Job', 'Delete items', 0, 'Nothing to delete: jobs ' || MIN(job)::text || ' to ' || MAX(job) || ' not found in t_analysis_job'
+                INSERT INTO T_Tmp_Results (
+                    item_type,
+                    item_name,
+                    item_id,
+                    action
+                )
+                SELECT 'Job', 'Delete items', 0,
+                       'Nothing to delete: jobs ' || MIN(job)::text || ' to ' || MAX(job) || ' not found in t_analysis_job'
                 FROM T_Tmp_Jobs;
             End If;
 
@@ -709,18 +843,36 @@ BEGIN
                       entered >= CURRENT_TIMESTAMP - INTERVAL '30 seconds';
 
                 If FOUND Then
-                    INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-                    SELECT 'Dataset', 'Delete items', 0, 'Logged deletion of ' || _myRowCount::text || ' datasets to t_event_log (IDs ' || MIN(dataset_id)::text || ' to ' || MAX(dataset_id) || ')'
+                    INSERT INTO T_Tmp_Results (
+                        item_type,
+                        item_name,
+                        item_id,
+                        action
+                    )
+                    SELECT 'Dataset', 'Delete items', 0,
+                           'Logged deletion of ' || _myRowCount::text || ' datasets to t_event_log (IDs ' || MIN(dataset_id)::text || ' to ' || MAX(dataset_id) || ')'
                     FROM T_Tmp_Datasets;
                 Else
-                    INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
-                    SELECT 'Dataset', 'Delete items', 0, 'Error: did not log deletion of datasets to t_event_log (IDs ' || MIN(dataset_id)::text || ' to ' || MAX(dataset_id) || ')'
+                    INSERT INTO T_Tmp_Results (
+                        item_type,
+                        item_name,
+                        item_id,
+                        action
+                    )
+                    SELECT 'Dataset', 'Delete items', 0,
+                           'Error: did not log deletion of datasets to t_event_log (IDs ' || MIN(dataset_id)::text || ' to ' || MAX(dataset_id) || ')'
                     FROM T_Tmp_Datasets;
                 End If;
 
             Else
-                INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-                SELECT 'Dataset', 'Delete items', 0, 'Nothing to delete: dataset IDs ' || MIN(dataset_id)::text || ' to ' || MAX(dataset_id) || ' not found in t_dataset'
+                INSERT INTO T_Tmp_Results (
+                    item_type,
+                    item_name,
+                    item_id,
+                    action
+                )
+                SELECT 'Dataset', 'Delete items', 0,
+                       'Nothing to delete: dataset IDs ' || MIN(dataset_id)::text || ' to ' || MAX(dataset_id) || ' not found in t_dataset'
                 FROM T_Tmp_Datasets;
             End If;
 
@@ -741,18 +893,36 @@ BEGIN
                       entered >= CURRENT_TIMESTAMP - INTERVAL '30 seconds';
 
                 If FOUND Then
-                    INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-                    SELECT 'Experiment', 'Delete items', 0, 'Logged deletion of ' || _myRowCount::text || ' experiments to t_event_log (IDs ' || MIN(experiment_id)::text || ' to ' || MAX(experiment_id) || ')'
+                    INSERT INTO T_Tmp_Results (
+                        item_type,
+                        item_name,
+                        item_id,
+                        action
+                    )
+                    SELECT 'Experiment', 'Delete items', 0,
+                           'Logged deletion of ' || _myRowCount::text || ' experiments to t_event_log (IDs ' || MIN(experiment_id)::text || ' to ' || MAX(experiment_id) || ')'
                     FROM T_Tmp_Experiments;
                 Else
-                    INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
-                    SELECT 'Experiment', 'Delete items', 0, 'Error: did not log deletion of experiments to t_event_log (IDs ' || MIN(experiment_id)::text || ' to ' || MAX(experiment_id) || ')'
+                    INSERT INTO T_Tmp_Results (
+                        item_type,
+                        item_name,
+                        item_id,
+                        action
+                    )
+                    SELECT 'Experiment', 'Delete items', 0,
+                           'Error: did not log deletion of experiments to t_event_log (IDs ' || MIN(experiment_id)::text || ' to ' || MAX(experiment_id) || ')'
                     FROM T_Tmp_Experiments;
                 End If;
 
             Else
-                INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-                SELECT 'Experiment', 'Delete items', 0, 'Nothing to delete: experiment IDs ' || MIN(experiment_id)::text || ' to ' || MAX(experiment_id) || ' not found in t_experiments'
+                INSERT INTO T_Tmp_Results (
+                    item_type,
+                    item_name,
+                    item_id,
+                    action
+                )
+                SELECT 'Experiment', 'Delete items', 0,
+                       'Nothing to delete: experiment IDs ' || MIN(experiment_id)::text || ' to ' || MAX(experiment_id) || ' not found in t_experiments'
                 FROM T_Tmp_Experiments;
             End If;
 
@@ -773,18 +943,36 @@ BEGIN
                       entered >= CURRENT_TIMESTAMP - INTERVAL '30 seconds';
 
                 If FOUND Then
-                    INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-                    SELECT 'Campaign', 'Delete items', 0, 'Logged deletion of ' || _myRowCount::text || ' campaigns to t_event_log (IDs ' || MIN(campaign_id)::text || ' to ' || MAX(campaign_id) || ')'
+                    INSERT INTO T_Tmp_Results (
+                        item_type,
+                        item_name,
+                        item_id,
+                        action
+                    )
+                    SELECT 'Campaign', 'Delete items', 0,
+                           'Logged deletion of ' || _myRowCount::text || ' campaigns to t_event_log (IDs ' || MIN(campaign_id)::text || ' to ' || MAX(campaign_id) || ')'
                     FROM T_Tmp_Campaigns;
                 Else
-                    INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
-                    SELECT 'Campaign', 'Delete items', 0, 'Error: did not log deletion of campaigns to t_event_log (IDs ' || MIN(campaign_id)::text || ' to ' || MAX(campaign_id) || ')'
+                    INSERT INTO T_Tmp_Results (
+                        item_type,
+                        item_name,
+                        item_id,
+                        action
+                    )
+                    SELECT 'Campaign', 'Delete items', 0,
+                           'Error: did not log deletion of campaigns to t_event_log (IDs ' || MIN(campaign_id)::text || ' to ' || MAX(campaign_id) || ')'
                     FROM T_Tmp_Campaigns;
                 End If;
 
             Else
-                INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-                SELECT 'Campaign', 'Delete items', 0, 'Nothing to delete: campaign IDs ' || MIN(campaign_id)::text || ' to ' || MAX(campaign_id) || ' not found in t_campaign'
+                INSERT INTO T_Tmp_Results (
+                    item_type,
+                    item_name,
+                    item_id,
+                    action
+                )
+                SELECT 'Campaign', 'Delete items', 0,
+                       'Nothing to delete: campaign IDs ' || MIN(campaign_id)::text || ' to ' || MAX(campaign_id) || ' not found in t_campaign'
                 FROM T_Tmp_Campaigns;
             End If;
         End If;
@@ -797,7 +985,13 @@ BEGIN
     If _campaignsFoundOrCreated Then
         -- Append event log entries for the unit test campaigns
 
-        INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
+        INSERT INTO T_Tmp_Results (
+            item_type,
+            item_name,
+            item_id,
+            action,
+            comment
+        )
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
             SELECT E.event_id,
@@ -815,15 +1009,27 @@ BEGIN
         ORDER BY RankQ.event_id;
 
         If Not FOUND Then
-            INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-            VALUES ('Campaign', 'Warning', 0, 'Entries not found in t_event_log for unit test campaigns');
+            INSERT INTO T_Tmp_Results (
+                item_type,
+                item_name,
+                item_id,
+                action
+            )
+            VALUES ('Campaign', 'Warning', 0,
+                    'Entries not found in t_event_log for unit test campaigns');
         End If;
 
     Else
         -- Unit test campaigns not found
         -- Append campaign related event log items from the last 2 hours
 
-        INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
+        INSERT INTO T_Tmp_Results (
+            item_type,
+            item_name,
+            item_id,
+            action,
+            comment
+        )
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
             SELECT E.event_id,
@@ -842,7 +1048,13 @@ BEGIN
     If _experimentsFoundOrCreated Then
         -- Append event log entries for the unit test experiments
 
-        INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
+        INSERT INTO T_Tmp_Results (
+            item_type,
+            item_name,
+            item_id,
+            action,
+            comment
+        )
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
             SELECT E.event_id,
@@ -860,14 +1072,26 @@ BEGIN
         ORDER BY RankQ.event_id;
 
         If Not FOUND Then
-            INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-            VALUES ('Experiment', 'Warning', 0, 'Entries not found in t_event_log for unit test experiments');
+            INSERT INTO T_Tmp_Results (
+                item_type,
+                item_name,
+                item_id,
+                action
+            )
+            VALUES ('Experiment', 'Warning', 0,
+                    'Entries not found in t_event_log for unit test experiments');
         End If;
     Else
         -- Unit test experiments not found
         -- Append experiment related event log items from the last 2 hours
 
-        INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
+        INSERT INTO T_Tmp_Results (
+            item_type,
+            item_name,
+            item_id,
+            action,
+            comment
+        )
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
             SELECT E.event_id,
@@ -886,7 +1110,13 @@ BEGIN
     If _datasetsFoundOrCreated Then
         -- Append event log entries for the unit test datasets
 
-        INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
+        INSERT INTO T_Tmp_Results (
+            item_type,
+            item_name,
+            item_id,
+            action,
+            comment
+        )
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
             SELECT E.event_id,
@@ -904,14 +1134,26 @@ BEGIN
         ORDER BY RankQ.event_id;
 
         If Not FOUND Then
-            INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-            VALUES ('Datasset', 'Warning', 0, 'Entries not found in t_event_log for unit test datasets');
+            INSERT INTO T_Tmp_Results (
+                item_type,
+                item_name,
+                item_id,
+                action
+            )
+            VALUES ('Datasset', 'Warning', 0,
+                    'Entries not found in t_event_log for unit test datasets');
         End If;
     Else
         -- Unit test datasets not found
         -- Append dataset related event log items from the last 2 hours
 
-        INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
+        INSERT INTO T_Tmp_Results (
+            item_type,
+            item_name,
+            item_id,
+            action,
+            comment
+        )
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
             SELECT E.event_id,
@@ -930,7 +1172,13 @@ BEGIN
     If _jobsFoundOrCreated Then
         -- Append event log entries for the unit test jobs
 
-        INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
+        INSERT INTO T_Tmp_Results (
+            item_type,
+            item_name,
+            item_id,
+            action,
+            comment
+        )
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
             SELECT E.event_id,
@@ -950,14 +1198,26 @@ BEGIN
         ORDER BY RankQ.event_id;
 
         If Not FOUND Then
-            INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-            VALUES ('Job', 'Warning', 0, 'Entries not found in t_event_log for unit test jobs');
+            INSERT INTO T_Tmp_Results (
+                item_type,
+                item_name,
+                item_id,
+                action
+            )
+            VALUES ('Job', 'Warning', 0,
+                    'Entries not found in t_event_log for unit test jobs');
         End If;
     Else
         -- Unit test jobs not found
         -- Append job related event log items from the last 2 hours
 
-        INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
+        INSERT INTO T_Tmp_Results (
+            item_type,
+            item_name,
+            item_id,
+            action,
+            comment
+        )
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
             SELECT E.event_id,
@@ -976,7 +1236,13 @@ BEGIN
     If _plexMappingFoundOrCreated Then
         -- Append history items for the unit test plex mappings
 
-        INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
+        INSERT INTO T_Tmp_Results (
+            item_type,
+            item_name,
+            item_id,
+            action,
+            comment
+        )
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
             SELECT H.entry_id,
@@ -993,14 +1259,26 @@ BEGIN
         ORDER BY RankQ.entry_id;
 
         If Not FOUND Then
-            INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action)
-            VALUES ('Experiment Plex History', 'Warning', 0, 'Entries not found in t_experiment_plex_members_history for unit test plex mappings');
+            INSERT INTO T_Tmp_Results (
+                item_type,
+                item_name,
+                item_id,
+                action
+            )
+            VALUES ('Experiment Plex History', 'Warning', 0,
+                    'Entries not found in t_experiment_plex_members_history for unit test plex mappings');
         End If;
     Else
         -- Unit test plex mapping not found
         -- Append plex member history items from the last 2 hours
 
-        INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
+        INSERT INTO T_Tmp_Results (
+            item_type,
+            item_name,
+            item_id,
+            action,
+            comment
+        )
         SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
         FROM (
             SELECT H.entry_id,
@@ -1020,7 +1298,13 @@ BEGIN
     -- Append rename information
     -----------------------------------------------------------------
 
-    INSERT INTO T_Tmp_Results (item_type, item_name, item_id, action, comment)
+    INSERT INTO T_Tmp_Results (
+        item_type,
+        item_name,
+        item_id,
+        action,
+        comment
+    )
     SELECT RankQ.item_type, RankQ.item_name, RankQ.item_id, RankQ.action, RankQ.comment
     FROM (SELECT L.entry_id,
                  'Rename log: ' || L.target_type AS item_type,

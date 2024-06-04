@@ -128,10 +128,12 @@ BEGIN
                 RAISE EXCEPTION 'Cannot add: entry "%" already exists for group %', _datasetType, _instrumentGroup;
             End If;
 
-            INSERT INTO t_instrument_group_allowed_ds_type ( instrument_group,
-                                                             dataset_type,
-                                                             comment)
-            VALUES(_instrumentGroup, _datasetType, _comment);
+            INSERT INTO t_instrument_group_allowed_ds_type (
+                instrument_group,
+                dataset_type,
+                comment
+            )
+            VALUES (_instrumentGroup, _datasetType, _comment);
 
             _validMode := true;
         End If;

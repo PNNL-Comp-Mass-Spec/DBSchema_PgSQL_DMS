@@ -40,11 +40,11 @@ BEGIN
 
     UPDATE Tmp_Job_Steps
     SET Dependencies = T.dependencies
-    FROM ( SELECT Step,
-                  COUNT(*) AS dependencies
-           FROM Tmp_Job_Step_Dependencies
-           WHERE Job = _job
-           GROUP BY Step
+    FROM (SELECT Step,
+                 COUNT(*) AS dependencies
+          FROM Tmp_Job_Step_Dependencies
+          WHERE Job = _job
+          GROUP BY Step
          ) AS T
     WHERE T.Step = Tmp_Job_Steps.Step AND
           Tmp_Job_Steps.Job = _job;
@@ -71,12 +71,12 @@ BEGIN
 
     UPDATE Tmp_Jobs
     SET Results_Directory_Name = TZ.Output_Directory_Name
-    FROM ( SELECT Job, Output_Directory_Name
-           FROM Tmp_Job_Steps
-           WHERE Job = _job AND
-                 Special_Instructions::citext = 'Job_Results'
-           ORDER BY Step
-           LIMIT 1
+    FROM (SELECT Job, Output_Directory_Name
+          FROM Tmp_Job_Steps
+          WHERE Job = _job AND
+                Special_Instructions::citext = 'Job_Results'
+          ORDER BY Step
+          LIMIT 1
         ) TZ
     WHERE Tmp_Jobs.Job = TZ.Job;
 

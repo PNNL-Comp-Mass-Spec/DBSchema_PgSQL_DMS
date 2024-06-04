@@ -98,10 +98,10 @@ BEGIN
     -----------------------------------------
 
     MERGE INTO t_dataset_qc_instruments AS target
-    USING ( SELECT Inst.instrument, Inst.instrument_id
-            FROM t_instrument_name Inst
-                 INNER JOIN Tmp_Instruments
-                   ON Inst.instrument_id = Tmp_Instruments.instrument_id
+    USING (SELECT Inst.instrument, Inst.instrument_id
+           FROM t_instrument_name Inst
+                INNER JOIN Tmp_Instruments
+                  ON Inst.instrument_id = Tmp_Instruments.instrument_id
           ) AS source
     ON (target.instrument = source.instrument)
     WHEN MATCHED AND target.instrument_id <> source.instrument_id THEN
@@ -115,11 +115,11 @@ BEGIN
     -- Delete rows in t_dataset_qc_instruments where the instrument is not in Tmp_Instruments or t_instrument_name
 
     DELETE FROM t_dataset_qc_instruments target
-    WHERE NOT EXISTS ( SELECT Inst.instrument
-                       FROM t_instrument_name Inst
-                            INNER JOIN Tmp_Instruments
-                              ON Inst.instrument_id = Tmp_Instruments.instrument_id
-                       WHERE Inst.Instrument = target.instrument
+    WHERE NOT EXISTS (SELECT Inst.instrument
+                      FROM t_instrument_name Inst
+                           INNER JOIN Tmp_Instruments
+                             ON Inst.instrument_id = Tmp_Instruments.instrument_id
+                      WHERE Inst.Instrument = target.instrument
                      );
 
     DROP TABLE Tmp_Instruments;

@@ -119,10 +119,11 @@ BEGIN
         ---------------------------------------------------
 
         INSERT INTO Tmp_JobsToCreate (
-                DatasetName, Priority, AnalysisToolName, ParamFileName, SettingsFileName,
-                OrganismName, ProteinCollectionList, ProteinOptionsList, OrganismDBName,
-                OwnerUsername, Comment, PropagationMode, SpecialProcessing,
-                ExistingJobCount, Message, ReturnCode)
+            DatasetName, Priority, AnalysisToolName, ParamFileName, SettingsFileName,
+            OrganismName, ProteinCollectionList, ProteinOptionsList, OrganismDBName,
+            OwnerUsername, Comment, PropagationMode, SpecialProcessing,
+            ExistingJobCount, Message, ReturnCode
+        )
         SELECT dataset, priority, analysis_tool_name, param_file_name, settings_file_name,
                organism_name, protein_collection_list, protein_options_list, organism_db_name,
                owner_username, comment, propagation_mode, special_processing,

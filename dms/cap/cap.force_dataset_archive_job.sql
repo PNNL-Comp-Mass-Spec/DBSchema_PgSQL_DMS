@@ -82,11 +82,13 @@ BEGIN
     -- Create DatasetArchive capture task job
     ---------------------------------------------------
 
-    INSERT INTO t_tasks ( Script,
-                          Dataset,
-                          Dataset_ID,
-                          Comment
-    ) VALUES (
+    INSERT INTO t_tasks (
+        Script,
+        Dataset,
+        Dataset_ID,
+        Comment
+    )
+    VALUES (
         'DatasetArchive',
         _dataset,
         _datasetID,

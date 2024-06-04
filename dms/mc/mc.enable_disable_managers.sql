@@ -246,8 +246,8 @@ BEGIN
     -- which allows the refcursor to filter by manager name
     -- without using the temporary table
 
-    _mgrNames := ARRAY( SELECT manager_name
-                        FROM Tmp_ManagerList
+    _mgrNames := ARRAY(SELECT manager_name
+                       FROM Tmp_ManagerList
                       );
 
     -- We no longer need the temporary table

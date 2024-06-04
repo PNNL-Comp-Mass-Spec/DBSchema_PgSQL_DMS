@@ -61,20 +61,22 @@ BEGIN
     If _processingMode In (0, 1) Then
         SELECT MIN(dataset_id)
         INTO _minimumDatasetID
-        FROM ( SELECT dataset_id
-               FROM t_dataset
-               ORDER BY dataset_id DESC
-               LIMIT 10000) LookupQ;
+        FROM (SELECT dataset_id
+              FROM t_dataset
+              ORDER BY dataset_id DESC
+              LIMIT 10000) LookupQ;
     End If;
 
     ------------------------------------------------
     -- Add new datasets to t_cached_dataset_links
     ------------------------------------------------
 
-    INSERT INTO t_cached_dataset_links (dataset_id,
-                                        dataset_row_version,
-                                        storage_path_row_version,
-                                        update_required )
+    INSERT INTO t_cached_dataset_links (
+        dataset_id,
+        dataset_row_version,
+        storage_path_row_version,
+        update_required
+    )
     SELECT DS.dataset_id,
            DS.xmin,
            DFP.xmin,
@@ -173,26 +175,26 @@ BEGIN
 
             SELECT MasicDirectoryName
             INTO _masicDirectoryName
-            FROM ( SELECT OrderQ.DatasetID,
-                          OrderQ.Job,
-                          OrderQ.MasicDirectoryName,
-                          Row_Number() OVER (PARTITION BY OrderQ.DatasetID
-                                             ORDER BY OrderQ.JobStateRank ASC, OrderQ.Job DESC) AS JobRank
-                   FROM ( SELECT J.dataset_id AS DatasetID,
-                                 J.job AS Job,
-                                 J.Results_Folder_Name AS MasicDirectoryName,
-                                 CASE
-                                     WHEN J.job_state_id = 4 THEN 1
-                                     WHEN J.job_state_id = 14 THEN 2
-                                     ELSE 3
-                                 END AS JobStateRank
-                          FROM t_analysis_job J
-                               INNER JOIN t_analysis_tool T
-                                 ON J.analysis_tool_id = T.analysis_tool_id
-                          WHERE J.dataset_id = _datasetID AND
-                                T.analysis_tool LIKE 'MASIC%' AND
-                                NOT J.results_folder_name IS NULL
-                        ) OrderQ
+            FROM (SELECT OrderQ.DatasetID,
+                         OrderQ.Job,
+                         OrderQ.MasicDirectoryName,
+                         Row_Number() OVER (PARTITION BY OrderQ.DatasetID
+                                            ORDER BY OrderQ.JobStateRank ASC, OrderQ.Job DESC) AS JobRank
+                  FROM (SELECT J.dataset_id AS DatasetID,
+                               J.job AS Job,
+                               J.Results_Folder_Name AS MasicDirectoryName,
+                               CASE
+                                   WHEN J.job_state_id = 4 THEN 1
+                                   WHEN J.job_state_id = 14 THEN 2
+                                   ELSE 3
+                               END AS JobStateRank
+                        FROM t_analysis_job J
+                             INNER JOIN t_analysis_tool T
+                               ON J.analysis_tool_id = T.analysis_tool_id
+                        WHERE J.dataset_id = _datasetID AND
+                              T.analysis_tool LIKE 'MASIC%' AND
+                              NOT J.results_folder_name IS NULL
+                       ) OrderQ
                  ) RankQ
             WHERE JobRank = 1;
             --
@@ -241,31 +243,31 @@ BEGIN
 
             UPDATE t_cached_dataset_links Target
             SET masic_directory_name = JobDirectoryQ.MasicDirectoryName
-            FROM ( SELECT DatasetID,
-                             MasicDirectoryName
-                      FROM ( SELECT OrderQ.DatasetID,
-                                    OrderQ.Job,
-                                    OrderQ.MasicDirectoryName,
-                                    Row_Number() OVER (PARTITION BY OrderQ.DatasetID
-                                                       ORDER BY OrderQ.JobStateRank ASC, OrderQ.Job DESC) AS JobRank
-                             FROM ( SELECT J.dataset_id AS DatasetID,
-                                           J.job AS Job,
-                                           J.Results_Folder_Name AS MasicDirectoryName,
-                                           CASE
-                                               WHEN J.job_state_id = 4 THEN 1
-                                               WHEN J.job_state_id = 14 THEN 2
-                                               ELSE 3
-                                           END AS JobStateRank
-                                    FROM t_analysis_job J
-                                         INNER JOIN t_analysis_tool T
-                                           ON J.analysis_tool_id = T.analysis_tool_id
-                                    WHERE J.dataset_id BETWEEN _datasetIdStart AND _datasetIdEnd AND
-                                          T.analysis_tool LIKE 'MASIC%' AND
-                                          NOT J.results_folder_name IS NULL
-                                  ) OrderQ
-                           ) RankQ
-                      WHERE JobRank = 1
-                   ) JobDirectoryQ
+            FROM (SELECT DatasetID,
+                         MasicDirectoryName
+                  FROM (SELECT OrderQ.DatasetID,
+                               OrderQ.Job,
+                               OrderQ.MasicDirectoryName,
+                               Row_Number() OVER (PARTITION BY OrderQ.DatasetID
+                                                  ORDER BY OrderQ.JobStateRank ASC, OrderQ.Job DESC) AS JobRank
+                        FROM (SELECT J.dataset_id AS DatasetID,
+                                     J.job AS Job,
+                                     J.Results_Folder_Name AS MasicDirectoryName,
+                                     CASE
+                                         WHEN J.job_state_id = 4 THEN 1
+                                         WHEN J.job_state_id = 14 THEN 2
+                                         ELSE 3
+                                     END AS JobStateRank
+                              FROM t_analysis_job J
+                                   INNER JOIN t_analysis_tool T
+                                     ON J.analysis_tool_id = T.analysis_tool_id
+                              WHERE J.dataset_id BETWEEN _datasetIdStart AND _datasetIdEnd AND
+                                    T.analysis_tool LIKE 'MASIC%' AND
+                                    NOT J.results_folder_name IS NULL
+                             ) OrderQ
+                       ) RankQ
+                  WHERE JobRank = 1
+                 ) JobDirectoryQ
             WHERE (Target.update_required > 0 OR _processingMode >= 3) AND
                   Target.dataset_id = JobDirectoryQ.DatasetID AND
                   Coalesce(Target.MASIC_Directory_Name, '') <> JobDirectoryQ.MasicDirectoryName;
@@ -387,54 +389,54 @@ BEGIN
             ------------------------------------------------
 
             MERGE INTO t_cached_dataset_links AS target
-            USING ( SELECT DS.dataset_id,
-                           DFP.dataset_row_version,
-                           DFP.storage_path_row_version,
-                           CASE
-                                WHEN DA.archive_state_id = 4 THEN format('Purged: %s', DFP.dataset_folder_path)
-                                ELSE CASE
-                                        WHEN DA.instrument_data_purged > 0 THEN format('Raw Data Purged: %s', DFP.Dataset_Folder_Path)
-                                        ELSE DFP.Dataset_Folder_Path
-                                     END
-                           END AS Dataset_Folder_Path,
-                           CASE
-                                WHEN DA.myemsl_state > 0 And DS.Created >= make_date(2013, 9, 17) Then ''
-                                ELSE DFP.Archive_Folder_Path
-                           END AS Archive_Folder_Path,
-                           format('https://metadata.my.emsl.pnl.gov/fileinfo/files_for_keyvalue/omics.dms.dataset_id/%s', DS.Dataset_ID) AS MyEMSL_URL,
-                           CASE
-                                WHEN DA.QC_Data_Purged > 0 THEN ''
-                                ELSE format('%sQC/index.html', DFP.Dataset_URL)
-                           END AS QC_Link,
-                           CASE
-                                WHEN DA.QC_Data_Purged > 0 THEN ''
-                                ELSE format('%s%s/', DFP.Dataset_URL, J.Results_Folder_Name)
-                           END AS QC_2D,
-                           CASE
-                                WHEN Experiment SIMILAR TO 'QC[_]Shew%' THEN
-                                       format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/P_2C/inst/%s/filterDS/QC_Shew', Inst.instrument)
-                                WHEN Experiment SIMILAR TO 'QC[_]Mam%'  THEN
-                                       format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/P_2C/inst/%s/filterDS/QC_Mam', Inst.instrument)
-                                WHEN Experiment SIMILAR TO 'TEDDY[_]DISCOVERY%' THEN
-                                       format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/qcart/inst/%s/filterDS/TEDDY_DISCOVERY', Inst.instrument)
-                                ELSE   format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/MS2_Count/inst/%s/filterDS/%s', Inst.instrument, Substring(DS.Dataset, 1, 4))
-                           END AS QC_Metric_Stats
-                    FROM t_dataset DS
-                        INNER JOIN t_cached_dataset_links DL
-                          ON DL.dataset_id = DS.dataset_id
-                        INNER JOIN t_cached_dataset_folder_paths DFP
-                          ON DFP.dataset_id = DS.dataset_id
-                        INNER JOIN t_experiments E
-                          ON E.exp_id = DS.exp_id
-                        INNER JOIN t_instrument_name Inst
-                          ON Inst.instrument_id = DS.instrument_id
-                        LEFT OUTER JOIN t_analysis_job J
-                          ON DS.decontools_job_for_qc = J.job
-                        LEFT OUTER JOIN t_dataset_archive DA
-                                        INNER JOIN t_archive_path AP
-                                          ON DA.storage_path_id = AP.archive_path_id
-                          ON DS.dataset_id = DA.dataset_id
-                    WHERE DS.dataset_id BETWEEN _datasetIdStart AND _datasetIdEnd
+            USING (SELECT DS.dataset_id,
+                          DFP.dataset_row_version,
+                          DFP.storage_path_row_version,
+                          CASE
+                               WHEN DA.archive_state_id = 4 THEN format('Purged: %s', DFP.dataset_folder_path)
+                               ELSE CASE
+                                       WHEN DA.instrument_data_purged > 0 THEN format('Raw Data Purged: %s', DFP.Dataset_Folder_Path)
+                                       ELSE DFP.Dataset_Folder_Path
+                                    END
+                          END AS Dataset_Folder_Path,
+                          CASE
+                               WHEN DA.myemsl_state > 0 And DS.Created >= make_date(2013, 9, 17) Then ''
+                               ELSE DFP.Archive_Folder_Path
+                          END AS Archive_Folder_Path,
+                          format('https://metadata.my.emsl.pnl.gov/fileinfo/files_for_keyvalue/omics.dms.dataset_id/%s', DS.Dataset_ID) AS MyEMSL_URL,
+                          CASE
+                               WHEN DA.QC_Data_Purged > 0 THEN ''
+                               ELSE format('%sQC/index.html', DFP.Dataset_URL)
+                          END AS QC_Link,
+                          CASE
+                               WHEN DA.QC_Data_Purged > 0 THEN ''
+                               ELSE format('%s%s/', DFP.Dataset_URL, J.Results_Folder_Name)
+                          END AS QC_2D,
+                          CASE
+                               WHEN Experiment SIMILAR TO 'QC[_]Shew%' THEN
+                                      format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/P_2C/inst/%s/filterDS/QC_Shew', Inst.instrument)
+                               WHEN Experiment SIMILAR TO 'QC[_]Mam%'  THEN
+                                      format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/P_2C/inst/%s/filterDS/QC_Mam', Inst.instrument)
+                               WHEN Experiment SIMILAR TO 'TEDDY[_]DISCOVERY%' THEN
+                                      format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/qcart/inst/%s/filterDS/TEDDY_DISCOVERY', Inst.instrument)
+                               ELSE   format('https://prismsupport.pnl.gov/smaqc/smaqc/metric/MS2_Count/inst/%s/filterDS/%s', Inst.instrument, Substring(DS.Dataset, 1, 4))
+                          END AS QC_Metric_Stats
+                   FROM t_dataset DS
+                       INNER JOIN t_cached_dataset_links DL
+                         ON DL.dataset_id = DS.dataset_id
+                       INNER JOIN t_cached_dataset_folder_paths DFP
+                         ON DFP.dataset_id = DS.dataset_id
+                       INNER JOIN t_experiments E
+                         ON E.exp_id = DS.exp_id
+                       INNER JOIN t_instrument_name Inst
+                         ON Inst.instrument_id = DS.instrument_id
+                       LEFT OUTER JOIN t_analysis_job J
+                         ON DS.decontools_job_for_qc = J.job
+                       LEFT OUTER JOIN t_dataset_archive DA
+                                       INNER JOIN t_archive_path AP
+                                         ON DA.storage_path_id = AP.archive_path_id
+                         ON DS.dataset_id = DA.dataset_id
+                   WHERE DS.dataset_id BETWEEN _datasetIdStart AND _datasetIdEnd
                   ) AS Source
             ON (target.dataset_id = source.dataset_id)
             WHEN MATCHED AND

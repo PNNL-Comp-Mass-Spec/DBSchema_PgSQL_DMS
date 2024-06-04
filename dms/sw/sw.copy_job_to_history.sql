@@ -195,22 +195,22 @@ BEGIN
 
     DELETE FROM sw.t_job_step_dependencies_history target
     WHERE EXISTS
-        (  SELECT 1
-           FROM sw.t_job_step_dependencies_history TSDH
-                INNER JOIN ( SELECT H.Job,
-                                    H.Step
-                             FROM sw.t_job_step_dependencies_history H
-                                  LEFT OUTER JOIN sw.t_job_step_dependencies D
-                                    ON H.Job = D.Job AND
-                                       H.Step = D.Step AND
-                                       H.Target_Step = D.Target_Step
-                             WHERE H.Job = _job AND
-                                   D.Job IS NULL
-                            ) DeleteQ
-                  ON TSDH.Job = DeleteQ.Job AND
-                     TSDH.Step = DeleteQ.Step
-            WHERE target.job = TSDH.job AND
-                  target.step = TSDH.step
+        (SELECT 1
+         FROM sw.t_job_step_dependencies_history TSDH
+              INNER JOIN (SELECT H.Job,
+                                 H.Step
+                          FROM sw.t_job_step_dependencies_history H
+                               LEFT OUTER JOIN sw.t_job_step_dependencies D
+                                 ON H.Job = D.Job AND
+                                    H.Step = D.Step AND
+                                    H.Target_Step = D.Target_Step
+                          WHERE H.Job = _job AND
+                                D.Job IS NULL
+                         ) DeleteQ
+                ON TSDH.Job = DeleteQ.Job AND
+                   TSDH.Step = DeleteQ.Step
+         WHERE target.job = TSDH.job AND
+               target.step = TSDH.step
         );
 
     -- Now add/update the job step dependencies

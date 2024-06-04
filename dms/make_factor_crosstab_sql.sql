@@ -130,8 +130,8 @@ BEGIN
         --                        ' FROM (SELECT Src.type, Src.target_id, Src.name, Src.Value'
         --                              ' FROM t_factor Src INNER JOIN Tmp_Factors I ON Src.factor_id = I.FactorID'
         --                              ') AS DataQ'
-        --                              ' PIVOT ('                                                                  ||
-        --                       format('   MAX(value) FOR name IN ( %s ) ', _factorNameList)                       ||
+        --                              ' PIVOT ('                                                                ||
+        --                       format('   MAX(value) FOR name IN (%s) ', _factorNameList)                       ||
         --                              ' ) AS PivotResults';
 
 
@@ -144,10 +144,10 @@ BEGIN
         --                       ON Src.Factor_ID = I.FactorID
         --                ORDER BY 1,2',
         --                $$SELECT unnest('{"BioRep", "Sample", "Time"}'::text[])$$)
-        --                AS ct ( Target_ID int,
-        --                        "BioRep" text,
-        --                        "Sample" text,
-        --                        "Time" text)
+        --                AS ct (Target_ID int,
+        --                       "BioRep" text,
+        --                       "Sample" text,
+        --                       "Time" text)
 
         -- Example contents of _crossTabSql for SQL Server
 
@@ -157,7 +157,7 @@ BEGIN
         --            INNER JOIN #FACTORS I
         --              ON Src.FactorID = I.FactorID
         --      ) AS DataQ
-        --      PIVOT ( MAX(Value) FOR Name IN ( [BioRep], [Sample], [Time] )
+        --      PIVOT (MAX(Value) FOR Name IN ([BioRep], [Sample], [Time])
         --            ) AS PivotResults
 
     End If;

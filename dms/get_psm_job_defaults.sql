@@ -184,7 +184,7 @@ BEGIN
 
     INSERT INTO Tmp_DatasetInfo (Dataset_Name)
     SELECT DISTINCT Value
-    FROM public.parse_delimited_list ( _datasets );
+    FROM public.parse_delimited_list (_datasets);
 
     ---------------------------------------------------
     -- Validate the datasets in Tmp_DatasetInfo
@@ -353,15 +353,15 @@ BEGIN
 
     SELECT string_agg(format('Enzyme:%s:%s', CountQ.enzyme_name, CountQ.Datasets), '|' ORDER BY CountQ.enzyme_name)
     INTO _addon
-    FROM (  SELECT Enz.enzyme_name, COUNT(DSInfo.dataset_id) AS Datasets
-            FROM Tmp_DatasetInfo DSInfo
-                 INNER JOIN t_dataset DS
-                   ON DSInfo.dataset_id = DS.dataset_id
-                 INNER JOIN t_experiments E
-                   ON DS.exp_id = E.exp_id
-                 INNER JOIN t_enzymes Enz
-                   ON E.enzyme_id = Enz.enzyme_id
-            GROUP BY Enz.enzyme_name
+    FROM (SELECT Enz.enzyme_name, COUNT(DSInfo.dataset_id) AS Datasets
+          FROM Tmp_DatasetInfo DSInfo
+               INNER JOIN t_dataset DS
+                 ON DSInfo.dataset_id = DS.dataset_id
+               INNER JOIN t_experiments E
+                 ON DS.exp_id = E.exp_id
+               INNER JOIN t_enzymes Enz
+                 ON E.enzyme_id = Enz.enzyme_id
+          GROUP BY Enz.enzyme_name
         ) CountQ;
 
     _metadata := format('%s%s|', _metadata, _addon);

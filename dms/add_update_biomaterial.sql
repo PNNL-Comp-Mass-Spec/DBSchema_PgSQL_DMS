@@ -405,8 +405,8 @@ BEGIN
                                 _biomaterialName,
                                 _organismList,
                                 _infoOnly   => false,
-                                _message    => _message,        -- Output
-                                _returnCode => _returnCode );   -- Output
+                                _message    => _message,       -- Output
+                                _returnCode => _returnCode);   -- Output
             End If;
 
         End If;
@@ -458,8 +458,8 @@ BEGIN
                             _biomaterialName,
                             _organismList,
                             _infoOnly   => false,
-                            _message    => _message,        -- Output
-                            _returnCode => _returnCode );   -- Output
+                            _message    => _message,       -- Output
+                            _returnCode => _returnCode);   -- Output
 
         End If;
 

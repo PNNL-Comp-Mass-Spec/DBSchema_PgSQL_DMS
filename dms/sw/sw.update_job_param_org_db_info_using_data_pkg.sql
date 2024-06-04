@@ -163,7 +163,7 @@ BEGIN
                ON J.analysis_tool_id = Tool.analysis_tool_id
         WHERE J.Job IN (SELECT Job
                         FROM dpkg.t_data_package_analysis_jobs
-                        WHERE Data_Pkg_ID = _dataPackageID ) AND
+                        WHERE Data_Pkg_ID = _dataPackageID) AND
               Tool.Org_DB_Required <> 0
         GROUP BY Org.Organism, J.Organism_DB_Name, J.Protein_Collection_List, J.Protein_Options_List
         ORDER BY COUNT(J.job) DESC;

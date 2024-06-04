@@ -126,7 +126,7 @@ BEGIN
         SELECT _job, Step
         FROM (
             SELECT xmltable.*
-            FROM (SELECT _scriptXML AS ScriptXML ) Src,
+            FROM (SELECT _scriptXML AS ScriptXML) Src,
                   XMLTABLE('//JobScript/Step'
                          PASSING Src.ScriptXML
                          COLUMNS step                 int    PATH '@Number',

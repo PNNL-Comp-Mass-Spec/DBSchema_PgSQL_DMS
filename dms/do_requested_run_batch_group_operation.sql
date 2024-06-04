@@ -84,7 +84,9 @@ BEGIN
             _message := format('Cannot delete batch group since used by one or more requested run batches: %s', _batchGroupID);
             RAISE EXCEPTION '%', _message USING ERRCODE = 'U5203';
         Else
-            INSERT INTO T_Deleted_Requested_Run_Batch_Group (Batch_Group_ID, Batch_Group, Description, Owner_User_ID, Created)
+            INSERT INTO T_Deleted_Requested_Run_Batch_Group (
+                Batch_Group_ID, Batch_Group, Description, Owner_User_ID, Created
+            )
             SELECT Batch_Group_ID, Batch_Group, Description, Owner_User_ID, Created
             FROM T_Requested_Run_Batch_Group
             WHERE Batch_Group_ID = _batchGroupID;

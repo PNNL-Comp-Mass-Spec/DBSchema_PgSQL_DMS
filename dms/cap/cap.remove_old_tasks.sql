@@ -112,10 +112,10 @@ BEGIN
         WHERE State IN (3, 4, 15, 101) AND    -- Complete, Inactive, Skipped, or Ignore
               Coalesce(Finish, Start) < _cutoffDateTimeForSuccess AND
               NOT job IN (SELECT T.job
-                  FROM cap.t_tasks T
-                  WHERE T.State IN (3, 4, 15, 101)
-                  ORDER BY T.job DESC
-                  LIMIT 50)
+                          FROM cap.t_tasks T
+                          WHERE T.State IN (3, 4, 15, 101)
+                          ORDER BY T.job DESC
+                          LIMIT 50)
         ORDER BY job;
 
         If _validateJobStepSuccess Then

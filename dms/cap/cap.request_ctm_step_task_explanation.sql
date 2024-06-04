@@ -64,18 +64,17 @@ BEGIN
             TS.Tool,
             APT.Tool_Priority,
             APT.Bionet_OK,
-            CASE WHEN ( Only_On_Storage_Server = 'Y' ) AND ( Storage_Server <> _machine ) THEN 'N' ELSE 'Y' END AS Server_OK,
-            CASE WHEN ( APT.Instrument_Capacity_Limited = 'N' OR (NOT Coalesce(Available_Capacity, 1) < 1) ) THEN 'Y' ELSE 'N' END AS Instrument_OK,
+            CASE WHEN (Only_On_Storage_Server = 'Y') AND (Storage_Server <> _machine) THEN 'N' ELSE 'Y' END AS Server_OK,
+            CASE WHEN (APT.Instrument_Capacity_Limited = 'N' OR (NOT Coalesce(Available_Capacity, 1) < 1)) THEN 'Y' ELSE 'N' END AS Instrument_OK,
             CASE WHEN (
                 (Processor_Assignment_Applies = 'N')
                 OR
                 (
-                    ( _processorassignmentcount > 0 AND Coalesce(Assigned_To_This_Processor, 0) > 0 )
+                    (_processorassignmentcount > 0 AND Coalesce(Assigned_To_This_Processor, 0) > 0)
                     OR
-                    ( _processorassignmentcount = 0 AND Coalesce(Assigned_To_Any_Processor, 0) = 0 )
+                    (_processorassignmentcount = 0 AND Coalesce(Assigned_To_Any_Processor, 0) = 0)
                 )
-            ) THEN 'Y' ELSE 'N' END
-            AS Assignment_OK,
+            ) THEN 'Y' ELSE 'N' END AS Assignment_OK,
             CASE WHEN CURRENT_TIMESTAMP > TS.Next_Try THEN 'Y' ELSE 'N' END AS Retry_Holdoff_OK
     FROM cap.t_task_steps TS
          INNER JOIN cap.t_tasks T
@@ -129,10 +128,10 @@ BEGIN
     SELECT 'Candidate capture task job steps that could be assigned to this processor' AS Parameter,
            format('%s (some may be excluded due to a Bionet, Storage Server, Instrument Capacity, or Instrument Lock rule; see table Tmp_CandidateJobStepDetails)',
                   JobCount) AS Value
-    FROM ( SELECT COUNT(*) AS JobCount
-           FROM Tmp_CandidateJobStepDetails AS CJS
-                INNER JOIN cap.t_tasks T ON T.Job = CJS.Job
-                LEFT OUTER JOIN cap.t_step_tools ON cap.t_step_tools.step_tool = CJS.Tool
+    FROM (SELECT COUNT(*) AS JobCount
+          FROM Tmp_CandidateJobStepDetails AS CJS
+               INNER JOIN cap.t_tasks T ON T.Job = CJS.Job
+               LEFT OUTER JOIN cap.t_step_tools ON cap.t_step_tools.step_tool = CJS.Tool
          ) CountQ;
 
     RETURN QUERY

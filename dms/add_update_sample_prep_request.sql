@@ -321,9 +321,8 @@ BEGIN
                           ON UOP.operation_id = UO.operation_id
                    WHERE U.Status = 'Active' AND
                          UO.operation = 'DMS_Sample_Preparation' AND
-                         Username = _callingUser::citext
-                  ) Then
-
+                         Username = _callingUser::citext)
+        Then
               _allowUpdateEstimatedPrepTime := true;
         End If;
 

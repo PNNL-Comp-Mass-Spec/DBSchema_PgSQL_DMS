@@ -127,7 +127,7 @@ BEGIN
         DELETE FROM Tmp_ProteinCollections
         WHERE NOT RowNumberID IN (SELECT MIN(RowNumberID) AS IDToKeep
                                   FROM Tmp_ProteinCollections
-                                  GROUP BY Protein_Collection_Name );
+                                  GROUP BY Protein_Collection_Name);
 
     End If;
 

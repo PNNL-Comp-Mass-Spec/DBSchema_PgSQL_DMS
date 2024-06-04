@@ -48,7 +48,7 @@ BEGIN
         Instrument_Group text NOT NULL,
         Year int NOT NULL,
         Jobs int NOT NULL,
-        PRIMARY KEY ( Script, Instrument_Group, Year )
+        PRIMARY KEY (Script, Instrument_Group, Year)
     );
 
     ---------------------------------------------------
@@ -139,10 +139,10 @@ BEGIN
     ---------------------------------------------------
 
     MERGE INTO sw.t_pipeline_job_stats AS t
-    USING ( SELECT Script, Instrument_Group, Year, Jobs
-            FROM Tmp_Pipeline_Job_Stats
+    USING (SELECT Script, Instrument_Group, Year, Jobs
+           FROM Tmp_Pipeline_Job_Stats
           ) AS s
-    ON ( t.instrument_group = s.instrument_group AND t.script = s.script AND t.year = s.year)
+    ON (t.instrument_group = s.instrument_group AND t.script = s.script AND t.year = s.year)
     WHEN MATCHED AND t.jobs < s.jobs THEN
         UPDATE SET jobs = s.jobs
     WHEN NOT MATCHED THEN

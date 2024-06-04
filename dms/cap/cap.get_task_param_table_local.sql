@@ -52,27 +52,27 @@ BEGIN
     --   '<Param Section="JobParameters" Name="Storage_Server_Name" Value="proto-4"/>'
 
     SELECT unnest(xpath('//params/Param', rooted_xml))::text
-    FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
-           FROM cap.t_task_parameters
-           WHERE job = _job
+    FROM (SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
+          FROM cap.t_task_parameters
+          WHERE job = _job
          ) Src;
 
     -- Obtain a single parameter:
     --   '<Param Section="JobParameters" Name="Storage_Server_Name" Value="proto-4"/>'
 
     SELECT unnest(xpath('//params/Param[@Name="Storage_Server_Name"]', rooted_xml))::text
-    FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
-           FROM cap.t_task_parameters
-           WHERE job = _job
+    FROM (SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
+          FROM cap.t_task_parameters
+          WHERE job = _job
          ) Src;
 
     -- Obtain the parameter value:
     --   'proto-4'
 
     SELECT unnest(xpath('//params/Param[@Name="Storage_Server_Name"]/@Value', rooted_xml))::text
-    FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
-           FROM cap.t_task_parameters
-           WHERE job = _job
+    FROM (SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
+          FROM cap.t_task_parameters
+          WHERE job = _job
          ) Src;
 
     */
@@ -108,7 +108,8 @@ BEGIN
     SELECT _job AS Job, Trim(XmlQ.section)::citext, Trim(XmlQ.name)::citext, Trim(XmlQ.value)::citext
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT ('<params>' || _xmlParameters::text || '</params>')::xml as rooted_xml ) Src,
+        FROM (SELECT ('<params>' || _xmlParameters::text || '</params>')::xml AS rooted_xml
+             ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml
                       COLUMNS section text PATH '@Section',

@@ -38,10 +38,10 @@ BEGIN
     ---------------------------------------------------
 
     MERGE INTO Tmp_ParamTab AS target
-    USING ( SELECT Null AS Step,
-                   _section AS Section,
-                   _paramName AS Name,
-                   _paramValue AS Value
+    USING (SELECT Null AS Step,
+                  _section AS Section,
+                  _paramName AS Name,
+                  _paramValue AS Value
           ) AS Source
     ON (target.Section = source.Section AND
         target.Name = source.Name)

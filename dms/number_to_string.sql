@@ -90,7 +90,7 @@ BEGIN
             _matchPos := strpos(_valueText, '0e+');
 
             If _matchPos > 0 Then
-                _valueText = Replace( _valueText, '0e+', 'e+');
+                _valueText = Replace(_valueText, '0e+', 'e+');
             Else
                 _continue := false;
             End If;

@@ -79,9 +79,11 @@ BEGIN
     -- Instrument name and ID are required because the columns cannot have null values
     ------------------------------------------------
 
-    INSERT INTO t_cached_dataset_stats (dataset_id,
-                                        instrument_id,
-                                        instrument)
+    INSERT INTO t_cached_dataset_stats (
+        dataset_id,
+        instrument_id,
+        instrument
+    )
     SELECT DS.dataset_id,
            DS.instrument_id,
            InstName.instrument

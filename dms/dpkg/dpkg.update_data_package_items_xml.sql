@@ -120,7 +120,8 @@ BEGIN
         SELECT XmlQ.Package, Trim(XmlQ.ItemType), Trim(XmlQ.Identifier)
         FROM (
             SELECT xmltable.*
-            FROM ( SELECT ('<items>' || _xml::text || '</items>')::xml as rooted_xml ) Src,
+            FROM (SELECT ('<items>' || _xml::text || '</items>')::xml AS rooted_xml
+                 ) Src,
                  XMLTABLE('//items/item'
                           PASSING Src.rooted_xml
                           COLUMNS Package    int  PATH '@pkg',

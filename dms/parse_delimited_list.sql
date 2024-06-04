@@ -70,7 +70,7 @@ BEGIN
 
     RETURN QUERY
     SELECT Trim(SplitQ.Value) ValueText
-    FROM (  SELECT regexp_split_to_table(_delimitedList, _delimiter) AS Value
+    FROM (SELECT regexp_split_to_table(_delimitedList, _delimiter) AS Value
          ) SplitQ
     WHERE COALESCE(Trim(SplitQ.Value), '') <> '';
 END

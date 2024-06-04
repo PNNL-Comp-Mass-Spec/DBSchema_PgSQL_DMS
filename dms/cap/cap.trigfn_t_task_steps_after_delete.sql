@@ -43,8 +43,12 @@ BEGIN
         RETURN null;
     End If;
 
-    INSERT INTO cap.t_task_step_events
-        (job, step, target_state, prev_target_state)
+    INSERT INTO cap.t_task_step_events (
+        job,
+        step,
+        target_state,
+        prev_target_state
+    )
     SELECT deleted.Job, deleted.Step, 0 as New_State, deleted.State as Old_State
     FROM deleted
     ORDER BY deleted.Job, deleted.Step;

@@ -21,15 +21,15 @@ BEGIN
     RETURN QUERY
     WITH
     Collection_1 (protein_ID, protein_collection_ID) AS
-      ( SELECT PCM1.Protein_ID,
-               PCM1.Protein_Collection_ID
-        FROM pc.T_Protein_Collection_Members PCM1
-        WHERE PCM1.Protein_Collection_ID = _collection_1 ),
-    Collection_2 ( protein_ID, protein_collection_ID) AS
-      ( SELECT PCM2.Protein_ID,
-               PCM2.Protein_Collection_ID
-        FROM pc.T_Protein_Collection_Members PCM2
-        WHERE PCM2.Protein_Collection_ID = _collection_2 )
+      (SELECT PCM1.Protein_ID,
+              PCM1.Protein_Collection_ID
+       FROM pc.T_Protein_Collection_Members PCM1
+       WHERE PCM1.Protein_Collection_ID = _collection_1),
+    Collection_2 (protein_ID, protein_collection_ID) AS
+      (SELECT PCM2.Protein_ID,
+              PCM2.Protein_Collection_ID
+       FROM pc.T_Protein_Collection_Members PCM2
+       WHERE PCM2.Protein_Collection_ID = _collection_2)
     SELECT collection_2.protein_ID
     FROM Collection_1
          RIGHT OUTER JOIN Collection_2

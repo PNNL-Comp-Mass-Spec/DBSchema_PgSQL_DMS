@@ -61,11 +61,13 @@ BEGIN
     End If;
 
     If Not _infoOnly Then
-        INSERT INTO cap.t_tasks (Script,
-                                 Comment,
-                                 Dataset,
-                                 Dataset_ID,
-                                 Priority )
+        INSERT INTO cap.t_tasks (
+            Script,
+            Comment,
+            Dataset,
+            Dataset_ID,
+            Priority
+        )
         SELECT 'DatasetArchive' AS Script,
                'Created by import from DMS' AS comment,
                Src.Dataset,

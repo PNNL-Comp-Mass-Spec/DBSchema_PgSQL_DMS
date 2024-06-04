@@ -276,7 +276,12 @@ BEGIN
 
                 RAISE INFO '%', _message;
 
-                INSERT INTO cap.t_myemsl_upload_resets (Job, Dataset_ID, Subfolder, Error_Message)
+                INSERT INTO cap.t_myemsl_upload_resets (
+                    Job,
+                    Dataset_ID,
+                    Subfolder,
+                    Error_Message
+                )
                 SELECT Job, Dataset_ID, Subfolder, Error_Message
                 FROM Tmp_FailedJobs
                 WHERE SkipResetMode = 0;

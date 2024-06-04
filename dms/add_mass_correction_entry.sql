@@ -91,9 +91,10 @@ BEGIN
     -- Is entry already in database?
     ---------------------------------------------------
 
-    If Exists ( SELECT mass_correction_id
-                FROM t_mass_correction_factors
-                WHERE mass_correction_tag = _modName::citext) Then
+    If Exists (SELECT mass_correction_id
+               FROM t_mass_correction_factors
+               WHERE mass_correction_tag = _modName::citext)
+    Then
         _msg := format('Cannot add: mass Correction "%s" already exists', _modName);
         RAISE WARNING '%', _msg;
 

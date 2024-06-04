@@ -200,7 +200,13 @@ BEGIN
     -- Populate temp table with new parameters
     -----------------------------------------------------------
 
-    INSERT INTO Tmp_FactorInfo (Identifier, Factor, Value, DatasetID, UpdateSkipCode)
+    INSERT INTO Tmp_FactorInfo (
+        Identifier,
+        Factor,
+        Value,
+        DatasetID,
+        UpdateSkipCode
+    )
     SELECT Trim(XmlQ.Identifier), Trim(XmlQ.Factor), Trim(XmlQ.Value), XmlQ.DatasetID, 0
     FROM (
         SELECT xmltable.*

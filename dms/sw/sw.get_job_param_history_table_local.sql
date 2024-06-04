@@ -38,17 +38,17 @@ BEGIN
     -- \\proto-3\QEHFX01\2022_1\
 
     SELECT unnest(xpath('//params/Param[@Name="DatasetStoragePath"]/@Value', rooted_xml))::text
-    FROM ( SELECT ('<params>' || parameters::text || '</params>')::xml as rooted_xml
-           FROM sw.t_job_parameters_history
-           WHERE job = 2014771
+    FROM (SELECT ('<params>' || parameters::text || '</params>')::xml AS rooted_xml
+          FROM sw.t_job_parameters_history
+          WHERE job = 2014771
          ) Src;
 
     -- \\proto-3\DMS3_Xfer\
 
     SELECT ((xpath('//params/Param[@Name = "TransferFolderPath"]/@Value', rooted_xml))[1])::text
-    FROM ( SELECT ('<root>' || parameters::text || '</root>')::xml as rooted_xml
-           FROM sw.t_job_parameters_history
-           WHERE job = 2014771) FilterQ;
+    FROM (SELECT ('<root>' || parameters::text || '</root>')::xml AS rooted_xml
+          FROM sw.t_job_parameters_history
+          WHERE job = 2014771) FilterQ;
 
     */
 
@@ -61,9 +61,9 @@ BEGIN
     SELECT _job AS Job, Trim(XmlQ.name)::citext, Trim(XmlQ.value)::citext
     FROM (
         SELECT xmltable.*
-        FROM ( SELECT ('<params>' || JobParams.parameters::text || '</params>')::xml as rooted_xml
-               FROM sw.t_job_parameters_history JobParams
-               WHERE JobParams.job = _job
+        FROM (SELECT ('<params>' || JobParams.parameters::text || '</params>')::xml AS rooted_xml
+              FROM sw.t_job_parameters_history JobParams
+              WHERE JobParams.job = _job
              ) Src,
              XMLTABLE('//params/Param'
                       PASSING Src.rooted_xml

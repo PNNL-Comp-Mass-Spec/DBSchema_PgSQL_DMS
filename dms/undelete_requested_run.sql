@@ -190,7 +190,13 @@ BEGIN
             -- Add the deleted requested run batch group to T_Requested_Run_Batch_Group
             ---------------------------------------------------
 
-            INSERT INTO T_Requested_Run_Batch_Group (Batch_Group_ID, Batch_Group, Description, Owner_User_ID, Created)
+            INSERT INTO T_Requested_Run_Batch_Group (
+                Batch_Group_ID,
+                Batch_Group,
+                Description,
+                Owner_User_ID,
+                Created
+            )
             OVERRIDING SYSTEM VALUE
             SELECT Batch_Group_ID, Batch_Group, Description, Owner_User_ID, Created
             FROM T_Deleted_Requested_Run_Batch_Group
@@ -205,13 +211,13 @@ BEGIN
             ---------------------------------------------------
 
             INSERT INTO T_Requested_Run_Batches (
-                    Batch_ID, Batch, Description, Owner_User_ID, Created, Locked,
-                    Last_Ordered, Requested_Batch_Priority, Actual_Batch_Priority,
-                    Requested_Completion_Date, Justification_for_High_Priority, Comment,
-                    -- Deprecated in January 2024
-                    -- Requested_Instrument_Group,
-                    Batch_Group_ID, Batch_Group_Order
-                )
+                Batch_ID, Batch, Description, Owner_User_ID, Created, Locked,
+                Last_Ordered, Requested_Batch_Priority, Actual_Batch_Priority,
+                Requested_Completion_Date, Justification_for_High_Priority, Comment,
+                -- Deprecated in January 2024
+                -- Requested_Instrument_Group,
+                Batch_Group_ID, Batch_Group_Order
+            )
             OVERRIDING SYSTEM VALUE
             SELECT Batch_ID, Batch, Description, Owner_User_ID, Created, Locked,
                    Last_Ordered, Requested_Batch_Priority, Actual_Batch_Priority,
@@ -228,14 +234,14 @@ BEGIN
         ---------------------------------------------------
 
         INSERT INTO T_Requested_Run (
-                Request_Id, Request_Name, Requester_Username, Comment, Created, Instrument_Group,
-                Request_Type_Id, Instrument_Setting, Special_Instructions, Wellplate, Well, Priority, Note, Exp_Id,
-                Request_Run_Start, Request_Run_Finish, Request_Internal_Standard, Work_Package, Batch_Id,
-                Blocking_Factor, Block, Run_Order, EUS_Proposal_Id, EUS_Usage_Type_Id,
-                Cart_Id, Cart_Config_Id, Cart_Column, Separation_Group, Mrm_Attachment,
-                Dataset_Id, Origin, State_Name, Request_Name_Code, Vialing_Conc, Vialing_Vol, Location_Id,
-                Queue_State, Queue_Instrument_Id, Queue_Date, Entered, Updated, Updated_By
-            )
+            Request_Id, Request_Name, Requester_Username, Comment, Created, Instrument_Group,
+            Request_Type_Id, Instrument_Setting, Special_Instructions, Wellplate, Well, Priority, Note, Exp_Id,
+            Request_Run_Start, Request_Run_Finish, Request_Internal_Standard, Work_Package, Batch_Id,
+            Blocking_Factor, Block, Run_Order, EUS_Proposal_Id, EUS_Usage_Type_Id,
+            Cart_Id, Cart_Config_Id, Cart_Column, Separation_Group, Mrm_Attachment,
+            Dataset_Id, Origin, State_Name, Request_Name_Code, Vialing_Conc, Vialing_Vol, Location_Id,
+            Queue_State, Queue_Instrument_Id, Queue_Date, Entered, Updated, Updated_By
+        )
         OVERRIDING SYSTEM VALUE
         SELECT Request_Id, Request_Name, Requester_Username, Comment, Created, Instrument_Group,
                Request_Type_Id, Instrument_Setting, Special_Instructions, Wellplate, Well, Priority, Note, Exp_Id,
