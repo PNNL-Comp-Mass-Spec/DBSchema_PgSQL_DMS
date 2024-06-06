@@ -12,6 +12,7 @@ CREATE TABLE ont.t_cv_newt (
     parent_term_id public.citext NOT NULL,
     grandparent_term_name public.citext,
     grandparent_term_id public.citext,
+    mnemonic public.citext,
     entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
@@ -49,6 +50,12 @@ CREATE INDEX ix_t_cv_newt_grandparent_term_name ON ont.t_cv_newt USING btree (gr
 --
 
 CREATE INDEX ix_t_cv_newt_identifier ON ont.t_cv_newt USING btree (identifier) INCLUDE (term_name);
+
+--
+-- Name: ix_t_cv_newt_mnemonic; Type: INDEX; Schema: ont; Owner: d3l243
+--
+
+CREATE INDEX ix_t_cv_newt_mnemonic ON ont.t_cv_newt USING btree (mnemonic);
 
 --
 -- Name: ix_t_cv_newt_parent_term_name; Type: INDEX; Schema: ont; Owner: d3l243

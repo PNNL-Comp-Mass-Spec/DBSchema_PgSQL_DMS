@@ -10,7 +10,8 @@ CREATE VIEW ont.v_cv_newt AS
     parent_term_name,
     parent_term_id,
     grandparent_term_name,
-    grandparent_term_id
+    grandparent_term_id,
+    mnemonic
    FROM ont.t_cv_newt;
 
 
