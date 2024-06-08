@@ -7,7 +7,9 @@ CREATE VIEW ont.v_helper_newt_list_report AS
     term_name,
     parent_term_name AS parent,
     grandparent_term_name AS grandparent,
-    is_leaf
+    common_name,
+    is_leaf,
+    rank
    FROM ont.v_cv_newt;
 
 

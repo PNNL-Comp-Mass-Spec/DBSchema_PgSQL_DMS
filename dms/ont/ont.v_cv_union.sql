@@ -83,12 +83,12 @@ UNION
  SELECT 'NEWT'::public.citext AS source,
     t_cv_newt.term_pk,
     t_cv_newt.term_name,
-    (t_cv_newt.identifier)::public.citext AS identifier,
+    t_cv_newt.identifier_text AS identifier,
     t_cv_newt.is_leaf,
     t_cv_newt.parent_term_name,
-    t_cv_newt.parent_term_id,
+    t_cv_newt.parent_term_id_text AS parent_term_id,
     t_cv_newt.grandparent_term_name,
-    t_cv_newt.grandparent_term_id
+    t_cv_newt.grandparent_term_id_text AS grandparent_term_id
    FROM ont.t_cv_newt
 UNION
  SELECT 'PRIDE'::public.citext AS source,
