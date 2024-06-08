@@ -9,9 +9,9 @@ CREATE TABLE ont.t_cv_newt (
     identifier integer NOT NULL,
     is_leaf smallint NOT NULL,
     parent_term_name public.citext NOT NULL,
-    parent_term_id public.citext NOT NULL,
+    parent_term_id integer NOT NULL,
     grandparent_term_name public.citext,
-    grandparent_term_id public.citext,
+    grandparent_term_id integer,
     mnemonic public.citext,
     entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
