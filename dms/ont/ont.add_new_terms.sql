@@ -9,16 +9,15 @@ CREATE OR REPLACE FUNCTION ont.add_new_terms(_ontologyname text DEFAULT 'PSI'::t
 **
 **  Desc:
 **      Add new ontology terms to the ontology-specific table
-**      For example, if _ontologyName is 'NEWT', will append data to table ont.t_cv_newt
+**      For example, if _ontologyName is 'BTO', will append data to table ont.t_cv_bto
 **      Does not update existing items
 **
-**      For NEWT, the data source is ont.v_newt_terms (which queries v_term_lineage)
-**      For other ontologies, the data source is v_term_lineage
-**
-**      In both cases, v_term_lineage queries t_ontology, t_term, and t_term_relationship
+**      The data source is v_term_lineage, which queries t_ontology, t_term, and t_term_relationship
 **
 **  Arguments:
-**    _ontologyName   Examples: NEWT, MS, MOD, or PRIDE; used to find identifiers
+**    _ontologyName   Examples: BTO, MS, MOD, or PRIDE; used to find identifiers
+**    _infoOnly       When true, preview updates
+**    _previewSql     When true, preview the SQL (but do not execute it)
 **
 **  Auth:   mem
 **  Date:   05/13/2013 mem - Initial Version
@@ -35,6 +34,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_terms(_ontologyname text DEFAULT 'PSI'::t
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          01/21/2024 mem - Change data type of argument _ontologyName to text
+**          06/08/2024 mem - No longer process NEWT info; instead, use add_new_newt_terms
 **
 *****************************************************/
 DECLARE
@@ -69,7 +69,7 @@ BEGIN
     If _ontologyName::citext = 'PSI' Then
         _warningMessage := 'Ontology PSI is superseded by MS (aka PSI_MS); creation of table T_CV_PSI is not allowed';
 
-    ElsIf _ontologyName::citext In ('BTO', 'ENVO', 'MS') Then
+    ElsIf _ontologyName::citext In ('BTO', 'ENVO', 'MS', 'NEWT') Then
         _warningMessage := format('Use function "ont.add_new_%s_terms" to add %s terms', Lower(_ontologyName), _ontologyName);
 
     ElsIf Not Exists (SELECT ontology FROM ont.v_term_lineage WHERE ontology = _ontologyName::citext) Then
@@ -155,22 +155,23 @@ BEGIN
     -- Construct the Insert Into and Select SQL
     ---------------------------------------------------
 
+    /*
+     * Deprecated in June 2024; instead, use ont.add_new_newt_terms
+
     If _ontologyName::citext = 'NEWT' Then
         -- NEWT identifiers do not start with NEWT
-        -- Query v_newt_terms (which in turn queries V_Term_Lineage)
+        -- Query v_newt_terms
         -- Insert data into 'ont.t_cv_newt' (defined by _targetTableWithSchema)
 
         _sourceTable := 'ont.v_newt_terms';
 
         _insertSql := format('INSERT INTO %s (term_pk, term_name, identifier, is_leaf, parent_term_name, parent_term_id, grandparent_term_name, grandparent_term_id)', _targetTableWithSchema);
 
-        /*
-         * Old
-        _s :=        ' SELECT DISTINCT term_pk, term_name, identifier, is_leaf, parent_term_name, Parent_term_Identifier, ' ||
-                                      'grandparent_term_name, grandparent_term_identifier'                                  ||
-              format(' FROM %s', _sourceTable)                                                                              ||
-              format(' WHERE NOT parent_term_identifier IS NULL AND NOT identifier IN (SELECT identifier::citext FROM %s)', _targetTableWithSchema);
-        */
+        -- Old
+        -- _s :=        ' SELECT DISTINCT term_pk, term_name, identifier, is_leaf, parent_term_name, Parent_term_Identifier, ' ||
+        --                              'grandparent_term_name, grandparent_term_identifier'                                  ||
+        --      format(' FROM %s', _sourceTable)                                                                              ||
+        --      format(' WHERE NOT parent_term_identifier IS NULL AND NOT identifier IN (SELECT identifier::citext FROM %s)', _targetTableWithSchema);
 
         _s := format('SELECT DISTINCT s.term_pk, s.term_name, s.identifier%s', CASE WHEN _infoOnly Then '::citext, ' Else '::int, ' END)                ||
               format(                's.is_leaf, s.parent_term_name, s.Parent_term_Identifier, s.grandparent_term_name, s.grandparent_term_identifier') ||
@@ -180,25 +181,25 @@ BEGIN
                      ' WHERE NOT s.parent_term_identifier IS NULL AND'
                      '       t.identifier IS NULL';
 
-    Else
-        -- Other identifiers do start with the ontology name
-        -- Directly query v_term_lineage
-
-        _sourceTable := 'ont.v_term_lineage';
-
-        _insertSql := format('INSERT INTO %s (term_pk, term_name, identifier, is_leaf, parent_term_name, parent_term_id, grandparent_term_name, grandparent_term_id)', _targetTableWithSchema);
-
-        _s :=        'SELECT DISTINCT s.term_pk, s.term_name, s.identifier, s.is_leaf, '
-                              's.parent_term_name, s.parent_term_Identifier, s.grandparent_term_name, s.grandparent_term_identifier' ||
-             format(' FROM (SELECT * FROM %s', _sourceTable)                                                                        ||
-             format(' WHERE ontology = ''%s'' AND is_obsolete = 0 AND NOT parent_term_identifier IS NULL) s', _ontologyName)        ||
-             format(' LEFT OUTER JOIN (SELECT identifier, parent_term_id, grandparent_term_id FROM %s) t', _targetTableWithSchema) ||
-                             ' ON s.identifier = t.identifier AND'
-                                ' s.parent_term_identifier = t.parent_term_id AND '
-                                ' Coalesce(s.grandparent_term_identifier, '''') = Coalesce(t.grandparent_term_id, '''')'
-                    ' WHERE t.identifier IS NULL;';
-
     End If;
+    */
+
+    -- Identifiers start with the ontology name
+    -- Directly query v_term_lineage
+
+    _sourceTable := 'ont.v_term_lineage';
+
+    _insertSql := format('INSERT INTO %s (term_pk, term_name, identifier, is_leaf, parent_term_name, parent_term_id, grandparent_term_name, grandparent_term_id)', _targetTableWithSchema);
+
+    _s :=        'SELECT DISTINCT s.term_pk, s.term_name, s.identifier, s.is_leaf, '
+                          's.parent_term_name, s.parent_term_Identifier, s.grandparent_term_name, s.grandparent_term_identifier' ||
+         format(' FROM (SELECT * FROM %s', _sourceTable)                                                                         ||
+         format(' WHERE ontology = ''%s'' AND is_obsolete = 0 AND NOT parent_term_identifier IS NULL) s', _ontologyName)         ||
+         format(' LEFT OUTER JOIN (SELECT identifier, parent_term_id, grandparent_term_id FROM %s) t', _targetTableWithSchema)   ||
+                         ' ON s.identifier = t.identifier AND'
+                            ' s.parent_term_identifier = t.parent_term_id AND '
+                            ' Coalesce(s.grandparent_term_identifier, '''') = Coalesce(t.grandparent_term_id, '''')'
+                ' WHERE t.identifier IS NULL;';
 
     ---------------------------------------------------
     -- Add or preview new terms
