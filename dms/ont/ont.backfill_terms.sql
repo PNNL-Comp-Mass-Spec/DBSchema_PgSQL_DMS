@@ -20,12 +20,22 @@ CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable text DEFAULT 't_cv_bt
 **      View ont.v_term_lineage uses tables ont.t_ontology, ont.t_term, and ont.t_term_relationship
 **
 **  Arguments:
+**    _sourceTable
+**    _namespace                    Namespace, e.g. 'BrendaTissueOBO', 'MS', 'PSI-MOD', 'ENVO', 'PSI-MI', or 'PSI-MS'
+**                                  For t_cv_newt, leave use an empty string for _namespace
+**    _infoOnly                     When true, show the existing rows that would be updated (does not show new terms)
 **    _previewRelationshipUpdates   Set to true to preview adding/removing relationships; 0 to actually update relationships
 **
 **  Usage:
 **      SELECT * FROM ont.backfill_terms  (
 **          _sourceTable                => 'ont.t_cv_bto',
 **          _namespace                  => 'BrendaTissueOBO',
+**          _infoOnly                   => false,
+**          _previewRelationshipUpdates => true);
+**
+**      SELECT * FROM ont.backfill_terms  (
+**          _sourceTable                => 'ont.t_cv_newt',
+**          _namespace                  => '',
 **          _infoOnly                   => false,
 **          _previewRelationshipUpdates => true);
 **
@@ -41,6 +51,8 @@ CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable text DEFAULT 't_cv_bt
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          01/21/2024 mem - Change data type of function arguments to text
+**          06/08/2024 mem - Remove unused Synonyms column from the temp table
+**                         - Fix bug that used ont.t_cv_bto instead of Tmp_SourceData
 **
 *****************************************************/
 DECLARE
@@ -58,6 +70,7 @@ BEGIN
     ---------------------------------------------------
 
     _sourceTable                := Trim(Coalesce(_sourceTable, ''));
+    _namespace                  := Trim(Coalesce(_namespace, ''));
     _infoOnly                   := Coalesce(_infoOnly, true);
     _previewRelationshipUpdates := Coalesce(_previewRelationshipUpdates, true);
 
@@ -112,7 +125,6 @@ BEGIN
         term_name citext,
         identifier citext,
         is_leaf int,
-        synonyms citext,                    -- Only used if the source is 'ont.t_cv_bto'
         parent_term_name citext NULL,
         parent_term_id citext NULL,
         grandparent_term_name citext NULL,
@@ -121,11 +133,9 @@ BEGIN
     );
 
     _s := ' INSERT INTO Tmp_SourceData (term_pk, term_name, identifier, is_leaf,'            ||
-          CASE WHEN _sourceTableWithSchema = 'ont.t_cv_bto' THEN ' synonyms,' ELSE '' END    ||
                                       ' parent_term_name, Parent_term_ID,'                   ||
                                       ' grandparent_term_name, grandparent_term_id, matches_existing)' ||
           ' SELECT term_pk, term_name, identifier, is_leaf,'                                 ||
-          CASE WHEN _sourceTableWithSchema = 'ont.t_cv_bto' THEN ' synonyms,' ELSE '' END    ||
                  ' parent_term_name, parent_term_id,'                                        ||
                  ' grandparent_term_name, grandparent_term_id, 0 AS matches_existing'        ||
           ' FROM %I.%I'                                                                      ||
@@ -232,7 +242,7 @@ BEGIN
         INSERT INTO Tmp_RelationshipsToAdd (child_pk, parent_pk)
         SELECT DISTINCT SourceTable.term_pk AS child_pk,
                         ont.t_term.term_pk AS parent_pk
-        FROM ont.t_cv_bto SourceTable
+        FROM Tmp_SourceData SourceTable
              INNER JOIN ont.t_term
                ON SourceTable.parent_term_id = ont.t_term.identifier
              LEFT OUTER JOIN ont.t_term_relationship R
@@ -293,7 +303,7 @@ BEGIN
                               SourceTable.term_pk AS Child_PK,
                               SourceTable.parent_term_id,
                               ont.t_term.term_pk AS Parent_PK
-              FROM ont.t_cv_bto SourceTable
+              FROM Tmp_SourceData SourceTable
                    INNER JOIN ont.t_term
                      ON SourceTable.parent_term_ID = ont.t_term.identifier
               WHERE ont.t_term.ontology_id = _ontologyID
@@ -372,7 +382,7 @@ BEGIN
                         SourceTable.term_pk AS Child_PK,
                         SourceTable.parent_term_id AS Parent,
                         ont.t_term.term_pk AS Parent_PK
-        FROM ont.t_cv_bto SourceTable
+        FROM Tmp_SourceData SourceTable
              INNER JOIN ont.t_term
                ON SourceTable.parent_term_ID = ont.t_term.identifier
              LEFT OUTER JOIN ont.t_term_relationship
