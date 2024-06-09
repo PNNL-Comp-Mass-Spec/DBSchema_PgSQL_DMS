@@ -16,6 +16,7 @@ CREATE TABLE ont.t_cv_newt (
     common_name public.citext,
     synonym public.citext,
     mnemonic public.citext,
+    children integer DEFAULT 0 NOT NULL,
     entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated timestamp without time zone,
     identifier_text public.citext GENERATED ALWAYS AS ((identifier)::public.citext) STORED,
@@ -117,6 +118,12 @@ CREATE INDEX ix_t_cv_newt_synonym ON ont.t_cv_newt USING btree (synonym);
 --
 
 CREATE INDEX ix_t_cv_newt_term_name ON ont.t_cv_newt USING btree (term_name);
+
+--
+-- Name: ix_t_cv_newt_term_pk; Type: INDEX; Schema: ont; Owner: d3l243
+--
+
+CREATE INDEX ix_t_cv_newt_term_pk ON ont.t_cv_newt USING btree (term_pk);
 
 --
 -- Name: TABLE t_cv_newt; Type: ACL; Schema: ont; Owner: d3l243
