@@ -10,7 +10,7 @@ CREATE VIEW ont.v_newt_list_report AS
     parent_term_id,
     grandparent_term_name,
     grandparent_term_id,
-    children
+    children,
     rank,
     common_name,
     synonym,
