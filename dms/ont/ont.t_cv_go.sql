@@ -45,6 +45,12 @@ ALTER TABLE ONLY ont.t_cv_go
 CREATE INDEX ix_t_cv_go_grandparent_term_name ON ont.t_cv_go USING btree (grandparent_term_name);
 
 --
+-- Name: ix_t_cv_go_identifier; Type: INDEX; Schema: ont; Owner: d3l243
+--
+
+CREATE INDEX ix_t_cv_go_identifier ON ont.t_cv_go USING btree (identifier) INCLUDE (term_name);
+
+--
 -- Name: ix_t_cv_go_parent_term_name; Type: INDEX; Schema: ont; Owner: d3l243
 --
 
@@ -55,6 +61,18 @@ CREATE INDEX ix_t_cv_go_parent_term_name ON ont.t_cv_go USING btree (parent_term
 --
 
 CREATE INDEX ix_t_cv_go_term_name ON ont.t_cv_go USING btree (term_name);
+
+--
+-- Name: ix_t_cv_go_term_name_include_identifier; Type: INDEX; Schema: ont; Owner: d3l243
+--
+
+CREATE INDEX ix_t_cv_go_term_name_include_identifier ON ont.t_cv_go USING btree (term_name) INCLUDE (identifier);
+
+--
+-- Name: ix_t_cv_go_term_pk; Type: INDEX; Schema: ont; Owner: d3l243
+--
+
+CREATE INDEX ix_t_cv_go_term_pk ON ont.t_cv_go USING btree (term_pk);
 
 --
 -- Name: TABLE t_cv_go; Type: ACL; Schema: ont; Owner: d3l243
