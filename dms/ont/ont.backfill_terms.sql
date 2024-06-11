@@ -20,11 +20,11 @@ CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable text DEFAULT 't_cv_bt
 **      View ont.v_term_lineage uses tables ont.t_ontology, ont.t_term, and ont.t_term_relationship
 **
 **  Arguments:
-**    _sourceTable
+**    _sourceTable                  Source table name, e.g. t_cv_bto or t_cv_newt
 **    _namespace                    Namespace, e.g. 'BrendaTissueOBO', 'MS', 'PSI-MOD', 'ENVO', 'PSI-MI', or 'PSI-MS'
-**                                  For t_cv_newt, leave use an empty string for _namespace
-**    _infoOnly                     When true, show the existing rows that would be updated (does not show new terms)
-**    _previewRelationshipUpdates   Set to true to preview adding/removing relationships; 0 to actually update relationships
+**                                  For t_cv_newt, use an empty string for _namespace
+**    _infoOnly                     When true, show rows that would be added or updated
+**    _previewRelationshipUpdates   Set to true to preview adding/removing relationships; false to actually update relationships
 **
 **  Usage:
 **      SELECT * FROM ont.backfill_terms  (
@@ -53,6 +53,7 @@ CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable text DEFAULT 't_cv_bt
 **          01/21/2024 mem - Change data type of function arguments to text
 **          06/08/2024 mem - Remove unused Synonyms column from the temp table
 **                         - Fix bug that used ont.t_cv_bto instead of Tmp_SourceData
+**          06/11/2024 mem - Fix an ambiguous column name issue
 **
 *****************************************************/
 DECLARE
@@ -112,6 +113,7 @@ BEGIN
 
     _sourceTableWithSchema := format('%s.%s', _sourceSchema, _sourceTable);
 
+    RAISE INFO '';
     RAISE INFO 'Back filling ont.t_term and ont.t_term_relationship using %', _sourceTableWithSchema;
 
     ---------------------------------------------------
@@ -162,7 +164,7 @@ BEGIN
          INNER JOIN ont.t_term T
            ON S.term_pk = T.term_pk
     GROUP BY T.ontology_id
-    ORDER BY COUNT(term_pk) DESC
+    ORDER BY COUNT(T.term_pk) DESC
     LIMIT 1;
 
     If Not _infoOnly Then
@@ -177,9 +179,9 @@ BEGIN
             is_leaf = s.is_leaf,
             updated = CURRENT_TIMESTAMP
         FROM (SELECT d.term_pk, d.term_name, d.identifier, MAX(d.is_leaf) AS is_leaf
-               FROM Tmp_SourceData d
-               WHERE d.matches_existing = 1
-               GROUP BY d.term_pk, d.term_name, d.identifier) AS s
+              FROM Tmp_SourceData d
+              WHERE d.matches_existing = 1
+              GROUP BY d.term_pk, d.term_name, d.identifier) AS s
         WHERE t.term_pk = s.term_pk AND
               (
                 t.term_name <> s.term_name OR
