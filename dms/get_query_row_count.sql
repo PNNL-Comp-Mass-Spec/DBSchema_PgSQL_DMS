@@ -28,6 +28,7 @@ CREATE OR REPLACE FUNCTION public.get_query_row_count(_objectname text, _wherecl
 **  Date:   05/22/2024 mem - Initial version
 **          05/24/2024 mem - Change the object name to lowercase
 **          05/25/2024 mem - Increment column Usage in t_query_row_counts
+**          06/13/2024 mem - When adding a new row to t_query_row_counts, look for a default refresh interval value in table t_query_row_count_default_refresh_interval
 **
 *****************************************************/
 DECLARE
@@ -107,13 +108,25 @@ BEGIN
     INTO _rowCount;
 
     If _queryID <= 0 Then
+        -- Look for a default refresh interval
+        SELECT refresh_interval_hours
+        INTO _refreshIntervalHours
+        FROM t_query_row_count_default_refresh_interval
+        WHERE object_name = _objectName;
+
+        If Not FOUND Then
+            -- A default is not defined; use 4 hours
+            _refreshIntervalHours := 4;
+        End If;
+
         INSERT INTO t_query_row_counts (
             object_name,
             where_clause,
             row_count,
-            usage
+            usage,
+            refresh_interval_hours
         )
-        VALUES (_objectName, _whereClause, _rowCount, 1);
+        VALUES (_objectName, _whereClause, _rowCount, 1, _refreshIntervalHours);
 
         RETURN _rowCount;
     End If;
