@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE public.assure_material_containers_exist(INOUT _conta
 **          11/19/2023 mem - Add procedure argument _campaignName
 **          11/20/2023 mem - Ported to PostgreSQL
 **          01/08/2024 mem - Remove procedure name from error message
+**          06/12/2024 mem - Do not mark a container as a location (applicable when a container name matches a location name, e.g. -80_Staging)
 **
 *****************************************************/
 DECLARE
@@ -85,7 +86,8 @@ BEGIN
         UPDATE Tmp_ContainerItems
         SET IsLocation = true
         FROM t_material_locations
-        WHERE Item = t_material_locations.location;
+        WHERE NOT IsContainer AND
+              Item = t_material_locations.location;
 
         ---------------------------------------------------
         -- Quick check of list
