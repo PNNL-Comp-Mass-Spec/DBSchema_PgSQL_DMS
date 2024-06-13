@@ -71,8 +71,6 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 51	30	10	Delete old historic DMS DB logs	SQL	CALL logdms.delete_old_events_and_historic_logs (_infoOnly => false);	\N	\N	f	t	0
 67	37	20	Disable chain 37	SQL	CALL disable_timetable_chain (_chainID => 37);	\N	\N	f	t	0
 54	32	10	Disable archive-dependent CTM step tools	SQL	SELECT * FROM cap.enable_disable_archive_step_tools (_enable => false, _disableComment => 'Disabled for scheduled archive maintenance');	\N	\N	f	t	0
-183	99	10	Disable All Managers	SQL	CALL mc.enable_disable_all_managers (_enable => false, _infoOnly => false);	\N	\N	f	t	0
-184	99	20	Disable chain 99	SQL	CALL disable_timetable_chain (_chainID => 99);	\N	\N	f	t	0
 185	100	10	Disable Analysis Managers	SQL	CALL mc.disable_analysis_managers (_infoOnly => false);	\N	\N	f	t	0
 186	100	20	Disable chain 100	SQL	CALL disable_timetable_chain (_chainID => 100);	\N	\N	f	t	0
 189	101	30	Disable chain 101	SQL	CALL disable_timetable_chain (_chainID => 101);	\N	\N	f	t	0
@@ -87,6 +85,9 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 195	104	20	Enable CTM step tools	SQL	SELECT * FROM cap.enable_disable_archive_step_tools (_enable => true, _disableComment => 'Disabled for scheduled archive maintenance');	\N	\N	f	t	0
 188	101	20	Disable CTM step tools	SQL	SELECT * FROM cap.enable_disable_archive_step_tools (_enable => false, _disableComment => 'Disabled for scheduled archive maintenance');	\N	\N	f	t	0
 190	102	10	Disable capture task managers	SQL	CALL mc.enable_disable_managers (_enable => false, _managerTypeID => 15, _infoOnly => false);	\N	\N	f	t	0
+197	99	30	Disable chain 99	SQL	CALL disable_timetable_chain (_chainID => 99);	\N	\N	f	f	0
+183	99	10	Disable all managers	SQL	CALL mc.enable_disable_all_managers (_enable => false, _infoOnly => false);	\N	\N	f	t	0
+184	99	20	Enable Status Msg DB Updater managers	SQL	CALL mc.enable_disable_all_managers (_managerTypeIdList => '14', _managerNameList => 'all', _enable => true, _infoonly => false);	\N	\N	f	t	0
 66	37	10	Re-enable MSGFPlus	SQL	SELECT * FROM sw.enable_disable_step_tool_for_debugging ('MSGFPlus', _debugMode => false);	\N	\N	f	t	0
 146	79	10	Update missed MyEMSLState info	SQL	CALL cap.update_missed_myemsl_state_values (_windowDays => 30, _infoOnly => false);	\N	\N	f	t	0
 147	80	10	Process pipeline jobs	SQL	CALL sw.update_context (_infoOnly => false);	\N	\N	f	t	0
@@ -211,7 +212,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 -- Name: task_task_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.task_task_id_seq', 196, true);
+SELECT pg_catalog.setval('timetable.task_task_id_seq', 197, true);
 
 
 --
