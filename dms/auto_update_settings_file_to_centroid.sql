@@ -12,7 +12,13 @@ CREATE OR REPLACE FUNCTION public.auto_update_settings_file_to_centroid(_setting
 **      This is useful for QExactive datasets, since DeconMSn seems to do more harm than good with QExactive data
 **      Also useful for Orbitrap datasets with profile-mode MS/MS spectra
 **
-**  Return value: delimited list
+**  Arguments:
+**     _settingsFile    Settings file name
+**     _toolName        Tool name
+**
+**  Return value:
+**      The settings file to use
+**      - Either _settingsFile or an updated file from column msgfplus_auto_centroid in table t_settings_files
 **
 **  Auth:   mem
 **  Date:   04/09/2013
@@ -36,7 +42,7 @@ BEGIN
           analysis_tool = _toolName;
 
     If Coalesce(_newSettingsFile, '') = '' And _toolName Like 'Sequest%' Then
-        -- Sequest Settings Files
+        -- SEQUEST Settings Files
         If _settingsFile = 'FinniganDefSettings_DeconMSn.xml' Then
             _newSettingsFile := 'FinniganDefSettings_MSConvert.xml';
         End If;
