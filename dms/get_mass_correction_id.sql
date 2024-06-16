@@ -7,7 +7,8 @@ CREATE OR REPLACE FUNCTION public.get_mass_correction_id(_modmass double precisi
     AS $$
 /****************************************************
 **
-**  Desc:   Gets Mass Correction ID for given mod mass, +/- 0.00006 Da
+**  Desc:
+**  	Gets Mass Correction ID for given mod mass, +/- 0.00006 Da
 **
 **  Return values: 0: failure, otherwise, MassCorrectionID
 **

@@ -7,7 +7,8 @@ CREATE OR REPLACE FUNCTION pc.get_protein_collection_id(_collectionname text) RE
     AS $$
 /****************************************************
 **
-**  Desc:   Gets CollectionID for given protein collection name
+**  Desc:
+**  	Gets CollectionID for given protein collection name
 **
 **  Arguments:
 **    _collectionName   Protein collection name (not the original .fasta file name)

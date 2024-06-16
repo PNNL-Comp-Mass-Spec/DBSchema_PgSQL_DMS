@@ -7,7 +7,8 @@ CREATE OR REPLACE FUNCTION public.get_user_operations_list(_userid integer) RETU
     AS $$
 /****************************************************
 **
-**  Desc:   Builds delimited list of Operations for given DMS User
+**  Desc:
+**  	Builds delimited list of Operations for given DMS User
 **
 **  Return value: comma-separated list
 **

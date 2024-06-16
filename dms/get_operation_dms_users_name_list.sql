@@ -7,7 +7,8 @@ CREATE OR REPLACE FUNCTION public.get_operation_dms_users_name_list(_operationid
     AS $$
 /****************************************************
 **
-**  Desc:   Builds delimited list of DMS users for the given Operation
+**  Desc:
+**  	Builds delimited list of DMS users for the given Operation
 **
 **  Return value: list of users delimited by either semicolons or vertical bars and colons
 **

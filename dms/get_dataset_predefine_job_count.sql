@@ -7,7 +7,8 @@ CREATE OR REPLACE FUNCTION public.get_dataset_predefine_job_count(_datasetid int
     AS $$
 /****************************************************
 **
-**  Desc:   Returns a count of the number of predefined jobs created for this dataset
+**  Desc:
+**  	Returns a count of the number of predefined jobs created for this dataset
 **
 **  Auth:   mem
 **  Date:   07/25/2017 mem - Initial version

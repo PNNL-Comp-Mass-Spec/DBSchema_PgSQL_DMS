@@ -7,8 +7,9 @@ CREATE OR REPLACE FUNCTION public.get_myemsl_transaction_id_urls(_datasetid inte
     AS $$
 /****************************************************
 **
-**  Desc:   Returns a comma-separated list of the URLs used to
-**          view files associated with each transaction ID for this dataset ID
+**  Desc:
+**  	Returns a comma-separated list of the URLs used to view files associated with 
+**      each transaction ID for this dataset ID
 **
 **  Auth:   mem
 **  Date:   02/28/2018 mem - Initial version

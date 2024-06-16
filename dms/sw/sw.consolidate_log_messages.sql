@@ -7,9 +7,9 @@ CREATE OR REPLACE FUNCTION sw.consolidate_log_messages(_messagetype text DEFAULT
     AS $$
 /****************************************************
 **
-**  Desc:   Deletes duplicate messages in sw.t_log_entries,
-**          keeping the first and last message
-**          (or, optionally only the first message)
+**  Desc:
+**  	Deletes duplicate messages in sw.t_log_entries, keeping the first and last message
+**      (or, optionally only the first message)
 **
 **  Arguments:
 **    _messageFilter               Optional filter for the message text; will auto-add % wildcards if it does not contain a % and no messages are matched

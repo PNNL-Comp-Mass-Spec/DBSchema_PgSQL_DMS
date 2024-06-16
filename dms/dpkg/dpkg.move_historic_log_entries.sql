@@ -7,7 +7,8 @@ CREATE OR REPLACE PROCEDURE dpkg.move_historic_log_entries(IN _infoholdoffweeks 
     AS $$
 /****************************************************
 **
-**  Desc:   Move log entries from dpkg.t_log_entries into into the historic log table (logdms.t_log_entries_data_package)
+**  Desc:
+**  	Move log entries from dpkg.t_log_entries into into the historic log table (logdms.t_log_entries_data_package)
 **
 **  Auth:   mem
 **  Date:   03/07/2018 mem - Initial version

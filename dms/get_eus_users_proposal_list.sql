@@ -7,8 +7,8 @@ CREATE OR REPLACE FUNCTION public.get_eus_users_proposal_list(_personid integer)
     AS $$
 /****************************************************
 **
-**  Desc:   Builds delimited list of proposals for
-**          given EUS user
+**  Desc:
+**  	Builds delimited list of proposals for given EUS user
 **
 **  Return value: comma-separated list
 **

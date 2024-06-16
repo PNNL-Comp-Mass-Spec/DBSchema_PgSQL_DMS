@@ -7,11 +7,11 @@ CREATE OR REPLACE FUNCTION public.get_sample_prep_request_eus_users_list(_reques
     AS $$
 /****************************************************
 **
-**  Desc:   Returns the EUS User associated with the sample prep request
-**
-**          When _mode is 'I', return user ID
-**          When _mode is 'N', return user name
-**          When _mode is 'V', return hybrid in the form Person_Name (Person_ID)
+**  Desc:
+**  	Returns the EUS User associated with the sample prep request
+**      - When _mode is 'I', return user ID
+**      - When _mode is 'N', return user name
+**      - When _mode is 'V', return hybrid in the form Person_Name (Person_ID)
 **
 **  Arguments:
 **    _mode   'I', 'N', or 'V'

@@ -7,9 +7,9 @@ CREATE OR REPLACE FUNCTION cap.consolidate_log_messages(_messagetype text DEFAUL
     AS $$
 /****************************************************
 **
-**  Desc:   Deletes duplicate messages in cap.t_log_entries,
-**          keeping the first and last message
-**          (or, optionally only the first message)
+**  Desc:
+**      Deletes duplicate messages in cap.t_log_entries, keeping the first and last message
+**      (or, optionally only the first message)
 **
 **  Arguments:
 **    _messageFilter               Optional filter for the message text; will auto-add % wildcards if it does not contain a % and no messages are matched

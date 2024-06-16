@@ -8,12 +8,13 @@ CREATE OR REPLACE FUNCTION public.try_cast(_in text, INOUT _out anyelement) RETU
     AS $$
 /****************************************************
 **
-**  Desc:   Tries to convert parameter _in to the data type of the _out parameter
+**  Desc:
+**  	Tries to convert parameter _in to the data type of the _out parameter
 **
-**          If successful, _out will contain the converted value
-**          If unsuccessful, _out will contain the original value (i.e., the default value)
+**      If successful, _out will contain the converted value
+**      If unsuccessful, _out will contain the original value (i.e., the default value)
 **
-**          Note: this function uses an exception handler to catch conversion errors, and thus it should not be used when performance is an issue
+**      Note: this function uses an exception handler to catch conversion errors, and thus it should not be used when performance is an issue
 **
 **  Example usage:
 **      SELECT _out FROM try_cast('2343', 0);                       -- 2343
@@ -59,12 +60,13 @@ CREATE OR REPLACE FUNCTION public.try_cast(_in text, _nullifinvalid boolean, INO
     AS $$
 /****************************************************
 **
-**  Desc:   Tries to convert parameter _in to the data type of the _out parameter
+**  Desc:
+**  	Tries to convert parameter _in to the data type of the _out parameter
 **
-**          If successful, _out will contain the converted value
-**          If unsuccessful, _out will contain null if _nullIfInvalid is true, or the original value (i.e., the default value)
+**      If successful, _out will contain the converted value
+**      If unsuccessful, _out will contain null if _nullIfInvalid is true, or the original value (i.e., the default value)
 **
-**          Note: this function uses an exception handler to catch conversion errors, and thus it should not be used when performance is an issue
+**      Note: this function uses an exception handler to catch conversion errors, and thus it should not be used when performance is an issue
 **
 **  Example usage:
 **      SELECT _out FROM try_cast('2343', false, 0);                       -- 2343

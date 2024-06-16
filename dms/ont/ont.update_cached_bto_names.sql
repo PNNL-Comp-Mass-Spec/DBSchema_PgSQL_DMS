@@ -7,7 +7,8 @@ CREATE OR REPLACE FUNCTION ont.update_cached_bto_names(_infoonly boolean DEFAULT
     AS $$
 /****************************************************
 **
-**  Desc:   Updates data in ont.t_cv_bto_cached_names
+**  Desc:
+**  	Updates data in ont.t_cv_bto_cached_names
 **
 **  Auth:   mem
 **  Date:   09/01/2017 mem - Initial version

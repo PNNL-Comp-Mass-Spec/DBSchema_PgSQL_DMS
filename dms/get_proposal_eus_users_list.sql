@@ -7,7 +7,8 @@ CREATE OR REPLACE FUNCTION public.get_proposal_eus_users_list(_proposalid text, 
     AS $$
 /****************************************************
 **
-**  Desc:   Builds delimited list of EUS users for given proposal
+**  Desc:
+**  	Builds delimited list of EUS users for given proposal
 **
 **  Return value: comma or semicolon delimited list
 **

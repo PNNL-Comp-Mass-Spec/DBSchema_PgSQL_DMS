@@ -7,7 +7,8 @@ CREATE OR REPLACE FUNCTION ont.get_taxid_synonym_list(_taxonomyid integer) RETUR
     AS $$
 /****************************************************
 **
-**  Desc:   Builds a delimited list of synonym names for the given Tax_ID value
+**  Desc:
+**  	Builds a delimited list of synonym names for the given Tax_ID value
 **
 **  Return value: comma-separated list
 **

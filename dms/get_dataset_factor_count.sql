@@ -7,7 +7,8 @@ CREATE OR REPLACE FUNCTION public.get_dataset_factor_count(_datasetid integer) R
     AS $$
 /****************************************************
 **
-**  Desc:   Returns a count of the number of factors defined for this dataset
+**  Desc:
+**  	Returns a count of the number of factors defined for this dataset
 **
 **  Auth:   mem
 **  Date:   07/25/2017 mem - Initial version
