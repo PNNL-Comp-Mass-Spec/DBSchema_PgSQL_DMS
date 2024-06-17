@@ -10,6 +10,9 @@ CREATE OR REPLACE FUNCTION public.get_exp_group_experiment_list(_groupid integer
 **  Desc:
 **      Build delimited list of experiments for given Experiment Group
 **
+**  Arguments:
+**     _groupID     Experiment group ID
+**
 **  Auth:   grk
 **  Date:   07/11/2006
 **          06/16/2022 mem - Ported to PostgreSQL

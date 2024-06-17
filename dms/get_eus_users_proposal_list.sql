@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_eus_users_proposal_list(_personid integer)
 **  Desc:
 **  	Builds delimited list of proposals for given EUS user
 **
-**  Return value: comma-separated list
+**  Arguments:
+**     _personID    Person ID
+**
+**  Returns:
+**      Comma-separated list
 **
 **  Auth:   grk
 **  Date:   12/28/2008 mem - Initial version

@@ -10,6 +10,9 @@ CREATE OR REPLACE FUNCTION cap.get_task_script_dot_format_table(_script text) RE
 **  Desc:
 **      Return Dot graphic command list (as table) for given script
 **
+**  Arguments:
+**    _script   Capture task script name
+**
 **  Auth:   mem
 **  Date:   06/25/2022 mem - Ported to PostgreSQL by converting V_Script_Dot_Format to a function
 **          08/17/2022 mem - Use case-insensitive comparison for script name

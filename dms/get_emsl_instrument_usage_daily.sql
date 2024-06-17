@@ -16,6 +16,10 @@ CREATE OR REPLACE FUNCTION public.get_emsl_instrument_usage_daily(_year integer,
 **
 **      See also /files1/www/html/prismsupport/dms2ws/application/controllers/Instrument_usage_report.php
 **
+**  Arguments:
+**     _year    Year
+**     _month   Month
+**
 **  Auth:   grk
 **  Date:   09/15/2015 grk - Initial release
 **          10/20/2015 grk - Added users to output

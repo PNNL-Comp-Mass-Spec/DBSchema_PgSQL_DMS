@@ -10,6 +10,10 @@ CREATE OR REPLACE FUNCTION public.get_event_log_summary(_startdate timestamp wit
 **  Desc:
 **      Summarize DMS activity, errors, and warnings between the start and end timestamps
 **
+**  Arguments:
+**     _startDate   Start date
+**     _endDate     End date
+**
 **  Usage:
 **      -- DMS ACTIVITY REPORT (Previous 24 hours)
 **      SELECT *

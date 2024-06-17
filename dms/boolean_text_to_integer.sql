@@ -11,6 +11,9 @@ CREATE OR REPLACE FUNCTION public.boolean_text_to_integer(_booleantext text) RET
 **      Return 1 if _booleanText is Yes, Y, 1, True, or T
 **      Otherwise, return 0
 **
+**  Arguments:
+**    _booleanText      Boolean value, as text: 'Yes', 'Y', '1', 'True', 'T'
+**
 **  Auth:   mem
 **  Date:   05/28/2019 mem - Initial version
 **          06/17/2022 mem - Ported to PostgreSQL

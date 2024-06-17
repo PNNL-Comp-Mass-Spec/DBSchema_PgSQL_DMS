@@ -12,7 +12,8 @@ CREATE OR REPLACE FUNCTION sw.extract_tagged_name(_tag text, _text text) RETURNS
 **      and terminated by a space, semicolon, colon, comma, or forward slash
 **      (or to the end of the text if not found)
 **
-**  Return values: substring, or '' if not found
+**  Returns:
+**      Substring, or '' if not found
 **
 **  Arguments:
 **    _tag      The tag to look for, for example 'DTA:'

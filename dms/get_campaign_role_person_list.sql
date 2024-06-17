@@ -10,12 +10,13 @@ CREATE OR REPLACE FUNCTION public.get_campaign_role_person_list(_campaignid inte
 **  Desc:
 **      Return list of people for given role for the given campaign
 **
-**  Return value: comma-separated list
-**
 **  Arguments:
 **    _campaignID   Campaign ID
 **    _role         Role name: 'Project Mgr', 'PI', 'Dataset Acquisition', 'Technical Lead', 'Sample Preparation', 'Informatics', or 'Observer'
 **    _mode         Name mode; if 'PRN' or 'USERNAME', return the username; otherwise return person's name and username
+**
+**  Returns:
+**      Comma-separated list
 **
 **  Auth:   grk
 **  Date:   02/04/2010

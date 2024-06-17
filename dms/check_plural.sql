@@ -10,6 +10,11 @@ CREATE OR REPLACE FUNCTION public.check_plural(_count integer DEFAULT 0, _textif
 **  Desc:
 **      Return _textIfOneItem if _count is 1; otherwise, returns _textIfZeroOrMultiple
 **
+**  Arguments:
+**    _count                    Item count
+**    _textIfOneItem            Text to return if item count is one
+**    _textIfZeroOrMultiple     Text to return if item count is zero or more than one
+**
 **  Auth:   mem
 **  Date:   03/05/2013 mem - Initial release
 **          03/29/2022 mem - Ported to PostgreSQL

@@ -19,7 +19,7 @@ CREATE OR REPLACE PROCEDURE pc.add_update_protein_collection_member(IN _referenc
 **    _message              Status message
 **    _returnCode           Return code
 **
-**  Returns:
+**  Return value:
 **    If _mode is 'add',    _returnCode will be the member_id of the row added to t_protein_collection_members
 **    If _mode is 'update', _returnCode will be an empty string
 **

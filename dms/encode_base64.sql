@@ -12,6 +12,9 @@ CREATE OR REPLACE FUNCTION public.encode_base64(_texttoencode text) RETURNS text
 **
 **      From https://stackoverflow.com/a/23699204/1179467
 **
+**  Arguments:
+**    _textToEncode     Text to encode to base 64
+**
 **  Auth:   mem
 **  Date:   09/12/2013
 **          06/12/2022 mem - Ported to PostgreSQL

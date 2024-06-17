@@ -10,11 +10,14 @@ CREATE OR REPLACE FUNCTION public.get_myemsl_url_dataset_name(_datasetname text)
 **  Desc:
 **      Generate the MyEMSL URL required for viewing items stored for a given dataset
 **
+**  Arguments:
+**    _datasetName      Dataset name
+**
 **  Auth:   mem
 **  Date:   09/12/2013
 **          06/21/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
-**          09/08/2023 mem - Include schema name when calling function verify_sp_authorized()
+**          09/08/2023 mem - Include schema name when calling function get_myemsl_url_work()
 **
 *****************************************************/
 DECLARE

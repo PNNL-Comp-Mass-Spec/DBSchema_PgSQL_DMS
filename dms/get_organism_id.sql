@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_organism_id(_organismname text DEFAULT '':
 **  Desc:
 **      Get organismID for given organism name
 **
-**  Return values: organismID if found, otherwise 0
+**  Arguments:
+**    _organismName     Organism name
+**
+**  Returns:
+**      OrganismID if found, otherwise 0
 **
 **  Auth:   grk
 **  Date:   01/26/2001

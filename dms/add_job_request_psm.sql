@@ -14,7 +14,7 @@ CREATE OR REPLACE PROCEDURE public.add_job_request_psm(INOUT _requestid integer,
 **  Arguments:
 **    _requestID                Output: ID of the new analysis job request
 **    _requestName              Job request name
-**    _datasets                 Input/output:  comma-separated list of datasets; will be alphabetized after removing duplicates
+**    _datasets                 Input/output: comma-separated list of datasets; will be alphabetized after removing duplicates
 **    _comment                  Job request comment
 **    _ownerUsername            Job request owner username
 **    _protCollNameList         Comma-separated list of protein collection names

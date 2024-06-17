@@ -10,6 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_next_instrument_dataset_start(_instrumenti
 **  Desc:
 **      Return start time of first dataset that was run on given instrument after given time
 **
+**
+**  Arguments:
+**    _instrumentID     Instrument ID
+**    _start            Timestamp threshold
+**
 **  Auth:   grk
 **  Date:   05/16/2011
 **          06/21/2022 mem - Ported to PostgreSQL

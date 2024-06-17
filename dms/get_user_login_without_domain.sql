@@ -10,8 +10,6 @@ CREATE OR REPLACE FUNCTION public.get_user_login_without_domain(_callinguser tex
 **  Desc:
 **      Return the network login (username) of the calling user
 **
-**  Return value: username
-**
 **  Auth:   mem
 **  Date:   11/08/2016 mem - Initial Version
 **          11/10/2016 mem - Add parameter _callingUser, which is used in place of DMSWebUser

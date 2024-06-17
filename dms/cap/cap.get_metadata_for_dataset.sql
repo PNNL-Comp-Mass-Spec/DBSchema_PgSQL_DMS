@@ -10,6 +10,9 @@ CREATE OR REPLACE FUNCTION cap.get_metadata_for_dataset(_datasetname text) RETUR
 **  Desc:
 **      Return a table with metadata for the given dataset
 **
+**  Arguments:
+**    _datasetName      Dataset name
+**
 **  Auth:   grk
 **  Date:   10/29/2009 grk - Initial release
 **          11/03/2009 dac - Corrected name of dataset number column in global metadata

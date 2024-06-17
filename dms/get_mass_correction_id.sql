@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_mass_correction_id(_modmass double precisi
 **  Desc:
 **  	Gets Mass Correction ID for given mod mass, +/- 0.00006 Da
 **
-**  Return values: 0: failure, otherwise, MassCorrectionID
+**  Arguments:
+**    _modMass      Modification mass
+**
+**  Returns:
+**      MassCorrectionID if found, otherwise 0
 **
 **  Auth:   kja
 **  Date:   08/22/2004

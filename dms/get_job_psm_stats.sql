@@ -10,6 +10,9 @@ CREATE OR REPLACE FUNCTION public.get_job_psm_stats(_job integer) RETURNS text
 **  Desc:
 **      Build delimited list of PSM stats for given analysis job
 **
+**  Arguments:
+**    _job      Job number
+**
 **  Auth:   mem
 **  Date:   02/22/2012 mem - Initial version
 **          05/08/2012 mem - Now showing FDR-based stats if Total_PSMs_FDR_Filter > 0

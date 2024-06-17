@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_analysis_tool_allowed_dataset_type_list(_a
 **  Desc:
 **      Build a delimited list of allowed dataset types for the given analysis tool
 **
-**  Return value: comma-separated list
+**  Arguments:
+**    _analysisToolID   Analysis tool ID
+**
+**  Returns:
+**      Comma-separated list
 **
 **  Auth:   mem
 **  Date:   12/18/2009

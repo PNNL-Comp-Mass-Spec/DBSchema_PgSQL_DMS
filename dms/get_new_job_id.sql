@@ -8,13 +8,17 @@ CREATE OR REPLACE FUNCTION public.get_new_job_id(_note text, _infoonly boolean D
 /****************************************************
 **
 **  Desc:
-**      Get a unique number for making a new job
+**      Get a unique number for making a new analysis job
+**
+**  Arguments:
+**    _note         Job note
+**    _infoOnly     When true, preview the next job number
 **
 **  Example usage:
 **
 **      -- Preview the next available job number
 **      SELECT *
-**      FROM public.get_new_job_id('Created in t_analysis_job', true);
+**      FROM public.get_new_job_id('Created in t_analysis_job', _infoOnly => true);
 **
 **      -- Get the next job number, storing the note and job number as a new row in t_analysis_job_id
 **      _job := public.get_new_job_id('Created in t_analysis_job', false)

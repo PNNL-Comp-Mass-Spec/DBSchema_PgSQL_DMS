@@ -17,7 +17,7 @@ CREATE OR REPLACE PROCEDURE pc.add_naming_authority(IN _name text, IN _descripti
 **    _message          Status message
 **    _returnCode       Return code
 **
-**  Returns:
+**  Return value:
 **    _returnCode will have the naming authority ID if a new row was added to pc.t_naming_authorities
 **    _returnCode will be the negative value of the authority ID if the authority already exists in pc.t_naming_authorities
 **

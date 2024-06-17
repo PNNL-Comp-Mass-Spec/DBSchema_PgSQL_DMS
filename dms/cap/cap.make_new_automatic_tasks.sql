@@ -11,6 +11,9 @@ CREATE OR REPLACE PROCEDURE cap.make_new_automatic_tasks(IN _infoonly boolean DE
 **      Create new capture task jobs for capture tasks that are complete and have
 **      scripts that have entries in the automatic capture task job creation table
 **
+**  Arguments:
+**    _infoOnly     When true, preview capture task jobs that would be created
+**
 **  Auth:   grk
 **  Date:   09/11/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          01/26/2017 mem - Add support for column Enabled in T_Automatic_Jobs

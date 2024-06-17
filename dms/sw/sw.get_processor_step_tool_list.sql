@@ -10,7 +10,8 @@ CREATE OR REPLACE FUNCTION sw.get_processor_step_tool_list(_processorname text) 
 **  Desc:
 **      Build a delimited list of step tools for the given processor
 **
-**  Return value: comma-separated list
+**  Returns:
+**      Comma-separated list
 **
 **  Auth:   mem
 **  Date:   03/30/2009

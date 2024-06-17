@@ -12,7 +12,11 @@ CREATE OR REPLACE FUNCTION cap.get_uri_path_id(_uripath text, _infoonly boolean 
 **      Add a new row if missing (and _infoOnly is false)
 **
 **      Returns the ID of T_URI_Paths in T_URI_Paths
-**      Will return 1 if _infoOnly is true and a match is not found
+**      Returns 1 if _infoOnly is true and a match is not found
+**
+**  Arguments:
+**    _uriPath      URI Path
+**    _infoOnly     When true, return the path ID if a match is found, or 1 if a match is not found
 **
 **  Auth:   mem
 **  Date:   04/02/2012 mem - Initial version

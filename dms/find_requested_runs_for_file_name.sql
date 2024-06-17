@@ -11,6 +11,9 @@ CREATE OR REPLACE FUNCTION public.find_requested_runs_for_file_name(_filename te
 **      Return list of active requested runs that match given file name
 **      The entire request name must match the start of the file name
 **
+**  Arguments:
+**    _fileName     Dataset file name
+**
 **  Auth:   grk
 **  Date:   07/20/2012 grk - Initial release
 **          06/17/2022 mem - Ported to PostgreSQL

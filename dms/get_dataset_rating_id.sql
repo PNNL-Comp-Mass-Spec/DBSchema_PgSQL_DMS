@@ -10,6 +10,9 @@ CREATE OR REPLACE FUNCTION public.get_dataset_rating_id(_datasetratingname text 
 **  Desc:
 **      Get dataset rating ID for given dataset rating name
 **
+**  Arguments:
+**     _datasetRatingName     Dataset name
+**
 **  Example usage:
 **      SELECT public.get_dataset_rating_id('Unknown');
 **      SELECT public.get_dataset_rating_id('Unreviewed');

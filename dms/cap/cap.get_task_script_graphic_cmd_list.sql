@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION cap.get_task_script_graphic_cmd_list(_script text) RE
 **  Desc:
 **      Return Dot graphic command list (as text) for given script
 **
-**  Return value: semicolon-separated list
+**  Arguments:
+**    _script   Capture task script name
+**
+**  Returns:
+**      Semicolon-separated list
 **
 **  Auth:   grk
 **  Date:   09/08/2009

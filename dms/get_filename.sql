@@ -13,13 +13,16 @@ CREATE OR REPLACE FUNCTION public.get_filename(_filepath text) RETURNS text
 **
 **  Works with both \ and / as path separators
 **
+**  Arguments:
+**    _filePath     File path
+**
 **  Auth:   mem
 **  Date:   05/18/2017
 **          01/14/2020 mem - Ported to PostgreSQL
 **
 *****************************************************/
 DECLARE
-    _filename TEXT;
+    _filename text;
 BEGIN
     _filename := '';
 

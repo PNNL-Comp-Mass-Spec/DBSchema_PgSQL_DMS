@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_campaign_id(_campaignname text DEFAULT '':
 **  Desc:
 **      Get campaignID for given campaign name
 **
-**  Return values: campaign ID if found, otherwise 0
+**  Arguments:
+**    _campaignName     Campaign name
+**
+**  Returns:
+**      Campaign ID if found, otherwise 0
 **
 **  Auth:   grk
 **  Date:   01/26/2001

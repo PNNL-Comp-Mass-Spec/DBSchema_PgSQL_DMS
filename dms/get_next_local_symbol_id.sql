@@ -10,11 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_next_local_symbol_id(_paramfileid integer)
 **  Desc:
 **      Get next available local symbol ID for a given parameter file ID
 **
-**  Returns:
-**      Next available local symbol ID (as an integer)
-**
 **  Arguments:
 **    _paramFileID  Parameter file ID
+**
+**  Returns:
+**      Next available local symbol ID (as an integer)
 **
 **  Auth:   kja
 **  Date:   08/10/2004

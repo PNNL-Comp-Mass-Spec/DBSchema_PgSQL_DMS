@@ -14,7 +14,8 @@ CREATE OR REPLACE FUNCTION public.validate_na_parameter(_parameter text, _trimwh
 **    _parameter        Text to check
 **    _trimWhitespace   When true, trim whitespace
 **
-**  Return value: the validated parameter
+**  Returns:
+**      The validated parameter
 **
 **  Auth:   mem
 **  Date:   09/12/2008 mem - Ticket #688, http://prismtrac.pnl.gov/trac/ticket/688

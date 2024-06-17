@@ -14,7 +14,8 @@ CREATE OR REPLACE FUNCTION public.xml_quote_check(_text text) RETURNS text
 **        < is changed to &lt;
 **        > is changed to &gt;
 **
-**  Return value: the updated text
+**  Returns:
+**      The updated text
 **
 **  Auth:   mem
 **  Date:   02/03/2011 mem - Initial version

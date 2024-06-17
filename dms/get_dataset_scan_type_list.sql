@@ -12,6 +12,14 @@ CREATE OR REPLACE FUNCTION public.get_dataset_scan_type_list(_datasetid integer)
 **
 **      Scan types are sorted using column sort_key from table t_dataset_scan_type_glossary
 **
+**  Arguments:
+**     _datasetID       Dataset ID
+**
+**  Returns:
+**      Comma-separated list
+**
+**  Example usage:
+**
 **      To find missing scan types, use either of the following queries:
 **
 **      SELECT CASE WHEN Coalesce(MissingScanTypes, '') = ''
@@ -33,8 +41,6 @@ CREATE OR REPLACE FUNCTION public.get_dataset_scan_type_list(_datasetid integer)
 **                   ON T.scan_type = G.scan_type
 **      WHERE G.scan_type IS NULL
 **      ORDER BY T.scan_type;
-**
-**  Return value: comma-separated list
 **
 **  Auth:   mem
 **  Date:   05/13/2010

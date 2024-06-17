@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_factor_list(_requestid integer) RETURNS te
 **  Desc:
 **      Build a delimited list of factors (as name/value pairs) for given requested run
 **
-**  Return value: comma-separated list
+**  Arguments:
+**     _requestID   Requested run ID
+**
+**  Returns:
+**      Comma-separated list
 **
 **  Auth:   grk
 **  Date:   05/17/2011

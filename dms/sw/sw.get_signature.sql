@@ -13,7 +13,8 @@ CREATE OR REPLACE FUNCTION sw.get_signature(_settings text) RETURNS integer
 **    Input string is hashed to pattern, and stored in table T_Signatures
 **    Signature is integer reference to pattern
 **
-**  Return values: signature (integer), otherwise, 0
+**  Returns:
+**      Signature (integer), otherwise, 0
 **
 **  Auth:   grk
 **  Date:   08/22/2008 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/666)

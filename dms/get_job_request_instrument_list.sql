@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_job_request_instrument_list(_requestid int
 **  Desc:
 **      Build a comma-separated list of instruments for the datasets associated with the given analysis job request
 **
-**  Return value: comma-separated list
+**  Arguments:
+**    _requestID    Analysis job request ID
+**
+**  Returns:
+**      Comma-separated list
 **
 **  Auth:   grk
 **  Date:   11/01/2005 grk - Initial version

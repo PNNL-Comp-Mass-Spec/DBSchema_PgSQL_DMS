@@ -19,9 +19,6 @@ CREATE OR REPLACE PROCEDURE public.request_dataset_create_task(IN _processorname
 **    _message              Status message
 **    _returnCode           Return code
 **
-**  Return values:
-**      0 for success, non-zero if an error
-**
 **  Example XML parameters returned in @parameters:
 **      <root>
 **        <dataset>SW_Test_Dataset_2023-10-24</dataset>

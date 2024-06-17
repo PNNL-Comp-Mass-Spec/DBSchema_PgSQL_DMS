@@ -8,9 +8,13 @@ CREATE OR REPLACE FUNCTION public.get_fiscal_year_from_date(_rawdate timestamp w
 /****************************************************
 **
 **  Desc:
-**      Return Fiscal year for given date
+**      Return fiscal year for given date
 **
-**  Return value: Fiscal year, e.g. 2021
+**  Arguments:
+**    _rawDate      Date to examine
+**
+**  Returns:
+**      Fiscal year, e.g. 2021
 **
 **  Auth:   grk
 **  Date:   03/15/2012

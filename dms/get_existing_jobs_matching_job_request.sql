@@ -15,6 +15,9 @@ CREATE OR REPLACE FUNCTION public.get_existing_jobs_matching_job_request(_reques
 **      For Peptide_Hit tools, also uses organism DB file name, organism name,
 **      protein collection list, and protein options list
 **
+**  Arguments:
+**     _requestID   Analysis job request ID
+**
 **  Auth:   grk
 **  Date:   12/06/2005 grk - Initial release
 **          03/28/2006 grk - Added protein collection fields

@@ -10,6 +10,9 @@ CREATE OR REPLACE PROCEDURE dpkg.update_data_package_item_counts(IN _packageid i
 **  Desc:
 **      Update the entity count fields in t_data_package
 **
+**  Arguments:
+**    _packageID    Data package ID
+**
 **  Auth:   mem
 **  Date:   06/09/2009 mem - Code ported from procedure UpdateDataPackageItems
 **          06/10/2009 mem - Updated to support item counts of zero

@@ -10,6 +10,10 @@ CREATE OR REPLACE FUNCTION public.get_param_file_mass_mod_code_list(_paramfileid
 **  Desc:
 **      Return the mass mods for the given parameter file, formatted as a comma-separated list of mod codes
 **
+**  Arguments:
+**    _paramFileId      Parameter file ID
+**    _includeSymbol    When non-zero, include the modification symbol
+**
 **  Auth:   mem
 **  Date:   11/04/2021 mem - Initial version
 **          06/22/2022 mem - Ported to PostgreSQL

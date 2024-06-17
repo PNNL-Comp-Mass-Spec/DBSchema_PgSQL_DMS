@@ -11,6 +11,9 @@ CREATE OR REPLACE FUNCTION public.get_myemsl_transaction_id_urls(_datasetid inte
 **  	Returns a comma-separated list of the URLs used to view files associated with 
 **      each transaction ID for this dataset ID
 **
+**  Arguments:
+**    _datasetID    Dataset ID
+**
 **  Auth:   mem
 **  Date:   02/28/2018 mem - Initial version
 **          06/13/2022 mem - Ported to PostgreSQL

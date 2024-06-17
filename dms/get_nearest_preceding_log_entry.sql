@@ -14,11 +14,12 @@ CREATE OR REPLACE FUNCTION public.get_nearest_preceding_log_entry(_seq integer, 
 **      look for the nearest preceeding log message in
 **      t_instrument_operation_history and t_instrument_config_history
 **
-**  Return value: nearest preceeding log message
-**
 **  Arguments:
 **    _seq              Item in t_emsl_instrument_usage_report to examine
 **    _includeText      When true, include any extra text following the closing square bracket in the comment
+**
+**  Returns:
+**      Nearest preceeding log message
 **
 **  Auth:   grk
 **  Date:   08/28/2012

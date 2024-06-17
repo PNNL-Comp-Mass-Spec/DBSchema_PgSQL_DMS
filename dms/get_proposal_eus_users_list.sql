@@ -10,14 +10,15 @@ CREATE OR REPLACE FUNCTION public.get_proposal_eus_users_list(_proposalid text, 
 **  Desc:
 **  	Builds delimited list of EUS users for given proposal
 **
-**  Return value: comma or semicolon delimited list
-**
 **  Arguments:
 **    _mode   Can be I, N, L, or V:
 **              I for comma-separated list of EUS User IDs,       e.g. 36746, 44666
 **              N for semicolon-separated list of names,          e.g. Adkins, Josh; Ansong, Charles;
 **              L for semicolon-separated list of last names,     e.g. Adkins; Ansong
 **              V for semicolon-separated list of both,           e.g. Adkins, Josh (36746); Ansong, Charles (44666)
+**
+**  Returns:
+**      Comma or semicolon separated list
 **
 **  Auth:   jds
 **  Date:   09/07/2006

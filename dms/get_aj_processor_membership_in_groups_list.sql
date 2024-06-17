@@ -10,11 +10,12 @@ CREATE OR REPLACE FUNCTION public.get_aj_processor_membership_in_groups_list(_pr
 **  Desc:
 **      Build delimited list of processor group IDs for given analysis job processor ID
 **
-**  Return value: comma-separated list
-**
 **  Arguments:
-**    _processorid          Processor ID
+**    _processorID          Processor ID
 **    _enableDisableFilter  Enable/disable filter: 0 means disabled only, 1 means enabled only, anything else means all
+**
+**  Returns:
+**      Comma-separated list
 **
 **  Auth:   grk
 **  Date:   02/12/2007

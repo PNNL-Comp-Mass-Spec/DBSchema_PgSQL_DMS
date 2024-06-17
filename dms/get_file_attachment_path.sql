@@ -34,15 +34,15 @@ CREATE OR REPLACE FUNCTION public.get_file_attachment_path(_entitytype text, _en
 **        Operations_Tasks
 **        Osm_Package
 **
-**  Return value:
-**    File attachment path, examples:
-**        sample_prep_request/2017_1/4574
-**        instrument_config/2015/5775
-**        osm_package/spread/195
-**
 **  Arguments:
 **    _entityType   Entity type: 'campaign', 'experiment', 'dataset', 'sample_prep_request', 'instrument_operation_history', 'instrument_config_history', 'lc_cart_config_history', 'experiment_group', or 'sample_submission'
 **    _entityID     Entity ID, though for Campaign, Dataset, Experiment, and Sample Prep Request supports both entity ID or entity name
+**
+**  Returns:
+**      File attachment path, examples:
+**        sample_prep_request/2017_1/4574
+**        instrument_config/2015/5775
+**        osm_package/spread/195
 **
 **  Auth:   grk
 **  Date:   04/16/2011

@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_instrument_id(_instrumentname text DEFAULT
 **  Desc:
 **      Get InstrumentID for given instrument name
 **
-**  Return values: instrument ID if found, otherwise 0
+**  Arguments:
+**    _instrumentName   Instrument name
+**
+**  Returns:
+**      Instrument ID if found, otherwise 0
 **
 **  Auth:   grk
 **  Date:   01/26/2001

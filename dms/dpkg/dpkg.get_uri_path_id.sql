@@ -14,6 +14,10 @@ CREATE OR REPLACE FUNCTION dpkg.get_uri_path_id(_uripath text, _infoonly boolean
 **      Returns the ID of T_URI_Paths in T_URI_Paths
 **      Will return 0 if _infoOnly is true and a match is not found
 **
+**  Arguments:
+**    _uriPath      URI Path
+**    _infoOnly     When true, return the path ID if a match is found, or 1 if a match is not found
+**
 **  Auth:   mem
 **  Date:   04/02/2012 mem - Initial version
 **          06/27/2023 mem - Ported to PostgreSQL

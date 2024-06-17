@@ -13,7 +13,12 @@ CREATE OR REPLACE FUNCTION public.get_fasta_file_path(_fastafilename text, _orga
 **      Otherwise, look for the file in pc.T_Archived_Output_Files
 **      or V_Legacy_FASTA_File_Paths
 **
-**  Return values: Path to the directory containing the Fasta file
+**  Arguments:
+**     _fastaFileName   FASTA file name
+**     _organismName    Organism name
+**
+**  Returns:
+**      Path to the directory containing the Fasta file
 **
 **  Auth:   kja
 **  Date:   01/23/2007

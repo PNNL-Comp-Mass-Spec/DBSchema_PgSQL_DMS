@@ -10,6 +10,9 @@ CREATE OR REPLACE FUNCTION public.get_dataset_type_id(_datasettype text DEFAULT 
 **  Desc:
 **      Get dataset type ID for given for given dataset type name
 **
+**  Arguments:
+**    _datasetType      Dataset type name
+**
 **  Example usage:
 **      SELECT public.get_dataset_type_id('HMS-MSn');
 **      SELECT public.get_dataset_type_id('HMS-HCD-HMSn');

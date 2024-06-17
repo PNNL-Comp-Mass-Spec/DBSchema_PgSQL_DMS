@@ -11,6 +11,16 @@ CREATE OR REPLACE FUNCTION public.find_existing_jobs_for_job_params(_datasetlist
 **      For the given dataset(s), return a table of existing analysis jobs
 **      that match the specified tool name, parameter file name, etc.
 **
+**  Arguments:
+**    _datasetList          Comma-separated list of dataset names
+**    _toolName             Analysis tool name
+**    _paramFileName        Parameter file name
+**    _settingsFileName     Settings file name
+**    _organismDBName       Organism DB name
+**    _organismName         Organism name
+**    _protCollNameList     Protein collection name list
+**    _protCollOptionsList  Protein collection options
+**
 **  Auth:   grk
 **  Date:   12/07/2005
 **          04/04/2006 grk - Increased sized of param file name

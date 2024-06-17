@@ -10,6 +10,10 @@ CREATE OR REPLACE FUNCTION public.combine_paths(_path1 text, _path2 text) RETURN
 **  Desc:
 **      Append a directory or file name to a path, assuring that the two names are separated by a \
 **
+**  Arguments:
+**    _path1        Parent path
+**    _path2        Directory or name to append
+**
 **  Auth:   mem
 **  Date:   07/03/2006
 **          04/15/2022 mem - Ported to PostgreSQL

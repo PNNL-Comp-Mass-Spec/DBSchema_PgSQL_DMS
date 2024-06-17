@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_fiscal_year_text_from_date(_rawdate timest
 **  Desc:
 **      Return Fiscal year for given date
 **
-**  Return value: Fiscal year description, e.g. FY_22
+**  Arguments:
+**    _rawDate      Date to examine
+**
+**  Returns:
+**      Fiscal year description, e.g. FY_22
 **
 **  Auth:   grk
 **  Date:   07/18/2011

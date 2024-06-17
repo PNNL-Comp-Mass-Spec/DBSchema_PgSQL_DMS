@@ -12,6 +12,10 @@ CREATE OR REPLACE FUNCTION cap.get_task_step_params(_job integer, _step integer)
 **
 **      Data comes from tables cap.t_tasks, cap.t_task_steps, and cap.t_task_parameters
 **
+**  Arguments:
+**    _job      Capture task job number
+**    _step     Job step
+**
 **  Auth:   grk
 **  Date:   09/08/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          08/30/2013 mem - Added MyEMSL_Status_URI

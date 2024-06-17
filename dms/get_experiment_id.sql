@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_experiment_id(_experimentname text DEFAULT
 **  Desc:
 **      Get experiment ID for given experiment name
 **
-**  Return values: experiment ID if found, otherwise 0
+**  Arguments:
+**     _experimentName      Experiment name
+**
+**  Returns:
+**      Experiment ID if found, otherwise 0
 **
 **  Auth:   grk
 **  Date:   01/26/2001

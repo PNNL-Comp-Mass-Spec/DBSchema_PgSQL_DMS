@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_instrument_dataset_type_list(_instrumentid
 **  Desc:
 **      Build delimited list of allowed dataset types for given instrument ID
 **
-**  Return value: delimited list
+**  Arguments:
+**    _instrumentID     Instrument ID
+**
+**  Returns:
+**      Comma-separated list
 **
 **  Auth:   mem
 **  Date:   09/17/2009 mem - Initial version (Ticket #748)

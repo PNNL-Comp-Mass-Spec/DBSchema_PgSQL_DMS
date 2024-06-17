@@ -10,6 +10,9 @@ CREATE OR REPLACE FUNCTION public.get_dataset_factor_count(_datasetid integer) R
 **  Desc:
 **  	Returns a count of the number of factors defined for this dataset
 **
+**  Arguments:
+**    _datasetID    Dataset ID
+**
 **  Auth:   mem
 **  Date:   07/25/2017 mem - Initial version
 **          06/13/2022 mem - Ported to PostgreSQL

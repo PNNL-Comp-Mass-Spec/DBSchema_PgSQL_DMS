@@ -8,9 +8,13 @@ CREATE OR REPLACE FUNCTION public.get_experiment_plex_members_for_entry(_plexexp
 /****************************************************
 **
 **  Desc:
-*       Builds delimited list of experiment plex members for a given experiment plex
+**      Builds delimited list of experiment plex members for a given experiment plex
 **
-**  Return value: list delimited with line feeds and vertical bars
+**  Arguments:
+**     _plexExperimentID    Plex experiment ID
+**
+**  Returns:
+**      List delimited with line feeds and vertical bars
 **
 **  Auth:   mem
 **  Date:   11/09/2018 mem

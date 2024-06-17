@@ -8,10 +8,14 @@ CREATE OR REPLACE FUNCTION public.get_job_request_existing_job_list(_requestid i
 /****************************************************
 **
 **  Desc:
-**  	Builds a comma-separated list of existing jobs for the given
+**  	Build a comma-separated list of existing jobs for the given
 **      analysis job request using t_analysis_job_request_existing_jobs
 **
-**  Return value: comma-separated list
+**  Arguments:
+**    _requestID    Analysis job request ID
+**
+**  Returns:
+**      Comma-separated list
 **
 **  Auth:   mem
 **  Date:   12/06/2005

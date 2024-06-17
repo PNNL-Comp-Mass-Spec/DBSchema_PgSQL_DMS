@@ -10,6 +10,9 @@ CREATE OR REPLACE FUNCTION public.get_dataset_id(_datasetname text DEFAULT ''::t
 **  Desc:
 **      Get dataset ID for given dataset name
 **
+**  Arguments:
+**    _datasetName  Dataset name
+**
 **  Example usage:
 **      SELECT public.get_dataset_id('Blank_Pos_11Aug22_Fiji_Infusion_r1');
 **      SELECT public.get_dataset_id('QC_Mam_19_01_R1_08Aug22_Oak_WBEH_22-06-16');

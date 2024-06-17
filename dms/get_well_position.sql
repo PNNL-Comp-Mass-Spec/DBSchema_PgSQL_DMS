@@ -11,7 +11,8 @@ CREATE OR REPLACE FUNCTION public.get_well_position(_index integer) RETURNS text
 **      Given 96 well plate well index number (value between 1 and 96),
 **      return the well position (aka well number), e.g. B09 or F12
 **
-**  Return values: well position, or empty string if invalid index
+**  Returns:
+**      Well position, or empty string if invalid index
 **
 **  Arguments:
 **    _index    One-based well index

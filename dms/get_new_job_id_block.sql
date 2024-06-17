@@ -11,6 +11,10 @@ CREATE OR REPLACE FUNCTION public.get_new_job_id_block(_jobcount integer, _note 
 **      Get a series of unique numbers for making new analysis jobs
 **      Accomplishes this by appending new rows to table t_analysis_job_id
 **
+**  Arguments:
+**    _jobCount     Number of jobs to create
+**    _note         Job note
+**
 **  Example usage:
 **
 **      CREATE TEMP TABLE Tmp_Jobs (Job int);

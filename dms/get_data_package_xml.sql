@@ -10,11 +10,12 @@ CREATE OR REPLACE FUNCTION public.get_data_package_xml(_datapackageid integer, _
 **  Desc:
 **      Get XML description of data package contents
 **
-**  Return value: XML, as text
-**
 **  Arguments:
 **    _dataPackageID    Data package ID
 **    _options          Comma separated list of items to include: 'Parameters', 'Experiments', 'Datasets', 'Jobs', 'Paths', or 'All'
+**
+**  Returns:
+**      XML, as text
 **
 **  Example output (excerpt)
 **    <data_package>

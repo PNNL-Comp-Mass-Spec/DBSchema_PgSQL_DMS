@@ -23,7 +23,7 @@ CREATE OR REPLACE PROCEDURE pc.add_update_protein_collection(IN _collectionname 
 **    _message                  Status message
 **    _returnCode               Return code
 **
-**  Returns:
+**  Return value:
 **    _returnCode will have the protein collection ID of the added or updated protein collection if no errors
 **    _returnCode will be '0' if _collectionName is blank or contains a space
 **

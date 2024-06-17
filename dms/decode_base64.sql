@@ -12,6 +12,9 @@ CREATE OR REPLACE FUNCTION public.decode_base64(_encodedtext text) RETURNS text
 **
 **      From https://stackoverflow.com/a/69247729/1179467
 **
+**  Arguments:
+**    _encodedText      Base-64 encoded text to decode
+**
 **  Auth:   mem
 **  Date:   09/12/2013
 **          06/17/2022 mem - Ported to PostgreSQL

@@ -10,10 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_biomaterial_organism_list(_biomaterialid i
 **  Desc:
 **      Build a delimited list of organism names for the given biomaterial
 **
-**  Return value: comma-separated list
-**
 **  Arguments:
-**    _biomaterialID   aka cell culture ID
+**    _biomaterialID    Biomaterial ID, aka cell culture ID
+**
+**  Returns:
+**      Comma-separated list
 **
 **  Auth:   mem
 **  Date:   12/02/2016 mem - Initial version

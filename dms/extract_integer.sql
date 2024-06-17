@@ -10,10 +10,13 @@ CREATE OR REPLACE FUNCTION public.extract_integer(_in text) RETURNS integer
 **  Desc:
 **  	Returns the first contiguous integer in parameter _in
 **
-**      Intended for use with EUS proposals that are typically numbers,
-**      but sometimes have letter suffixes
+**      Intended for use with EUS proposals that are typically numbers, but sometimes have letter suffixes
 **
-**  Return value: extracted integer, or null if no integer was found
+**  Arguments:
+**    _in   Text to parse
+**
+**  Returns:
+**      Extracted integer, or null if no integer was found
 **
 **  Auth:   mem
 **  Date:   04/26/2016 mem - Initial release

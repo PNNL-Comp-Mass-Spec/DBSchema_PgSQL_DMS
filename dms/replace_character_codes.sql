@@ -16,10 +16,11 @@ CREATE OR REPLACE FUNCTION public.replace_character_codes(_text text) RETURNS te
 **        &apos;    (single quote, aka apostrophe)
 **        &amp;     (ampersand)
 **
-**  Return value: Updated text
-**
 **  Arguments:
 **    _text   Text to update
+**
+**  Returns:
+**      Updated text
 **
 **  Auth:   mem
 **  Date:   02/25/2021 mem - Initial version

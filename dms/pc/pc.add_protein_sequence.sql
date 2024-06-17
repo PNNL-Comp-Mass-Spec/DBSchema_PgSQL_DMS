@@ -22,7 +22,7 @@ CREATE OR REPLACE PROCEDURE pc.add_protein_sequence(IN _sequence text, IN _lengt
 **    _message              Status message
 **    _returnCode           Return code
 **
-**  Returns:
+**  Return value:
 **    If pc.t_proteins already has a protein with the given sequence length and SHA-1 hash, _returnCode will have the protein_id
 **    Otherwise, _returnCode will have the protein_id of the row added to t_proteins
 **

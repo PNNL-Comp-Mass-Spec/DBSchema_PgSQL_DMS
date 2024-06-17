@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_analysis_tool_allowed_instrument_class_lis
 **  Desc:
 **      Build a delimited list of allowed instrument class names for the given analysis tool
 **
-**  Return value: comma-separated list
+**  Arguments:
+**    _analysisToolID   Analysis tool ID
+**
+**  Returns:
+**      Comma-separated list
 **
 **  Auth:   mem
 **  Date:   11/12/2010

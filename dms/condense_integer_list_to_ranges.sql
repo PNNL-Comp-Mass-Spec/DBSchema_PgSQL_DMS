@@ -20,7 +20,10 @@ CREATE OR REPLACE FUNCTION public.condense_integer_list_to_ranges(_debugmode boo
 **          Value int             -- Null values will be ignored
 **      );
 **
-**  Example commands:
+**  Arguments:
+**    _debugMode    When true, show categories and values
+**
+**  Example usage:
 **
 **      INSERT INTO Tmp_ValuesByCategory
 **      VALUES ('Job', 100),

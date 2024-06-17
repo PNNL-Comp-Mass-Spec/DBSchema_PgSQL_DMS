@@ -13,7 +13,11 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_list(_job integer) RETURNS public.
 **      Additionally, each parameter will end with <br>,
 **      producing a table-style layout on the Capture Jobs Detail Report
 **
-**  Return value: delimited list
+**  Arguments:
+**    _job      Capture task job number
+**
+**  Returns:
+**      HTML formatted text
 **
 **  Auth:   grk
 **  Date:   01/27/2010

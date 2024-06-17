@@ -13,7 +13,8 @@ CREATE OR REPLACE FUNCTION public.trim_whitespace_and_punctuation(_text text) RE
 **
 **      See also public.trim_whitespace()
 **
-**  Return value: Trimmed text
+**  Returns:
+**      Trimmed text
 **
 **  Auth:   mem
 **  Date:   09/11/2020 mem - Initial release (modelled after UDF ScrubWhitespace)

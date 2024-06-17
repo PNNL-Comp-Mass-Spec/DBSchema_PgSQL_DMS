@@ -10,6 +10,9 @@ CREATE OR REPLACE FUNCTION public.check_emsl_usage_item_validity(_seq integer) R
 **  Desc:
 **      Check EMSL usage item validity
 **
+**  Arguments:
+**    _seq      Seq ID of row in t_emsl_instrument_usage_report to validate
+**
 **  Example usage:
 **      SELECT *
 **      FROM (SELECT Src.seq,
@@ -49,9 +52,9 @@ DECLARE
 BEGIN
     _message := '';
 
-    SELECT --InstUsage.type,
+    SELECT -- InstUsage.type,
            InstUsage.start,
-           --InstUsage.minutes,
+           -- InstUsage.minutes,
            InstUsage.proposal,
            Coalesce(InstUsageType.usage_type, '') as usage,
            InstUsage.users,

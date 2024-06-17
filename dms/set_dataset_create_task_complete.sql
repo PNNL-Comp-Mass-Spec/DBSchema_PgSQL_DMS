@@ -17,9 +17,6 @@ CREATE OR REPLACE PROCEDURE public.set_dataset_create_task_complete(IN _entryid 
 **    _message              Status message
 **    _returnCode           Return code
 **
-**  Return values:
-**      0 for success, non-zero if an error
-**
 **  Auth:   mem
 **          10/25/2023 mem - Initial version
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure

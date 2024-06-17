@@ -11,7 +11,8 @@ CREATE OR REPLACE FUNCTION public.get_param_file_mass_mods_table_code(_paramfile
 **      Return the mass mods for the given parameter file, formatted as a string-based table
 **      The format codes are thosed used by Jira
 **
-**  Return value: list of mass mods delimited by '<br>'
+**  Returns:
+**      List of mass mods delimited by '<br>'
 **
 **  Auth:   mem
 **  Date:   12/05/2016 mem - Initial version

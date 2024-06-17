@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_fiscal_year_start(_numberofrecentyears int
 **  Desc:
 **  	Returns starting date for fiscal year N years ago
 **
-**  Return value: Fiscal year start date, e.g. 2021-10-01
+**  Arguments:
+**    _numberOfRecentYears      Number of years before the current year
+**
+**  Returns:
+**      Fiscal year start date, e.g. 2021-10-01
 **
 **  Auth:   grk
 **  Date:   07/18/2011 grk - Initial Version

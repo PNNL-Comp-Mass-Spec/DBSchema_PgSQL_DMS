@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_campaign_work_package_list(_campaignname t
 **  Desc:
 **      Build a delimited list of work packages for the given campaign
 **
-**  Return value: semicolon-separated list
+**  Arguments:
+**    _campaignName   Campaign Name
+**
+**  Returns:
+**      Semicolon-separated list
 **
 **  Auth:   mem
 **  Date:   06/07/2019 mem - Initial version

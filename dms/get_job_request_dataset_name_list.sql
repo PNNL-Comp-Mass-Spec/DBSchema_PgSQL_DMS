@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_job_request_dataset_name_list(_requestid i
 **  Desc:
 **      Build a comma-separated list of the datasets associated with the given analysis job request
 **
-**  Return value: comma-separated list
+**  Arguments:
+**    _requestID    Analysis job request ID
+**
+**  Returns:
+**      Comma-separated list
 **
 **  Auth:   mem
 **  Date:   07/30/2019 mem - Initial release

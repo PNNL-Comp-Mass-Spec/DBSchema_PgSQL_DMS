@@ -10,7 +10,8 @@ CREATE OR REPLACE FUNCTION public.get_prep_lc_experiment_groups_list(_preplcruni
 **  Desc:
 **      Build delimited list of experiment groups for given prep LC run
 **
-**  Return value: comma-separated list
+**  Returns:
+**      Comma-separated list
 **
 **  Auth:   grk
 **  Date:   04/30/2010

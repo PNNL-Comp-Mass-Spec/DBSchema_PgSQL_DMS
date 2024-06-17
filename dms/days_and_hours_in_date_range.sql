@@ -11,6 +11,11 @@ CREATE OR REPLACE FUNCTION public.days_and_hours_in_date_range(_startdate timest
 **  Desc:
 **  	Returns a series of date/time values spaced _hourInterval hours apart
 **
+**  Arguments:
+**    _startDate        Start date
+**    _endDate          End date
+**    _hourinterval     Interval, in hours
+**
 **  Auth:   mem
 **  Date:   11/07/2007
 **          11/29/2007 mem - Fixed bug that started at _startDate + _hourInterval instead of at _startDate

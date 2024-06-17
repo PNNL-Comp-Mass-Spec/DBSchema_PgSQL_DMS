@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_exp_biomaterial_list(_experimentname text)
 **  Desc:
 **      Build delimited list of biomaterial items for given experiment
 **
-**  Return value: semicolon delimited list
+**  Arguments:
+**     _experimentName      Experiment name
+**
+**  Returns:
+**      Semicolon delimited list
 **
 **  Auth:   grk
 **  Date:   02/04/2005

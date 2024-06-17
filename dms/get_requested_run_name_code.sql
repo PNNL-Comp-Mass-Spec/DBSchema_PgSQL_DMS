@@ -18,8 +18,6 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_name_code(_requestname text,
 **          GCM_20210825_R_POIR043_18_GC
 **          MoT_20210706_B_8050_13_LC-Acetylome
 **
-**  Return value: string
-**
 **  Auth:   mem
 **  Date:   08/05/2010
 **          08/10/2010 mem - Added _datasetTypeID and _separationType

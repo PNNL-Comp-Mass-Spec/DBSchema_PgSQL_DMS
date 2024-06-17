@@ -20,7 +20,7 @@ CREATE OR REPLACE PROCEDURE pc.add_protein_reference(IN _name text, IN _descript
 **    _message                  Status message
 **    _returnCode               Return code
 **
-**  Returns:
+**  Return value:
 **    _returnCode will have the reference ID of the protein reference added to T_Protein_Names
 **    _returnCode will be '0' if an error
 **

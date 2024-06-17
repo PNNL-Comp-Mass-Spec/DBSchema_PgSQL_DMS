@@ -30,7 +30,7 @@ CREATE OR REPLACE PROCEDURE pc.add_output_file_archive_entry(IN _proteincollecti
 **  For example,  '\\gigasax\DMS_FASTA_File_Archive\Dynamic\Forward\ID_00000_C1CEE570.fasta'
 **  is changed to '\\gigasax\DMS_FASTA_File_Archive\Dynamic\Forward\ID_004226_C1CEE570.fasta'
 **
-**  Returns:
+**  Return value:
 **    _returnCode will have the archived file ID of the file added to pc.t_archived_output_files if no errors
 **    _returnCode will be '0' if an error
 **

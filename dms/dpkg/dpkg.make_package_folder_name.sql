@@ -8,7 +8,10 @@ CREATE OR REPLACE FUNCTION dpkg.make_package_folder_name(_datapackageid integer,
 /****************************************************
 **
 **  Desc:
-*       Generates a data package folder name given a data package ID and name
+**      Generates a data package folder name given a data package ID and name  
+**
+**  Arguments:
+**    _data_Package_ID  Data package ID
 **
 **  Auth:   grk
 **  Date:   05/21/2009 grk

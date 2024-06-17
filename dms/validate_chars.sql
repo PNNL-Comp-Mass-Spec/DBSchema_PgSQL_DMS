@@ -10,12 +10,13 @@ CREATE OR REPLACE FUNCTION public.validate_chars(_string text, _validch text DEF
 **  Desc:
 **      Validate that _string only contains characters from valid set
 **
-**  Return value: The invalid characters, if any are found
-**                Uses '[space]' if a space is found and _validCh does not have a space (and is not an empty string)
-***
 **  Arguments:
 **    _string    Text to examine
 **    _validCh   If default (empty string), allows letters, numbers, underscore, and dash
+**
+**  Returns:
+**      The invalid characters, if any are found
+**      Uses '[space]' if a space is found and _validCh does not have a space (and is not an empty string)
 **
 **  Auth:   grk
 **  Date:   04/30/2007 grk - Ticket #450

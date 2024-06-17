@@ -10,14 +10,15 @@ CREATE OR REPLACE FUNCTION public.extract_number_from_text(_searchtext text, _st
 **  Desc:
 **      Examine the text provided to return the next integer value present, starting at _startLoc
 **
-**  Return values: number found, or 0 if no number found
+**      See also function public.extract_integer
+**      That function does not have a _startLoc parameter, and it returns null if a number is not found
 **
 **  Arguments:
 **    _searchText   The text to search for a number
 **    _startLoc     The position to start searching at
 **
-**  See also function public.extract_integer
-**  That function does not have a _startLoc parameter, and it returns null if a number is not found
+**  Returns:
+**      Number found, or 0 if no number found
 **
 **  Auth:   mem
 **  Date:   07/31/2007

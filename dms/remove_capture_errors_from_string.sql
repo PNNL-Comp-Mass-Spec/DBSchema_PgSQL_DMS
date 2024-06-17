@@ -10,10 +10,11 @@ CREATE OR REPLACE FUNCTION public.remove_capture_errors_from_string(_comment tex
 **  Desc:
 **      Removes common dataset capture error messages
 **
-**  Return value: Updated comment
-**
 **  Arguments:
 **    _comment   Dataset comment
+**
+**  Returns:
+**      Updated comment
 **
 **  Auth:   mem
 **  Date:   08/08/2017 mem - Initial version

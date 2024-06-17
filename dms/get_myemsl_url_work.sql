@@ -10,6 +10,10 @@ CREATE OR REPLACE FUNCTION public.get_myemsl_url_work(_keyname text, _value text
 **  Desc:
 **      Generate the MyEMSL URL required for viewing items in MyEMSL
 **
+**  Arguments:
+**    _keyName  Key name
+**    _value    Value
+**
 **  Auth:   mem
 **  Date:   09/12/2013
 **          06/12/2022 mem - Ported to PostgreSQL

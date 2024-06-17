@@ -10,10 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_aj_processor_group_associated_jobs(_groupi
 **  Desc:
 **      Get jobs associated with given group
 **
-**  Return value: comma-separated list
-**
 **  Arguments:
 **    _jobStateFilter   0 means new only, 1 means new and in progress only, anything else means all states
+**
+**  Returns:
+**      Comma-separated list
 **
 **  Auth:   grk
 **  Date:   02/16/2007

@@ -45,6 +45,10 @@ CREATE OR REPLACE FUNCTION public.days_in_date_range(_startdate timestamp with t
 **  Desc:
 **  	Returns a series of date/time values spaced 1 day apart
 **
+**  Arguments:
+**    _startDate        Start date
+**    _endDate          End date
+**
 **  Auth:   grk
 **  Date:   01/22/2005
 **          06/17/2022 mem - Ported to PostgreSQL

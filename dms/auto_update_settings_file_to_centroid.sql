@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION public.auto_update_settings_file_to_centroid(_setting
 **     _settingsFile    Settings file name
 **     _toolName        Tool name
 **
-**  Return value:
+**  Returns:
 **      The settings file to use
 **      - Either _settingsFile or an updated file from column msgfplus_auto_centroid in table t_settings_files
 **

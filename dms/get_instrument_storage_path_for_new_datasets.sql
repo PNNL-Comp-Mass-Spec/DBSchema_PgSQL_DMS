@@ -21,7 +21,8 @@ CREATE OR REPLACE FUNCTION public.get_instrument_storage_path_for_new_datasets(_
 **    _autoSwitchActiveStorage      When true, change the active storage for the instrument if the storage path differs from the current active storage path
 **    _infoOnly                     When true, preview updates
 **
-**  Returns: The storage path ID; 0 if an error
+**  Returns:
+**      The storage path ID; 0 if an error
 **
 **  Auth:   mem
 **  Date:   05/11/2011 mem - Initial Version

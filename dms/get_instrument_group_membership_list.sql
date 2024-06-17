@@ -10,18 +10,19 @@ CREATE OR REPLACE FUNCTION public.get_instrument_group_membership_list(_instrume
 **  Desc:
 **      Build delimited list of associated instruments for given instrument group
 **
-**  Return value: delimited list, using a vertical bar if _activeOnly is 2, otherwise using a comma
-**
 **  Arguments:
 **    _instrumentGroup  Instrument group name
 **    _activeOnly       0 for all instruments, 1 for only active instruments, 2 to format the instruments as a vertical bar separated list of instrument name and ID (see comments below)
 **    _maximumLength    Maximum length of the returned list of instruments; if 0, all instruments, sorted alphabetically
 **
-**  When _activeOnly is 2, the instrument list will be in the form:
-**    InstrumentName:InstrumentID|InstrumentName:InstrumentID|InstrumentName:InstrumentID
+**  Returns:
+**      Delimited list, using a vertical bar if _activeOnly is 2, otherwise using a comma
 **
-**  Additionally, if the instrument is inactive or offsite, the instrument name will show that in parentheses, with inactive taking precedence
-**  This is used to format instrument info on the Instrument Group Detail Report page, https://dms2.pnl.gov/instrument_group/show/VelosOrbi
+**      When _activeOnly is 2, the instrument list will be in the form:
+**        InstrumentName:InstrumentID|InstrumentName:InstrumentID|InstrumentName:InstrumentID
+**
+**      Additionally, if the instrument is inactive or offsite, the instrument name will show that in parentheses, with inactive taking precedence
+**      This is used to format instrument info on the Instrument Group Detail Report page, https://dms2.pnl.gov/instrument_group/show/VelosOrbi
 **
 **  Auth:   grk
 **  Date:   08/30/2010 grk - Initial version

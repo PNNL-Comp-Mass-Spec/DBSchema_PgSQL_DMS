@@ -16,12 +16,13 @@ CREATE OR REPLACE FUNCTION public.remove_from_string(_text text, _texttoremove t
 **
 **      If _textToRemove does not have a percent sign, uses regexp_replace(), meaning _textToRemove cannot have RegEx specific characters
 **
-**  Return value: Updated text
-**
 **  Arguments:
 **    _text                     Text to search
 **    _textToRemove             Text to remove; may optionally end with a percent sign
 **    _caseInsensitiveMatching  When true, ignore case
+**
+**  Returns:
+**      Updated text
 **
 **  Auth:   mem
 **  Date:   10/25/2016 mem - Initial version

@@ -11,10 +11,11 @@ CREATE OR REPLACE FUNCTION public.remove_cr_lf(_text text) RETURNS text
 **      Remove carriage returns and line feeds from the text, replacing them with semicolons
 **      After removing, also trim leading or trailing commas and semicolons
 **
-**  Return value: Updated string
-**
 **  Arguments:
 **    _text   Text to search
+**
+**  Returns:
+**      Updated string
 **
 **  Auth:   mem
 **  Date:   02/25/2021 mem - Initial version

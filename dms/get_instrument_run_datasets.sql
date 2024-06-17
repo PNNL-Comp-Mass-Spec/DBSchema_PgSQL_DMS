@@ -10,6 +10,10 @@ CREATE OR REPLACE FUNCTION public.get_instrument_run_datasets(_mostrecentweeks i
 **  Desc:
 **      Return list of datasets and acquisition time information for given instrument
 **
+**  Arguments:
+**    _mostRecentWeeks  Number of recent weeks to include, starting with today
+**    _instrument       Instrument name
+**
 **  Usage:
 **      SELECT *
 **      FROM get_instrument_run_datasets(3, 'eclipse02')

@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_analysis_tool_id(_toolname text DEFAULT ''
 **  Desc:
 **      Get toolID for given analysis tool name
 **
-**  Return values: tool id if found, otherwise 0
+**  Arguments:
+**    _toolName     Analysis tool name
+**
+**  Returns:
+**      Tool id if found, otherwise 0
 **
 **  Auth:   grk
 **  Date:   01/26/2001

@@ -15,7 +15,11 @@ CREATE OR REPLACE FUNCTION public.get_dataset_priority(_datasetname text) RETURN
 **       If either the dataset name or the experiment name matches one of the filters below,
 **       this function will return 1 and add_new_dataset() will set the dataset rating to 5 (Released)
 **
-**  Return values: 0 for default priority, 1 for higher priority
+**  Arguments:
+**     _datasetName     Dataset name
+**
+**  Returns:
+**      0 for default priority, 1 for higher priority
 **
 **  Auth:   grk
 **  Date:   02/10/2006

@@ -14,7 +14,8 @@ CREATE OR REPLACE FUNCTION public.get_well_index(_wellposition text) RETURNS int
 **      The first row of the plate has wells A1 through A12
 **      The last  row of the plate has wells H1 through H12
 **
-**  Return values: corresponding well index, or 0 if invalid position
+**  Returns:
+**      Corresponding well index, or 0 if invalid position
 **
 **  Arguments:
 **    _wellPosition   Well position, e.g. B3 or H04

@@ -21,7 +21,7 @@ CREATE OR REPLACE PROCEDURE pc.add_update_encryption_metadata(IN _proteincollect
 **    _message                  Status message
 **    _returnCode               Return code
 **
-**  Returns:
+**  Return value:
 **    _returnCode will have the passphrase ID of the newly added row
 **    _returnCode will be '0' if an error
 **

@@ -13,6 +13,9 @@ CREATE OR REPLACE FUNCTION public.find_matching_datasets_for_job_request(_reques
 **
 **      Used by web page https://dms2.pnl.gov/helper_aj_request_datasets_ckbx/param
 **
+**  Arguments:
+**    _requestID    Analysis job request ID
+**
 **  Auth:   grk
 **  Date:   01/08/2008 grk - Initial release
 **          02/11/2009 mem - Updated to allow for OrgDBName to not be 'na' when using protein collection lists

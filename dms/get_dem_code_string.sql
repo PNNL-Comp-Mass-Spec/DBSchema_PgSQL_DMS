@@ -8,7 +8,10 @@ CREATE OR REPLACE FUNCTION public.get_dem_code_string(_code integer) RETURNS tex
 /****************************************************
 **
 **  Desc:
-**      Return sting for data extraction manager completion code
+**      Return string for data extraction manager completion code
+**
+**  Arguments:
+**     _code    Completion code
 **
 **  Auth:   grk
 **  Date:   07/27/2006

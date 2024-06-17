@@ -16,6 +16,10 @@ CREATE OR REPLACE FUNCTION public.get_emsl_instrument_usage_rollup(_year integer
 **
 **      See also /files1/www/html/prismsupport/dms2ws/application/controllers/Instrument_usage_report.php
 **
+**  Arguments:
+**     _year    Year
+**     _month   Month
+**
 **  Auth:   grk
 **  Date:   09/11/2012 grk - Initial release
 **          04/11/2017 mem - Update for new fields DMS_Inst_ID and Usage_Type

@@ -10,6 +10,13 @@ CREATE OR REPLACE FUNCTION public.get_instrument_group_dataset_type_list(_instru
 **  Desc:
 **      Build delimited list of allowed dataset types for given instrument group
 **
+**  Arguments:
+**    _instrumentGroup  Instrument group name
+**    _delimiter        List delimited
+**
+**  Returns:
+**      Comma-separated list
+**
 **  Auth:   grk
 **  Date:   08/28/2010 grk - Initial version
 **          02/04/2021 mem - Add argument _delimiter

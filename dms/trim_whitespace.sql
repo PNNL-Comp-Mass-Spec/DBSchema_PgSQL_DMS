@@ -13,7 +13,8 @@ CREATE OR REPLACE FUNCTION public.trim_whitespace(_text text) RETURNS text
 **      See also public.trim_whitespace_and_punctuation() which also removes periods, commas, semicolons,
 **      single quotes, and double quotes from the start and end of the text
 **
-**  Return value: Trimmed text
+**  Returns:
+**      Trimmed text
 **
 **  Auth:   mem
 **  Date:   07/01/2014 mem - Initial release

@@ -18,7 +18,7 @@ CREATE OR REPLACE PROCEDURE pc.add_annotation_type(IN _name text, IN _descriptio
 **    _message      Status message
 **    _returnCode   Return code
 **
-**  Returns:
+**  Return value:
 **    _returnCode will have the annotation type ID if a new row was added to t_annotation_types
 **    _returnCode will be the negative value of the annotation type ID if the annotation type already exists in t_annotation_types
 **

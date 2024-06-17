@@ -10,6 +10,9 @@ CREATE OR REPLACE FUNCTION public.get_dataset_myemsl_transaction_ids(_datasetid 
 **  Desc:
 **  	Returns a comma-separated list of the MyEMSL ingest transaction IDs for this dataset ID
 **
+**  Arguments:
+**     _datasetID   Dataset ID
+**
 **  Auth:   mem
 **  Date:   02/28/2018 mem - Initial version
 **          06/19/2022 mem - Ported to PostgreSQL

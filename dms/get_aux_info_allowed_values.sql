@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_aux_info_allowed_values(_id integer) RETUR
 **  Desc:
 **      Build delimited list of allowed values for given aux info item
 **
-**  Return value: list delimited by ' | '
+**  Arguments:
+**    _id       Aux info ID
+**
+**  Returns:
+**      List delimited by ' | '
 **
 **  Auth:   grk
 **  Date:   08/24/2010

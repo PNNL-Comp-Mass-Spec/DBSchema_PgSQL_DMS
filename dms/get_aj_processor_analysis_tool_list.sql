@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_aj_processor_analysis_tool_list(_processor
 **  Desc:
 **      Build delimited list of analysis tools for given analysis job processor ID
 **
-**  Return value: comma-separated list
+**  Arguments:
+**    _processorID      Processor ID
+**
+**  Returns:
+**      Comma-separated list
 **
 **  Auth:   grk
 **  Date:   02/23/2007 (Ticket 389)
