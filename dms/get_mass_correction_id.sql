@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION public.get_mass_correction_id(_modmass double precisi
 **          04/02/2020 mem - Change _modMass from a varchar to a float
 **          10/24/2022 mem - Ported to PostgreSQL
 **          04/20/2023 mem - Use float8 for double precision variable _mcVariance
+**          06/16/2024 mem - Assure that the query only returns one row
 **
 *****************************************************/
 DECLARE
@@ -33,7 +34,9 @@ BEGIN
     INTO _massCorrectionID
     FROM t_mass_correction_factors
     WHERE (monoisotopic_mass < _modMass + _mcVariance AND
-           monoisotopic_mass > _modMass - _mcVariance);
+           monoisotopic_mass > _modMass - _mcVariance)
+    ORDER BY Abs(monoisotopic_mass - _modMass)
+    LIMIT 1;
 
     If FOUND Then
         RETURN _massCorrectionID;
