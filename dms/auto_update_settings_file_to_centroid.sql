@@ -28,6 +28,7 @@ CREATE OR REPLACE FUNCTION public.auto_update_settings_file_to_centroid(_setting
 **                         - Renamed the procedure from AutoUpdateQExactiveSettingsFile
 **          06/17/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
+**          06/16/2024 mem - Ignore case when looking for the settings file in t_settings_files
 **
 *****************************************************/
 DECLARE
@@ -38,8 +39,8 @@ BEGIN
     SELECT msgfplus_auto_centroid
     INTO _newSettingsFile
     FROM t_settings_files
-    WHERE file_name = _settingsFile AND
-          analysis_tool = _toolName;
+    WHERE file_name = _settingsFile::citext AND
+          analysis_tool = _toolName::citext;
 
     If Coalesce(_newSettingsFile, '') = '' And _toolName Like 'Sequest%' Then
         -- SEQUEST Settings Files

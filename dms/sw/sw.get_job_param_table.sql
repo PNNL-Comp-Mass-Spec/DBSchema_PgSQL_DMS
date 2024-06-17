@@ -56,14 +56,15 @@ CREATE OR REPLACE FUNCTION sw.get_job_param_table(_job integer, _settingsfileove
 **          07/25/2023 mem - Do not show a warning message when _debugMode is true and the settings file is 'na'
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          03/03/2024 mem - Trim whitespace when extracting values from XML
+**          06/16/2024 mem - Ignore case when querying t_settings_files and v_settings_file_lookup
 **
 *****************************************************/
 DECLARE
     _paramXML xml;
-    _settingsFileName text;
-    _analysisToolName text;
-    _settingsFileNameMappedTool text;
-    _analysisToolNameMappedTool text;
+    _settingsFileName citext;
+    _analysisToolName citext;
+    _settingsFileNameMappedTool citext;
+    _analysisToolNameMappedTool citext;
     _settingsFileFound boolean;
     _extDTA text := '';
     _insertCount int;
@@ -217,7 +218,7 @@ BEGIN
 
     -- Retrieve the settings file contents (as XML)
 
-    SELECT Contents
+    SELECT contents
     INTO _paramXML
     FROM public.t_settings_files
     WHERE file_name = _settingsFileName AND
@@ -231,12 +232,12 @@ BEGIN
         -- Settings file not found for tool _analysisToolName
         -- Try relaxing the tool name specification
 
-        SELECT File_Name, Mapped_Tool
+        SELECT file_name, mapped_tool
         INTO _settingsFileNameMappedTool,
              _analysisToolNameMappedTool
-        FROM public.V_Settings_File_Lookup
-        WHERE File_Name = _settingsFileName AND
-              Analysis_Tool = _analysisToolName
+        FROM public.v_settings_file_lookup
+        WHERE file_name = _settingsFileName AND
+              analysis_tool = _analysisToolName
         LIMIT 1;
 
         If FOUND Then

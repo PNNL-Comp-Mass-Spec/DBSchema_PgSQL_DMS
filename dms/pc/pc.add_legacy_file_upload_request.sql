@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE pc.add_legacy_file_upload_request(IN _legacyfilename
 **          05/03/2023 mem - Return 0 if no errors (previously returned the ID of the newly added row, but the calling application does not use that value)
 **          08/18/2023 mem - Ported to PostgreSQL
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          06/16/2024 mem - Ignore case when querying v_legacy_static_file_locations
 **
 *****************************************************/
 DECLARE
@@ -84,7 +85,7 @@ BEGIN
     SELECT ID
     INTO _legacyFileID
     FROM pc.v_legacy_static_file_locations
-    WHERE file_name = _legacyFileName;
+    WHERE file_name = _legacyFileName::citext;
 
     If Not Found Then
         _message := format('Legacy FASTA file "%s" not found in pc.v_legacy_static_file_locations', _legacyFileName);

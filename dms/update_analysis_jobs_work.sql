@@ -83,6 +83,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_jobs_work(IN _state text DEFA
 **          01/03/2024 mem - Update warning message
 **          02/16/2024 mem - Use try_cast() to parse the new priority value
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
+**          06/16/2024 mem - Ignore case when querying t_param_files and t_settings_files
 **
 *****************************************************/
 DECLARE
@@ -271,7 +272,7 @@ BEGIN
         SELECT param_file_id
         INTO _result
         FROM t_param_files
-        WHERE param_file_name = _paramFileName;
+        WHERE param_file_name = _paramFileName::citext;
 
         If Not FOUND Then
             _message := format('Parameter file could not be found: "%s"', _paramFileName);
@@ -297,7 +298,7 @@ BEGIN
                     JOIN t_analysis_job AJ
                         ON AJ.analysis_tool_id = AnTool.analysis_tool_id
                 WHERE PF.valid = 1 AND
-                      PF.param_file_name = _paramFileName AND
+                      PF.param_file_name = _paramFileName::citext AND
                       AJ.job = TD.job
               );
 
@@ -326,7 +327,7 @@ BEGIN
                         ON SF.analysis_tool = AnTool.analysis_tool
                     JOIN t_analysis_job AJ
                         ON AJ.analysis_tool_id = AnTool.analysis_tool_id
-                WHERE SF.file_name = _settingsFileName AND
+                WHERE SF.file_name = _settingsFileName::citext AND
                       AJ.job = TD.job
               );
 

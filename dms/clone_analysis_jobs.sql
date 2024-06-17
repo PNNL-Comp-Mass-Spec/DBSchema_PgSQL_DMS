@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE public.clone_analysis_jobs(IN _sourcejobs text, IN _
 **          06/12/2018 mem - Send _maxLength to append_to_text
 **          07/29/2022 mem - Use Coalesce instead of Coalesce
 **          02/01/2024 mem - Ported to PostgreSQL
+**          06/16/2024 mem - Ignore case when querying t_param_files and t_settings_files
 **
 *****************************************************/
 DECLARE
@@ -459,8 +460,8 @@ BEGIN
         If _newParamFileName <> '' Then
             SELECT param_file_name
             INTO _matchingFile
-            FROM T_Param_Files
-            WHERE param_file_name = _newParamFileName;
+            FROM t_param_files
+            WHERE param_file_name = _newParamFileName::citext;
 
             If FOUND Then
                 _newParamFileName := _matchingFile;
@@ -479,8 +480,8 @@ BEGIN
         If _newSettingsFileName <> '' Then
             SELECT file_name
             INTO _matchingFile
-            FROM T_Settings_Files
-            WHERE file_name = _newSettingsFileName;
+            FROM t_settings_files
+            WHERE file_name = _newSettingsFileName::citext;
 
             If FOUND Then
                 _newSettingsFileName := _matchingFile;

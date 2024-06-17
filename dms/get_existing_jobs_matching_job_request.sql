@@ -32,6 +32,7 @@ CREATE OR REPLACE FUNCTION public.get_existing_jobs_matching_job_request(_reques
 **          06/21/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved words
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          06/16/2024 mem - Ignore case when finding existing jobs for the job request
 **
 *****************************************************/
 DECLARE
@@ -71,7 +72,7 @@ BEGIN
         _resultType := Coalesce(_resultType, 'Unknown');
 
         -- When looking for existing jobs, if the analysis tool is not a Peptide_Hit tool,
-        -- then we ignore OrganismDBName, Organism Name, Protein Collection List, and Protein Options List
+        -- we ignore OrganismDBName, Organism Name, Protein Collection List, and Protein Options List
 
         -- If the tool is a Peptide_Hit tool, we only consider Organism Name when searching
         -- against a legacy Fasta file (i.e. when the Protein Collection List is 'na')
@@ -88,21 +89,21 @@ BEGIN
                ON AJ.analysis_tool_id = AJT.analysis_tool_id
              INNER JOIN t_organisms Org
                ON AJ.organism_id = Org.organism_id
-        WHERE AJT.analysis_tool = _requestInfo.analysis_tool AND
-              AJ.param_file_name = _requestInfo.param_file_name AND
-              AJ.settings_file_name = _requestInfo.settings_file_name AND
-              Coalesce(AJ.special_processing, '') = Coalesce(_requestInfo.special_processing, '') AND
+        WHERE AJT.analysis_tool = _requestInfo.analysis_tool::citext AND
+              AJ.param_file_name = _requestInfo.param_file_name::citext AND
+              AJ.settings_file_name = _requestInfo.settings_file_name::citext AND
+              Coalesce(AJ.special_processing, '') = Coalesce(_requestInfo.special_processing::citext, '') AND
               (_resultType NOT LIKE '%Peptide_Hit%' OR
                _resultType LIKE '%Peptide_Hit%' AND
                (
                    (_requestInfo.protein_collection_list <> 'na' AND
-                    AJ.protein_collection_list = _requestInfo.protein_collection_list AND
-                    AJ.protein_options_list = _requestInfo.protein_options_list
+                    AJ.protein_collection_list = _requestInfo.protein_collection_list::citext AND
+                    AJ.protein_options_list = _requestInfo.protein_options_list::citext
                    ) OR
                    (_requestInfo.protein_collection_list = 'na' AND
-                    AJ.protein_collection_list = _requestInfo.protein_collection_list AND
-                    AJ.organism_db_name = _requestInfo.organism_db_name AND
-                    Org.organism = _requestInfo.organism
+                    AJ.protein_collection_list = _requestInfo.protein_collection_list::citext AND
+                    AJ.organism_db_name = _requestInfo.organism_db_name::citext AND
+                    Org.organism = _requestInfo.organism::citext
                    )
                )
               )

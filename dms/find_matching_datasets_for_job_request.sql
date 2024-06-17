@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION public.find_matching_datasets_for_job_request(_reques
 **          06/30/2022 mem - Rename parameter file argument
 **          07/13/2023 mem - Ported to PostgreSQL
 **          05/29/2024 mem - Add "Sel" column, which the web page renders as a checkbox
+**          06/16/2024 mem - Ignore case when finding datasets that have jobs that match job parameters from the job request
 **
 *****************************************************/
 DECLARE
@@ -83,7 +84,7 @@ BEGIN
     FROM public.parse_delimited_list(_jobRequestInfo.DatasetList);
 
     ---------------------------------------------------
-    -- Get list of datasets that have jobs that match job parameters from the request
+    -- Get list of datasets that have jobs that match job parameters from the job request
     ---------------------------------------------------
 
     INSERT INTO Tmp_MatchingJobDatasets (
@@ -112,18 +113,18 @@ BEGIN
          -- INNER JOIN t_analysis_job_state AJS ON AJ.job_state_id = AJS.job_state_id
          INNER JOIN Tmp_RequestDatasets RD
            ON RD.dataset = DS.dataset
-    WHERE AJT.analysis_tool = _jobRequestInfo.ToolName AND
-          AJ.param_file_name = _jobRequestInfo.ParamFileName AND
-          AJ.settings_file_name = _jobRequestInfo.SettingsFileName AND
+    WHERE AJT.analysis_tool = _jobRequestInfo.ToolName::citext AND
+          AJ.param_file_name = _jobRequestInfo.ParamFileName::citext AND
+          AJ.settings_file_name = _jobRequestInfo.SettingsFileName::citext AND
           (
             (_jobRequestInfo.ProteinCollectionList = 'na' AND
-             AJ.organism_db_name = _jobRequestInfo.OrganismDBName AND
+             AJ.organism_db_name = _jobRequestInfo.OrganismDBName::citext AND
              Org.organism = Coalesce(_jobRequestInfo.OrganismName, Org.organism)
             )
             OR
             (_jobRequestInfo.ProteinCollectionList <> 'na' AND
-             AJ.protein_collection_list = Coalesce(_jobRequestInfo.ProteinCollectionList, AJ.protein_collection_list) AND
-             AJ.protein_options_list = Coalesce(_jobRequestInfo.ProteinOptionsList, AJ.protein_options_list)
+             AJ.protein_collection_list = Coalesce(_jobRequestInfo.ProteinCollectionList::citext, AJ.protein_collection_list) AND
+             AJ.protein_options_list = Coalesce(_jobRequestInfo.ProteinOptionsList::citext, AJ.protein_options_list)
             )
           )
     GROUP BY DS.dataset;
