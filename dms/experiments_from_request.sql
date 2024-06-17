@@ -32,7 +32,7 @@ END
 $$;
 
 
-ALTER FUNCTION public.experiments_from_request(_requestID integer) OWNER TO d3l243;
+ALTER FUNCTION public.experiments_from_request(_requestid integer) OWNER TO d3l243;
 
 --
 -- Name: FUNCTION experiments_from_request(_requestid integer); Type: COMMENT; Schema: public; Owner: d3l243

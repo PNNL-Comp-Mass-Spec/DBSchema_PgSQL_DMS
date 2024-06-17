@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_wp_for_eus_proposal(_eusproposalid text) R
 /****************************************************
 **
 **  Desc:
-**  	Determines best work package to use for a given EUS user proposal
+**      Determines best work package to use for a given EUS user proposal
 **      Column work_package will be 'none' in the returned table if no match is found
 **
 **  Arguments:

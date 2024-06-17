@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_fiscal_year_start(_numberofrecentyears int
 /****************************************************
 **
 **  Desc:
-**  	Returns starting date for fiscal year N years ago
+**      Returns starting date for fiscal year N years ago
 **
 **  Arguments:
 **    _numberOfRecentYears      Number of years before the current year

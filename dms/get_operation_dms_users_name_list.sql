@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_operation_dms_users_name_list(_operationid
 /****************************************************
 **
 **  Desc:
-**  	Builds delimited list of DMS users for the given Operation
+**      Builds delimited list of DMS users for the given Operation
 **
 **  Arguments:
 **    _formatAsTable   When 0, separate usernames with semicolons.  When 1, include a vertical bar between each user and use a colon between the user's name and network login

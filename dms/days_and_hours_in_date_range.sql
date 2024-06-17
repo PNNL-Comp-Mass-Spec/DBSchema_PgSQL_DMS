@@ -9,7 +9,7 @@ CREATE OR REPLACE FUNCTION public.days_and_hours_in_date_range(_startdate timest
 /****************************************************
 **
 **  Desc:
-**  	Returns a series of date/time values spaced _hourInterval hours apart
+**      Returns a series of date/time values spaced _hourInterval hours apart
 **
 **  Arguments:
 **    _startDate        Start date
@@ -49,7 +49,7 @@ CREATE OR REPLACE FUNCTION public.days_and_hours_in_date_range(_startdate timest
 /****************************************************
 **
 **  Desc:
-**  	Returns a series of date/time values spaced _hourInterval hours apart
+**      Returns a series of date/time values spaced _hourInterval hours apart
 **
 **  Auth:   mem
 **  Date:   11/07/2007

@@ -9,7 +9,7 @@ CREATE OR REPLACE FUNCTION public.days_in_date_range(_startdate timestamp withou
 /****************************************************
 **
 **  Desc:
-**  	Returns a series of date/time values spaced 1 day apart
+**      Returns a series of date/time values spaced 1 day apart
 **
 **  Auth:   grk
 **  Date:   01/22/2005
@@ -43,7 +43,7 @@ CREATE OR REPLACE FUNCTION public.days_in_date_range(_startdate timestamp with t
 /****************************************************
 **
 **  Desc:
-**  	Returns a series of date/time values spaced 1 day apart
+**      Returns a series of date/time values spaced 1 day apart
 **
 **  Arguments:
 **    _startDate        Start date

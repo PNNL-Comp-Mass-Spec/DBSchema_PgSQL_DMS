@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.extract_integer(_in text) RETURNS integer
 /****************************************************
 **
 **  Desc:
-**  	Returns the first contiguous integer in parameter _in
+**      Returns the first contiguous integer in parameter _in
 **
 **      Intended for use with EUS proposals that are typically numbers, but sometimes have letter suffixes
 **

@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION dpkg.get_xml_row(_data_package_id integer, _type text
 /****************************************************
 **
 **  Desc:
-**  	Returns a data row in XML format listing data package id, item type, and item ID
+**      Returns a data row in XML format listing data package id, item type, and item ID
 **
 **  Arguments:
 **    _data_Package_ID  Data package ID

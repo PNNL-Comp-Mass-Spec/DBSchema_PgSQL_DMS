@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION ont.get_taxid_child_count(_taxonomyid integer) RETURN
 /****************************************************
 **
 **  Desc:
-**  	Counts the number of nodes with Parent_Tax_ID equal to _taxonomyID
+**      Counts the number of nodes with Parent_Tax_ID equal to _taxonomyID
 **
 **  Returns:
 **      Node count; 0 if no children

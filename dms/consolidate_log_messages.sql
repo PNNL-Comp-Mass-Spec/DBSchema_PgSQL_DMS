@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.consolidate_log_messages(_messagetype text DEF
 /****************************************************
 **
 **  Desc:
-**		Deletes duplicate messages in public.t_log_entries, keeping the first and last message
+**      Deletes duplicate messages in public.t_log_entries, keeping the first and last message
 **      (or, optionally only the first message)
 **
 **  Arguments:

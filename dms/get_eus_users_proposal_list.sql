@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_eus_users_proposal_list(_personid integer)
 /****************************************************
 **
 **  Desc:
-**  	Builds delimited list of proposals for given EUS user
+**      Builds delimited list of proposals for given EUS user
 **
 **  Arguments:
 **     _personID    Person ID

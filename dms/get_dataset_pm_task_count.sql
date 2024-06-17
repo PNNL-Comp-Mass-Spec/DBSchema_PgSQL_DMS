@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_pm_task_count(_datasetid integer) 
 /****************************************************
 **
 **  Desc:
-**  	Returns a count of the number of peak matching tasks for this dataset
+**      Returns a count of the number of peak matching tasks for this dataset
 **
 **  Arguments:
 **     _datasetID   Dataset ID

@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.get_proposal_eus_users_list(_proposalid text, 
 /****************************************************
 **
 **  Desc:
-**  	Builds delimited list of EUS users for given proposal
+**      Builds delimited list of EUS users for given proposal
 **
 **  Arguments:
 **    _mode   Can be I, N, L, or V:
