@@ -69,7 +69,7 @@ BEGIN
           where_clause = _whereClause;
 
     If FOUND Then
-        _rowCountAgeHours := extract(epoch FROM
+        _rowCountAgeHours := Extract(epoch from
                                      CURRENT_TIMESTAMP -
                                      _lastRefresh) / 3600.0;
 

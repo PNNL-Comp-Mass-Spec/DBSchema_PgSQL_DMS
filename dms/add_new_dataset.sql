@@ -574,7 +574,7 @@ BEGIN
         If Not _runStartDate Is Null and Not _runFinishDate Is Null Then
             -- Check whether the _runFinishDate value is more than 24 hours from now
             -- If it is, update it to match _runStartDate
-            If extract(epoch from _runFinishDate - CURRENT_TIMESTAMP) / 3600 > 24 Then
+            If Extract(epoch from _runFinishDate - CURRENT_TIMESTAMP) / 3600 > 24 Then
                 _runFinishDate := _runStartDate;
             End If;
         End If;

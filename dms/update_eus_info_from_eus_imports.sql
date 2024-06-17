@@ -112,7 +112,7 @@ BEGIN
         End If;
 
         RAISE INFO '%; % seconds elapsed', _statusMessage,
-                                           Round(extract(epoch FROM (clock_timestamp() - _startTime)), 0)::int;
+                                           Round(Extract(epoch from (clock_timestamp() - _startTime)), 0)::int;
     Else
         RAISE INFO 'Return code %: %', _returnCode, Coalesce(_message, '??');
     End If;

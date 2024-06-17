@@ -271,7 +271,7 @@ BEGIN
                    TS.state,
                    public.timestamp_text(TS.start)  AS start,
                    public.timestamp_text(TS.finish) AS finish,
-                   round((EXTRACT(epoch FROM (COALESCE((ts.finish), CURRENT_TIMESTAMP) - (ts.start))) / 60), 1) AS runtime_minutes,
+                   round((Extract(epoch from (COALESCE((ts.finish), CURRENT_TIMESTAMP) - (ts.start))) / 60), 1) AS runtime_minutes,
                    TS.Output_Folder_name AS output_folder,
                    T.instrument
             FROM cap.t_tasks T
