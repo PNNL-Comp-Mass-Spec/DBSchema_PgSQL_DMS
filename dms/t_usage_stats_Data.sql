@@ -21,7 +21,8 @@ SET row_security = off;
 --
 
 COPY public.t_usage_stats (posted_by, last_posting_time, usage_count) FROM stdin;
-create_psm_job_request	2024-03-26 13:39:40	40
+update_analysis_job_processor_group_associations	2024-06-04 15:10:02.001648	2
+create_psm_job_request	2024-06-12 18:19:04.976207	41
 CreatePSMJobRequest	2023-02-24 11:07:11	453
 set_archive_task_busy	2024-04-22 11:16:33	225886
 set_archive_task_complete	2024-04-22 11:16:33	113523
@@ -49,9 +50,7 @@ StoreQCARTResults	2016-07-18 13:28:15	2489
 StoreQCDMResults	2023-02-28 23:04:00	212277
 StoreQuameterResults	2023-02-24 15:25:37	396122
 StoreSMAQCResults	2023-02-27 16:58:37	77970
-update_analysis_job_processor_group_membership	2024-02-25 14:54:54	5
 update_analysis_jobs	2024-04-03 08:54:02	3
-update_cart_parameters	2024-04-22 11:16:06	153723
 update_dataset_dispositions	2024-04-22 08:42:37	2355
 update_dataset_dispositions_by_name	2024-04-22 08:42:37	435
 update_eus_info_from_eus_imports	2024-01-02 18:50:13	1
@@ -91,17 +90,19 @@ UpdateResearchTeamForCampaign	2023-02-24 16:04:54	1671
 UpdateResearchTeamObserver	2022-09-30 10:37:22	256
 UpdateSampleRequestAssignments	2022-02-17 08:18:40	233
 UpdateUser	2013-03-25 19:01:27	125
-update_analysis_job_state_name_cached	2024-05-31 22:03:16.920318	198
-update_analysis_job_tool_name_cached	2024-05-31 22:03:20.259219	198
 update_requested_run_factors	2024-05-24 20:47:56.417362	795
-update_eus_proposals_from_eus_imports	2024-06-02 06:15:18.383213	465
-update_eus_users_from_eus_imports	2024-06-02 06:15:39.761928	468
 update_requested_run_assignments	2024-05-20 19:56:39.427068	3027
-update_eus_instruments_from_eus_imports	2024-06-02 06:16:12.968721	470
 update_instrument_group_allowed_dataset_type	2024-05-15 18:22:48.51121	87
+update_cart_parameters	2024-06-03 20:29:59.354351	153727
 update_research_team_for_campaign	2024-05-16 14:58:42.135942	186
 update_dataset_file_info_xml	2024-05-26 18:53:31.359441	111602
 update_requested_run_admin	2024-05-21 16:30:06.132909	319
+update_analysis_job_state_name_cached	2024-06-12 22:03:29.884699	203
+update_analysis_job_tool_name_cached	2024-06-12 22:03:33.45637	203
+update_eus_proposals_from_eus_imports	2024-06-13 06:15:30.204823	476
+update_analysis_job_processor_group_membership	2024-06-04 14:43:02.710059	10
+update_eus_users_from_eus_imports	2024-06-13 06:15:51.757576	479
+update_eus_instruments_from_eus_imports	2024-06-13 06:16:25.32485	481
 \.
 
 

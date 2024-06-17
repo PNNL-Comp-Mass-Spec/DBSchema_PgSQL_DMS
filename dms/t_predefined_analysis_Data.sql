@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
+-- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
@@ -21,6 +21,7 @@ SET row_security = off;
 --
 
 COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequence, instrument_class_criteria, instrument_name_criteria, instrument_excl_criteria, campaign_name_criteria, campaign_excl_criteria, experiment_name_criteria, experiment_excl_criteria, exp_comment_criteria, organism_name_criteria, dataset_name_criteria, dataset_excl_criteria, dataset_type_criteria, scan_type_criteria, scan_type_excl_criteria, labelling_incl_criteria, labelling_excl_criteria, separation_type_criteria, scan_count_min_criteria, scan_count_max_criteria, analysis_tool_name, param_file_name, settings_file_name, organism_id, organism_db_name, protein_collection_list, protein_options_list, priority, special_processing, enabled, description, created, creator, next_level, trigger_before_disposition, propagation_mode, last_affected) FROM stdin;
+1839	90	3	Finnigan_Ion_Trap			QC-Shew-Standard			%Intact%			%Test_QC_Test%	%QC_Mam%							0	0	MSGFPlus	MSGFPlus_Tryp_MetOx.txt	IonTrapDefSettings_MSConvert.xml	4	na	Shewanella_oneidensis_MR1_2010-04-22	seq_direction=forward,filetype=fasta	2		0		2024-06-13 12:53:39.223254	D3L243	91	1	0	2024-06-13 12:53:56.849804
 1000	100	\N	Finnigan_Ion_Trap			deinococcus														0	0	TurboSequest	sequest_Tryp_4_IC.params	FinniganDefSettings.xml	1	GDR_2000-03-21.fasta.bin	na	na	2		0		2001-05-03 14:55:00		\N	0	0	2001-05-03 14:55:00
 1224	24	\N	LTQ_FT	LTQ_Orb%																0	0	LTQ_FTPek	LTQOrb-MS_Default_2006-11-09.par	LTQ_FTDefSettings.txt	1051	na	na	na	2		0	Disabled 2/8/2007 by D3L243	2006-01-23 18:33:31	D3L243	\N	0	0	2006-01-23 18:33:31
 1267	5	10	Finnigan_FTICR									%QC%								0	0	TIC_D2L	TIC_Normal_2006-12-18.xml	na	1051	na	na	na	2		0		2007-02-08 19:31:57	D3L243	\N	0	0	2007-02-08 19:31:57
@@ -836,7 +837,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 -- Name: t_predefined_analysis_predefine_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1838, true);
+SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1839, true);
 
 
 --
