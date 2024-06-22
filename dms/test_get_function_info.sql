@@ -10,13 +10,12 @@ CREATE OR REPLACE FUNCTION public.test_get_function_info(_schemaname text DEFAUL
 **  Desc:
 **      Test using public.get_current_function_info() to auto-determine the schema and name of this function
 **
-**  Arguments
+**  Arguments:
 **    _schemaName   Schema name to use if the context info does not include a schema name before the object name
-*                   Use '<auto>' or '<lookup>' to auto-determine the schema name for the object, if empty in the context
+**                  Use '<auto>' or '<lookup>' to auto-determine the schema name for the object, if empty in the context
 **    _showDebug    When true, show debug info
 **
 **  Example usage:
-**
 **      SELECT *
 **      FROM test_get_function_info();
 **
@@ -25,6 +24,9 @@ CREATE OR REPLACE FUNCTION public.test_get_function_info(_schemaname text DEFAUL
 **
 **      SELECT *
 **      FROM test_get_function_info('public', true);
+**
+**      SELECT *
+**      FROM test_get_function_info('sw', true);
 **
 **  Auth:   mem
 **  Date:   08/24/2022 mem - Initial version

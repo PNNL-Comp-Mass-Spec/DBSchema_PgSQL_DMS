@@ -86,7 +86,7 @@ BEGIN
          LEFT OUTER JOIN Tmp_InstrumentLoading ON
            Tmp_InstrumentLoading.Instrument = T.Instrument
     WHERE TS.State = 2 AND
-          T.State IN (1,2)
+          T.State IN (1, 2)
     ORDER BY T.Job, TS.Step;
 
     ---------------------------------------------------

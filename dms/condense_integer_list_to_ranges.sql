@@ -24,7 +24,6 @@ CREATE OR REPLACE FUNCTION public.condense_integer_list_to_ranges(_debugmode boo
 **    _debugMode    When true, show categories and values
 **
 **  Example usage:
-**
 **      INSERT INTO Tmp_ValuesByCategory
 **      VALUES ('Job', 100),
 **             ('Job', 101),

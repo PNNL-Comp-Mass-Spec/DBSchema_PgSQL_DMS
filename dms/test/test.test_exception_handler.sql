@@ -18,7 +18,6 @@ CREATE OR REPLACE FUNCTION test.test_exception_handler(_divisor text, _useerrorh
 **                          When false, uses format_error_message to construct the error message
 **
 **  Example usage:
-**
 **      SELECT test.test_exception_handler('40', false);
 **      SELECT test.test_exception_handler('apple', false);
 **      SELECT test.test_exception_handler('apple', true);

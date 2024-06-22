@@ -84,7 +84,7 @@ BEGIN
                FROM V_NEXUS_Import_Proposal_Participants Source
                     INNER JOIN (SELECT proposal_id
                                 FROM t_eus_proposals
-                                WHERE state_id IN (1,2) OR
+                                WHERE state_id IN (1, 2) OR
                                       _updateUsersOnInactiveProposals AND state_id <> 4   -- State for is 'No Interest'
                                ) DmsEUSProposals
                       ON Source.project_id = DmsEUSProposals.proposal_id
@@ -168,7 +168,7 @@ BEGIN
                FROM V_NEXUS_Import_Proposal_Participants Source
                     INNER JOIN (SELECT proposal_id
                                 FROM t_eus_proposals
-                                WHERE state_id IN (1,2)
+                                WHERE state_id IN (1, 2)
                                ) DmsEUSProposals
                       ON Source.project_id = DmsEUSProposals.proposal_id
               ) AS Source

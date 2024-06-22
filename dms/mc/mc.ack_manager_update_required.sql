@@ -18,7 +18,6 @@ CREATE OR REPLACE PROCEDURE mc.ack_manager_update_required(IN _managername text,
 **    _returnCode       Return code
 **
 **  Example usage:
-**
 **      UPDATE mc.v_param_value
 **      SET Value = 'True'
 **      WHERE mgr_name = 'monroe_analysis' and param_name = 'ManagerUpdateRequired';

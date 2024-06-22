@@ -16,6 +16,10 @@ CREATE OR REPLACE FUNCTION public.try_cast(_in text, INOUT _out anyelement) RETU
 **
 **      Note: this function uses an exception handler to catch conversion errors, and thus it should not be used when performance is an issue
 **
+**  Arguments:
+**    _in   Text to convert
+**    _out  Parameter used to determine the target data type
+**
 **  Example usage:
 **      SELECT _out FROM try_cast('2343', 0);                       -- 2343
 **      SELECT _out FROM try_cast('2343', null::int);               -- 2343
@@ -67,6 +71,11 @@ CREATE OR REPLACE FUNCTION public.try_cast(_in text, _nullifinvalid boolean, INO
 **      If unsuccessful, _out will contain null if _nullIfInvalid is true, or the original value (i.e., the default value)
 **
 **      Note: this function uses an exception handler to catch conversion errors, and thus it should not be used when performance is an issue
+**
+**  Arguments:
+**    _in               Text to convert
+**    _nullIfInvalid    When true, return null if the text cannot be converted, otherwise return the original value
+**    _out              Parameter used to determine the target data type
 **
 **  Example usage:
 **      SELECT _out FROM try_cast('2343', false, 0);                       -- 2343

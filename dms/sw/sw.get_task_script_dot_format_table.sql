@@ -8,7 +8,10 @@ CREATE OR REPLACE FUNCTION sw.get_task_script_dot_format_table(_script text) RET
 /****************************************************
 **
 **  Desc:
-**      Return Dot graphic command list (as table) for given script
+**      Return Dot graphic command list (as table) for given pipeline script
+**
+**  Arguments:
+**    _script   Pipeline script name
 **
 **  Example usage:
 **
@@ -24,8 +27,7 @@ CREATE OR REPLACE FUNCTION sw.get_task_script_dot_format_table(_script text) RET
 **           ) AS ScriptLines On true
 **      ORDER BY script, seq, script_line;
 **
-**
-**    View v_script_dot_format returns identical information as this function
+**    View sw.v_script_dot_format returns identical information as this function
 **
 **      SELECT *
 **      FROM sw.v_script_dot_format
@@ -35,7 +37,6 @@ CREATE OR REPLACE FUNCTION sw.get_task_script_dot_format_table(_script text) RET
 **      SELECT *
 **      FROM sw.v_script_dot_format
 **      ORDER BY script, seq, line;
-**
 **
 **  Auth:   mem
 **  Date:   06/25/2022 mem - Ported to PostgreSQL by converting V_Script_Dot_Format to a function

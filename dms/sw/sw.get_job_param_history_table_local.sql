@@ -10,6 +10,9 @@ CREATE OR REPLACE FUNCTION sw.get_job_param_history_table_local(_job integer) RE
 **  Desc:
 **      Return a table of the job parameters stored locally in t_job_parameters_history
 **
+**  Arguments:
+**    _job      Analysis job number
+**
 **  Auth:   mem
 **  Date:   01/12/2012
 **          04/11/2022 mem - Use varchar(4000) when populating the table

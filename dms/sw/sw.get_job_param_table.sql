@@ -17,7 +17,6 @@ CREATE OR REPLACE FUNCTION sw.get_job_param_table(_job integer, _settingsfileove
 **    _debugMode                When true, show additional debug messages
 **
 **  Example usage:
-**
 **      SELECT * FROM sw.get_job_param_table(2023504);
 **      SELECT * FROM sw.get_job_param_table(2023504, '', true);
 **      SELECT * FROM sw.get_job_param_table(2023504, 'IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml', true);

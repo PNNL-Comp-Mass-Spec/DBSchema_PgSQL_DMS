@@ -248,12 +248,12 @@ BEGIN
                     -- How many current matching shared results steps are in which states?
 
                     SELECT Coalesce(SUM(CASE WHEN State = 5 THEN 1 ELSE 0 END), 0),
-                           Coalesce(SUM(CASE WHEN State in (2,4) THEN 1 ELSE 0 END), 0)
+                           Coalesce(SUM(CASE WHEN State in (2, 4) THEN 1 ELSE 0 END), 0)
                     INTO _numCompleted, _numPending
                     FROM cap.t_task_steps
                     WHERE Output_Folder_Name = _outputFolderName AND
                           NOT Output_Folder_Name IS NULL AND
-                          State in (2,4,5);
+                          State IN (2, 4, 5);
 
                     If Coalesce(_numCompleted, 0) = 0 Then
                         -- Also check t_task_steps_history for completed, matching shared results steps

@@ -135,7 +135,7 @@ BEGIN
         SELECT event_id, entered
         FROM logcap.t_task_events
         WHERE entered < _dateThreshold AND
-              NOT (date_part('month', entered)::int IN (2,8) And date_part('day', entered)::int BETWEEN 1 AND 7) AND
+              NOT (date_part('month', entered)::int IN (2, 8) And date_part('day', entered)::int BETWEEN 1 AND 7) AND
               (_yearFilter < 1970 Or date_part('year', entered)::int = _yearFilter);
         --
         GET DIAGNOSTICS _matchCount = ROW_COUNT;
@@ -207,7 +207,7 @@ BEGIN
         SELECT Event_ID, Entered
         FROM logcap.t_task_step_events
         WHERE entered < _dateThreshold AND
-              NOT (date_part('month', entered)::int IN (2,8) And date_part('day', entered)::int BETWEEN 1 AND 7) AND
+              NOT (date_part('month', entered)::int IN (2, 8) And date_part('day', entered)::int BETWEEN 1 AND 7) AND
               (_yearFilter < 1970 Or date_part('year', entered)::int = _yearFilter);
         --
         GET DIAGNOSTICS _matchCount = ROW_COUNT;
@@ -278,7 +278,7 @@ BEGIN
         SELECT Event_ID, Entered
         FROM logcap.t_task_step_processing_log
         WHERE entered < _dateThreshold AND
-              NOT (date_part('month', entered)::int IN (2,8) And date_part('day', entered)::int BETWEEN 1 AND 7) AND
+              NOT (date_part('month', entered)::int IN (2, 8) And date_part('day', entered)::int BETWEEN 1 AND 7) AND
               (_yearFilter < 1970 Or date_part('year', entered)::int = _yearFilter);
         --
         GET DIAGNOSTICS _matchCount = ROW_COUNT;
@@ -405,7 +405,7 @@ BEGIN
         SELECT entry_id, entered
         FROM logcap.t_log_entries
         WHERE entered < _dateThreshold AND
-              NOT (date_part('month', entered)::int IN (2,8) And date_part('day', entered)::int BETWEEN 1 AND 7) AND
+              NOT (date_part('month', entered)::int IN (2, 8) And date_part('day', entered)::int BETWEEN 1 AND 7) AND
               (_yearFilter < 1970 Or date_part('year', entered)::int = _yearFilter);
         --
         GET DIAGNOSTICS _matchCount = ROW_COUNT;

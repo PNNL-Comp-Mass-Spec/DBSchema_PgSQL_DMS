@@ -10,6 +10,13 @@ CREATE OR REPLACE FUNCTION sw.extract_server_name(_path text) RETURNS text
 **  Desc:
 **      Extract the server name from the given path
 **
+**  Arguments:
+**    _path     File path (supports both backslashes and forward slashes)
+**
+**  Example usage:
+**      SELECT sw.extract_server_name('\\proto-8\DMS3_Xfer\QC_Mam_23_01_b_20Apr23_Smeagol_WBEH-23-03-20\');
+**      SELECT sw.extract_server_name('//proto-8/DMS3_Xfer/QC_Mam_23_01_b_20Apr23_Smeagol_WBEH-23-03-20/');
+**
 **  Auth:   mem
 **  Date:   03/03/2010
 **          06/26/2022 mem - Ported to PostgreSQL

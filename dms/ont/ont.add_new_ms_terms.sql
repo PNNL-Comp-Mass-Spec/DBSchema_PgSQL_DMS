@@ -24,6 +24,9 @@ CREATE OR REPLACE FUNCTION ont.add_new_ms_terms(_sourcetable text DEFAULT 'T_Tmp
 **        grandparent_term_name
 **        grandparent_term_id
 **
+**  Arguments:
+**    _sourceTable  Source table name
+**
 **  Auth:   mem
 **  Date:   06/15/2016 mem - Initial Version
 **          05/16/2018 mem - Add columns Parent_term_type and GrandParent_term_type

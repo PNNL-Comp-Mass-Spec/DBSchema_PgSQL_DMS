@@ -8,7 +8,10 @@ CREATE OR REPLACE FUNCTION ont.get_taxid_taxonomy_table(_taxonomyid integer) RET
 /****************************************************
 **
 **  Desc:
-**      Populates a table with the Taxonomy entries for the given TaxonomyID value
+**      Return a table with the Taxonomy entries for the given Taxonomy ID value
+**
+**  Arguments:
+**    _taxonomyID       Taxonomy ID
 **
 **  Auth:   mem
 **  Date:   03/02/2016 mem - Initial version

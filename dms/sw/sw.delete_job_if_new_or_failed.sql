@@ -176,11 +176,11 @@ BEGIN
         RETURN;
     End If;
 
-    If _jobState In (2,3,9) Or Exists (SELECT JS.job
-                                       FROM sw.t_job_steps JS
-                                       WHERE JS.job = _job AND
-                                             JS.state IN (4, 9) AND
-                                             JS.start >= CURRENT_TIMESTAMP - INTERVAL '7 days')
+    If _jobState In (2, 3, 9) Or Exists (SELECT JS.job
+                                         FROM sw.t_job_steps JS
+                                         WHERE JS.job = _job AND
+                                               JS.state IN (4, 9) AND
+                                               JS.start >= CURRENT_TIMESTAMP - INTERVAL '7 days')
     Then
         RAISE WARNING 'Pipeline % not deleted; job is in progress', _jobText;
     ElsIf _jobState IN (4,7,14) Then

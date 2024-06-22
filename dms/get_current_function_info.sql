@@ -25,13 +25,12 @@ CREATE OR REPLACE FUNCTION public.get_current_function_info(_schemaname text DEF
 **
 **      To view the search path use: SHOW search_path;
 **
-**  Arguments
+**  Arguments:
 **    _schemaName   Schema name to use if the context info does not include a schema name before the object name
-*                   Use '<auto>' or '<lookup>' to auto-determine the schema name for the object, if empty in the context
+**                  Use '<auto>' or '<lookup>' to auto-determine the schema name for the object, if empty in the context
 **    _showDebug    When true, show the current context and RegEx match info
 **
 **  Example usage:
-**
 **      SELECT schema_name, object_name
 **      INTO _schemaName, _objectName
 **      FROM get_current_function_info();

@@ -10,14 +10,17 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_list(_delimitedlist text, _del
 **  Desc:
 **      Parse the text in _delimitedList and return a table containing the values
 **
-**      _delimitedList should be of the form 'Value1,Value2'
+**      Will not return empty string values
 **
-**      Will not return empty string values, e.g.
-**      if the list is 'Value1,,Value2' or ',Value1,Value2'
-**      the table will only contain entries 'Value1' and 'Value2'
+**      For example, if the list is 'Value1,,Value2' or ',Value1,Value2',
+**      the returned table will only contain entries 'Value1' and 'Value2'
 **
 **      If _delimiter is chr(13) or chr(10), will split _delimitedList on CR or LF
 **      In this case, blank lines will not be included in the output table
+**
+**  Arguments:
+**    _delimitedList    Delimited list of values, e.g. 'Value1,Value2'
+**    _delimiter        Delimiter to use (defaults to a comma)
 **
 **  Auth:   mem
 **  Date:   06/06/2006

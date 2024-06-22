@@ -59,7 +59,6 @@ CREATE OR REPLACE FUNCTION sw.add_update_job_parameter_xml(_xmlparameters xml, _
 **      <Param Section="PeptideSearch" Name="ProteinOptions" Value="seq_direction=forward,filetype=fasta" />
 **
 **  Example usage:
-**
 **      -- This function can be called from a procedure, sending in the XML via a variable and storing the results in variables (or in a single record variable)
 **
 **      _xmlParams := '<Param Section="JobParameters" Name="DatasetFolderName" Value="QC_Mam_19_01_d_22Apr23_Pippin_REP-23-03-09" /><Param Section="JobParameters" Name="DatasetID" Value="1146056" /><Param Section="JobParameters" Name="DatasetName" Value="QC_Mam_19_01_d_22Apr23_Pippin_REP-23-03-09" /><Param Section="JobParameters" Name="DatasetStoragePath" Value="\\proto-8\Lumos02\2023_2\" /><Param Section="JobParameters" Name="DatasetType" Value="HMS-HCD-HMSn" /><Param Section="JobParameters" Name="Experiment" Value="QC_Mam_19_01" /><Param Section="JobParameters" Name="InstClass" Value="LTQ_FT" /><Param Section="JobParameters" Name="Instrument" Value="Lumos02" /><Param Section="JobParameters" Name="ToolName" Value="MSGFPlus_MzML_NoRefine" /><Param Section="JobParameters" Name="transferFolderPath" Value="\\proto-8\DMS3_Xfer\" /><Param Section="MSGFPlus" Name="MSGFPlusJavaMemorySize" Value="4000" /><Param Section="MSGFPlus" Name="MSGFPlusThreads" Value="all" /><Param Section="PeptideSearch" Name="ProteinCollectionList" Value="M_musculus_UniProt_SPROT_2013_09_2013-09-18,Tryp_Pig_Bov" />'::xml;

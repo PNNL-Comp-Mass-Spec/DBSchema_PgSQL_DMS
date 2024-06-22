@@ -9,7 +9,7 @@ CREATE OR REPLACE PROCEDURE public.get_query_row_count_proc(IN _objectname text,
 **
 **  Desc:
 **      Use function get_query_row_count() to determine the number of rows in the given table or view
-***     that match the given where clause (use an empty string if no where clause)
+**      that match the given where clause (use an empty string if no where clause)
 **
 **      The row count is obtained from table t_query_row_counts if it contains a recent query result
 **      If the row count info is out-of-date, the table or view is re-queried and the cached value in t_query_row_counts is updated
@@ -25,7 +25,6 @@ CREATE OR REPLACE PROCEDURE public.get_query_row_count_proc(IN _objectname text,
 **      CALL public.get_query_row_count_proc('v_dataset_list_report_2', '');
 **
 **      CALL public.get_query_row_count_proc('v_analysis_job_list_report_2', 'dataset like ''qc_mam_23%''');
-**
 **
 **  Auth:   mem
 **  Date:   05/22/2024 mem - Initial version

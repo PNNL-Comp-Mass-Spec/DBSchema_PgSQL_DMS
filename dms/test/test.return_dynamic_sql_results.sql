@@ -12,8 +12,14 @@ CREATE OR REPLACE FUNCTION test.return_dynamic_sql_results(_startdate timestamp 
 **
 **      Demonstrates use of RETURN QUERY with EXECUTE _sql
 **
+**  Arguments:
+**    _startDate        Starting timestamp
+**    _endDate          Ending timestamp
+**    _hourInterval     Interval, in hours
+**
 **  Example usage:
-**      SELECT * FROM test.return_dynamic_sql_results('1/20/2023', '1/23/2023')
+**      SELECT * FROM test.return_dynamic_sql_results('1/20/2023', '1/23/2023');
+**      SELECT * FROM test.return_dynamic_sql_results('1/20/2023', '1/23/2023', _hourInterval => 4);
 **
 **  Auth:   mem
 **  Date:   01/24/2023 mem - Initial release
@@ -27,7 +33,8 @@ BEGIN
     _startDateText := make_date(Extract(year from _startDate)::int, Extract(month from _startDate)::int, Extract(day from _startDate)::int)::text;
     _endDateText   := make_date(Extract(year from _endDate)::int,   Extract(month from _endDate)::int,   Extract(day from _endDate)::int)::text;
 
-    _sql := format('SELECT the_date FROM generate_series (''%s''::timestamp, ''%s''::timestamp, make_interval(hours => %s)) AS the_date', _startDate::text, _endDate::text, _hourInterval);
+    _sql := format('SELECT the_date FROM generate_series (''%s''::timestamp, ''%s''::timestamp, make_interval(hours => %s)) AS the_date',
+                   _startDate::text, _endDate::text, _hourInterval);
 
     -- Uncomment to show the SQL
     -- RAISE INFO '%', _sql;

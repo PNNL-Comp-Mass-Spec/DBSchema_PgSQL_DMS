@@ -18,7 +18,6 @@ CREATE OR REPLACE PROCEDURE mc.report_manager_error_cleanup(IN _managername text
 **    _returnCode   Return code
 **
 **  Example usage:
-**
 **      CALL mc.report_manager_error_cleanup ('monroe_analysis', 2);
 **
 **  Auth:   mem

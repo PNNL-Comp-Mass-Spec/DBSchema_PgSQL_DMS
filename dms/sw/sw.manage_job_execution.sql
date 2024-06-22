@@ -31,7 +31,7 @@ CREATE OR REPLACE PROCEDURE sw.manage_job_execution(IN _parameters text DEFAULT 
 **     When the action is "state", the only allowed value is "Hold"
 **     In contrast, procedure public.manage_job_execution() supports "Hold", "Release", or "Reset"
 **
-**  Arguments
+**  Arguments:
 **    _parameters   XML parameters
 **    _message      Status or warning message
 **    _returnCode   Return code

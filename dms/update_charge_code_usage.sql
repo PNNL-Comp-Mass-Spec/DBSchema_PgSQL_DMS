@@ -14,7 +14,6 @@ CREATE OR REPLACE FUNCTION public.update_charge_code_usage(_infoonly boolean DEF
 **    _infoOnly     When true, preview the old and new values; otherwise, update the stats
 **
 **  Example usage:
-**
 **      -- Preview changes:
 **      SELECT * FROM update_charge_code_usage(true);
 **

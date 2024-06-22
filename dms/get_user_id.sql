@@ -17,7 +17,6 @@ CREATE OR REPLACE FUNCTION public.get_user_id(_username text DEFAULT ''::text) R
 **      User ID if found, otherwise 0
 **
 **  Example usage:
-**
 **      SELECT * FROM public.get_user_id('d3l243');
 **      SELECT * FROM public.get_user_id('Monroe, Matthew E (d3l243)');
 **      SELECT * FROM public.get_user_id('unknown');

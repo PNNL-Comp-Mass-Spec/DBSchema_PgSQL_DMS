@@ -16,7 +16,6 @@ CREATE OR REPLACE PROCEDURE public.post_usage_log_entry(IN _postedby text, IN _m
 **    _minimumUpdateInterval   Set to a value greater than 0 to limit the entries to occur at most every _minimumUpdateInterval hours
 **
 **  Example usage:
-**
 **      CALL post_usage_log_entry('store_dataset_file_info', 'Dataset: QC_Mam_19_01_1a_Samwise_19Aug22_WBEH-22-05-03');
 **      SELECT * FROM t_usage_stats WHERE posted_by LIKE 'store%dataset%file%info';
 **

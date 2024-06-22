@@ -8,8 +8,15 @@ CREATE OR REPLACE FUNCTION sw.get_results_directory_name(_job integer, _tag text
 /****************************************************
 **
 **  Desc:
-**      Determine the results directory name for given job,
+**      Determine the results directory name for the given job,
 **      based on the tag, current timestamp, and job number
+**
+**  Arguments:
+**    _job      Analysis job number
+**    _tag      Three letter tag for the step tool, e.g. 'MSG'
+**
+**  Returns:
+**      Directory name, e.g. 'MSG202406211840_Auto100000'
 **
 **  Example usage:
 **      SELECT * FROM sw.get_results_directory_name(100000, 'MSG');

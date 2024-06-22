@@ -11,6 +11,9 @@ CREATE OR REPLACE PROCEDURE sw.update_actual_cpu_loading(IN _infoonly boolean DE
 **      Update actual_cpu_load based on t_processor_status
 **      (using Prog_Runner_Core_Usage values pushed by the Analysis Manager)
 **
+**  Arguments:
+**    _infoOnly     When true, preview the results; when false, update sw.t_job_steps
+**
 **  Auth:   mem
 **  Date:   11/20/2015 mem - Initial release
 **          01/05/2016 mem - Check for load values over 255
@@ -153,7 +156,6 @@ BEGIN
               U.Processor_Name = JS.processor AND
               JS.actual_cpu_load <> U.New_CPU_Load OR
               JS.actual_cpu_load IS NULL;
-
     End If;
 
     DROP TABLE Tmp_PendingUpdates;

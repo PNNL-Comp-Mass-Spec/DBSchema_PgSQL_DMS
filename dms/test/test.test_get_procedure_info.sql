@@ -5,6 +5,25 @@
 CREATE OR REPLACE PROCEDURE test.test_get_procedure_info(IN _schemaname text DEFAULT ''::text, IN _showdebug boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
+/****************************************************
+**
+**  Desc:
+**      Calls function test_get_function_info() and get_current_function_info(), showing the results using RAISE INFO
+**
+**  Arguments:
+**    _schemaName   Schema name
+**    _showDebug    When true,
+**
+**  Example usage:
+**      CALL test.test_get_procedure_info('');
+**      CALL test.test_get_procedure_info('test');
+**      CALL test.test_get_procedure_info('public');
+**
+**  Auth:   mem
+**  Date:   08/24/2022 mem - Initial version
+**          06/21/2024 mem - Align text in the output window
+**
+*****************************************************/
 DECLARE
     _functionInfo record;
     _procedureInfo record;
@@ -21,7 +40,7 @@ BEGIN
 
     RAISE INFO 'Schema and name for procedure: %', _procedureInfo.name_with_schema;
 
-    RAISE INFO 'Procedure signature: %', _procedureInfo.object_signature;
+    RAISE INFO 'Procedure signature:           %', _procedureInfo.object_signature;
 END;
 $$;
 

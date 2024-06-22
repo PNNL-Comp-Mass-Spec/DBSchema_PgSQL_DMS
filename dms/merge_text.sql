@@ -10,7 +10,11 @@ CREATE OR REPLACE FUNCTION public.merge_text(_text1 text, _text2 text) RETURNS t
 **  Desc:
 **      Concatenate _text1 and _text2 using a semicolon
 **
-**      However, if the two variables have identical strings, only returns _text1
+**      However, if the two variables have identical strings, just return _text1
+**
+**  Arguments:
+**    _text1    First string
+**    _text2    Second string
 **
 **  Auth:   mem
 **  Date:   08/03/2007

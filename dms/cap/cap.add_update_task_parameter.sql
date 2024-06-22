@@ -23,7 +23,6 @@ CREATE OR REPLACE PROCEDURE cap.add_update_task_parameter(IN _job integer, IN _s
 **    _showDebug        When true, set _showDebug to true when calling get_current_function_info()
 **
 **  Example usage:
-**
 **      CALL cap.add_update_task_parameter (6016849, 'DatasetQC', 'CreateDatasetInfoFile', 'False', _infoOnly => true);
 **      CALL cap.add_update_task_parameter (6016849, 'DatasetQC', 'CreateDatasetInfoFile', 'False', _infoOnly => false);
 **      CALL cap.add_update_task_parameter (6016849, 'DatasetQC', 'CreateDatasetInfoFile', 'True',  _infoOnly => false, _deleteParam => true);

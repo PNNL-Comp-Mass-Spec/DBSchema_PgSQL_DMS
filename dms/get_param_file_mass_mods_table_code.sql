@@ -11,6 +11,9 @@ CREATE OR REPLACE FUNCTION public.get_param_file_mass_mods_table_code(_paramfile
 **      Return the mass mods for the given parameter file, formatted as a string-based table
 **      The format codes are thosed used by Jira
 **
+**  Arguments:
+**    _paramFileId      Parameter file ID
+**
 **  Returns:
 **      List of mass mods delimited by '<br>'
 **
@@ -26,12 +29,12 @@ DECLARE
     _result text;
 BEGIN
 
-    SELECT Table_Code_Header,
-           string_agg(Table_Code_Row, '<br>' ORDER BY Table_Code_Row)
+    SELECT table_code_header,
+           string_agg(table_code_row, '<br>' ORDER BY table_code_row)
     INTO _header, _list
-    FROM V_Param_File_Mass_Mods
-    WHERE Param_File_ID = _paramFileId
-    GROUP BY Table_Code_Header;
+    FROM v_param_file_mass_mods
+    WHERE param_file_id = _paramFileId
+    GROUP BY table_code_header;
 
     If FOUND Then
         _result := format('%s<br>%s', _header, _list);

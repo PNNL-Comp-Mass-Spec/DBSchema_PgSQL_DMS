@@ -10,11 +10,16 @@ CREATE OR REPLACE FUNCTION test.test_exception_handler_nested(_divisor text, _us
 **  Desc:
 **      Uses function test_exception_handler to divide 100 by _divisor and return the result
 **      That function raises an exception if _divisor is not numeric
+**
 **      Query this function with _divisor => '0' to force a divide-by-zero error
 **
-**  Example usage:
+**  Arguments:
+**    _divisor              Divisor (as text)
+**    _useErrorHandler      When true, call local_error_handler (which will log an entry to public.t_log_entries)
+**                          When false, uses format_error_message to construct the error message
 **
-**      SELECT test.test_exception_handler_nested('40', false);
+**  Example usage:
+**      SELECT 100 / 40.0 AS Expected_Result, test.test_exception_handler_nested('40', false) AS Actual_Result;
 **      SELECT test.test_exception_handler_nested('apple', false);
 **      SELECT test.test_exception_handler_nested('apple', true);
 **
@@ -25,11 +30,10 @@ CREATE OR REPLACE FUNCTION test.test_exception_handler_nested(_divisor text, _us
 **          05/22/2023 mem - Capitalize reserved word
 **
 *****************************************************/
-
 DECLARE
     _result numeric;
 BEGIN
-    _result := test.test_exception_handler(_divisor, _useerrorhandler);
+    _result := test.test_exception_handler(_divisor, _useErrorHandler);
     RETURN _result;
 End
 $$;

@@ -10,11 +10,14 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_integer_list(_delimitedlist te
 **  Desc:
 **      Parse the text in _delimitedList and return a table containing the values (as integers)
 **
-**      _delimitedList should be of the form 'Value1,Value2'
+**      Ignores empty strings and any items that are not integers
 **
-**      Ignores empty strings and any items that are not integers, e.g.
-**      if the list is '1,,2,test,3,4.2,5'
-**      the table will contain four numbers: 1, 2, 3, 5
+**      For example, if the list is '1,,2,test,3,4.2,5',
+**      the returned table will contain four numbers: 1, 2, 3, 5
+**
+**  Arguments:
+**    _delimitedList    Delimited list of values, e.g. 'Value1,Value2'
+**    _delimiter        Delimiter to use (defaults to a comma)
 **
 **  Auth:   mem
 **  Date:   11/30/2006

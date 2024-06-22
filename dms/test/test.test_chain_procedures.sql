@@ -5,6 +5,33 @@
 CREATE OR REPLACE PROCEDURE test.test_chain_procedures(IN _commitafterlog boolean DEFAULT true, IN _rollbackafterlog boolean DEFAULT false, IN _rethrowexception boolean DEFAULT false, IN _logerrors boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
+/****************************************************
+**
+**  Desc:
+**      This procedure inserts a row into t_log_entries then calls procedure alter_entered_by_user()
+**      After this it optionally Commits the transaction and/or rolls back the transaction
+**      Next, it triggers an divide-by-zero exception
+**
+**  Arguments:
+**    _commitAfterLog       When true, use COMMIT after inserting the row into t_log_entries
+**    _rollbackAfterLog     When true, use ROLLBACK after inserting the row into t_log_entries
+**    _rethrowException     When true, use RAISE EXCEPTION inside the error handler that catches the divide-by-zero error
+**    _logErrors            When true, log exceptions
+**    _message              Output message
+**    _returnCode           Return code
+**
+**  Example usage:
+**      CALL test.test_chain_procedures(_commitAfterLog => false, _rollbackAfterLog => false, _logErrors => false);
+**      CALL test.test_chain_procedures(_commitAfterLog => true,  _rollbackAfterLog => false, _logErrors => false);
+**      CALL test.test_chain_procedures(_commitAfterLog => true,  _rollbackAfterLog => true,  _logErrors => false);
+**      CALL test.test_chain_procedures(_commitAfterLog => false, _rollbackAfterLog => true,  _logErrors => false);
+**
+**      SELECT * FROM t_log_entries WHERE entered >= CURRENT_TIMESTAMP - Interval '5 minutes';
+**
+**  Auth:   mem
+**  Date:   05/02/2023 mem - Initial release
+**
+*****************************************************/
 DECLARE
     _sqlState text;
     _exceptionMessage text;
@@ -110,7 +137,6 @@ Begin
     End If;
 
     RAISE INFO 'End';
-
 End
 $$;
 

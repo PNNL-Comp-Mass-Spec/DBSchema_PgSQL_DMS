@@ -21,7 +21,6 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **    _showDebug        When true, show the existing parameter names and values, followed by any updated or deleted parameters
 **
 **  Example input XML:
-**
 **      <Param Section="DatasetQC" Name="ComputeOverallQualityScores" Value="True" />
 **      <Param Section="DatasetQC" Name="CreateDatasetInfoFile" Value="True" />
 **      <Param Section="DatasetQC" Name="SaveLCMS2DPlots" Value="True" />
@@ -34,7 +33,6 @@ CREATE OR REPLACE FUNCTION cap.add_update_task_parameter_xml(_xmlparameters xml,
 **      <Param Section="JobParameters" Name="Instrument_Name" Value="QEHFX03" />
 **
 **  Example usage:
-**
 **      -- This function can be called from a procedure, sending in the XML via a variable and storing the results in variables (or in a single record variable)
 **
 **      _xmlParams := '<Param Section="DatasetQC" Name="ComputeOverallQualityScores" Value="True" /><Param Section="DatasetQC" Name="CreateDatasetInfoFile" Value="True" /><Param Section="DatasetQC" Name="SaveLCMS2DPlots" Value="True" /><Param Section="JobParameters" Name="Dataset" Value="QC_Mam_19_01-run04_19July22_Remus_WBEH-22-05-07" /><Param Section="JobParameters" Name="Dataset_ID" Value="1060934" />'::xml;

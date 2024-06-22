@@ -10,6 +10,12 @@ CREATE OR REPLACE FUNCTION ont.update_cached_bto_names(_infoonly boolean DEFAULT
 **  Desc:
 **      Updates data in ont.t_cv_bto_cached_names
 **
+**  Arguments:
+**    _infoOnly     When true, preview rows to add or delete
+**
+**  Example usage:
+**      SELECT * FROM ont.update_cached_bto_names(_infoOnly => true);
+**
 **  Auth:   mem
 **  Date:   09/01/2017 mem - Initial version
 **          04/07/2022 mem - Ported to PostgreSQL

@@ -10,8 +10,11 @@ CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_libraryid 
 **  Desc:
 **      Compute a SHA-1 hash value using the settings used to create an in-silico digest based spectral library
 **
-**      If the Spectral library ID is non-zero, reads settings from T_Spectral_Library
+**      If the Spectral library ID is non-zero, reads settings from t_spectral_library
 **      Otherwise, uses the values provided to the other parameters
+**
+**  Arguments:
+**    _libraryID    Spectral library ID; when zero, read settings from t_spectral_library and ignore the other parameters
 **
 **  Returns:
 **    Computed hash, or an empty string if an error
@@ -97,7 +100,7 @@ BEGIN
     End If;
 
     -- Remove any spaces in the static and dynamic mods
-    _staticMods := Replace(_staticMods, ' ', '');
+    _staticMods  := Replace(_staticMods, ' ', '');
     _dynamicMods := Replace(_dynamicMods, ' ', '');
 
     ---------------------------------------------------

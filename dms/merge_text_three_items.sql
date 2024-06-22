@@ -10,7 +10,12 @@ CREATE OR REPLACE FUNCTION public.merge_text_three_items(_text1 text, _text2 tex
 **  Desc:
 **      Concatenate _text1 and _text2 using a semicolon (but, if identical strings, just use _text1)
 **
-**      Next, concatenates _text3, provided it does not match _text1 or_text2
+**      Next, concatenate _text3, provided it does not match _text1 or_text2
+**
+**  Arguments:
+**    _text1    First string
+**    _text2    Second string
+**    _text3    Third string
 **
 **  Auth:   mem
 **  Date:   08/03/2007

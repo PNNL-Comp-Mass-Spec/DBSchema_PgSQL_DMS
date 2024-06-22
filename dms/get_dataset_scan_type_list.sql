@@ -8,18 +8,17 @@ CREATE OR REPLACE FUNCTION public.get_dataset_scan_type_list(_datasetid integer)
 /****************************************************
 **
 **  Desc:
-**      Build a delimited list of actual scan types for the specified dataset
+**      Build a comma-separated list of actual scan types for the specified dataset
 **
 **      Scan types are sorted using column sort_key from table t_dataset_scan_type_glossary
 **
 **  Arguments:
-**     _datasetID       Dataset ID
+**    _datasetID       Dataset ID
 **
 **  Returns:
 **      Comma-separated list
 **
 **  Example usage:
-**
 **      To find missing scan types, use either of the following queries:
 **
 **      SELECT CASE WHEN Coalesce(MissingScanTypes, '') = ''

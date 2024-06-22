@@ -8,16 +8,15 @@ CREATE OR REPLACE FUNCTION test.test_get_call_stack(_recursiondepth integer DEFA
 /****************************************************
 **
 **  Desc:
-**      Uses GET DIAGNOSTICS to obtain the context, then uses get_call_stack() to convert the context to a call stack stable
+**      Uses GET DIAGNOSTICS to obtain the context, then uses get_call_stack() to convert the context to a call stack table
 **
 **  Arguments:
 **    _recursionDepth       When 0, simply display the context; when non-zero, recursively call this function
 **
 **  Example usage:
-**
-**      SELECT * FROM test.test_get_call_stack_nested(0);
-**      SELECT * FROM test.test_get_call_stack_nested(1);
-**      SELECT * FROM test.test_get_call_stack_nested(2);
+**      SELECT * FROM test.test_get_call_stack(0);
+**      SELECT * FROM test.test_get_call_stack(1);
+**      SELECT * FROM test.test_get_call_stack(2);
 **
 **  Auth:   mem
 **  Date:   08/24/2022 mem - Initial version

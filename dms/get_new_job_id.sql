@@ -15,7 +15,6 @@ CREATE OR REPLACE FUNCTION public.get_new_job_id(_note text, _infoonly boolean D
 **    _infoOnly     When true, preview the next job number
 **
 **  Example usage:
-**
 **      -- Preview the next available job number
 **      SELECT *
 **      FROM public.get_new_job_id('Created in t_analysis_job', _infoOnly => true);

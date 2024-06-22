@@ -10,6 +10,9 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_batch_max_days_in_queue(_bat
 **  Desc:
 **      Return the largest value for v_requested_run_queue_times.days_in_queue for the requested runs in the given batch
 **
+**  Arguments:
+**    _batchid      batch ID
+**
 **  Returns:
 **      Maximum days in queue
 **

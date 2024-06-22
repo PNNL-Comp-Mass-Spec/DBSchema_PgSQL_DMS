@@ -246,7 +246,7 @@ BEGIN
     INTO _list
     FROM Tmp_DatasetInfo
     WHERE (NOT _allowNewDatasets AND     dataset_state_id <> 3) OR
-          (    _allowNewDatasets AND NOT dataset_state_id IN (1,2,3));
+          (    _allowNewDatasets AND NOT dataset_state_id IN (1, 2, 3));
 
     If Coalesce(_list, '') <> '' Then
         _message := format('The following datasets were not in the correct state: %s', _list);

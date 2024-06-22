@@ -20,7 +20,6 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **    _returnCode       Return code
 **
 **  Example usage:
-**
 **      CALL mc.update_single_mgr_control_param('orgdbdir', 'G:\DMS_Temp_Org', '1277, 1317, 1318', _infoOnly => true);
 **
 **  Auth:   jds

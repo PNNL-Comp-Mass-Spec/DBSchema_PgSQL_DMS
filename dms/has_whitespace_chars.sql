@@ -15,7 +15,12 @@ CREATE OR REPLACE FUNCTION public.has_whitespace_chars(_entityname text, _allows
 **      This function is called by numerous check constraints,
 **      including on tables T_Dataset and T_Experiments
 **
-**  Returns values: false if no problems, true if whitespace characters are present
+**  Arguments:
+**    _entityName   Value to check
+**    _allowSpace   When true, allow spaces
+**
+**  Returns values:
+**      False if no whitespace characters, true if whitespace characters are present
 **
 **  Auth:   mem
 **  Date:   02/15/2011

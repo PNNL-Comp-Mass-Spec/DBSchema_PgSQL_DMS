@@ -8,15 +8,17 @@ CREATE OR REPLACE FUNCTION pc.standardize_protein_collection_list(_protcollnamel
 /****************************************************
 **
 **  Desc:
-**      Standardize the order of protein collection names in a protein
-**      collection list, returning them in a canonical order such that
-**      internal standard collections (type 5) are listed first,
-**      contaminants (type 4) are listed last,
-**      and the remaining collections are listed alphabetically in the middle
+**      Standardize the order of protein collection names in a protein collection list,
+**      returning them in a canonical order such that:
+**      - Internal standard collections (type 5) are listed first,
+**      - Contaminants (type 4) are listed last
+**      - The remaining collections are listed alphabetically in the middle
 **
-**      Note that this procedure does not validate the protein
-**      collection names vs. those in T_Protein_Collections,
-**      though it will correct capitalization errors
+**      Note that this function does not validate the protein collection names vs.
+**      those in t_protein_collections, though it will correct capitalization errors
+**
+**  Arguments:
+**    _protCollNameList     Comma-separated list of protein collection names
 **
 **  Auth:   mem
 **  Date:   06/08/2006
@@ -45,8 +47,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Populate a temporary table with the protein collections
-    -- in _protCollNameList
+    -- Populate a temporary table with the protein collections in _protCollNameList
     --
     -- The Collection_Name column in this table uses collation 'general_ci_ai',
     -- which sorts underscores before letters, as is the default for SQL Server
@@ -66,7 +67,6 @@ BEGIN
     --      LOCALE = '@ColStrength=primary');   -- This means to ignore case and ignore accents
     --                                          -- To ignore accents but consider case, use
     --                                          -- 'LOCALE = 'und@colStrength=primary;colCaseLevel=yes'
-    --
     -- See also:
     --   https://dba.stackexchange.com/a/313982/122858
     --   https://postgresql.verite.pro/blog/2019/10/14/nondeterministic-collations.html
@@ -111,7 +111,7 @@ BEGIN
     SELECT string_agg(Collection_Name, ',' ORDER BY Collection_Name)
     INTO _textToAppend
     FROM Tmp_Protein_Collections
-    WHERE NOT Collection_Type_ID IN (4,5);
+    WHERE NOT Collection_Type_ID IN (4, 5);
 
      _protCollNameListNew := public.append_to_text(_protCollNameListNew, _textToAppend, _delimiter => ',');
 

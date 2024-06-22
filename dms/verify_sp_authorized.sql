@@ -25,7 +25,6 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **      'User Username cannot call procedure ProcedureName from host IP 130.20.228.1
 **
 **  Example usage:
-**
 **      SELECT schema_name, object_name, name_with_schema
 **      INTO _currentSchema, _currentProcedure, _nameWithSchema
 **      FROM get_current_function_info('<auto>', _showDebug => false);

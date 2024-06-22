@@ -10,6 +10,9 @@ CREATE OR REPLACE FUNCTION public.tinyint_to_enabled_disabled(_value integer) RE
 **  Desc:
 **      Return the text 'Disabled' if _value is 0 or null, otherwise returns 'Enabled'
 **
+**  Arguments:
+**    _value    Integer value to examine
+**
 **  Auth:   mem
 **  Date:   11/14/2012 mem - Initial version
 **          06/23/2022 mem - Ported to PostgreSQL

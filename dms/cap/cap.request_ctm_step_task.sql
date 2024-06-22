@@ -88,7 +88,7 @@ CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, IN
 **          01/20/2010 grk - Added logic for instrument/processor assignment
 **          02/01/2010 grk - Added instrumentation for more logging of reject requests
 **          03/12/2010 grk - Fixed problem with inadvertent throttling of step tools that aren't subject to it
-**          03/21/2011 mem - Switched t_tasks.State test from State IN (1,2) to State < 100
+**          03/21/2011 mem - Switched t_tasks.State test from State IN (1, 2) to State < 100
 **          04/12/2011 mem - Now making an entry in T_task_Step_Processing_Log for each capture task job step assigned
 **          05/18/2011 mem - No longer making an entry in T_task_Request_Log for every request
 **                         - Now showing the top _jobCountToPreview candidate steps when _infoLevel is > 0

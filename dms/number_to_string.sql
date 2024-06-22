@@ -11,6 +11,10 @@ CREATE OR REPLACE FUNCTION public.number_to_string(_value double precision, _dig
 **  Desc:
 **      Convert the number to a string with the specified number of digits after the decimal
 **
+**  Arguments:
+**    _value                Double precision value
+**    _digitsAfterDecimal   Number of digits to display after the decimal point
+**
 **  Auth:   mem
 **  Date:   06/14/2022 mem - Initial version
 **          05/22/2023 mem - Capitalize reserved word
@@ -36,6 +40,10 @@ CREATE OR REPLACE FUNCTION public.number_to_string(_value numeric, _digitsafterd
 **
 **  Desc:
 **      Convert the number to a string with the specified number of digits after the decimal
+**
+**  Arguments:
+**    _value                Double precision value
+**    _digitsAfterDecimal   Number of digits to display after the decimal point
 **
 **  Auth:   mem
 **  Date:   10/26/2017 mem - Initial version

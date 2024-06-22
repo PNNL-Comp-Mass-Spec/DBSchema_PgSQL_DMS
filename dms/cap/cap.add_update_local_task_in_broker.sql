@@ -22,7 +22,6 @@ CREATE OR REPLACE PROCEDURE cap.add_update_local_task_in_broker(INOUT _job integ
 **    _callingUser      Username of the calling user (unused by this procedure)
 **
 **  Example usage:
-**
 **      CALL cap.add_update_local_task_in_broker(
 **          _job        => 5280268,
 **          _scriptname => 'DatasetArchive',

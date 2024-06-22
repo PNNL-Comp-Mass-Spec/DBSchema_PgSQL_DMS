@@ -10,7 +10,12 @@ CREATE OR REPLACE FUNCTION sw.get_job_step_params_work(_job integer, _step integ
 **  Desc:
 **      Return a table with the parameters for the given job and step
 **
-**      Data comes from sw.T_Job_Parameters, not from the public schema tables
+**      Data comes from sw.t_job_parameters, not from the public schema tables
+**
+**  Arguments:
+**    _job          Analysis job number
+**    _step         Job step
+**    _debugMode    When true, show additional info using RAISE INFO
 **
 **  Auth:   mem
 **  Date:   12/04/2009 mem - Extracted code from GetJobStepParams to create this procedure

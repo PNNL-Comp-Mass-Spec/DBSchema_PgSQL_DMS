@@ -16,7 +16,6 @@ CREATE OR REPLACE FUNCTION mc.archive_old_managers_and_params(_mgrlist text, _in
 **    _infoOnly   False to perform the update, true to preview
 **
 **  Example usage:
-**
 **      UPDATE mc.t_mgrs
 **      SET control_from_website = 0
 **      WHERE mgr_name = 'pub-10-1' AND control_from_website > 0;

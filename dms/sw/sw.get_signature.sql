@@ -13,6 +13,9 @@ CREATE OR REPLACE FUNCTION sw.get_signature(_settings text) RETURNS integer
 **    Input string is hashed to pattern, and stored in table T_Signatures
 **    Signature is integer reference to pattern
 **
+**  Arguments:
+**    _settings     Analysis tool settings, e.g. CentroidMSXML=True;CentroidPeakCountToRetain=-1;MSXMLGenerator=MSConvert.exe;MSXMLOutputType=mzML;MzRefParamFile=MzRef_NoMods.txt;
+**
 **  Returns:
 **      Signature (integer), otherwise, 0
 **
@@ -31,7 +34,7 @@ BEGIN
     _reference := 0;
 
     ---------------------------------------------------
-    -- Convert string to SHA-1 hash (upper case hex string)
+    -- Convert _settings to a SHA-1 hash (upper case hex string)
     ---------------------------------------------------
 
     _pattern := sw.get_sha1_hash(_settings);
@@ -73,9 +76,9 @@ BEGIN
 
         If Exists (SELECT reference FROM sw.t_signatures WHERE reference = _reference AND string IS NULL) Then
             UPDATE sw.t_signatures
-            SET Last_Used = CURRENT_TIMESTAMP,
-                String = _settings
-            WHERE Reference = _reference;
+            SET last_used = CURRENT_TIMESTAMP,
+                string = _settings
+            WHERE reference = _reference;
         Else
             UPDATE sw.t_signatures
             SET last_used = CURRENT_TIMESTAMP

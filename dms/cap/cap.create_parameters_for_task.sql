@@ -22,7 +22,9 @@ CREATE OR REPLACE FUNCTION cap.create_parameters_for_task(_job integer, _dataset
 **    _capturesubdirectory      Capture subdirectory
 **
 **  Example usage:
-**      SELECT Src::text FROM cap.create_parameters_for_task(5273219, 'ABF_Rt_HH_B112_CP_M_d7_r2_46_LC', '1016835', 'DatasetCapture', 'proto-4', 'Agilent_QQQ_04', 'Agilent_TOF_V2', 1, '') Src
+**      SELECT Src::text
+**      FROM cap.create_parameters_for_task(5273219, 'ABF_Rt_HH_B112_CP_M_d7_r2_46_LC', '1016835', 'DatasetCapture',
+**                                          'proto-4', 'Agilent_QQQ_04', 'Agilent_TOF_V2', 1, '') Src
 **
 **  Example Results:
 **      <Param Section="DatasetQC" Name="ComputeOverallQualityScores" Value="True" />

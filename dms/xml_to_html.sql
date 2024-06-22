@@ -13,6 +13,9 @@ CREATE OR REPLACE FUNCTION public.xml_to_html(_xml xml) RETURNS text
 **      Add a line feed before each XML tag and changes the
 **      less than signs and greater than signs to &lt; and &gt;
 **
+**  Arguments:
+**    _xml      Text to process
+**
 **  Returns:
 **      The XML, as HTML formatted text
 **

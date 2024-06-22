@@ -11,7 +11,7 @@ CREATE OR REPLACE FUNCTION mc.unarchive_old_managers_and_params(_mgrlist text, _
 **      Move managers from mc.t_old_managers to mc.t_mgrs and
 **      move manager parameters from mc.t_param_value_old_managers to mc.t_param_value
 **
-**      See also procedure mc.archive_old_managers_and_params
+**      See also function mc.archive_old_managers_and_params
 **
 **  Arguments:
 **    _mgrList                    One or more manager names (comma-separated list); supports wildcards because uses stored procedure Parse_Manager_Name_List
@@ -19,7 +19,6 @@ CREATE OR REPLACE FUNCTION mc.unarchive_old_managers_and_params(_mgrlist text, _
 **    _enableControlFromWebsite   If true, set control_from_website to 1 when storing the manager info in mc.t_mgrs
 **
 **  Example usage:
-**
 **      SELECT * FROM mc.unarchive_old_managers_and_params('Pub-10-1', _infoOnly => true,  _enableControlFromWebsite => true);
 **      SELECT * FROM mc.unarchive_old_managers_and_params('Pub-10-1', _infoOnly => false, _enableControlFromWebsite => true);
 **      SELECT * FROM mc.t_mgrs WHERE mgr_name = 'pub-10-1';

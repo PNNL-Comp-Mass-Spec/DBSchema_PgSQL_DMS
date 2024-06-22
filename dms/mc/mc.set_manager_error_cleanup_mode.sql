@@ -20,7 +20,6 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_error_cleanup_mode(IN _mgrlist text D
 **    _returnCode   Return code
 **
 **  Example usage:
-**
 **      CALL mc.set_manager_error_cleanup_mode('Pub-10-1,Pub-11%', 1, _infoOnly => true);
 **
 **  Auth:   mem

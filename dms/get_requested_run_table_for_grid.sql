@@ -10,6 +10,9 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_table_for_grid(_itemlist tex
 **  Desc:
 **      Return the info for the requested run IDs in _itemList
 **
+**  Arguments:
+**    _itemList     Comma-separated list of requested run IDs
+**
 **  Auth:   grk
 **  Date:   01/13/2013
 **          01/13/2013 grk - Initial release

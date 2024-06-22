@@ -17,6 +17,9 @@ CREATE OR REPLACE FUNCTION public.timestamp_text_immutable(_currenttime timestam
 **
 **      There are two timestamp_text_immutable functions; this one accepts a timestamp that does not have a timezone
 **
+**  Arguments:
+**    _currentTime      Timestamp to convert to text
+**
 **  Example usage:
 **      To convert the timestamp to text, use either
 **        SELECT timestamp_text_immutable(localtimestamp);
@@ -58,6 +61,9 @@ CREATE OR REPLACE FUNCTION public.timestamp_text_immutable(_currenttime timestam
 **      For example: 2022-05-31_14:38:32.410
 **
 **      There are two timestamp_text_immutable functions; this one accepts a timestamp with a timezone
+**
+**  Arguments:
+**    _currentTime      Timestamp to convert to text
 **
 **  Example usage:
 **      To convert the timestamp to text, use either

@@ -18,6 +18,40 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_name_code(_requestname text,
 **          GCM_20210825_R_POIR043_18_GC
 **          MoT_20210706_B_8050_13_LC-Acetylome
 **
+**  Arguments:
+**    _requestName          Request name
+**    _requestCreated       Request created timestamp
+**    _requesterUsername    Requster username
+**    _batchID              Batch ID
+**    _batchName            Batch name
+**    _batchGroupID         Batch group ID
+**    _batchCreated         Batch created timestamp
+**    _datasetTypeID        Dataset type ID
+**    _separationType       Separation type name
+**
+**  Example usage:
+**      -- Name code: GCM_20210825_R_POIR043_18_GC
+**      SELECT request_id,
+**             get_requested_run_name_code(
+**                  RR.request_name, RR.created, RR.requester_username,
+**                  RR.batch_id, BatchInfo.batch, BatchInfo.batch_group_id, BatchInfo.created,
+**                  RR.request_type_id, RR.separation_group)
+**      FROM t_requested_run RR LEFT OUTER JOIN
+**           t_requested_run_batches BatchInfo
+**             ON BatchInfo.batch_id = RR.batch_id
+**      WHERE RR.request_id IN (1022686, 1022687, 1022688, 1022689);
+**
+**      -- Name code: MoT_20210706_B_8050_13_LC-Acetylome
+**      SELECT request_id,
+**             get_requested_run_name_code(
+**                  RR.request_name, RR.created, RR.requester_username,
+**                  RR.batch_id, BatchInfo.batch, BatchInfo.batch_group_id, BatchInfo.created,
+**                  RR.request_type_id, RR.separation_group)
+**      FROM t_requested_run RR LEFT OUTER JOIN
+**           t_requested_run_batches BatchInfo
+**             ON BatchInfo.batch_id = RR.batch_id
+**      WHERE RR.request_id IN (997713, 997714, 997715, 997716);
+**
 **  Auth:   mem
 **  Date:   08/05/2010
 **          08/10/2010 mem - Added _datasetTypeID and _separationType

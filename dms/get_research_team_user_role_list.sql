@@ -8,7 +8,10 @@ CREATE OR REPLACE FUNCTION public.get_research_team_user_role_list(_researchteam
 /****************************************************
 **
 **  Desc:
-**      Build a delimited list of roles for given user for the given research team
+**      Build a vertical bar delimited list of roles for given user for the given research team
+**
+**  Arguments:
+**    _researchTeamID   Research team ID
 **
 **  Auth:   grk
 **  Date:   03/28/2010

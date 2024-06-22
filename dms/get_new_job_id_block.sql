@@ -12,11 +12,10 @@ CREATE OR REPLACE FUNCTION public.get_new_job_id_block(_jobcount integer, _note 
 **      Accomplishes this by appending new rows to table t_analysis_job_id
 **
 **  Arguments:
-**    _jobCount     Number of jobs to create
-**    _note         Job note
+**    _jobCount   Number of jobs to make
+**    _note       Text to store in the "note" column in t_analysis_job_id
 **
 **  Example usage:
-**
 **      CREATE TEMP TABLE Tmp_Jobs (Job int);
 **
 **      INSERT INTO Tmp_Jobs (Job)
@@ -26,10 +25,6 @@ CREATE OR REPLACE FUNCTION public.get_new_job_id_block(_jobcount integer, _note 
 **      INSERT INTO Tmp_Jobs (Job)
 **      SELECT job
 **      FROM public.get_new_job_id_block(1, 'Created in sw.t_jobs');
-**
-**  Arguments:
-**    _jobCount   Number of jobs to make
-**    _note       Text to store in the "note" column in t_analysis_job_id
 **
 **  Auth:   mem
 **  Date:   08/05/2009 mem - Initial release (Ticket #744, http://prismtrac.pnl.gov/trac/ticket/744)

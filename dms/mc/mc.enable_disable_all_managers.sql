@@ -20,7 +20,6 @@ CREATE OR REPLACE PROCEDURE mc.enable_disable_all_managers(IN _managertypeidlist
 **    _returnCode           Return code
 **
 **  Example usage:
-**
 **      BEGIN;
 **          -- Disable the Capture Task Managers and the Analysis Tool Managers on Pub-80 through Pub-89
 **          CALL mc.enable_disable_all_managers(

@@ -19,7 +19,6 @@ CREATE OR REPLACE PROCEDURE mc.set_manager_update_required(IN _mgrlist text DEFA
 **    _returnCode   Return code
 **
 **  Example usage:
-**
 **      UPDATE mc.v_param_value SET value = 'false' WHERE mgr_name = 'pub-10-1' AND param_name = 'ManagerUpdateRequired';
 **      Call mc.set_manager_update_required ('Pub-10-1, Pub-12-%', _showTable => true, _infoOnly => true);
 **

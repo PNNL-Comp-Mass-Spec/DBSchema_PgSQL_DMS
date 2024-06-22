@@ -23,7 +23,6 @@ CREATE OR REPLACE PROCEDURE sw.add_update_job_parameter(IN _job integer, IN _sec
 **    _showDebug        When true, set _showDebug to true when calling get_current_function_info()
 **
 **  Example usage:
-**
 **      CALL sw.add_update_job_parameter (2177045, 'PeptideSearch', 'ProteinCollectionList', 'M_musculus_UniProt_SPROT_2013_09_2013-09-18', _infoOnly => true);
 **      CALL sw.add_update_job_parameter (2177045, 'PeptideSearch', 'ProteinCollectionList', 'M_musculus_UniProt_SPROT_2013_09_2013-09-18', _infoOnly => false);
 **      CALL sw.add_update_job_parameter (2177045, 'PeptideSearch', 'ProteinCollectionList', 'M_musculus_UniProt_SPROT_2013_09_2013-09-18', _infoOnly => false, _deleteParam => true);
