@@ -103,46 +103,45 @@ BEGIN
                    _message2::citext;
         End If;
 
-    Else
-        ---------------------------------------------------
-        -- Preview rows to add or delete
-        ---------------------------------------------------
-
-        RETURN QUERY
-        SELECT 'Delete from cache'::citext AS Task,
-               target.identifier,
-               target.term_name
-        FROM ont.t_cv_bto_cached_names target
-             LEFT OUTER JOIN (SELECT cvbto.identifier AS identifier,
-                                     MIN(cvbto.term_name) AS term_name
-                              FROM ont.t_cv_bto cvbto
-                              GROUP BY cvbto.identifier) source
-               ON target.identifier = source.identifier AND
-                  target.term_name = source.term_name
-        WHERE source.identifier IS NULL
-        UNION
-        SELECT 'Add to cache'::citext AS Task,
-               source.identifier,
-               source.term_name
-        FROM ont.t_cv_bto_cached_names target
-             RIGHT OUTER JOIN (SELECT cvbto.identifier AS identifier,
-                                      MIN(cvbto.term_name) AS term_name
-                               FROM ont.t_cv_bto cvbto
-                               GROUP BY cvbto.identifier) source
-               ON target.identifier = source.identifier AND
-                  target.term_name = source.term_name
-        WHERE target.identifier IS NULL
-        ORDER BY Task, identifier;
-
-        If Not FOUND Then
-            RETURN QUERY
-            SELECT 'Cached names are already up-to-date'::citext,
-                   ''::citext,
-                   ''::citext;
-        End If;
-
+        RETURN;
     End If;
 
+    ---------------------------------------------------
+    -- Preview rows to add or delete
+    ---------------------------------------------------
+
+    RETURN QUERY
+    SELECT 'Delete from cache'::citext AS Task,
+           target.identifier,
+           target.term_name
+    FROM ont.t_cv_bto_cached_names target
+         LEFT OUTER JOIN (SELECT cvbto.identifier AS identifier,
+                                 MIN(cvbto.term_name) AS term_name
+                          FROM ont.t_cv_bto cvbto
+                          GROUP BY cvbto.identifier) source
+           ON target.identifier = source.identifier AND
+              target.term_name = source.term_name
+    WHERE source.identifier IS NULL
+    UNION
+    SELECT 'Add to cache'::citext AS Task,
+           source.identifier,
+           source.term_name
+    FROM ont.t_cv_bto_cached_names target
+         RIGHT OUTER JOIN (SELECT cvbto.identifier AS identifier,
+                                  MIN(cvbto.term_name) AS term_name
+                           FROM ont.t_cv_bto cvbto
+                           GROUP BY cvbto.identifier) source
+           ON target.identifier = source.identifier AND
+              target.term_name = source.term_name
+    WHERE target.identifier IS NULL
+    ORDER BY Task, identifier;
+
+    If Not FOUND Then
+        RETURN QUERY
+        SELECT 'Cached names are already up-to-date'::citext,
+               ''::citext,
+               ''::citext;
+    End If;
 END
 $$;
 
