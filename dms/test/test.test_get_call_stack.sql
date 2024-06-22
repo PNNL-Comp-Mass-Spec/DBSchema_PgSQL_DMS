@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION test.test_get_call_stack(_recursiondepth integer DEFA
 **  Date:   08/24/2022 mem - Initial version
 **          08/31/2022 mem - Add a linefeed before showing the context
 **          05/22/2023 mem - Capitalize reserved words
+**          06/21/2024 mem - Add a blank line to the output window
 **
 *****************************************************/
 DECLARE
@@ -34,6 +35,8 @@ BEGIN
 
         RETURN;
     End If;
+
+    RAISE INFO '';
 
     GET DIAGNOSTICS _pgContext = PG_CONTEXT;
     RAISE NOTICE E'Context: \n%', _pgContext;

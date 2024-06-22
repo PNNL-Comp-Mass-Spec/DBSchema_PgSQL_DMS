@@ -28,9 +28,12 @@ CREATE OR REPLACE FUNCTION test.test_get_function_info(_schemaname text DEFAULT 
 **  Auth:   mem
 **  Date:   08/24/2022 mem - Initial version
 **          09/01/2022 mem - Change the default value for _schemaName to '<auto>'
+**          06/21/2024 mem - Add a blank line to the output window
 **
 *****************************************************/
 BEGIN
+    RAISE INFO '';
+
     RETURN QUERY
     SELECT I.schema_name, I.object_name, I.argument_data_types, I.name_with_schema, I.object_signature
     FROM public.get_current_function_info(_schemaName, _showDebug) I;
