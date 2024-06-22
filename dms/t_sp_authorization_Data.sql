@@ -37,6 +37,8 @@ COPY public.t_sp_authorization (entry_id, procedure_name, login_name, host_name,
 24	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::199
 25	*	pgdms	localhost	127.0.0.1
 26	*	DMSWebUser	prismweb2_IPv6_alt	2620:0:50f1:118::11fd
+27	*	DMSWebUser	proto-2	130.20.230.113
+28	*	DMSWebUser	proto-2_IPv6	2620:0:50f1:118::193b
 \.
 
 
@@ -44,7 +46,7 @@ COPY public.t_sp_authorization (entry_id, procedure_name, login_name, host_name,
 -- Name: t_sp_authorization_entry_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_sp_authorization_entry_id_seq', 26, true);
+SELECT pg_catalog.setval('public.t_sp_authorization_entry_id_seq', 28, true);
 
 
 --
