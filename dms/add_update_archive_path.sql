@@ -142,7 +142,7 @@ BEGIN
                    FROM t_archive_path
                    WHERE archive_path_id = _archivePathIDValue AND archive_path_function = 'Active')
         Then
-            RAISE EXCEPTION 'Cannot set archive path to non Active for instrument "%"; set another archive path to Active, and this archive path will be marked old', _instrumentName;
+            RAISE EXCEPTION 'Cannot set archive path to non Active for instrument "%"; set another archive path to Active, and this archive path''s state will be changed to Old', _instrumentName;
         End If;
     End If;
 
@@ -178,7 +178,6 @@ BEGIN
     -- Insert new archive path
 
     If _mode = 'add' Then
-
         INSERT INTO t_archive_path (
             archive_path,
             archive_server_name,
@@ -196,7 +195,6 @@ BEGIN
         )
         RETURNING archive_path_id
         INTO _archivePathID;
-
     End If;
 
     ---------------------------------------------------
@@ -204,7 +202,6 @@ BEGIN
     ---------------------------------------------------
 
     If _mode = 'update' Then
-
         UPDATE t_archive_path
         SET archive_path          = _archivePath,
             archive_server_name   = _archiveServer,
@@ -213,7 +210,6 @@ BEGIN
             note                  = _archiveNote,
             archive_path_function = _archiveFunction
         WHERE archive_path_id = _archivePathIDValue;
-
     End If;
 
 END
