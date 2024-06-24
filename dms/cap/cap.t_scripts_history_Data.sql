@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
+-- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
@@ -57,6 +57,11 @@ COPY cap.t_scripts_history (entry_id, script_id, script, results_tag, contents, 
 36	13	LCDatasetCapture	LCD	<JobScript Name="LCDatasetCapture"><Step Number="1" Tool="LCDatasetCapture" /><Step Number="2" Tool="DatasetIntegrity"><Depends_On Step_Number="1" /></Step><Step Number="3" Tool="LCDatasetInfo"><Depends_On Step_Number="2" /></Step></JobScript>	2023-10-26 15:21:50	gibb166 (via DMSWebUser)
 37	13	LCDatasetCapture	LCD	<JobScript Name="LCDatasetCapture"><Step Number="1" Tool="LCDatasetCapture" /><Step Number="2" Tool="DatasetIntegrity"><Depends_On Step_Number="1" /></Step><Step Number="3" Tool="LCDatasetInfo"><Depends_On Step_Number="2" /></Step></JobScript>	2023-10-27 11:46:11	gibb166 (via DMSWebUser)
 38	13	LCDatasetCapture	LCD	<JobScript Name="LCDatasetCapture"><Step Number="1" Tool="LCDatasetCapture" /><Step Number="2" Tool="DatasetIntegrity"><Depends_On Step_Number="1" Test="Target_Skipped" /></Step><Step Number="3" Tool="LCDatasetInfo"><Depends_On Step_Number="2" Test="Target_Skipped" /></Step></JobScript>	2023-10-31 14:55:42	gibb166 (via DMSWebUser)
+39	13	LCDatasetCapture	LCD	<JobScript Name="LCDatasetCapture">\r\n<Step Number="1" Tool="LCDatasetCapture" />\r\n<Step Number="2" Tool="DatasetIntegrity">\r\n<Depends_On Step_Number="1" Test="Target_Skipped" />\r\n</Step>\r\n<Step Number="3" Tool="LCDatasetInfo">\r\n<Depends_On Step_Number="2" Test="Target_Skipped" />\r\n</Step>\r\n<test>\r\n</test>\r\n</JobScript>	2024-06-23 18:05:03.717724	D3L243 (via dmswebuser)
+40	13	LCDatasetCapture	LCD	<JobScript Name="LCDatasetCapture">\r\n<Step Number="1" Tool="LCDatasetCapture" />\r\n<Step Number="2" Tool="DatasetIntegrity">\r\n<Depends_On Step_Number="1" Test="Target_Skipped" />\r\n</Step>\r\n<Step Number="3" Tool="LCDatasetInfo">\r\n<Depends_On Step_Number="2" Test="Target_Skipped" />\r\n</Step>\r\n\r\n</JobScript>	2024-06-23 18:05:25.053655	D3L243 (via dmswebuser)
+41	13	LCDatasetCapture	LCD	<JobScript Name="LCDatasetCapture"><Step Number="1" Tool="LCDatasetCapture" /><Step Number="2" Tool="DatasetIntegrity"><Depends_On Step_Number="1" Test="Target_Skipped" /></Step><Step Number="3" Tool="LCDatasetInfo"><Depends_On Step_Number="2" Test="Target_Skipped" /></Step></JobScript>	2024-06-23 18:18:45.950364	D3L243 (via dmswebuser)
+42	13	LCDatasetCapture	LCD	<JobScript Name="LCDatasetCapture"><Step Number="1" Tool="LCDatasetCapture"/><Step Number="2" Tool="DatasetIntegrity"><Depends_On Step_Number="1" Test="Target_Skipped"/></Step><Step Number="3" Tool="LCDatasetInfo"><Depends_On Step_Number="2" Test="Target_Skipped" /></Step></JobScript>	2024-06-23 18:19:29.056827	D3L243 (via dmswebuser)
+43	13	LCDatasetCapture	LCD	<JobScript Name="LCDatasetCapture"><Step Number="1" Tool="LCDatasetCapture"/><Step Number="2" Tool="DatasetIntegrity"><Depends_On Step_Number="1" Test="Target_Skipped"/></Step><Step Number="3" Tool="LCDatasetInfo"><Depends_On Step_Number="2" Test="Target_Skipped"/></Step></JobScript>	2024-06-23 18:19:43.398613	dmswebuser
 \.
 
 
@@ -64,7 +69,7 @@ COPY cap.t_scripts_history (entry_id, script_id, script, results_tag, contents, 
 -- Name: t_scripts_history_entry_id_seq; Type: SEQUENCE SET; Schema: cap; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('cap.t_scripts_history_entry_id_seq', 38, true);
+SELECT pg_catalog.setval('cap.t_scripts_history_entry_id_seq', 43, true);
 
 
 --

@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_step_tools(IN _name text, IN 
 **          01/03/2024 mem - Update warning messages
 **          01/11/2024 mem - Check for an empty step tool name
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
+**          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **
 *****************************************************/
 DECLARE
@@ -68,8 +69,14 @@ BEGIN
     FROM public.verify_sp_authorized(_currentProcedure, _currentSchema, _logError => true);
 
     If Not _authorized Then
-        -- Commit changes to persist the message logged to public.t_log_entries
-        COMMIT;
+        BEGIN
+            -- Commit changes to persist the message logged to public.t_log_entries
+            COMMIT;
+        EXCEPTION
+            WHEN OTHERS THEN
+            -- The commit failed, likely because this procedure was called from the DMS website, which wraps procedure calls in a transaction
+            -- Ignore the commit error (t_log_entries will not be updated, but _message will be updated)
+        END;
 
         If Coalesce(_message, '') = '' Then
             _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);

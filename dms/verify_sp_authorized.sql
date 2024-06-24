@@ -34,8 +34,14 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **      FROM public.verify_sp_authorized(_currentProcedure, _currentSchema, _logError => true);
 **
 **      If Not _authorized Then
-**          -- Commit changes to persist the message logged to public.t_log_entries
-**          COMMIT;
+**          BEGIN
+**              -- Commit changes to persist the message logged to public.t_log_entries
+**              COMMIT;
+**          EXCEPTION
+**              WHEN OTHERS THEN
+**              -- The commit failed, likely because this procedure was called from the DMS website, which wraps procedure calls in a transaction
+**              -- Ignore the commit error (t_log_entries will not be updated, but _message will be updated)
+**          END;
 **
 **          If Coalesce(_message, '') = '' Then
 **              _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
@@ -67,6 +73,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **          03/12/2024 mem - Use 127.0.0.1 for the client host IP if inet_client_addr() is null
 **                         - Use CURRENT_USER instead of SESSION_USER when _infoOnly is true
 **          03/24/2024 mem - Include the authorization table name in the error message
+**          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **
 *****************************************************/
 DECLARE

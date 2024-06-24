@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
+-- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
@@ -32,7 +32,7 @@ COPY cap.t_scripts (script_id, script, description, enabled, results_tag, conten
 9	MyEMSLDatasetPush	This script pushes a dataset into MyEMSL, it does not push in subfolders; disabled in 2023 since ArchiveUpdate always uses MyEMSL	N	PSH	<JobScript Name="MyEMSLDatasetPush"><Step Number="1" Tool="ArchiveUpdate" /><Step Number="2" Tool="ArchiveVerify"><Depends_On Step_Number="1" /></Step><Step Number="3" Tool="ArchiveStatusCheck"><Depends_On Step_Number="2" /></Step></JobScript>
 10	MyEMSLDatasetPushRecursive	This script pushes a dataset, plus all of its subfolders, into MyEMSL; disabled in 2023 since ArchiveUpdate always uses MyEMSL	N	PSH	<JobScript Name="MyEMSLDatasetPushRecursive"><Step Number="1" Tool="ArchiveUpdate" /><Step Number="2" Tool="ArchiveVerify"><Depends_On Step_Number="1" /></Step><Step Number="3" Tool="ArchiveStatusCheck"><Depends_On Step_Number="2" /></Step></JobScript>
 12	MyEMSLVerify	This script runs the ArchiveStatusCheck tool to make sure that MyEMSL has validated the checksums of ingested data, including making sure it has been copied to tape.	Y	DSV	<JobScript Name="MyEMSLVerify"><Step Number="1" Tool="ArchiveStatusCheck" /></JobScript>
-13	LCDatasetCapture	This script is for LC data capture	Y	LCD	<JobScript Name="LCDatasetCapture"><Step Number="1" Tool="LCDatasetCapture" /><Step Number="2" Tool="DatasetIntegrity"><Depends_On Step_Number="1" Test="Target_Skipped" /></Step><Step Number="3" Tool="LCDatasetInfo"><Depends_On Step_Number="2" Test="Target_Skipped" /></Step></JobScript>
+13	LCDatasetCapture	This script is for LC data capture	Y	LCD	<JobScript Name="LCDatasetCapture"><Step Number="1" Tool="LCDatasetCapture"/><Step Number="2" Tool="DatasetIntegrity"><Depends_On Step_Number="1" Test="Target_Skipped"/></Step><Step Number="3" Tool="LCDatasetInfo"><Depends_On Step_Number="2" Test="Target_Skipped"/></Step></JobScript>
 \.
 
 

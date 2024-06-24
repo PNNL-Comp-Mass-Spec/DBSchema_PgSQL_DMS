@@ -129,6 +129,7 @@ CREATE OR REPLACE PROCEDURE sw.request_step_task_xml(IN _processorname text, INO
 **          10/27/2023 mem - Apply a row-level lock to sw.t_job_steps using FOR UPDATE
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
+**          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **
 *****************************************************/
 DECLARE
@@ -193,8 +194,14 @@ BEGIN
     FROM public.verify_sp_authorized(_currentProcedure, _currentSchema, _logError => true);
 
     If Not _authorized Then
-        -- Commit changes to persist the message logged to public.t_log_entries
-        COMMIT;
+        BEGIN
+            -- Commit changes to persist the message logged to public.t_log_entries
+            COMMIT;
+        EXCEPTION
+            WHEN OTHERS THEN
+            -- The commit failed, likely because this procedure was called from the DMS website, which wraps procedure calls in a transaction
+            -- Ignore the commit error (t_log_entries will not be updated, but _message will be updated)
+        END;
 
         If Coalesce(_message, '') = '' Then
             _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
