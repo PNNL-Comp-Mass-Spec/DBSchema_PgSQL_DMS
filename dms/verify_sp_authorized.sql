@@ -73,7 +73,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **          03/12/2024 mem - Use 127.0.0.1 for the client host IP if inet_client_addr() is null
 **                         - Use CURRENT_USER instead of SESSION_USER when _infoOnly is true
 **          03/24/2024 mem - Include the authorization table name in the error message
-**          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          06/23/2024 mem - Update usage example to have an exception handler around the Commit statement
 **
 *****************************************************/
 DECLARE
