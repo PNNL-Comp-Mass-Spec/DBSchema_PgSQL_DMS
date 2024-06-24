@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_scripts(IN _script text, IN _
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          01/11/2024 mem - Check for an empty script name
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
+**          06/23/2024 mem - Remove CR and LF from _contents
 **
 *****************************************************/
 DECLARE
@@ -118,6 +119,9 @@ BEGIN
         If _contents Is Null Then
             _scriptXML := null;
         Else
+            -- The website adds CR and LF to the end of each line; remove those (and any adjacent spaces)
+            _contents := regexp_replace(_contents, ' *(' || chr(10) || '|' || chr(13) || ') *', '', 'g');
+
             _scriptXML := public.try_cast(_contents, null::xml);
 
             If _scriptXML Is Null Then

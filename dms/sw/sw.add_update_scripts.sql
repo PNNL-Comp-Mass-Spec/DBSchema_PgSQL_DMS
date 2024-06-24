@@ -89,6 +89,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_scripts(IN _script text, IN _descripti
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          01/11/2024 mem - Check for an empty script name
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
+**          06/23/2024 mem - Remove CR and LF from _contents
 **
 *****************************************************/
 DECLARE
@@ -97,7 +98,7 @@ DECLARE
     _nameWithSchema text;
     _authorized boolean;
 
-    _contentsXML xml;
+    _scriptXML xml;
     _parametersXML xml;
     _fieldsXML xml;
 
@@ -187,9 +188,12 @@ BEGIN
         _returnCode := 'U5205';
         RETURN;
     Else
-        _contentsXML := public.try_cast(_contents, null::xml);
+        -- The website adds CR and LF to the end of each line; remove those (and any adjacent spaces)
+        _contents := regexp_replace(_contents, ' *(' || chr(10) || '|' || chr(13) || ') *', '', 'g');
 
-        If _contentsXML Is Null Then
+        _scriptXML := public.try_cast(_contents, null::xml);
+
+        If _scriptXML Is Null Then
             _message := format('Script contents is not valid XML: ', _contents);
             RAISE WARNING '%', _message;
 
@@ -284,7 +288,7 @@ BEGIN
             _enabled,
             _resultsTag,
             _backFill,
-            _contentsXML,
+            _scriptXML,
             _parametersXML,
             _fieldsXML
         )
@@ -310,7 +314,7 @@ BEGIN
           enabled = _enabled,
           results_tag = _resultsTag,
           backfill_to_dms = _backFill,
-          contents = _contentsXML,
+          contents = _scriptXML,
           parameters = _parametersXML,
           fields = _fieldsXML
         WHERE script = _script;
