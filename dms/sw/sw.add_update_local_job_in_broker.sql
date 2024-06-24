@@ -15,11 +15,11 @@ CREATE OR REPLACE PROCEDURE sw.add_update_local_job_in_broker(INOUT _job integer
 **    _scriptName               Pipeline script name
 **    _datasetName              Dataset name
 **    _priority                 Priority
-**    _jobParam                 XML parameters for the job (as text)
+**    _jobParam                 XML parameters for the job (as text); ignored if _mode is 'update' or 'reset'
 **    _comment                  Job comment
 **    _ownerUsername            Owner username
 **    _dataPackageID            Data package ID (0 if not applicable)
-**    _resultsDirectoryName     Results directory name
+**    _resultsDirectoryName     Results directory name; ignored if _mode is 'update' or 'reset'
 **    _mode                     'add', 'update', 'reset', or 'previewAdd'
 **    _message                  Status message
 **    _returnCode               Return code
@@ -88,6 +88,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_local_job_in_broker(INOUT _job integer
 **          01/03/2024 mem - Update warning message
 **          03/03/2024 mem - Trim whitespace when extracting values from XML
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
+**          06/23/2024 mem - Do not update job parameters if _mode is 'update' or 'reset' and _jobParam is null or empty
 **
 *****************************************************/
 DECLARE
@@ -159,8 +160,14 @@ BEGIN
     FROM public.verify_sp_authorized(_currentProcedure, _currentSchema, _logError => true);
 
     If Not _authorized Then
-        -- Commit changes to persist the message logged to public.t_log_entries
-        COMMIT;
+        Begin
+            -- Commit changes to persist the message logged to public.t_log_entries
+            COMMIT;
+        EXCEPTION
+            WHEN OTHERS THEN
+            -- The commit failed, likely because this procedure was called from the DMS website, which wraps procedure calls in a transaction
+            -- Ignore the commit error (t_log_entries will not be updated, but _message will be updated)
+        End;
 
         If Coalesce(_message, '') = '' Then
             _message := format('User %s cannot use procedure %s', CURRENT_USER, _nameWithSchema);
@@ -193,37 +200,42 @@ BEGIN
         -- Verify parameters
         ---------------------------------------------------
 
-        If _jobParam Is Null Then
-            RAISE EXCEPTION 'Web page bug: _jobParam is null for job %', _job;
-        End If;
-
-        If _jobParam = '' Then
-            RAISE EXCEPTION 'Web page bug: _jobParam is empty for job %', _job;
-        End If;
-
-        -- Uncomment to log the job parameters to sw.t_log_entries
-        -- CALL post_log_entry ('Debug', _jobParam, 'Add_Update_Local_Job_In_Broker', 'sw');
-        -- RETURN;
-
-        CALL sw.verify_job_parameters (
-                    _jobParam,                      -- Input/Output
-                    _scriptName,
-                    _dataPackageID,
-                    _message    => _msg,            -- Output
-                    _returnCode => _returnCode,     -- Output
-                    _debugMode  => _debugMode);
-
-        If _returnCode <> '' Then
-            _message := 'Error from verify_job_parameters';
-
-            If _job > 0 Then
-                _message := format('%s (Job %s)', _message, _job);
+        If _mode In ('update', 'reset') And Trim(Coalesce(_jobParam, '')) = '' Then
+            -- Job parameters will be empty if updating a job using https://dms2.pnl.gov/pipeline_jobs/edit/2300000
+            _jobParam := '';
+        Else
+            If _jobParam Is Null Then
+                RAISE EXCEPTION 'Web page bug: _jobParam is null for job %', _job;
             End If;
 
-            _message := format('%s: %s', _message, _msg);
-            RAISE INFO '%', _message;
+            If _jobParam = '' Then
+                RAISE EXCEPTION 'Web page bug: _jobParam is empty for job %', _job;
+            End If;
 
-            RAISE EXCEPTION '%', _message;
+            -- Uncomment to log the job parameters to sw.t_log_entries
+            -- CALL post_log_entry ('Debug', _jobParam, 'Add_Update_Local_Job_In_Broker', 'sw');
+            -- RETURN;
+
+            CALL sw.verify_job_parameters (
+                        _jobParam,                      -- Input/Output
+                        _scriptName,
+                        _dataPackageID,
+                        _message    => _msg,            -- Output
+                        _returnCode => _returnCode,     -- Output
+                        _debugMode  => _debugMode);
+
+            If _returnCode <> '' Then
+                _message := 'Error from verify_job_parameters';
+
+                If _job > 0 Then
+                    _message := format('%s (Job %s)', _message, _job);
+                End If;
+
+                _message := format('%s: %s', _message, _msg);
+                RAISE INFO '%', _message;
+
+                RAISE EXCEPTION '%', _message;
+            End If;
         End If;
 
         If Coalesce(_ownerUsername, '') = '' Then
@@ -259,13 +271,17 @@ BEGIN
 
         If _mode = 'update' Then
 
-            _jobParamXML := public.try_cast(_jobParam, null::xml);
+            If _mode In ('update', 'reset') And _jobParam = '' Then
+                _jobParamXML := null;
+            Else
+                _jobParamXML := public.try_cast(_jobParam, null::xml);
 
-            If _jobParamXML Is Null Then
-                RAISE EXCEPTION 'XML job parameters are not valid XML for job %: %', _job, Coalesce(_jobParam, '??');
+                If _jobParamXML Is Null Then
+                    RAISE EXCEPTION 'XML job parameters are not valid XML for job %: %', _job, Coalesce(_jobParam, '??');
+                End If;
             End If;
 
-            -- Update job and params
+            -- Update job and possibly update the job parameters
 
             UPDATE sw.t_jobs
             SET priority = _priority,
@@ -276,6 +292,10 @@ BEGIN
                                   ELSE data_pkg_id
                               END
             WHERE job = _job;
+
+            If _mode In ('update', 'reset') And _jobParam = '' Then
+                RETURN;
+            End If;
 
             If _state In (1, 4, 5) And _dataPackageID > 0 Then
                  CREATE TEMP TABLE Tmp_Job_Params (
