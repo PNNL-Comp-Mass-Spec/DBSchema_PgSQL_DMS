@@ -40,6 +40,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_archive_path(INOUT _archivepathid 
 **                         - Include schema name when calling function verify_sp_authorized()
 **          01/03/2024 mem - Update warning messages
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
+**          06/22/2024 mem - Update warning message
 **
 *****************************************************/
 DECLARE
@@ -141,7 +142,7 @@ BEGIN
                    FROM t_archive_path
                    WHERE archive_path_id = _archivePathIDValue AND archive_path_function = 'Active')
         Then
-            RAISE EXCEPTION 'Cannot set archive path to non Active for instrument "%"', _instrumentName;
+            RAISE EXCEPTION 'Cannot set archive path to non Active for instrument "%"; set another archive path to Active, and this archive path will be marked old', _instrumentName;
         End If;
     End If;
 
