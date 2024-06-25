@@ -49,6 +49,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_step_tools(IN _name text, IN _type tex
 **          01/11/2024 mem - Check for an empty step tool name
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          06/24/2024 mem - Remove CR and LF from _parameterTemplate
 **
 *****************************************************/
 DECLARE
@@ -93,6 +94,9 @@ BEGIN
     End If;
 
     If Trim(Coalesce(_parameterTemplate, '')) <> '' Then
+        -- The website adds CR and LF to the end of each line; remove those (and any adjacent spaces)
+        _parameterTemplate := regexp_replace(_parameterTemplate, ' *(' || chr(10) || '|' || chr(13) || ') *', '', 'g');
+
         _parameterTemplateXML := public.try_cast(_parameterTemplate, null::xml);
 
         If _parameterTemplateXML Is Null Then

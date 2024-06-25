@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_settings_file(INOUT _settingsfilei
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          06/24/2024 mem - Remove CR and LF from _contents
 **
 *****************************************************/
 DECLARE
@@ -116,6 +117,9 @@ BEGIN
         _returnCode := 'U5203';
         RETURN;
     End If;
+
+    -- The website adds CR and LF to the end of each line; remove those (and any adjacent spaces)
+    _contents := regexp_replace(_contents, ' *(' || chr(10) || '|' || chr(13) || ') *', '', 'g');
 
     _xmlContents := public.try_cast(_contents, null::xml);
 

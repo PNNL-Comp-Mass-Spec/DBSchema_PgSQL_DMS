@@ -51,6 +51,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_instrument_class(IN _instrumentcla
 **          01/09/2024 mem - Ported to PostgreSQL
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          06/24/2024 mem - Remove CR and LF from _params
 **
 *****************************************************/
 DECLARE
@@ -137,7 +138,11 @@ BEGIN
         End If;
 
         If _params <> '' Then
+            -- The website adds CR and LF to the end of each line; remove those (and any adjacent spaces)
+            _params := regexp_replace(_params, ' *(' || chr(10) || '|' || chr(13) || ') *', '', 'g');
+
             _xmlParams := public.try_cast(_params, null::XML);
+
             If _xmlParams Is Null Then
                 RAISE EXCEPTION 'Could not convert params to XML' USING ERRCODE = 'U5207';
             End If;
