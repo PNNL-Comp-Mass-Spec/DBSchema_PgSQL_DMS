@@ -15,7 +15,7 @@ CREATE VIEW sw.v_pipeline_step_tools_detail_report AS
     memory_usage_mb,
     available_for_general_processing,
     param_file_storage_path,
-    parameter_template,
+    public.xml_to_html(parameter_template) AS parameter_template,
     tag,
     avg_runtime_minutes,
     disable_output_folder_name_override_on_skip,
