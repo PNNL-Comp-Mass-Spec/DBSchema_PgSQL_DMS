@@ -1,8 +1,8 @@
 --
--- Name: v_processor_step_tools_detail_report; Type: VIEW; Schema: sw; Owner: d3l243
+-- Name: v_processor_step_tools; Type: VIEW; Schema: sw; Owner: d3l243
 --
 
-CREATE VIEW sw.v_processor_step_tools_detail_report AS
+CREATE VIEW sw.v_processor_step_tools AS
  SELECT lp.processor_name,
     ptgd.tool_name,
     ptgd.priority,
@@ -32,12 +32,18 @@ CREATE VIEW sw.v_processor_step_tools_detail_report AS
   WHERE (m.enabled > 0);
 
 
-ALTER VIEW sw.v_processor_step_tools_detail_report OWNER TO d3l243;
+ALTER VIEW sw.v_processor_step_tools OWNER TO d3l243;
 
 --
--- Name: TABLE v_processor_step_tools_detail_report; Type: ACL; Schema: sw; Owner: d3l243
+-- Name: VIEW v_processor_step_tools; Type: COMMENT; Schema: sw; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE sw.v_processor_step_tools_detail_report TO readaccess;
-GRANT SELECT ON TABLE sw.v_processor_step_tools_detail_report TO writeaccess;
+COMMENT ON VIEW sw.v_processor_step_tools IS 'Step tools associated with processors on enabled machines';
+
+--
+-- Name: TABLE v_processor_step_tools; Type: ACL; Schema: sw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE sw.v_processor_step_tools TO readaccess;
+GRANT SELECT ON TABLE sw.v_processor_step_tools TO writeaccess;
 
