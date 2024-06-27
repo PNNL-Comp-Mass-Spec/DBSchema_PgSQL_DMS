@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION sw.get_processor_step_tool_list(_processorname text) 
 /****************************************************
 **
 **  Desc:
-**      Build a comma-separated list of step tools for the given processor
+**      Build a comma-separated list of enabled step tools for the given processor
 **
 **  Arguments:
 **    _processorName    Processor name
@@ -20,6 +20,7 @@ CREATE OR REPLACE FUNCTION sw.get_processor_step_tool_list(_processorname text) 
 **  Date:   03/30/2009
 **          09/02/2009 mem - Now using T_Processor_Tool_Groups and T_Processor_Tool_Group_Details to determine the processor tool priorities for the given processor
 **          06/26/2022 mem - Ported to PostgreSQL
+**          06/27/2024 mem - Cast _processorName to citext
 **
 *****************************************************/
 DECLARE
@@ -35,7 +36,7 @@ BEGIN
          INNER JOIN sw.t_processor_tool_group_details PTGD
            ON PTG.group_id = PTGD.group_id AND
               LP.proc_tool_mgr_id = PTGD.mgr_id
-    WHERE LP.processor_name = _processorName AND
+    WHERE LP.processor_name = _processorName::citext AND
           PTGD.enabled > 0;
 
     RETURN Coalesce(_result, '');
