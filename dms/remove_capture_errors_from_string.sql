@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION public.remove_capture_errors_from_string(_comment tex
 **          06/23/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Capitalize reserved word
 **          01/21/2024 mem - Change data type of argument _comment to text
+**          06/26/2024 mem - Add "Exception running tool"
 **
 *****************************************************/
 DECLARE
@@ -40,7 +41,8 @@ BEGIN
             'Dataset not ready: File size changed',
             'Dataset name matched multiple files; must be a .uimf file, .d folder, or folder with a single .uimf file',
             'Error running OpenChrom',
-            'Authentication failure: The user name or password is incorrect.'
+            'Authentication failure: The user name or password is incorrect.',
+            'Exception running tool'
              ];
 
     FOREACH _textToFind IN ARRAY _commentsToRemove
