@@ -9,9 +9,15 @@ CREATE OR REPLACE PROCEDURE public.reset_failed_dataset_capture_tasks(IN _reseth
 **
 **  Desc:
 **      Look for dataset entries with state=5 (Capture Failed) and a comment
-**      stating that we should be able to automatically retry capture; for example:
-**         "Dataset not ready: Exception validating constant folder size"
-**         "Dataset not ready: Exception validating constant file size"
+**      that indicates it is safe to automatically retry capture, including:
+**         "Exception validating constant"
+**         "File size changed"
+**         "Folder size changed%"
+**         "Error running OpenChrom"
+**         "Authentication failure: The user name or password is incorrect"
+**
+**      Also look for capture task jobs with state=5 and a failed DatasetInfo step, with message
+**         "The process cannot access the file 'chromatography-data.sqlite' because it is being used by another process"
 **
 **  Arguments:
 **    _resetHoldoffHours    Holdoff time, in hours, to apply to column last_affected
@@ -27,13 +33,14 @@ CREATE OR REPLACE PROCEDURE public.reset_failed_dataset_capture_tasks(IN _reseth
 **          11/02/2016 mem - Check for Folder size changed and File size changed
 **          01/30/2017 mem - Switch from DateDiff to DateAdd
 **          04/12/2017 mem - Log exceptions to T_Log_Entries
-**          08/08/2017 mem - Call Remove_Capture_Errors_From_String instead of Remove_From_String
+**          08/08/2017 mem - Use remove_capture_errors_from_string() instead of remove_from_string()
 **          08/16/2017 mem - Look for failed Openchrom conversion tasks
 **                         - Prevent dataset from being automatically reset more than 4 times
 **          08/16/2017 mem - Look for 'Authentication failure: The user name or password is incorrect'
 **          05/28/2019 mem - Use a holdoff of 15 minutes for authentication errors
 **          08/25/2022 mem - Use new column name in T_Log_Entries
 **          02/21/2024 mem - Ported to PostgreSQL
+**          06/26/2024 mem - Reset datasets with a DatasetInfo job step with error "The process cannot access the file 'chromatography-data.sqlite' because it is being used by another process."
 **
 *****************************************************/
 DECLARE
@@ -75,7 +82,8 @@ BEGIN
         CREATE TEMP TABLE Tmp_Datasets (
             Dataset_ID int NOT NULL,
             Dataset text NOT NULL,
-            Reset_Comment text NOT NULL
+            Reset_Comment text NOT NULL,
+            Error_Message text NOT NULL
         );
 
         ------------------------------------------------
@@ -87,15 +95,18 @@ BEGIN
         INSERT INTO Tmp_Datasets (
             Dataset_ID,
             Dataset,
-            Reset_Comment
+            Reset_Comment,
+            Error_Message
         )
         SELECT A.dataset_id,
-               A.Dataset,
-               '' AS Reset_Comment
+               A.dataset,
+               '' AS Reset_Comment,
+               Coalesce(A.comment, 'Unknown error') AS Error_Message
         FROM (SELECT dataset_id,
-                     dataset
+                     dataset,
+                     comment
               FROM t_dataset
-              WHERE dataset_state_id = 5 AND
+              WHERE dataset_state_id = 5 AND    -- Capture Failed
                     (comment ILIKE '%Exception validating constant%' OR
                      comment ILIKE '%File size changed%' OR
                      comment ILIKE '%Folder size changed%' OR
@@ -106,17 +117,32 @@ BEGIN
         UNION
         SELECT dataset_id,
                dataset,
-               '' AS Reset_Comment
+               '' AS Reset_Comment,
+               Coalesce(comment, 'Unknown error') AS Error_Message
         FROM t_dataset
-        WHERE dataset_state_id = 5 AND
-              (comment ILIKE '%Authentication failure%password is incorrect%') AND
-               last_affected < CURRENT_TIMESTAMP - INTERVAL '15 minutes'
+        WHERE dataset_state_id = 5 AND          -- Capture Failed
+              comment ILIKE '%Authentication failure%password is incorrect%' AND
+              last_affected < CURRENT_TIMESTAMP - INTERVAL '15 minutes'
+        UNION
+        SELECT T.dataset_id,
+               T.dataset,
+               '' AS Reset_Comment,
+               Coalesce(TS.Completion_Message, 'Unknown Error') AS Error_Message
+        FROM cap.T_Task_Steps AS TS
+             INNER JOIN cap.T_Tasks AS T
+               ON TS.Job = T.Job
+        WHERE T.State = 5 AND                   -- Capture task job failed
+              TS.State = 6 AND                  -- Job step failed
+              TS.Tool LIKE '%datasetinfo' AND
+              TS.Completion_Message LIKE '%The process cannot access the file %sqlite% used by another process%' AND
+              TS.Finish < CURRENT_TIMESTAMP - INTERVAL '15 minutes'
         ORDER BY dataset_id
         LIMIT _maxDatasetsToReset;
 
         If Not FOUND Then
             _message := 'No candidate datasets were found to reset';
             If _infoOnly Then
+                RAISE INFO '';
                 RAISE INFO '%', _message;
             End If;
 
@@ -151,7 +177,7 @@ BEGIN
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-80s %-10s %-25s %-5s %-20s %-80s %-40s';
+            _formatSpecifier := '%-80s %-10s %-25s %-5s %-20s %-160s %-80s %-80s %-40s';
 
             _infoHead := format(_formatSpecifier,
                                 'Dataset',
@@ -159,7 +185,9 @@ BEGIN
                                 'Instrument',
                                 'State',
                                 'Last_Affected',
-                                'Comment',
+                                'Error Message',
+                                'Current Dataset Comment',
+                                'Updated Dataset Comment',
                                 'Reset_Comment'
                                );
 
@@ -169,6 +197,8 @@ BEGIN
                                          '-------------------------',
                                          '-----',
                                          '--------------------',
+                                         '----------------------------------------------------------------------------------------------------------------------------------------------------------------',
+                                         '--------------------------------------------------------------------------------',
                                          '--------------------------------------------------------------------------------',
                                          '----------------------------------------'
                                         );
@@ -177,13 +207,15 @@ BEGIN
             RAISE INFO '%', _infoHeadSeparator;
 
             FOR _previewData IN
-                SELECT DS.Dataset,
-                       DS.Dataset_id,
-                       Inst.Instrument,
+                SELECT DS.dataset,
+                       DS.dataset_id AS DatasetID,
+                       Inst.instrument,
                        DS.dataset_state_id AS State,
-                       public.timestamp_text(DS.Last_Affected) AS Last_Affected,
-                       DS.Comment,
-                       Src.Reset_Comment
+                       public.timestamp_text(DS.Last_Affected) AS LastAffected,
+                       Src.Error_Message AS ErrorMessage,
+                       DS.comment AS CurrentComment,
+                       remove_capture_errors_from_string(DS.comment) AS UpdatedComment,
+                       Src.Reset_Comment AS ResetComment
                 FROM Tmp_Datasets Src
                      INNER JOIN t_dataset DS
                        ON Src.dataset_id = DS.dataset_id
@@ -193,12 +225,14 @@ BEGIN
             LOOP
                 _infoData := format(_formatSpecifier,
                                     _previewData.Dataset,
-                                    _previewData.Dataset_id,
+                                    _previewData.DatasetID,
                                     _previewData.Instrument,
                                     _previewData.State,
-                                    _previewData.Last_Affected,
-                                    _previewData.Comment,
-                                    _previewData.Reset_Comment
+                                    _previewData.LastAffected,
+                                    _previewData.ErrorMessage,
+                                    _previewData.CurrentComment,
+                                    _previewData.UpdatedComment,
+                                    _previewData.ResetComment
                                    );
 
                 RAISE INFO '%', _infoData;
