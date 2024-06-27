@@ -4,7 +4,7 @@
 
 CREATE VIEW cap.v_capture_local_processors_detail_report AS
  SELECT processor_name,
-    state,
+    state AS processor_state,
     machine,
     latest_request,
     manager_version,
