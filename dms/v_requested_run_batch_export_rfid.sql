@@ -5,16 +5,15 @@
 CREATE VIEW public.v_requested_run_batch_export_rfid AS
  SELECT rrb.batch_id AS id,
     rrb.batch AS name,
-    t_users.name AS owner,
+    u.name AS owner,
     rrb.description,
-    requestedrunstats.requests,
-    requestedrunstats.active_requests,
+    stats.requests,
+    stats.active_requests,
     (rbs.instrument_group_first)::public.citext AS inst_group,
     rrb.created,
-    rrb.rfid_hex_id AS hexid,
     rrb.rfid_hex_id AS hex_id
    FROM (((public.t_requested_run_batches rrb
-     LEFT JOIN public.t_users ON ((rrb.owner_user_id = t_users.user_id)))
+     LEFT JOIN public.t_users u ON ((rrb.owner_user_id = u.user_id)))
      LEFT JOIN ( SELECT rr.batch_id,
             count(rr.request_id) AS requests,
             sum(
@@ -23,7 +22,7 @@ CREATE VIEW public.v_requested_run_batch_export_rfid AS
                     ELSE 0
                 END) AS active_requests
            FROM public.t_requested_run rr
-          GROUP BY rr.batch_id) requestedrunstats ON ((requestedrunstats.batch_id = rrb.batch_id)))
+          GROUP BY rr.batch_id) stats ON ((stats.batch_id = rrb.batch_id)))
      LEFT JOIN public.t_cached_requested_run_batch_stats rbs ON ((rbs.batch_id = rrb.batch_id)))
   WHERE (rrb.batch_id > 0);
 
