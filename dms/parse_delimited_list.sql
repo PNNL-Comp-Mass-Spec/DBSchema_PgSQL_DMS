@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_list(_delimitedlist text, _del
 **      Will not return empty string values
 **
 **      For example, if the list is 'Value1,,Value2' or ',Value1,Value2',
-**      the returned table will only contain entries 'Value1' and 'Value2'
+**      the output table will only have two rows: 'Value1' and 'Value2'
 **
 **      If _delimiter is chr(13) or chr(10), will split _delimitedList on CR or LF
 **      In this case, blank lines will not be included in the output table
@@ -31,10 +31,12 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_list(_delimitedlist text, _del
 **          01/14/2020 mem - Ported to PostgreSQL
 **          02/23/2024 mem - Add special handling if _delimeter is CR, LF, or CRLF
 **                         - Add support for _delimiter being '|' or '||'
+**          07/05/2024 mem - Fix bug that failed to replace CR or LF characters in _delimitedList with the delimiter
 **
 *****************************************************/
 DECLARE
     _delimiterIsCRorLF boolean := false;
+    _replacementChar text;
 BEGIN
     _delimitedList = Coalesce(_delimitedList, '');
 
@@ -43,26 +45,31 @@ BEGIN
     Then
         -- Change all carriage returns to linefeeds, and make the delimiter a linefeed
         _delimiterIsCRorLF := true;
-
-        _delimiter := chr(10);
-        _delimitedList := Trim(Replace(_delimitedList, chr(13), _delimiter));
-
+        _delimiter         := chr(10);
+        _delimitedList     := Trim(Replace(_delimitedList, chr(13), _delimiter));
     ElsIf Position('|'  In _delimiter) > 0 And
           Position('\|' In _delimiter) = 0
     Then
         -- Escape any vertical bars
         _delimiter := Trim(Replace(_delimiter, '|', '\|'));
-
     End If;
 
     If _delimitedList <> '' And Not _delimiterIsCRorLF Then
-        -- Replace any CR or LF characters with _delimiter
-        If Position(chr(13) In _delimiter) > 0 Then
-            _delimitedList := Trim(Replace(_delimitedList, chr(13), _delimiter));
+        If _delimiter = '\|' Then
+            _replacementChar := '|';
+        ElsIf _delimiter = '\|\|' Then
+            _replacementChar := '||';
+        Else
+            _replacementChar := _delimiter;
         End If;
 
-        If Position(chr(10) In _delimiter) > 0 Then
-            _delimitedList := Trim(Replace(_delimitedList, chr(10), _delimiter));
+        -- Replace any CR or LF characters with _replacementChar
+        If Position(chr(13) In _delimitedList) > 0 Then
+            _delimitedList := Trim(Replace(_delimitedList, chr(13), _replacementChar));
+        End If;
+
+        If Position(chr(10) In _delimitedList) > 0 Then
+            _delimitedList := Trim(Replace(_delimitedList, chr(10), _replacementChar));
         End If;
 
         -- If _delimiter is a comma or a semicolon, replace any tab characters with _delimiter

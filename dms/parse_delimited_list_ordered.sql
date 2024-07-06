@@ -13,15 +13,15 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_list_ordered(_delimitedlist te
 **      The table includes column entry_id to allow the calling procedure to sort the data,
 **      based on the data order in _delimitedList; The first row will have entry_id = 1
 **
-**      Note that if two commas in a row are encountered, the resultant table will contain an empty cell for that row
+**      Note that if two commas in a row are encountered, the output table will have an empty value for that row
 **
 **      If _delimiter is chr(13) or chr(10), will split _delimitedList on CR or LF
-**      In this case, blank lines will not be included in output table
+**      In this case, blank lines will not be included in the output table
 **
 **  Arguments:
-**    _delimitedList     List of values, e.g. 'Value1,Value2'
-**    _delimiter         Delimiter (comma by default)
-**    _maxRows           Maximum number of rows to return (0 to return all); useful if parsing a comma-separated list of items and the final item is a comment field, which itself might contain commas
+**    _delimitedList    Delimited list of values, e.g. 'Value1,Value2'
+**    _delimiter        Delimiter to use (defaults to a comma)
+**    _maxRows          Maximum number of rows to return (0 to return all); useful if parsing a comma-separated list of items and the final item is a comment field, which itself might contain commas
 **
 **  Auth:   mem
 **  Date:   10/16/2007
@@ -29,10 +29,12 @@ CREATE OR REPLACE FUNCTION public.parse_delimited_list_ordered(_delimitedlist te
 **          01/14/2020 mem - Ported to PostgreSQL
 **          02/23/2024 mem - Add special handling if _delimeter is CR, LF, or CRLF
 **                         - Add support for _delimiter being '|' or '||'
+**          07/05/2024 mem - Fix bug that failed to replace CR or LF characters in _delimitedList with the delimiter
 **
 *****************************************************/
 DECLARE
     _delimiterIsCRorLF boolean := false;
+    _replacementChar text;
 BEGIN
     _delimitedList = Coalesce(_delimitedList, '');
 
@@ -41,25 +43,31 @@ BEGIN
     Then
         -- Change all carriage returns to linefeeds, and make the delimiter a linefeed
         _delimiterIsCRorLF := true;
-
-        _delimiter := chr(10);
-        _delimitedList := Trim(Replace(_delimitedList, chr(13), _delimiter));
+        _delimiter         := chr(10);
+        _delimitedList     := Trim(Replace(_delimitedList, chr(13), _delimiter));
     ElsIf Position('|'  In _delimiter) > 0 And
           Position('\|' In _delimiter) = 0
     Then
         -- Escape any vertical bars
         _delimiter := Trim(Replace(_delimiter, '|', '\|'));
-
     End If;
 
     If _delimitedList <> '' And Not _delimiterIsCRorLF Then
-        -- Replace any CR or LF characters with _delimiter
-        If Position(chr(13) In _delimiter) > 0 Then
-            _delimitedList := Trim(Replace(_delimitedList, chr(13), _delimiter));
+        If _delimiter = '\|' Then
+            _replacementChar := '|';
+        ElsIf _delimiter = '\|\|' Then
+            _replacementChar := '||';
+        Else
+            _replacementChar := _delimiter;
         End If;
 
-        If Position(chr(10) In _delimiter) > 0 Then
-            _delimitedList := Trim(Replace(_delimitedList, chr(10), _delimiter));
+        -- Replace any CR or LF characters with _replacementChar
+        If Position(chr(13) In _delimitedList) > 0 Then
+            _delimitedList := Trim(Replace(_delimitedList, chr(13), _replacementChar));
+        End If;
+
+        If Position(chr(10) In _delimitedList) > 0 Then
+            _delimitedList := Trim(Replace(_delimitedList, chr(10), _replacementChar));
         End If;
 
         -- If _delimiter is a comma or a semicolon, replace any tab characters with _delimiter
@@ -78,7 +86,6 @@ BEGIN
          ) SplitQ
     WHERE COALESCE(Trim(SplitQ.Value), '') <> ''
     LIMIT _maxRows;
-
 END
 $$;
 
