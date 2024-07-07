@@ -69,7 +69,7 @@ CREATE VIEW public.v_protein_collection_list_report AS
                      JOIN pc.t_protein_collection_types pctypes ON ((pc.collection_type_id = pctypes.collection_type_id)))
                      JOIN pc.t_protein_collection_states pcs ON ((pc.collection_state_id = pcs.collection_state_id)))
                      LEFT JOIN pc.t_archived_output_files aof ON ((pc.authentication_hash OPERATOR(public.=) aof.authentication_hash)))) cp) lookupq
-     JOIN public.t_organisms org ON ((lookupq.organism_name OPERATOR(public.=) org.organism)))
+     LEFT JOIN public.t_organisms org ON ((lookupq.organism_name OPERATOR(public.=) org.organism)))
      LEFT JOIN public.t_protein_collection_usage pcu ON ((lookupq.protein_collection_id = pcu.protein_collection_id)))
   GROUP BY lookupq.protein_collection_id, lookupq.name, lookupq.description, lookupq.organism_name, lookupq.state, lookupq.entries, lookupq.residues, pcu.job_usage_count_last12months, pcu.job_usage_count, pcu.most_recently_used, lookupq.includes_contaminants, lookupq.file_size_mb, lookupq.type, lookupq.source, lookupq.internal_standard_or_contaminant, org.organism_db_name;
 
