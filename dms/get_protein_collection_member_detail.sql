@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION public.get_protein_collection_member_detail(_id integ
 **      Each unique combo of protein name and protein sequence has a distinct reference ID
 **      If multiple protein collections have the same protein reference ID, this function only includes one of those protein collection IDs
 **
-**      This function called from the Protein Collection Member detail report, for example:
+**      This function is called from the Protein Collection Member detail report, for example:
 **      https://dms2.pnl.gov/protein_collection_members/show/13363564
 **
 **  Arguments:
