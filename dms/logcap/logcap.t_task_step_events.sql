@@ -56,12 +56,6 @@ CREATE INDEX ix_t_task_step_events_current_state_job ON logcap.t_task_step_event
 CREATE INDEX ix_t_task_step_events_entered_include_job ON logcap.t_task_step_events USING btree (entered) INCLUDE (job);
 
 --
--- Name: ix_t_task_step_events_event_id; Type: INDEX; Schema: logcap; Owner: d3l243
---
-
-CREATE INDEX ix_t_task_step_events_event_id ON logcap.t_task_step_events USING btree (event_id);
-
---
 -- Name: ix_t_task_step_events_job; Type: INDEX; Schema: logcap; Owner: d3l243
 --
 
