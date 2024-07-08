@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE public.update_eus_users_from_eus_imports(IN _updateu
 **          03/01/2024 mem - Only change state_id to 3 in T_EUS_Proposal_Users if state_id is not 2, 3, 4, or 5 (previously not 2 or 4)
 **                           This change was made to avoid state_id changing from 5 to 3, then from 3 back to 5 every time this procedure is called
 **                         - Ported to PostgreSQL
+**          07/07/2024 mem - Cache EUS proposals associated with each user
 **
 *****************************************************/
 DECLARE
@@ -56,8 +57,8 @@ BEGIN
     _updateUsersOnInactiveProposals := Coalesce(_updateUsersOnInactiveProposals, false);
 
     BEGIN
-
         _currentLocation := 'Update t_eus_users';
+        RAISE INFO '%', _currentLocation;
 
         ---------------------------------------------------
         -- Use a MERGE Statement to synchronize
@@ -151,6 +152,7 @@ BEGIN
         WHERE Coalesce(last_name, '') = '' AND Position(',' In name_fm) > 1;
 
         _currentLocation := 'Update t_eus_proposal_users';
+        RAISE INFO '%', _currentLocation;
 
         ---------------------------------------------------
         -- Use a MERGE Statement to synchronize
@@ -176,7 +178,7 @@ BEGIN
             target.person_id = Source.person_id)
         WHEN MATCHED AND NOT Coalesce(target.state_id, 0) IN (1, 4) THEN
             UPDATE SET
-                state_id = 1,
+                state_id      = 1,
                 last_affected = CURRENT_TIMESTAMP
         WHEN NOT MATCHED THEN
             INSERT (proposal_id, person_id, of_dms_interest, state_id, last_affected)
@@ -258,6 +260,57 @@ BEGIN
             RAISE INFO 'Table t_eus_proposal_users is up-to-date';
         End If;
 
+        ---------------------------------------------------
+        -- Update cached eus_proposals in t_eus_users
+        ---------------------------------------------------
+
+        _currentLocation := 'Update cached EUS proposals in t_eus_users';
+        RAISE INFO '%', _currentLocation;
+
+        CREATE TEMP TABLE Tmp_Proposals_By_User (
+            Person_ID int,
+            Proposals text
+        );
+
+        CREATE INDEX IX_Tmp_Proposals_By_User_Person_ID ON Tmp_Proposals_By_User (Person_ID);
+
+        INSERT INTO Tmp_Proposals_By_User (Person_ID, Proposals)
+        SELECT P.person_id, string_agg(P.Proposal_ID, ', ' ORDER BY P.Proposal_ID)
+        FROM t_eus_proposal_users P
+        WHERE P.state_id <> 5
+        GROUP BY P.person_id;
+
+        MERGE INTO t_eus_users AS t
+        USING ( -- Option 1:
+                -- SELECT U.person_id,
+                --        public.get_eus_users_proposal_list(U.person_id) AS proposals
+                -- FROM public.t_eus_users U
+
+                -- Option 2:
+                SELECT U.person_id,
+                       P.Proposals
+                FROM public.t_eus_users U
+                     INNER JOIN Tmp_Proposals_By_User P
+                       ON U.Person_ID = P.Person_ID
+              ) AS s
+        ON (t.person_id = s.person_id)
+        WHEN MATCHED AND
+             (t.eus_proposals IS DISTINCT FROM s.proposals) THEN
+        UPDATE SET
+            eus_proposals = s.proposals;
+
+        -- Clear the eus_proposals field for users not in Tmp_Proposals_By_User
+        UPDATE t_eus_users
+        SET eus_proposals = ''
+        WHERE person_id IN (SELECT U.person_id
+                            FROM t_eus_users U
+                                 LEFT OUTER JOIN Tmp_Proposals_By_User P
+                                   ON P.person_id = U.person_id
+                            WHERE P.person_id IS NULL) AND
+              Coalesce(eus_proposals, '') <> '';
+
+        DROP TABLE Tmp_Proposals_By_User;
+
     EXCEPTION
         WHEN OTHERS THEN
             GET STACKED DIAGNOSTICS
@@ -280,7 +333,6 @@ BEGIN
     ---------------------------------------------------
 
     CALL post_usage_log_entry ('update_eus_users_from_eus_imports', _usageMessage);
-
 END
 $$;
 

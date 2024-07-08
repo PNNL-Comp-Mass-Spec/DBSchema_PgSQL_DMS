@@ -10,7 +10,8 @@ CREATE TABLE public.t_eus_users (
     last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     last_name public.citext,
     first_name public.citext,
-    valid smallint DEFAULT 1 NOT NULL
+    valid smallint DEFAULT 1 NOT NULL,
+    eus_proposals public.citext
 );
 
 
