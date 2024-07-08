@@ -847,8 +847,7 @@ BEGIN
                 priority = source.priority,
                 start = source.start,
                 finish = source.finish,
-                processing_time_minutes = source.processing_time_minutes
-        ;
+                processing_time_minutes = source.processing_time_minutes;
 
         DROP TABLE Tmp_Job_Backfill_Details;
         RETURN;

@@ -46,11 +46,11 @@ BEGIN
         USING (SELECT SS.separation_type_id,
                       SUM(CASE WHEN public.months_between(DS.Created, CURRENT_TIMESTAMP) <= 12 THEN 1
                                ELSE 0
-                          END) AS Usage_Last12Months,
+                          END) AS usage_last12months,
                       SUM(CASE WHEN DS.Dataset_ID IS NULL THEN 0
                                ELSE 1
-                          END) AS Usage_All_Years,
-                      MAX(DS.created) AS Most_Recent_Use
+                          END) AS usage_all_years,
+                      MAX(DS.created) AS most_recent_use
                FROM t_secondary_sep SS
                     LEFT OUTER JOIN t_dataset DS
                       ON DS.separation_type = SS.separation_type
@@ -58,16 +58,16 @@ BEGIN
               ) AS s
         ON (t.separation_type_id = s.separation_type_id)
         WHEN MATCHED AND
-             (t.Usage_Last12Months IS DISTINCT FROM s.Usage_Last12Months OR
-              t.Usage_All_Years IS DISTINCT FROM s.Usage_All_Years OR
-              t.Most_Recent_Use IS DISTINCT FROM s.Most_Recent_Use) THEN
+             (t.usage_last12months IS DISTINCT FROM s.usage_last12months OR
+              t.usage_all_years    IS DISTINCT FROM s.usage_all_years OR
+              t.most_recent_use    IS DISTINCT FROM s.most_recent_use) THEN
             UPDATE SET
-                Usage_Last12Months = s.Usage_Last12Months,
-                Usage_All_Years = s.Usage_All_Years,
-                Most_Recent_Use = s.Most_Recent_Use
+                usage_last12months = s.usage_last12months,
+                usage_all_years    = s.usage_all_years,
+                most_recent_use    = s.most_recent_use
         WHEN NOT MATCHED THEN
-            INSERT (separation_type_id, Usage_Last12Months, Usage_All_Years, Most_Recent_Use)
-            VALUES (s.separation_type_id, s.Usage_Last12Months, s.Usage_All_Years, s.Most_Recent_Use);
+            INSERT (separation_type_id, usage_last12months, usage_all_years, most_recent_use)
+            VALUES (s.separation_type_id, s.usage_last12months, s.usage_all_years, s.most_recent_use);
 
         GET DIAGNOSTICS _addOrUpdateCount = ROW_COUNT;
 

@@ -267,7 +267,6 @@ BEGIN
             Percent_PSMs_Missing_NTerm_Reporter_Ion = Source.Percent_PSMs_Missing_NTerm_Reporter_Ion,
             Percent_PSMs_Missing_Reporter_Ion       = Source.Percent_PSMs_Missing_Reporter_Ion,
             Last_Affected                           = CURRENT_TIMESTAMP
-
     WHEN NOT MATCHED THEN
         INSERT (Job,
                 MSGF_Threshold,
@@ -344,7 +343,6 @@ BEGIN
                 CTerm_R_Phosphopeptides = Source.CTerm_R_Phosphopeptides,
                 Missed_Cleavage_Ratio    = Source.MissedCleavageRatio,
                 Last_Affected          = CURRENT_TIMESTAMP
-
         WHEN NOT MATCHED THEN
             INSERT (Job,
                     Phosphopeptides,
@@ -358,7 +356,6 @@ BEGIN
                     Source.CTerm_R_Phosphopeptides,
                     Source.MissedCleavageRatio,
                     CURRENT_TIMESTAMP);
-
     End If;
 
     -----------------------------------------------

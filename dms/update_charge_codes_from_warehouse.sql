@@ -294,23 +294,21 @@ BEGIN
                     auth_hid                   = source.auth_hid,
                     last_affected              = CURRENT_TIMESTAMP
             WHEN NOT MATCHED
-                THEN INSERT (
-                         charge_code, resp_username, resp_hid, wbs_title, charge_code_title,
-                         sub_account, sub_account_title, setup_date, sub_account_effective_date,
-                         inactive_date, sub_account_inactive_date, deactivated, auth_amt, auth_username, auth_hid,
-                         auto_defined, charge_code_state, activation_state, last_affected
-                    ) VALUES
-                    (source.charge_code, source.resp_username, source.resp_hid, source.wbs_title, source.charge_code_title,
-                     source.sub_account, source.sub_account_title, source.setup_date, source.sub_account_effective_date,
-                     source.inactive_date, source.sub_account_inactive_date, source.deactivated, source.auth_amt, source.auth_username, source.auth_hid,
-                     1,        -- auto_defined=1
-                     1,        -- charge_code_state = 1 (Interest Unknown)
-                     public.charge_code_activation_state(_deactivated       => source.deactivated,
-                                                         _chargeCodeState   => 1,
-                                                         _usageSamplePrep   => 0,
-                                                         _usageRequestedRun => 0),
-                     CURRENT_TIMESTAMP
-                    );
+                THEN INSERT (charge_code, resp_username, resp_hid, wbs_title, charge_code_title,
+                             sub_account, sub_account_title, setup_date, sub_account_effective_date,
+                             inactive_date, sub_account_inactive_date, deactivated, auth_amt, auth_username, auth_hid,
+                             auto_defined, charge_code_state, activation_state, last_affected)
+                     VALUES (source.charge_code, source.resp_username, source.resp_hid, source.wbs_title, source.charge_code_title,
+                             source.sub_account, source.sub_account_title, source.setup_date, source.sub_account_effective_date,
+                             source.inactive_date, source.sub_account_inactive_date, source.deactivated, source.auth_amt, source.auth_username, source.auth_hid,
+                             1,        -- auto_defined=1
+                             1,        -- charge_code_state = 1 (Interest Unknown)
+                             public.charge_code_activation_state(_deactivated       => source.deactivated,
+                                                                 _chargeCodeState   => 1,
+                                                                 _usageSamplePrep   => 0,
+                                                                 _usageRequestedRun => 0),
+                             CURRENT_TIMESTAMP
+                            );
 
             GET DIAGNOSTICS _mergeCount = ROW_COUNT;
 

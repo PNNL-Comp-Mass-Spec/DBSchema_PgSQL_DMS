@@ -660,7 +660,6 @@ BEGIN
             MS2_Rep_Ion_2Missing = Source.MS2_Rep_Ion_2Missing, MS2_Rep_Ion_3Missing = Source.MS2_Rep_Ion_3Missing,
             mass_error_ppm = Coalesce(Target.mass_error_ppm, Source.MS1_5C),
             Last_Affected = CURRENT_TIMESTAMP
-
     WHEN NOT MATCHED THEN
         INSERT (Dataset_ID,
                 SMAQC_Job,
@@ -690,7 +689,8 @@ BEGIN
                 Source.Trypsin_2A, Source.Trypsin_2C,
                 Source.MS2_Rep_Ion_All, Source.MS2_Rep_Ion_1Missing, Source.MS2_Rep_Ion_2Missing, Source.MS2_Rep_Ion_3Missing,
                 Source.MS1_5C,  -- Store MS1_5C in mass_error_ppm; if DTA_Refinery is run in the future, mass_error_ppm will get auto-updated to the pre-refinement value computed by DTA_Refinery
-                CURRENT_TIMESTAMP);
+                CURRENT_TIMESTAMP
+               );
 
     _message := 'SMAQC measurement storage successful';
 

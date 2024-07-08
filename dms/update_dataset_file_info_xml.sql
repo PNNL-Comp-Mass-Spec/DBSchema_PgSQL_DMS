@@ -921,7 +921,7 @@ BEGIN
                 profile_scan_count_msn  = Source.profile_scan_count_msn,
                 centroid_scan_count_ms  = Source.centroid_scan_count_ms,
                 centroid_scan_count_msn = Source.centroid_scan_count_msn,
-                last_affected = CURRENT_TIMESTAMP
+                last_affected           = CURRENT_TIMESTAMP
         WHEN NOT MATCHED THEN
             INSERT (dataset_id, scan_count_ms, scan_count_msn,
                     scan_count_dia, elution_time_max,
@@ -940,7 +940,8 @@ BEGIN
                     Source.bpi_median_ms, Source.bpi_median_msn,
                     Source.profile_scan_count_ms , Source.profile_scan_count_msn,
                     Source.centroid_scan_count_ms, Source.centroid_scan_count_msn,
-                    CURRENT_TIMESTAMP);
+                    CURRENT_TIMESTAMP
+                   );
 
         -----------------------------------------------
         -- Cannot use a merge statement on t_dataset_scan_types
@@ -1010,9 +1011,9 @@ BEGIN
         WHEN MATCHED THEN
             UPDATE SET
                 file_size_bytes = Source.InstFileSize,
-                file_hash = Source.InstFileHash,
-                file_size_rank = Source.FileSizeRank,
-                deleted = false
+                file_hash       = Source.InstFileHash,
+                file_size_rank  = Source.FileSizeRank,
+                deleted         = false
         WHEN NOT MATCHED THEN
             INSERT (dataset_id, file_path, file_size_bytes, file_hash, File_Size_Rank)
             VALUES (Source.dataset_id, Source.InstFilePath, Source.InstFileSize, Source.InstFileHash, Source.FileSizeRank);
@@ -1048,7 +1049,7 @@ BEGIN
             target.mz = Source.Mz)
         WHEN MATCHED THEN
             UPDATE SET
-                max_intensity = Source.MaxIntensity,
+                max_intensity    = Source.MaxIntensity,
                 median_intensity = Source.MedianIntensity
         WHEN NOT MATCHED THEN
             INSERT (dataset_id, mz, max_intensity, median_intensity)

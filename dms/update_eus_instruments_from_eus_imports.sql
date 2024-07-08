@@ -86,19 +86,18 @@ BEGIN
             ) AS s (Instrument_ID, Instrument_Name, Display_Name,
                     Available_Hours, Active_Sw, Primary_Instrument)
         ON (t.eus_instrument_id = s.Instrument_ID)
-        WHEN MATCHED AND (
-                t.eus_instrument_name IS DISTINCT FROM s.Instrument_Name OR
-                t.eus_display_name IS DISTINCT FROM s.Display_Name OR
-                t.eus_available_hours IS DISTINCT FROM s.Available_Hours OR
-                t.eus_active_sw IS DISTINCT FROM s.Active_Sw OR
-                t.eus_primary_instrument IS DISTINCT FROM s.Primary_Instrument
-                ) THEN
+        WHEN MATCHED AND
+             (t.eus_instrument_name IS DISTINCT FROM s.Instrument_Name OR
+              t.eus_display_name IS DISTINCT FROM s.Display_Name OR
+              t.eus_available_hours IS DISTINCT FROM s.Available_Hours OR
+              t.eus_active_sw IS DISTINCT FROM s.Active_Sw OR
+              t.eus_primary_instrument IS DISTINCT FROM s.Primary_Instrument) THEN
             UPDATE SET
-                eus_instrument_name = s.Instrument_Name,
-                eus_display_name = s.Display_Name,
-                eus_available_hours = s.Available_Hours,
-                last_affected = CURRENT_TIMESTAMP,
-                eus_active_sw = s.Active_Sw,
+                eus_instrument_name    = s.Instrument_Name,
+                eus_display_name       = s.Display_Name,
+                eus_available_hours    = s.Available_Hours,
+                last_affected          = CURRENT_TIMESTAMP,
+                eus_active_sw          = s.Active_Sw,
                 eus_primary_instrument = s.Primary_Instrument
         WHEN NOT MATCHED THEN
             INSERT (eus_instrument_id,
@@ -112,8 +111,8 @@ BEGIN
                     s.Display_Name,
                     s.Available_Hours,
                     s.Active_Sw,
-                    s.Primary_Instrument)
-        ;
+                    s.Primary_Instrument
+                   );
 
         GET DIAGNOSTICS _mergeCount = ROW_COUNT;
 

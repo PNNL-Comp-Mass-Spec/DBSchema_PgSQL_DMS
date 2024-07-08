@@ -144,7 +144,8 @@ BEGIN
           ) AS s
     ON (t.instrument_group = s.instrument_group AND t.script = s.script AND t.year = s.year)
     WHEN MATCHED AND t.jobs < s.jobs THEN
-        UPDATE SET jobs = s.jobs
+        UPDATE SET
+            jobs = s.jobs
     WHEN NOT MATCHED THEN
         INSERT (script, instrument_group, year, Jobs)
         VALUES (s.script, s.instrument_group, s.year, s.Jobs);

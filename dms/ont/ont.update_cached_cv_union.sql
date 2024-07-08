@@ -151,8 +151,8 @@ BEGIN
                     '             s.parent_term_name,'
                     '             s.parent_term_id,'
                     '             s.grandparent_term_name,'
-                    '             s.grandparent_term_id)'
-                    ';';
+                    '             s.grandparent_term_id'
+                    '            );';
 
             If _previewSQL Then
                 RAISE INFO '%', _sql;

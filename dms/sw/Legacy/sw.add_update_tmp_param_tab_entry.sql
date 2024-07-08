@@ -46,7 +46,8 @@ BEGIN
     ON (target.Section = source.Section AND
         target.Name = source.Name)
     WHEN MATCHED AND target.value <> source.value THEN
-        UPDATE SET Value = source.Value
+        UPDATE SET
+            Value = source.Value
     WHEN NOT MATCHED THEN
         INSERT (Step, Section, Name, Value)
         VALUES (source.Step, source.Section, source.Name, source.Value);

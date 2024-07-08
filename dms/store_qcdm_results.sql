@@ -367,7 +367,6 @@ BEGIN
         UPDATE SET
             QCDM = Source.QCDM,
             QCDM_Last_Affected = CURRENT_TIMESTAMP
-
     WHEN NOT MATCHED THEN
         INSERT (Dataset_ID,
                 QCDM,

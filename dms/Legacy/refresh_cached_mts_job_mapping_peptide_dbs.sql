@@ -94,8 +94,8 @@ BEGIN
             target.job = source.job AND
             target.result_type = source.result_type)
         WHEN MATCHED AND
-             (Coalesce(target.last_affected ,'') <> Coalesce(source.last_affected,'') OR
-              Coalesce(target.process_state ,'') <> Coalesce(source.process_state,'')) THEN
+             (Coalesce(target.last_affected , '') <> Coalesce(source.last_affected, '') OR
+              Coalesce(target.process_state , '') <> Coalesce(source.process_state, '')) THEN
             UPDATE SET
                 last_affected = source.last_affected,
                 process_state = source.process_state

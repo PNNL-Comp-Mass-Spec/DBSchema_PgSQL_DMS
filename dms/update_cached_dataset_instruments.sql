@@ -61,7 +61,7 @@ BEGIN
               t.instrument <> s.instrument) THEN
             UPDATE SET
                 instrument_id = s.instrument_id,
-                instrument = s.instrument
+                instrument    = s.instrument
         WHEN NOT MATCHED THEN
             INSERT (dataset_id, instrument_id, instrument)
             VALUES (s.dataset_id, s.instrument_id, s.instrument);
@@ -258,7 +258,7 @@ BEGIN
           t.instrument <> s.instrument) THEN
         UPDATE SET
             instrument_id = s.instrument_id,
-            instrument = s.instrument
+            instrument    = s.instrument
     WHEN NOT MATCHED THEN
         INSERT (dataset_id, instrument_id, instrument)
         VALUES (s.dataset_id, s.instrument_id, s.instrument);

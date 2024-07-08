@@ -117,15 +117,15 @@ BEGIN
               ) AS Source
         ON (target.mts_job_id = source.mts_job_id AND target.dms_job = source.dms_job)
         WHEN MATCHED AND
-             (Coalesce(target.job_start,'') <> Coalesce(source.job_start,'') OR
-              Coalesce(target.job_finish,'') <> Coalesce(source.job_finish,'') OR
+             (Coalesce(target.job_start, '') <> Coalesce(source.job_start, '') OR
+              Coalesce(target.job_finish, '') <> Coalesce(source.job_finish, '') OR
               target.state_id <> source.state_id OR
               target.task_server <> source.task_server OR
               target.task_database <> source.task_database OR
               target.task_id <> source.task_id OR
               Coalesce(target.dms_job_count,0) <> Coalesce(source.dms_job_count,0) OR
-              Coalesce(target.output_folder_path,'') <> Coalesce(source.output_folder_path,'') OR
-              Coalesce(target.results_url,'') <> Coalesce(source.results_url,'') OR
+              Coalesce(target.output_folder_path, '') <> Coalesce(source.output_folder_path, '') OR
+              Coalesce(target.results_url, '') <> Coalesce(source.results_url, '') OR
               Coalesce(target.amt_count_1pct_fdr, 0) <> source.amt_count_1pct_fdr OR
               Coalesce(target.amt_count_5pct_fdr, 0) <> source.amt_count_5pct_fdr OR
               Coalesce(target.amt_count_10pct_fdr, 0) <> source.amt_count_10pct_fdr OR
@@ -197,7 +197,8 @@ BEGIN
                     source.amt_count_10pct_fdr, source.amt_count_25pct_fdr,
                     source.amt_count_50pct_fdr, source.refine_mass_cal_ppm_shift,
                     source.md_id, source.qid,
-                    source.ini_file_name, source.comparison_mass_tag_count, source.md_state);
+                    source.ini_file_name, source.comparison_mass_tag_count, source.md_state
+                   );
 
         GET DIAGNOSTICS _mergeCount = ROW_COUNT;
 

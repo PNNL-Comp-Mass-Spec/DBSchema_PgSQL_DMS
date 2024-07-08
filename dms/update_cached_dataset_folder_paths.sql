@@ -294,15 +294,14 @@ BEGIN
                   target.myemsl_path_flag         IS DISTINCT FROM source.myemsl_path_flag OR
                   target.dataset_url              IS DISTINCT FROM source.dataset_url) THEN
                 UPDATE SET
-                    dataset_row_version = source.XMin_Dataset,
+                    dataset_row_version      = source.XMin_Dataset,
                     storage_path_row_version = source.XMin_SPath,
-                    dataset_folder_path = source.dataset_folder_path,
-                    archive_folder_path = source.archive_folder_path,
-                    myemsl_path_flag = source.myemsl_path_flag,
-                    dataset_url = source.dataset_url,
-                    update_required = 0,
-                    last_affected = CURRENT_TIMESTAMP
-            ;
+                    dataset_folder_path      = source.dataset_folder_path,
+                    archive_folder_path      = source.archive_folder_path,
+                    myemsl_path_flag         = source.myemsl_path_flag,
+                    dataset_url              = source.dataset_url,
+                    update_required          = 0,
+                    last_affected            = CURRENT_TIMESTAMP;
 
             GET DIAGNOSTICS _mergeCount = ROW_COUNT;
 

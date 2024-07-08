@@ -321,23 +321,35 @@ BEGIN
                          PCM.reference_id = ProtName.reference_id
         ) AS s
         ON (t.protein_collection_id = s.protein_collection_id AND t.reference_id = s.reference_id)
-        WHEN MATCHED AND (
-            t.protein_name <> s.protein_name OR
-            t.residue_count <> s.residue_count OR
-            t.protein_id <> s.protein_id OR
-            t.description IS DISTINCT FROM s.description OR
-            t.monoisotopic_mass IS DISTINCT FROM s.monoisotopic_mass
-            )
-        THEN UPDATE SET
-            protein_name = s.protein_name,
-            description = s.description,
-            residue_count = s.residue_count,
+        WHEN MATCHED AND
+             (t.protein_name  <> s.protein_name OR
+              t.residue_count <> s.residue_count OR
+              t.protein_id    <> s.protein_id OR
+              t.description IS DISTINCT FROM s.description OR
+              t.monoisotopic_mass IS DISTINCT FROM s.monoisotopic_mass
+             ) THEN
+        UPDATE SET
+            protein_name      = s.protein_name,
+            description       = s.description,
+            residue_count     = s.residue_count,
             monoisotopic_mass = s.monoisotopic_mass,
-            protein_id = s.protein_id
+            protein_id        = s.protein_id
         WHEN NOT MATCHED THEN
-            INSERT (protein_collection_id, reference_id, protein_name, description, residue_count, monoisotopic_mass, protein_id)
-            VALUES (s.protein_collection_id, s.reference_id, s.protein_name, s.description, s.residue_count, s.monoisotopic_mass, s.protein_id)
-        ;
+            INSERT (protein_collection_id,
+                    reference_id,
+                    protein_name,
+                    description,
+                    residue_count,
+                    monoisotopic_mass,
+                    protein_id)
+            VALUES (s.protein_collection_id,
+                    s.reference_id,
+                    s.protein_name,
+                    s.description,
+                    s.residue_count,
+                    s.monoisotopic_mass,
+                    s.protein_id
+                   );
 
         GET DIAGNOSTICS _mergeCount = ROW_COUNT;
 

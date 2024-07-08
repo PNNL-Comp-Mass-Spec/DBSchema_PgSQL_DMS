@@ -449,17 +449,16 @@ BEGIN
                   target.qc_2d                    IS DISTINCT FROM source.qc_2d OR
                   target.qc_metric_stats          IS DISTINCT FROM source.qc_metric_stats) THEN
                 UPDATE SET
-                    dataset_row_version = source.dataset_row_version,
+                    dataset_row_version      = source.dataset_row_version,
                     storage_path_row_version = source.storage_path_row_version,
-                    dataset_folder_path = source.dataset_folder_path,
-                    archive_folder_path = source.archive_folder_path,
-                    myemsl_url = source.myemsl_url,
-                    qc_link = source.qc_link,
-                    qc_2d = source.qc_2d,
-                    qc_metric_stats = source.qc_metric_stats,
-                    update_required = 0,
-                    last_affected = CURRENT_TIMESTAMP
-            ;
+                    dataset_folder_path      = source.dataset_folder_path,
+                    archive_folder_path      = source.archive_folder_path,
+                    myemsl_url               = source.myemsl_url,
+                    qc_link                  = source.qc_link,
+                    qc_2d                    = source.qc_2d,
+                    qc_metric_stats          = source.qc_metric_stats,
+                    update_required          = 0,
+                    last_affected            = CURRENT_TIMESTAMP;
             --
             GET DIAGNOSTICS _updateCount = ROW_COUNT;
 

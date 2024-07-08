@@ -120,11 +120,11 @@ BEGIN
     ON (target.job = source.job AND
         target.processor = source.processor)
     WHEN MATCHED AND target.general_processing <> source.general_processing THEN
-        UPDATE SET general_processing = source.general_processing
+        UPDATE SET
+            general_processing = source.general_processing
     WHEN NOT MATCHED THEN
         INSERT (job, processor, general_processing)
-        VALUES (source.job, source.processor, source.general_processing)
-    ;
+        VALUES (source.job, source.processor, source.general_processing);
 
     GET DIAGNOSTICS _mergeCount = ROW_COUNT;
 

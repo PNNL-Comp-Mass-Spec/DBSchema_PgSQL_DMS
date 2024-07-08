@@ -51,12 +51,11 @@ BEGIN
             ) AS Source (Protein_Collection_ID, Name)
         ON (target.protein_collection_id = source.protein_collection_id)
         WHEN MATCHED AND (Target.name <> Source.name) THEN
-            UPDATE Set
+            UPDATE SET
                   name = Source.name
         WHEN NOT MATCHED THEN
             INSERT (protein_collection_id, name, job_usage_count)
-            VALUES (Source.protein_collection_id, Source.name, 0)
-        ;
+            VALUES (Source.protein_collection_id, Source.name, 0);
 
         -- Delete rows from t_protein_collection_usage that are not in V_Protein_Collections_by_Organism
 

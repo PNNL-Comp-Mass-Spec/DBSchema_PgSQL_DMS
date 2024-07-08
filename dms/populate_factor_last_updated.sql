@@ -193,7 +193,8 @@ BEGIN
               ) AS s
         ON (t.RequestID = s.RequestID AND t.FactorName = s.FactorName)
         WHEN MATCHED THEN
-            UPDATE SET Last_Updated = _changeDate
+            UPDATE SET
+                Last_Updated = _changeDate
         WHEN NOT MATCHED THEN
             INSERT (RequestID, FactorName, Last_Updated)
             VALUES (s.RequestID, s.FactorName, _changeDate);

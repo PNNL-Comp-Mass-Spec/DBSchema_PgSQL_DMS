@@ -86,9 +86,9 @@ BEGIN
                  (t.Biomaterial_List IS DISTINCT FROM s.Biomaterial_List OR
                   t.reference_compound_list IS DISTINCT FROM s.reference_compound_list) THEN
                 UPDATE SET
-                    Biomaterial_List = s.Biomaterial_List,
+                    Biomaterial_List        = s.Biomaterial_List,
                     reference_compound_list = s.reference_compound_list,
-                    last_affected = CURRENT_TIMESTAMP
+                    last_affected           = CURRENT_TIMESTAMP
             WHEN NOT MATCHED THEN
                 INSERT (exp_id, Biomaterial_List, reference_compound_list)
                 VALUES (s.exp_id, s.Biomaterial_List, s.reference_compound_list);
@@ -281,8 +281,8 @@ BEGIN
         ON (t.exp_id = s.exp_id)
         WHEN MATCHED AND t.Biomaterial_List IS DISTINCT FROM s.Biomaterial_List THEN
             UPDATE SET
-                Biomaterial_List = s.Biomaterial_List,
-                last_affected = CURRENT_TIMESTAMP
+                biomaterial_list = s.biomaterial_list,
+                last_affected    = CURRENT_TIMESTAMP
         WHEN NOT MATCHED THEN
             INSERT (exp_id, Biomaterial_List)
             VALUES (s.exp_id, s.Biomaterial_List);
@@ -299,7 +299,7 @@ BEGIN
         WHEN MATCHED AND t.reference_compound_list IS DISTINCT FROM s.reference_compound_list THEN
             UPDATE SET
                 reference_compound_list = s.reference_compound_list,
-                last_affected = CURRENT_TIMESTAMP
+                last_affected           = CURRENT_TIMESTAMP
         WHEN NOT MATCHED THEN
             INSERT (exp_id, reference_compound_list)
             VALUES (s.exp_id, s.reference_compound_list);

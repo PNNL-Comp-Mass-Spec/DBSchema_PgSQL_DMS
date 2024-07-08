@@ -205,8 +205,8 @@ BEGIN
                         s.separation_group_first, s.separation_group_last,
                         s.active_requests, s.first_active_request, s.last_active_request,
                         s.oldest_active_request_created, s.oldest_request_created,
-                        s.days_in_queue, statement_timestamp())
-            ;
+                        s.days_in_queue, statement_timestamp()
+                       );
 
         END;
 
@@ -283,9 +283,15 @@ BEGIN
                     instrument_last   = s.instrument_last,
                     last_affected     = statement_timestamp()
             WHEN NOT MATCHED THEN
-                INSERT (batch_id, datasets, min_days_in_queue, max_days_in_queue, instrument_first, instrument_last, last_affected)
-                VALUES (s.batch_id, s.datasets, s.min_days_in_queue, s.max_days_in_queue, s.instrument_first, s.instrument_last, statement_timestamp())
-            ;
+                INSERT (batch_id, datasets,
+                        min_days_in_queue, max_days_in_queue,
+                        instrument_first, instrument_last,
+                        last_affected)
+                VALUES (s.batch_id, s.datasets,
+                        s.min_days_in_queue, s.max_days_in_queue,
+                        s.instrument_first, s.instrument_last,
+                        statement_timestamp()
+                       );
 
         END;
 
@@ -369,9 +375,13 @@ BEGIN
                     block_missing      = s.block_missing,
                     last_affected      = statement_timestamp()
             WHEN NOT MATCHED THEN
-                INSERT (requests, days_in_prep_queue, blocked, block_missing, last_affected)
-                VALUES (s.requests, s.days_in_prep_queue, s.blocked, s.block_missing, statement_timestamp())
-            ;
+                INSERT (requests, days_in_prep_queue,
+                        blocked, block_missing,
+                        last_affected)
+                VALUES (s.requests, s.days_in_prep_queue,
+                        s.blocked, s.block_missing,
+                        statement_timestamp()
+                       );
 
         END;
 

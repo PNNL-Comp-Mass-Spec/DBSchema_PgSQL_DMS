@@ -304,22 +304,22 @@ BEGIN
           Target.sample_prep_request_most_recent IS DISTINCT FROM Src.sample_prep_request_most_recent OR
           Target.most_recent_activity            IS DISTINCT FROM Src.most_recent_activity) THEN
         UPDATE SET
-            sample_submission_count = Src.sample_submission_count,
-            biomaterial_count = Src.biomaterial_count,
-            experiment_count = Src.experiment_count,
-            dataset_count = Src.dataset_count,
-            job_count = Src.job_count,
-            run_request_count = Src.run_request_count,
-            sample_prep_request_count = Src.sample_prep_request_count,
-            data_package_count = Src.data_package_count,
-            sample_submission_most_recent = Src.sample_submission_most_recent,
-            biomaterial_most_recent = Src.biomaterial_most_recent,
-            experiment_most_recent = Src.experiment_most_recent,
-            dataset_most_recent = Src.dataset_most_recent,
-            job_most_recent = Src.job_most_recent,
-            run_request_most_recent = Src.run_request_most_recent,
+            sample_submission_count         = Src.sample_submission_count,
+            biomaterial_count               = Src.biomaterial_count,
+            experiment_count                = Src.experiment_count,
+            dataset_count                   = Src.dataset_count,
+            job_count                       = Src.job_count,
+            run_request_count               = Src.run_request_count,
+            sample_prep_request_count       = Src.sample_prep_request_count,
+            data_package_count              = Src.data_package_count,
+            sample_submission_most_recent   = Src.sample_submission_most_recent,
+            biomaterial_most_recent         = Src.biomaterial_most_recent,
+            experiment_most_recent          = Src.experiment_most_recent,
+            dataset_most_recent             = Src.dataset_most_recent,
+            job_most_recent                 = Src.job_most_recent,
+            run_request_most_recent         = Src.run_request_most_recent,
             sample_prep_request_most_recent = Src.sample_prep_request_most_recent,
-            most_recent_activity = Src.most_recent_activity
+            most_recent_activity            = Src.most_recent_activity
     WHEN NOT MATCHED THEN
         INSERT (campaign_id, sample_submission_count, Biomaterial_Count, experiment_count,
                 dataset_count, Job_Count, Run_Request_Count, Sample_Prep_Request_Count, Data_Package_Count,
@@ -330,7 +330,8 @@ BEGIN
                 Src.Dataset_Count, Src.Job_Count, Src.Run_Request_Count, Src.Sample_Prep_Request_Count, Src.Data_Package_Count,
                 Src.Sample_Submission_Most_Recent, Src.Biomaterial_Most_Recent, Src.Experiment_Most_Recent,
                 Src.Dataset_Most_Recent, Src.Job_Most_Recent, Src.Run_Request_Most_Recent,
-                Src.Sample_Prep_Request_Most_Recent, Src.Most_Recent_Activity);
+                Src.Sample_Prep_Request_Most_Recent, Src.Most_Recent_Activity
+               );
 
     GET DIAGNOSTICS _addOrUpdateCount = ROW_COUNT;
 

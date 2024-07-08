@@ -134,8 +134,8 @@ BEGIN
           Target.Job_Count <> Src.Job_Count) THEN
         UPDATE SET
             Experiment_Count = Src.Experiment_Count,
-            Dataset_Count = Src.Dataset_Count,
-            Job_Count = Src.Job_Count
+            Dataset_Count    = Src.Dataset_Count,
+            Job_Count        = Src.Job_Count
     WHEN NOT MATCHED THEN
         INSERT (Biomaterial_ID, Experiment_Count, Dataset_Count, Job_Count)
         VALUES (Src.Biomaterial_ID, Src.Experiment_Count, Src.Dataset_Count, Src.Job_Count);

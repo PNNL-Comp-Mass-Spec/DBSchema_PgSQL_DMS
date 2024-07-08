@@ -167,7 +167,8 @@ BEGIN
                 Source.Proposal,
                 Source.Allocation,
                 Source.Comment,
-                Source.FY);
+                Source.FY
+               );
 
     -- If _callingUser is defined, update entered_by in t_instrument_allocation_updates
     If _callingUser = '' Then
