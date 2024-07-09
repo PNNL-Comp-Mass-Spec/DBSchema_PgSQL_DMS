@@ -1,10 +1,10 @@
 --
--- Name: find_existing_jobs_for_request(integer); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: find_existing_jobs_for_request(integer, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.find_existing_jobs_for_request(_requestid integer) RETURNS TABLE(job integer, state public.citext, priority integer, request integer, created timestamp without time zone, start timestamp without time zone, finish timestamp without time zone, processor public.citext, dataset public.citext)
+CREATE OR REPLACE FUNCTION public.find_existing_jobs_for_request(_requestid integer, _message text DEFAULT ''::text) RETURNS TABLE(job integer, state public.citext, priority integer, request integer, created timestamp without time zone, start timestamp without time zone, finish timestamp without time zone, processor public.citext, dataset public.citext)
     LANGUAGE plpgsql
-    AS $$
+    AS $_$
 /****************************************************
 **
 **  Desc:
@@ -12,6 +12,22 @@ CREATE OR REPLACE FUNCTION public.find_existing_jobs_for_request(_requestid inte
 **
 **  Arguments:
 **    _requestID    Analysis job request ID
+**    _message      Output message from update_cached_job_request_existing_jobs or update_cached_job_request_existing_jobs
+**
+**  Example usage:
+**      SELECT * FROM find_existing_jobs_for_request(4000);
+**
+**      DO $example$
+**      DECLARE
+**          _message text;
+**          _returnCode text;
+**          _delimiter text;
+**      BEGIN
+**          RAISE INFO '';
+**          PERFORM find_existing_jobs_for_request(4000, _message => _message);
+**          RAISE INFO '%', _message;
+**      END
+**      $example$;
 **
 **  Auth:   grk
 **  Date:   12/05/2005 grk - Initial version
@@ -23,6 +39,7 @@ CREATE OR REPLACE FUNCTION public.find_existing_jobs_for_request(_requestid inte
 **          07/30/2019 mem - After obtaining the actual matching jobs using GetRunRequestExistingJobListTab, compare to the cached values in T_Analysis_Job_Request_Existing_Jobs; call Update_Cached_Job_Request_Existing_Jobs if a mismatch
 **          07/31/2019 mem - Use new function name, get_existing_jobs_matching_job_request
 **          12/03/2023 mem - Ported to Postgres
+**          07/08/2024 mem - Add output argument _message, though it is only accessible using PERFORM, e.g. PERFORM
 **
 *****************************************************/
 DECLARE
@@ -100,14 +117,14 @@ BEGIN
 
     DROP TABLE Tmp_ExistingJobs;
 END
-$$;
+$_$;
 
 
-ALTER FUNCTION public.find_existing_jobs_for_request(_requestid integer) OWNER TO d3l243;
+ALTER FUNCTION public.find_existing_jobs_for_request(_requestid integer, _message text) OWNER TO d3l243;
 
 --
--- Name: FUNCTION find_existing_jobs_for_request(_requestid integer); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION find_existing_jobs_for_request(_requestid integer, _message text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.find_existing_jobs_for_request(_requestid integer) IS 'FindExistingJobsForRequest';
+COMMENT ON FUNCTION public.find_existing_jobs_for_request(_requestid integer, _message text) IS 'FindExistingJobsForRequest';
 
