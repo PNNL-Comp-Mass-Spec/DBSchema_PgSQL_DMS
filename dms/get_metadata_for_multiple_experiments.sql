@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION public.get_metadata_for_multiple_experiments(_experim
 **  Date:   11/01/2006
 **          02/23/2023 bcg - Rename procedure and parameters to a case-insensitive match to postgres
 **          07/05/2024 mem - Ported to PostgreSQL (based on stored procedures dump_metadata_for_multiple_experiments and load_metadata_for_multiple_experiments)
+**          07/08/2024 mem - Create temp tables instead of persisted tables
 **
 *****************************************************/
 DECLARE
@@ -27,7 +28,7 @@ BEGIN
     -- Create and populate temporary tables
     ---------------------------------------------------
 
-    CREATE TABLE Tmp_Experiments (
+    CREATE TEMP TABLE Tmp_Experiments (
         Experiment text NOT NULL
     );
 
@@ -35,7 +36,7 @@ BEGIN
     -- Temporary table to hold metadata
     ---------------------------------------------------
 
-    CREATE TABLE Tmp_Metadata (
+    CREATE TEMP TABLE Tmp_Metadata (
         Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Experiment_Name text NOT NULL,
         Biomaterial_Name text NULL,
