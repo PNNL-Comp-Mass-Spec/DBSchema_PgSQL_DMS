@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE public.validate_wellplate_loading(INOUT _wellplatena
 **          05/16/2022 mem - Show example well numbers
 **          11/25/2022 mem - Rename parameter to _wellplate
 **          12/02/2023 mem - Ported to PostgreSQL
+**          07/09/2024 mem - Use a well index value of 0 if _wellPosition is an empty string
 **
 *****************************************************/
 DECLARE
@@ -75,12 +76,14 @@ BEGIN
 
     -- Check for overflow
 
-    If Not _wellPosition Is Null Then
+    If Not _wellPosition Is Null And _wellPosition <> '' Then
+
+        -- Note that function get_well_index() returns 0 if _wellPosition is an empty string or is only a single character
 
         _wellIndex := public.get_well_index(_wellPosition::citext);
 
         If _wellIndex = 0 Then
-            _message := 'Well position is not valid; should be in the format A4 or C12';
+            _message := format('Well position is not valid (%s); should be in the format A4 or C12', _wellPosition);
             _returnCode := 'U5243';
             RETURN;
         End If;
