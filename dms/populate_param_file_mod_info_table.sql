@@ -45,6 +45,7 @@ CREATE OR REPLACE PROCEDURE public.populate_param_file_mod_info_table(IN _showmo
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          07/09/2024 mem - Replace spaces with underscores in _massModFilterTextColumn
+**                         - Ignore case when using a mass mod filter
 **
 *****************************************************/
 DECLARE
@@ -303,7 +304,7 @@ BEGIN
                     _massModFilterSql := format('%s OR ', _massModFilterSql);
                 End If;
 
-                _massModFilterSql := format('%s %I SIMILAR TO ''%s''',
+                _massModFilterSql := format('%s Lower(%I) SIMILAR TO Lower(''%s'')',
                                            _massModFilterSql,
                                            _currentColumn,
                                            '%' || _massModFilterText || '%');
