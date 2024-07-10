@@ -3,53 +3,26 @@
 --
 
 CREATE VIEW public.v_material_containers_detail_report AS
- SELECT container,
-    type,
-    location,
-    items,
-    comment,
-    freezer,
-    campaign,
-    created,
-    container_id AS id,
-    status,
-    researcher,
-    files
-   FROM ( SELECT mc.container,
-            mc.type,
-            ml.location,
-            (count(contentsq.material_id))::integer AS items,
-            mc.comment,
-            ml.freezer_tag AS freezer,
-            c.campaign,
-            mc.created,
-            mc.status,
-            mc.researcher,
-            tfa.files,
-            mc.container_id
-           FROM ((((public.t_material_containers mc
-             LEFT JOIN public.t_campaign c ON ((mc.campaign_id = c.campaign_id)))
-             LEFT JOIN ( SELECT t_biomaterial.container_id,
-                    t_biomaterial.biomaterial_id AS material_id
-                   FROM public.t_biomaterial
-                  WHERE (t_biomaterial.material_active OPERATOR(public.=) 'Active'::public.citext)
-                UNION
-                 SELECT t_experiments.container_id,
-                    t_experiments.exp_id AS material_id
-                   FROM public.t_experiments
-                  WHERE (t_experiments.material_active OPERATOR(public.=) 'Active'::public.citext)
-                UNION
-                 SELECT t_reference_compound.container_id,
-                    t_reference_compound.compound_id AS material_id
-                   FROM public.t_reference_compound
-                  WHERE (t_reference_compound.active > 0)) contentsq ON ((contentsq.container_id = mc.container_id)))
-             LEFT JOIN ( SELECT t_file_attachment.entity_id,
-                    count(t_file_attachment.attachment_id) AS files
-                   FROM public.t_file_attachment
-                  WHERE ((t_file_attachment.entity_type OPERATOR(public.=) 'material_container'::public.citext) AND (t_file_attachment.active > 0) AND (t_file_attachment.entity_id OPERATOR(public.<>) ALL (ARRAY['na'::public.citext, 'Staging'::public.citext, 'Met_Staging'::public.citext, '-80_Staging'::public.citext])))
-                  GROUP BY t_file_attachment.entity_id) tfa ON ((tfa.entity_id OPERATOR(public.=) mc.container)))
-             JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)))
-          GROUP BY mc.container, mc.type, ml.location, mc.comment, c.campaign, mc.created, mc.status, mc.researcher, ml.freezer_tag, tfa.files, mc.container_id) containerq;
+ SELECT mc.container,
+    mc.type,
+    ml.location,
+    public.get_material_container_item_count(mc.container_id) AS items,
+    mc.comment,
+    ml.freezer_tag AS freezer,
+    c.campaign,
+    mc.created,
+    mc.container_id AS id,
+    mc.status,
+    mc.researcher,
+    tfa.files
+   FROM (((public.t_material_containers mc
+     JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)))
+     LEFT JOIN public.t_campaign c ON ((mc.campaign_id = c.campaign_id)))
+     LEFT JOIN ( SELECT fa.entity_id,
+            count(fa.attachment_id) AS files
+           FROM public.t_file_attachment fa
+          WHERE ((fa.entity_type OPERATOR(public.=) 'material_container'::public.citext) AND (fa.active > 0) AND (NOT (fa.entity_id OPERATOR(public.=) ANY (ARRAY['na'::public.citext, 'Staging'::public.citext, 'Met_Staging'::public.citext, '-80_Staging'::public.citext]))))
+          GROUP BY fa.entity_id) tfa ON ((tfa.entity_id OPERATOR(public.=) mc.container)));
 
 
 ALTER VIEW public.v_material_containers_detail_report OWNER TO d3l243;
