@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE public.populate_param_file_mod_info_table(IN _showmo
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          07/09/2024 mem - Replace spaces with underscores in _massModFilterTextColumn
 **
 *****************************************************/
 DECLARE
@@ -78,7 +79,8 @@ BEGIN
     _massModFilterSql := '';
 
     If _massModFilterTextColumn <> '' Then
-        _massModFilterComparison := '%' || _massModFilterTextColumn || '%';
+        -- Replace spaces in _massModFilterTextColumn with underscores
+        _massModFilterComparison := '%' || Replace(_massModFilterTextColumn, ' ', '_') || '%';
     Else
         _massModFilterComparison := '';
     End If;
