@@ -29,7 +29,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_ms_terms(_sourcetable text DEFAULT 'T_Tmp
 **
 **  Auth:   mem
 **  Date:   06/15/2016 mem - Initial Version
-**          05/16/2018 mem - Add columns Parent_term_type and GrandParent_term_type
+**          05/16/2018 mem - Add columns Parent_term_type and Grandparent_term_type
 **          04/03/2022 mem - Ported to PostgreSQL
 **          04/04/2022 mem - Update the merge query to support parent_term_type being null
 **          10/04/2022 mem - Change _infoOnly from integer to boolean
