@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
+-- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
@@ -52,10 +52,10 @@ COPY public.t_analysis_job_processor_group (group_id, group_name, group_descript
 137	Sequest Clusters 1 and 5	Clusters 1 and 5 (disabled 2023-07-31 since processor groups were deprecated in May 2015)	N	2009-01-23 17:54:22	2023-07-31 14:41:18	PNL\\D3L243
 138	Pub-17	Pub-17	N	2009-01-25 21:49:41	2011-03-18 16:39:27	D3L243 (via DMSWebUser)
 139	Sequest Clusters 1, 2, and 5	Clusters 1, 2, and 5	N	2009-02-07 23:06:48	2016-02-15 17:48:04	PNL\\D3L243
+143	Sequest Cluster 1 DTA Testing	\N	N	2009-07-08 11:17:26	2011-03-18 16:42:01	pnl\\D3L243
 140	Sequest Clusters 1, 3, 4, and 5	All except SeqCluster2	N	2009-06-04 15:20:55	2016-02-15 17:48:05	PNL\\D3L243
 141	Sequest Clusters 1, 2, 3, and 4	All except SeqCluster5	N	2009-06-04 15:59:58	2016-02-15 17:48:05	PNL\\D3L243
 142	Decon2LS_V2	Group for Pub boxes running Decon2LS_V2 (supports UIMF files and RAPID processing)	N	2009-06-23 19:56:36	2011-03-18 16:42:00	pnl\\D3L243
-143	Sequest Cluster 1 DTA Testing	\N	N	2009-07-08 11:17:26	2011-03-18 16:42:01	pnl\\D3L243
 144	R610 Pubs 50-59	Dell R610 Pubs 50 through 59	N	2009-11-17 13:44:33	2011-03-18 16:42:01	pnl\\D3L243
 145	Sequest Clusters 3 and 5	Clusters 3 and 5	N	2010-04-05 11:13:48	2016-02-15 17:48:07	PNL\\D3L243
 146	Sequest Clusters 2 and 5	Clusters 2 and 5 (disabled 2023-07-31 since processor groups were deprecated in May 2015)	N	2010-04-20 10:03:45	2023-07-31 14:41:18	PNL\\D3L243

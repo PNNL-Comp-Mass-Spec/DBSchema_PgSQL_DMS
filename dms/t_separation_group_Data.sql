@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
+-- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
@@ -22,6 +22,12 @@ SET row_security = off;
 
 COPY public.t_separation_group (separation_group, comment, active, sample_prep_visible, fraction_count) FROM stdin;
 CE		1	0	0
+Evosep_100_SPD_11min		1	1	0
+Evosep_200_SPD_6min		1	1	0
+Evosep_30_SPD_44min		1	1	0
+Evosep_300_SPD_3min		1	1	0
+Evosep_60_SPD_21min		1	1	0
+Evosep_extended_15_SPD_88min		1	1	0
 Evosep_Whisper_20_SPD_60min		1	1	0
 Evosep_Whisper_40_SPD_30min		1	1	0
 GC		1	1	0
@@ -34,8 +40,10 @@ LC-Acetylome		1	1	0
 LC-Agilent-2D-Intact		1	0	0
 LC-Eksigent		0	0	0
 LC-Formic_100min		0	0	0
+LC-Formic_10Min		1	1	0
 LC-Formic_150min		1	1	0
 LC-Formic_1hr		1	1	0
+LC-Formic_20Min		1	1	0
 LC-Formic_2hr		1	1	0
 LC-Formic_30min		0	0	0
 LC-Formic_3hr		1	1	0

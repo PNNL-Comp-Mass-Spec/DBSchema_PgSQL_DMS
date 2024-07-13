@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
+-- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
@@ -35,8 +35,8 @@ COPY public.t_enzymes (enzyme_id, enzyme_name, description, p1, p1_exception, p2
 19	Trypsin_R	Trypsin, after R only aka ArgC	R-	P	R-	P	Standard	1	11	Tryp_Pig_Bov	\N
 20	Chymotrypsin	Chymotrypsin	FWYL-	na	FWYL-	na	Standard	1	3	HumanContam	\N
 21	ArgC	Endoproteinase ArgC	R-	na	R-	na	Standard	1	17	HumanContam	\N
-22	Do_not_cleave	No cleavage anywhere; used when .Fasta is peptides, not proteins	B	na	B	na	Standard	1	18	HumanContam	\N
 23	LysN	LysN metalloendopeptidase	K-	na	K-	na	Standard	0	19	HumanContam	\N
+22	Do_not_cleave	No cleavage anywhere; used when .Fasta is peptides, not proteins	B	na	B	na	Standard	1	18	HumanContam	\N
 24	Pepsin	Pepsin	FLWY	na	FLWY	na	Standard	1	\N	HumanContam	Promega Pepsin, Cleaves at the C-Terminus of Phe, Leu, Tyr, Trp; https://www.promega.com/products/mass-spectrometry/proteases-and-surfactants/pepsin/?catNum=V1959
 25	Elastase	Elastase	AVSGLI	na	AVSGLI	na	Standard	1	\N	HumanContam	Promega Elastase, Cleaves at C-Terminus of Ala, Val, Ser, Gly, Leu and Ile; https://www.promega.com/products/mass-spectrometry/proteases-and-surfactants/elastase/?catNum=V1891
 26	LysC_plus_Trypsin	LysC and Trypsin; cleave after K or R if not followed by P, or cleave after K	KR-	na	KR-	na	Standard	1	\N	Tryp_Pig_Bov	\N

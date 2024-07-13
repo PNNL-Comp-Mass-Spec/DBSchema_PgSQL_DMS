@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
+-- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
@@ -21,47 +21,8 @@ SET row_security = off;
 --
 
 COPY public.t_maxquant_mods (mod_id, mod_title, mod_position, mass_correction_id, composition, isobaric_mod_ion_number) FROM stdin;
-41	DimethLys0	anywhere	1208	H(4) C(2)	0
-1	Acetyl (K)	notCterm	1120	C(2) H(2) O	0
-2	Acetyl (Protein N-term)	proteinNterm	1120	C(2) H(2) O	0
-3	Carbamidomethyl (C)	anywhere	1014	H(3) C(2) N O	0
-4	Oxidation (M)	anywhere	1115	O	0
-5	Phospho (STY)	anywhere	1010	H O(3) P	0
-6	GlyGly (K)	anywhere	1021	H(6) C(4) N(2) O(2)	0
-7	Methyl (KR)	anywhere	1032	H(2) C	0
-8	Dimethyl (KR)	anywhere	1208	H(4) C(2)	0
-9	Trimethyl (K)	anywhere	1188	H(6) C(3)	0
-10	Pro5	anywhere	\N	Cx(5) C(-5)	0
-11	Pro6	anywhere	\N	Cx(5) Nx C(-5) N(-1)	0
-12	Glu->pyro-Glu	anyNterm	1121	H(-2) O(-1)	0
-13	Gln->pyro-Glu	anyNterm	1169	H(-3) N(-1)	0
-14	QQTGG (K)	notCterm	\N	H(29) C(18) N(7) O(8)	0
-15	Deamidation (N)	anywhere	1127	H(-1) N(-1) O	0
-16	Deamidation 18O (N)	anywhere	\N	H(-1) N(-1) Ox	0
-17	Deamidation (NQ)	anywhere	1127	H(-1) N(-1) O	0
-18	Hydroxyproline	anywhere	1115	O	0
-19	Carbamyl (N-term)	anyNterm	1037	H C N O	0
-20	Delta:H(2)C(2) (N-term)	anyNterm	\N	C(2) H(2)	0
-21	Dioxidation (MW)	anywhere	1064	O(2)	0
-22	Trioxidation (C)	anywhere	1008	O(3)	0
-23	Dethiomethyl (M)	anywhere	1161	H(-4) C(-1) S(-1)	0
-24	Cation:Na (DE)	anywhere	\N	H(-1) Na	0
-25	Methyl (E)	anywhere	1032	H(2) C	0
-26	Dehydrated (ST)	anywhere	1121	H(-2) O(-1)	0
-27	Oxidation (P)	anywhere	1115	O	0
-28	Dimethyl (K)	anywhere	1208	H(4) C(2)	0
-29	Amidated (Protein C-term)	proteinCterm	1243	H N O(-1)	0
-30	Sulfo (STY)	anywhere	1220	S	0
-31	Acetyl (N-term)	anyNterm	1120	C(2) H(2) O	0
-32	Amidated (C-term)	anyCterm	1243	H N O(-1)	0
-33	Sulfation (Y)	anywhere	\N	S O(3)	0
-34	Phospho (ST)	anywhere	1010	H O(3) P	0
-35	Cys-Cys	anywhere	1272	H(-1)	0
-36	Arg6	anywhere	\N	Cx(6) C(-6)	0
-37	Arg10	anywhere	1165	Cx(6) Nx(4) C(-6) N(-4)	0
-38	Lys4	anywhere	\N	Hx(4) H(-4)	0
-39	Lys6	anywhere	\N	Cx(6) C(-6)	0
 40	Lys8	anywhere	1164	Cx(6) Nx(2) C(-6) N(-2)	0
+41	DimethLys0	anywhere	1208	H(4) C(2)	0
 42	DimethNter0	anyNterm	1208	H(4) C(2)	0
 43	DimethLys4	anywhere	\N	Hx(4) C(2)	0
 44	DimethNter4	anyNterm	\N	Hx(4) C(2)	0
@@ -150,7 +111,6 @@ COPY public.t_maxquant_mods (mod_id, mod_title, mod_position, mass_correction_id
 127	TMT6plex-Lys130	anywhere	1267	H(20) C(8) Cx(4) N O(2) Nx	5
 128	TMT6plex-Lys131	anywhere	1267	H(20) C(8) Cx(4) N O(2) Nx	6
 129	TMT8plex-Lys126C	anywhere	1267	H(20) C(8) Cx(4) N O(2) Nx	1
-233	Cys->Asn	anywhere	\N	S(-1) H C N O	0
 130	TMT8plex-Lys127N	anywhere	1267	H(20) C(8) Cx(4) N O(2) Nx	2
 131	TMT8plex-Lys127C	anywhere	1267	H(20) C(8) Cx(4) N O(2) Nx	3
 132	TMT8plex-Lys128C	anywhere	1267	H(20) C(8) Cx(4) N O(2) Nx	4
@@ -254,6 +214,7 @@ COPY public.t_maxquant_mods (mod_id, mod_title, mod_position, mass_correction_id
 230	Asp->Xle	anywhere	\N	O(-2) H(6) C(2)	0
 231	Cys->Ala	anywhere	\N	S(-1)	0
 232	Cys->Arg	anywhere	\N	S(-1) H(7) C(3) N(3)	0
+233	Cys->Asn	anywhere	\N	S(-1) H C N O	0
 234	Cys->Asp	anywhere	\N	S(-1) C O(2)	0
 235	Cys->Gln	anywhere	\N	S(-1) H(3) C(2) N O	0
 236	Cys->Glu	anywhere	\N	S(-1) H(2) C(2) O(2)	0
@@ -586,6 +547,45 @@ COPY public.t_maxquant_mods (mod_id, mod_title, mod_position, mass_correction_id
 563	TMTpro16plex-Nter132C	anyNterm	1509	H(25) C(8) Cx(7) N O(3) Nx(2)	13
 564	TMTpro16plex-Nter133N	anyNterm	1509	H(25) C(8) Cx(7) N O(3) Nx(2)	14
 565	TMTpro16plex-Nter133C	anyNterm	1509	H(25) C(8) Cx(7) N O(3) Nx(2)	15
+1	Acetyl (K)	notCterm	1120	C(2) H(2) O	0
+2	Acetyl (Protein N-term)	proteinNterm	1120	C(2) H(2) O	0
+3	Carbamidomethyl (C)	anywhere	1014	H(3) C(2) N O	0
+4	Oxidation (M)	anywhere	1115	O	0
+5	Phospho (STY)	anywhere	1010	H O(3) P	0
+6	GlyGly (K)	anywhere	1021	H(6) C(4) N(2) O(2)	0
+7	Methyl (KR)	anywhere	1032	H(2) C	0
+8	Dimethyl (KR)	anywhere	1208	H(4) C(2)	0
+9	Trimethyl (K)	anywhere	1188	H(6) C(3)	0
+10	Pro5	anywhere	\N	Cx(5) C(-5)	0
+11	Pro6	anywhere	\N	Cx(5) Nx C(-5) N(-1)	0
+12	Glu->pyro-Glu	anyNterm	1121	H(-2) O(-1)	0
+13	Gln->pyro-Glu	anyNterm	1169	H(-3) N(-1)	0
+14	QQTGG (K)	notCterm	\N	H(29) C(18) N(7) O(8)	0
+15	Deamidation (N)	anywhere	1127	H(-1) N(-1) O	0
+16	Deamidation 18O (N)	anywhere	\N	H(-1) N(-1) Ox	0
+17	Deamidation (NQ)	anywhere	1127	H(-1) N(-1) O	0
+18	Hydroxyproline	anywhere	1115	O	0
+19	Carbamyl (N-term)	anyNterm	1037	H C N O	0
+20	Delta:H(2)C(2) (N-term)	anyNterm	\N	C(2) H(2)	0
+21	Dioxidation (MW)	anywhere	1064	O(2)	0
+22	Trioxidation (C)	anywhere	1008	O(3)	0
+23	Dethiomethyl (M)	anywhere	1161	H(-4) C(-1) S(-1)	0
+24	Cation:Na (DE)	anywhere	\N	H(-1) Na	0
+25	Methyl (E)	anywhere	1032	H(2) C	0
+26	Dehydrated (ST)	anywhere	1121	H(-2) O(-1)	0
+27	Oxidation (P)	anywhere	1115	O	0
+28	Dimethyl (K)	anywhere	1208	H(4) C(2)	0
+29	Amidated (Protein C-term)	proteinCterm	1243	H N O(-1)	0
+30	Sulfo (STY)	anywhere	1220	S	0
+31	Acetyl (N-term)	anyNterm	1120	C(2) H(2) O	0
+32	Amidated (C-term)	anyCterm	1243	H N O(-1)	0
+33	Sulfation (Y)	anywhere	\N	S O(3)	0
+34	Phospho (ST)	anywhere	1010	H O(3) P	0
+35	Cys-Cys	anywhere	1272	H(-1)	0
+36	Arg6	anywhere	\N	Cx(6) C(-6)	0
+37	Arg10	anywhere	1165	Cx(6) Nx(4) C(-6) N(-4)	0
+38	Lys4	anywhere	\N	Hx(4) H(-4)	0
+39	Lys6	anywhere	\N	Cx(6) C(-6)	0
 566	TMTpro16plex-Nter134N	anyNterm	1509	H(25) C(8) Cx(7) N O(3) Nx(2)	16
 567	TMTpro16plex-Lys126C	anywhere	1509	H(25) C(8) Cx(7) N O(3) Nx(2)	1
 568	TMTpro16plex-Lys127N	anywhere	1509	H(25) C(8) Cx(7) N O(3) Nx(2)	2

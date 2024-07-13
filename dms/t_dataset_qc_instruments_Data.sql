@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
+-- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
@@ -24,6 +24,7 @@ COPY public.t_dataset_qc_instruments (instrument, instrument_id, last_updated) F
 21T_Agilent	106	2015-11-04 16:46:10
 AMOLF_VOrbiETD01	102	2015-11-04 16:46:10
 Ascend01	192	2023-04-24 09:37:48
+Astral01	254	2024-05-31 17:37:49
 Broad_Exploris01	184	2021-10-22 13:37:49
 Broad_QEHFX01	168	2019-11-21 21:37:48
 Broad_QExactP01	148	2017-12-06 17:37:48

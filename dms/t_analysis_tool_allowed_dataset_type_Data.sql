@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
+-- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
@@ -22,78 +22,6 @@ SET row_security = off;
 
 COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type, comment) FROM stdin;
 2	MS	
-1	DIA-HMS-HCD-HMSn	
-1	HMS-CID/ETD-HMSn	
-1	HMS-CID/ETD-MSn	
-1	HMS-ETciD-EThcD-HMSn	
-1	HMS-ETciD-EThcD-MSn	
-1	HMS-ETciD-HMSn	
-1	HMS-ETciD-MSn	
-1	HMS-ETD-HMSn	
-1	HMS-ETD-MSn	
-1	HMS-EThcD-HMSn	
-1	HMS-EThcD-MSn	
-1	HMS-HCD-CID-HMSn	
-1	HMS-HCD-CID-MSn	
-1	HMS-HCD-CID/ETD-HMSn	
-1	HMS-HCD-CID/ETD-MSn	
-1	HMS-HCD-ETD-HMSn	
-1	HMS-HCD-ETD-MSn	
-1	HMS-HCD-HMSn	
-1	HMS-HCD-MSn	
-1	HMS-HMSn	
-1	HMS-MSn	
-1	HMS-PQD-CID/ETD-MSn	
-1	HMS-PQD-ETD-MSn	
-1	MS-CID/ETD-MSn	
-1	MS-ETD-MSn	
-1	MS-MSn	
-2	DIA-HMS-HCD-HMSn	
-2	HMS	
-2	HMS-CID/ETD-HMSn	
-2	HMS-CID/ETD-MSn	
-2	HMS-ETD-HMSn	
-2	HMS-ETD-MSn	
-2	HMS-HCD-CID-HMSn	
-2	HMS-HCD-CID-MSn	
-2	HMS-HCD-CID/ETD-HMSn	
-2	HMS-HCD-CID/ETD-MSn	
-2	HMS-HCD-ETD-HMSn	
-2	HMS-HCD-ETD-MSn	
-2	HMS-HCD-HMSn	
-2	HMS-HCD-MSn	
-2	HMS-HMSn	
-2	HMS-MSn	
-2	HMS-PQD-CID/ETD-MSn	
-2	HMS-PQD-ETD-MSn	
-2	MS-CID/ETD-MSn	
-2	MS-ETD-MSn	
-2	MS-MSn	
-3	DIA-HMS-HCD-HMSn	
-3	HMS-ETD-HMSn	
-3	HMS-ETD-MSn	
-3	HMS-HCD-CID-HMSn	
-3	HMS-HCD-CID-MSn	
-3	HMS-HCD-CID/ETD-HMSn	
-3	HMS-HCD-CID/ETD-MSn	
-3	HMS-HCD-ETD-HMSn	
-3	HMS-HCD-ETD-MSn	
-3	HMS-HCD-HMSn	
-3	HMS-HCD-MSn	
-3	HMS-HMSn	
-3	HMS-MSn	
-3	HMS-PQD-CID/ETD-MSn	
-3	HMS-PQD-ETD-MSn	
-3	MS-CID/ETD-MSn	
-3	MS-ETD-MSn	
-3	MS-MSn	
-4	DIA-HMS-HCD-HMSn	
-4	HMS	
-4	HMS-ETD-HMSn	
-4	HMS-ETD-MSn	
-4	HMS-HCD-CID-HMSn	
-4	HMS-HCD-CID-MSn	
-90	HMS-CID/ETD-MSn	
 4	HMS-HCD-CID/ETD-HMSn	
 4	HMS-HCD-CID/ETD-MSn	
 4	HMS-HCD-ETD-HMSn	
@@ -104,7 +32,6 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 4	HMS-MSn	
 4	HMS-PQD-CID/ETD-MSn	
 4	HMS-PQD-ETD-MSn	
-4	MS	
 4	MS-CID/ETD-MSn	
 4	MS-ETD-MSn	
 4	MS-MSn	
@@ -670,7 +597,6 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 33	IMS-HMS	
 33	IMS-HMS-HMSn	
 33	IMS-HMS-MSn	
-33	MS	
 33	MS-CID/ETD-MSn	
 33	MS-ETD-MSn	
 33	MS-MSn	
@@ -731,7 +657,6 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 36	HMS-HCD-HMSn	Must be centroided HMSn spectra
 36	HMS-HCD-MSn	
 36	HMS-HMSn	Must be centroided HMSn spectra
-36	HMS-MSn	
 36	HMS-PQD-CID/ETD-MSn	
 36	HMS-PQD-ETD-MSn	
 36	IMS-HMS-HMSn	
@@ -1019,7 +944,6 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 66	HMS-HMSn	
 66	HMS-MSn	
 67	DIA-HMS-HCD-HMSn	
-73	MS-MSn	
 67	HMS-CID/ETD-HMSn	Must be centroided HMSn spectra
 67	HMS-CID/ETD-MSn	
 67	HMS-ETciD-EThcD-HMSn	
@@ -1165,6 +1089,7 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 73	HMS-PQD-ETD-MSn	
 73	MS-CID/ETD-MSn	
 73	MS-ETD-MSn	
+73	MS-MSn	
 74	DIA-HMS-HCD-HMSn	
 74	HMS-CID/ETD-HMSn	
 74	HMS-CID/ETD-MSn	
@@ -1216,7 +1141,6 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 75	HMS-PQD-CID/ETD-MSn	
 75	HMS-PQD-ETD-MSn	
 75	MRM	
-75	MS	
 75	MS-CID/ETD-MSn	
 75	MS-ETD-MSn	
 75	MS-MSn	
@@ -1453,6 +1377,82 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 92	HMS-EThcD-HMSn	
 92	HMS-EThcD-MSn	
 92	HMS-HCD-CID-HMSn	
+1	DIA-HMS-HCD-HMSn	
+1	HMS-CID/ETD-HMSn	
+1	HMS-CID/ETD-MSn	
+1	HMS-ETciD-EThcD-HMSn	
+1	HMS-ETciD-EThcD-MSn	
+1	HMS-ETciD-HMSn	
+1	HMS-ETciD-MSn	
+1	HMS-ETD-HMSn	
+1	HMS-ETD-MSn	
+1	HMS-EThcD-HMSn	
+1	HMS-EThcD-MSn	
+1	HMS-HCD-CID-HMSn	
+1	HMS-HCD-CID-MSn	
+1	HMS-HCD-CID/ETD-HMSn	
+1	HMS-HCD-CID/ETD-MSn	
+1	HMS-HCD-ETD-HMSn	
+1	HMS-HCD-ETD-MSn	
+1	HMS-HCD-HMSn	
+1	HMS-HCD-MSn	
+1	HMS-HMSn	
+1	HMS-MSn	
+1	HMS-PQD-CID/ETD-MSn	
+1	HMS-PQD-ETD-MSn	
+1	MS-CID/ETD-MSn	
+1	MS-ETD-MSn	
+1	MS-MSn	
+2	DIA-HMS-HCD-HMSn	
+2	HMS	
+2	HMS-CID/ETD-HMSn	
+2	HMS-CID/ETD-MSn	
+2	HMS-ETD-HMSn	
+2	HMS-ETD-MSn	
+2	HMS-HCD-CID-HMSn	
+2	HMS-HCD-CID-MSn	
+2	HMS-HCD-CID/ETD-HMSn	
+2	HMS-HCD-CID/ETD-MSn	
+2	HMS-HCD-ETD-HMSn	
+2	HMS-HCD-ETD-MSn	
+2	HMS-HCD-HMSn	
+2	HMS-HCD-MSn	
+2	HMS-HMSn	
+2	HMS-MSn	
+2	HMS-PQD-CID/ETD-MSn	
+2	HMS-PQD-ETD-MSn	
+2	MS-CID/ETD-MSn	
+2	MS-ETD-MSn	
+2	MS-MSn	
+3	DIA-HMS-HCD-HMSn	
+3	HMS-ETD-HMSn	
+3	HMS-ETD-MSn	
+3	HMS-HCD-CID-HMSn	
+3	HMS-HCD-CID-MSn	
+3	HMS-HCD-CID/ETD-HMSn	
+3	HMS-HCD-CID/ETD-MSn	
+3	HMS-HCD-ETD-HMSn	
+3	HMS-HCD-ETD-MSn	
+3	HMS-HCD-HMSn	
+3	HMS-HCD-MSn	
+3	HMS-HMSn	
+3	HMS-MSn	
+3	HMS-PQD-CID/ETD-MSn	
+3	HMS-PQD-ETD-MSn	
+3	MS-CID/ETD-MSn	
+3	MS-ETD-MSn	
+3	MS-MSn	
+4	DIA-HMS-HCD-HMSn	
+4	HMS	
+4	HMS-ETD-HMSn	
+4	HMS-ETD-MSn	
+4	HMS-HCD-CID-HMSn	
+4	HMS-HCD-CID-MSn	
+90	HMS-CID/ETD-MSn	
+4	MS	
+33	MS	
+36	HMS-MSn	
+75	MS	
 92	HMS-HCD-CID-MSn	
 92	HMS-HCD-CID/ETD-HMSn	
 92	HMS-HCD-CID/ETD-MSn	
