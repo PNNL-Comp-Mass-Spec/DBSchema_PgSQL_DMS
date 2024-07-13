@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE public.update_instrument_group_allowed_dataset_type(
 **          03/01/2024 mem - Ported to PostgreSQL
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          07/12/2024 mem - Capitalize instrument group name
 **
 *****************************************************/
 DECLARE
@@ -104,8 +105,13 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Make sure _datasetType is properly capitalized
+        -- Assure that_instrumentGroup and _datasetType are properly capitalized
         ---------------------------------------------------
+
+        SELECT instrument_group
+        INTO _instrumentGroup
+        FROM t_instrument_group
+        WHERE instrument_group = _instrumentGroup::citext;
 
         SELECT dataset_type
         INTO _datasetType
