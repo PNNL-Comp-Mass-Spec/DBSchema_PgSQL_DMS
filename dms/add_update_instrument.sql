@@ -65,6 +65,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_instrument(IN _instrumentid intege
 **          01/11/2024 mem - Show a custom message when _mode is 'update' but _instrumentID is null
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          07/12/2024 mem - If _percentEMSLOwned is an empty string, treat it as 0%
 **
 *****************************************************/
 DECLARE
@@ -130,7 +131,7 @@ BEGIN
         _description         := Trim(Coalesce(_description, ''));
         _usage               := Trim(Coalesce(_usage, ''));
         _mode                := Trim(Lower(Coalesce(_mode, '')));
-        _percentEMSLOwnedVal := public.try_cast(_percentEMSLOwned, null::int);
+        _percentEMSLOwnedVal := Round(public.try_cast(_percentEMSLOwned, 0.0::numeric))::int;
 
         If _percentEMSLOwnedVal Is Null Or _percentEMSLOwnedVal < 0 Or _percentEMSLOwnedVal > 100 Then
             RAISE EXCEPTION 'Percent EMSL Owned should be a number between 0 and 100' USING ERRCODE = 'U5201';

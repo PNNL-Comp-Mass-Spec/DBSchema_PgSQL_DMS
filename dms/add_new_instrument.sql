@@ -65,6 +65,7 @@ CREATE OR REPLACE PROCEDURE public.add_new_instrument(IN _instrumentname text, I
 **          09/01/2023 mem - Expand _instrumentName to varchar(64), _description to varchar(1024), and _usage to varchar(128)
 **          10/05/2023 mem - Archive path is now agate.emsl.pnl.gov
 **                         - Ported to PostgreSQL
+**          07/12/2024 mem - If _percentEMSLOwned is an empty string, treat it as 0%
 **
 *****************************************************/
 DECLARE
@@ -117,7 +118,7 @@ BEGIN
     _usage                 := Trim(Coalesce(_usage, ''));
     _autoDefineStoragePath := Trim(Coalesce(_autoDefineStoragePath, 'No'));
 
-    _percentEMSLOwnedVal := Round(public.try_cast(_percentEMSLOwned, null::numeric))::int;
+    _percentEMSLOwnedVal := Round(public.try_cast(_percentEMSLOwned, 0.0::numeric))::int;
 
     If _percentEMSLOwnedVal Is Null Or _percentEMSLOwnedVal < 0 Or _percentEMSLOwnedVal > 100 Then
         RAISE EXCEPTION 'Percent EMSL Owned should be a number between 0 and 100';
