@@ -46,7 +46,7 @@ COPY public.t_sp_authorization (entry_id, procedure_name, login_name, host_name,
 -- Name: t_sp_authorization_entry_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_sp_authorization_entry_id_seq', 29, true);
+SELECT pg_catalog.setval('public.t_sp_authorization_entry_id_seq', 28, true);
 
 
 --

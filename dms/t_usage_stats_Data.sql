@@ -66,7 +66,6 @@ update_dataset_dispositions_by_name	2024-07-08 10:19:15	511
 update_dataset_file_info_xml	2024-07-09 14:20:32	137864
 update_eus_info_from_eus_imports	2024-01-02 18:50:13	1
 update_eus_users_from_eus_imports	2024-07-12 06:15:40.530638	508
-update_instrument_group_allowed_dataset_type	2024-05-15 17:24:53	61
 update_eus_instruments_from_eus_imports	2024-07-12 06:16:14.493713	506
 update_notification_user_registration	2024-04-03 08:00:11	1
 update_organism_list_for_biomaterial	2024-03-12 22:27:22	422
@@ -102,6 +101,7 @@ UpdateRequestedRunAdmin	2023-02-22 10:42:51	1749
 UpdateRequestedRunAssignments	2023-02-24 16:35:23	11234
 UpdateRequestedRunBatchParameters	2023-02-26 12:57:42	6051
 UpdateRequestedRunBlockingAndFactors	2023-02-26 12:57:42	7354
+update_instrument_group_allowed_dataset_type	2024-07-12 19:46:05.212851	73
 \.
 
 

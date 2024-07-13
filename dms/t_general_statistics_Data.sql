@@ -23,9 +23,9 @@ SET row_security = off;
 COPY public.t_general_statistics (entry_id, category, label, value, last_affected) FROM stdin;
 1001	Job_Count	Last 7 days	3.000	2024-07-11 17:03:19.002976
 1011	Dataset_Count	Last 7 days	0.000	2024-07-11 17:03:19.002976
-1002	Job_Count	Last 30 days	12248.000	2024-07-12 17:03:20.275117
-1012	Dataset_Count	Last 30 days	10040.000	2024-07-12 17:03:20.275117
-1015	Experiment_Count	Last 30 days	2060.000	2024-07-12 17:03:20.275117
+1002	Job_Count	Last 30 days	12213.000	2024-07-12 20:03:20.413801
+1012	Dataset_Count	Last 30 days	10020.000	2024-07-12 20:03:20.413801
+1015	Experiment_Count	Last 30 days	2059.000	2024-07-12 20:03:20.413801
 1017	Organism_Count	Last 7 days	0.000	2024-07-10 20:03:18.239403
 1021	RawDataTB	Last 30 days	8	2024-07-10 23:03:18.376873
 1000	Job_Count	All	2280907.000	2024-07-11 05:03:18.595914

@@ -21,14 +21,14 @@ SET row_security = off;
 --
 
 COPY public.t_instrument_group_allowed_ds_type (instrument_group, dataset_type, comment, dataset_usage_count, dataset_usage_last_year) FROM stdin;
-Lumos	HMS-HCD-MSn		8291	1972
-QExactive	HMS-HCD-HMSn		120011	22705
-Lumos	HMS-HCD-HMSn		28850	2471
+Lumos	HMS-HCD-MSn		8291	1971
 QExactive	DIA-HMS-HCD-HMSn		620	184
-QEHFX	HMS-HCD-HMSn		33561	5801
-Exploris	HMS-HCD-HMSn		7426	6874
+QExactive	HMS-HCD-HMSn		120011	22694
+Lumos	HMS-HCD-HMSn		28850	2470
 Eclipse	HMS-HCD-HMSn		11038	2859
-Eclipse	HMS-HCD-MSn		3254	1007
+QEHFX	HMS-HCD-HMSn		33561	5796
+Exploris	HMS-HCD-HMSn		7426	6873
+Eclipse	HMS-HCD-MSn		3254	1006
 21T	DIA-HMS-HCD-HMSn		67	58
 Ascend	DIA-HMS-HCD-HMSn		416	395
 Ascend	HMS-HCD-CID-HMSn		0	0
@@ -68,7 +68,6 @@ Astral	HMS-HCD-CID/ETD-HMSn		0	0
 Astral	HMS-HCD-CID/ETD-MSn		0	0
 Astral	HMS-HCD-ETD-HMSn		0	0
 Astral	HMS-HCD-ETD-MSn		0	0
-Astral	HMS-HCD-HMSn		110	110
 Astral	HMS-HCD-MSn		0	0
 Astral	HMS-HMSn		0	0
 Astral	HMS-MSn		0	0
@@ -322,8 +321,9 @@ VelosOrbi	HMS-PQD-CID/ETD-MSn		35	0
 VelosOrbi	HMS-PQD-ETD-MSn		0	0
 Agilent_QQQ	HMS		2650	42
 Agilent_GC-MS	GC-MS		50764	2688
-Ascend	HMS-HCD-HMSn		1653	1301
 TSQ	MRM	Use for MRM	146592	8965
+Ascend	HMS-HCD-HMSn		1653	1300
+Astral	HMS-HCD-HMSn		110	110
 Ascend_Frac	HMS-ETciD-MSn		0	0
 Ascend_Frac	HMS-ETD-HMSn		0	0
 Ascend_Frac	HMS-ETD-MSn		0	0
