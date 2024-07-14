@@ -56,6 +56,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_interval_for_multiple_instrume
 **          04/30/2024 mem - Only call update_emsl_instrument_usage_report if the instrument is an "EUS Primary Instrument" or if T_Instrument_Name has the Tracking flag enabled
 **          05/01/2024 mem - Ignore case when filtering on instrument name
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          07/13/2024 mem - Fix variable name typo
 **
 *****************************************************/
 DECLARE
@@ -427,7 +428,7 @@ BEGIN
                     End If;
 
                     If _returnCode <> '' And Not _infoOnly Then
-                        RAISE EXCEPTION '%', _msg;
+                        RAISE EXCEPTION '%', _message;
                     End If;
 
                 End If;
