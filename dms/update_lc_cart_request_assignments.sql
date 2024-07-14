@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE public.update_lc_cart_request_assignments(IN _cartas
 **          03/05/2024 mem - Ported to PostgreSQL
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          07/13/2024 mem - Include cart assignment XML in warning messages
 **
 *****************************************************/
 DECLARE
@@ -108,7 +109,7 @@ BEGIN
         _xml := public.try_cast('<root>' || _cartAssignmentList || '</root>', null::xml);
 
         If _xml Is Null Then
-            _message := 'Cart assignment list is not valid XML';
+            _message := format('Cart assignment list is not valid XML: "%s"', Substring(_cartAssignmentList, 1, 255));
             RAISE EXCEPTION '%', _message;
         End If;
 
@@ -155,7 +156,7 @@ BEGIN
         GET DIAGNOSTICS _requestCountInXML = ROW_COUNT;
 
         If _requestCountInXML = 0 Then
-            _message := 'No requested runs were found in the XML';
+            _message := format('No requested runs were found in the XML: "%s"', Substring(_cartAssignmentList, 1, 255));
 
             RAISE WARNING '%', _message;
             _returnCode := 'U5201';
