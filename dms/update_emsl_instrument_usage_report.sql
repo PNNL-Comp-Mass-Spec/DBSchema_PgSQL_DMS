@@ -64,6 +64,7 @@ CREATE OR REPLACE PROCEDURE public.update_emsl_instrument_usage_report(IN _instr
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          07/14/2024 mem - Skip calling update_emsl_instrument_acq_overlap_data() when instrument name is blank
 **
 *****************************************************/
 DECLARE
@@ -1476,7 +1477,12 @@ BEGIN
 
                 RAISE INFO '%', _infoData;
             END LOOP;
+        End If;
 
+        If _instrument = '' Then
+            DROP TABLE Tmp_DebugReports;
+            DROP TABLE Tmp_Staging;
+            RETURN;
         End If;
 
         ---------------------------------------------------
