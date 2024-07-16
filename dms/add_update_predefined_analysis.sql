@@ -88,6 +88,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_predefined_analysis(IN _level inte
 **          01/11/2024 mem - Show a custom message when _mode is 'update' but _id is null
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          07/15/2024 mem - Fix invalid call to function get_analysis_tool_allowed_dataset_type_list()
 **
 *****************************************************/
 DECLARE
@@ -373,11 +374,9 @@ BEGIN
                 Then
                     -- Example criteria that will result in this message: Instrument Criteria=Agilent_TOF%, Tool=AgilentSequest
 
-                    _allowedDatasetTypes := public.get_instrument_dataset_type_list(_instrument.InstrumentID);
+                    _allowedDatasetTypes   := public.get_instrument_dataset_type_list(_instrument.InstrumentID);
 
-                    SELECT AllowedDatasetTypes
-                    INTO _allowedDSTypesForTool
-                    FROM public.get_analysis_tool_allowed_dataset_type_list(_analysisToolID);
+                    _allowedDSTypesForTool := public.get_analysis_tool_allowed_dataset_type_list(_analysisToolID);
 
                     _msg := format('Criteria matched instrument "%s" with allowed dataset types of "%s"; however, analysis tool %s allows these dataset types: "%s"',
                                    _instrument.InstrumentName, _allowedDatasetTypes, _analysisToolName, _allowedDSTypesForTool);
