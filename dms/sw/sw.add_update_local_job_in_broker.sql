@@ -90,6 +90,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_local_job_in_broker(INOUT _job integer
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - Do not update job parameters if _mode is 'update' or 'reset' and _jobParam is null or empty
 **                         - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          07/15/2024 mem - Skip logging certain validation errors
 **
 *****************************************************/
 DECLARE
@@ -110,6 +111,7 @@ DECLARE
     _logEntryID int;
     _alterEnteredByMessage text;
 
+    _logErrors boolean := true;
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -190,10 +192,12 @@ BEGIN
         WHERE job = _job;
 
         If _mode = 'update' And Not FOUND Then
+            _logErrors := false;
             RAISE EXCEPTION 'Cannot update: job % does not exist', _job;
         End If;
 
         If _mode = 'update' And _datasetName::citext <> 'Aggregation' Then
+            _logErrors := false;
             RAISE EXCEPTION 'Currently only aggregation jobs can be updated; cannot update %', _job;
         End If;
 
@@ -235,6 +239,7 @@ BEGIN
                 _message := format('%s: %s', _message, _msg);
                 RAISE INFO '%', _message;
 
+                _logErrors := false;
                 RAISE EXCEPTION '%', _message;
             End If;
         End If;
@@ -260,14 +265,15 @@ BEGIN
 
 
             If _returnCode <> '' Then
+                _logErrors := false;
                 RAISE EXCEPTION '%', _msg;
             End If;
         End If;
 
         ---------------------------------------------------
-        -- Update mode
-        -- restricted to certain job states and limited to certain fields
-        -- force reset of job?
+        -- Update mode: restricted to certain job states and limited to certain fields
+        --
+        -- Force reset of job?
         ---------------------------------------------------
 
         If _mode = 'update' Then
@@ -448,9 +454,9 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => '', _logError => true);
+                        _callingProcLocation => '', _logError => _logErrors);
 
-        If char_length(Coalesce(_callingUser, '')) > 0 Then
+        If char_length(Coalesce(_callingUser, '')) > 0 And _logErrors Then
 
             SELECT MAX(entry_id)
             INTO _logEntryID
