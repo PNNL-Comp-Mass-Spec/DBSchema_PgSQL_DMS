@@ -39,7 +39,6 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 21	15	10	Sleep 46 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 23	16	10	Sleep 39 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 24	16	20	Auto update job priorities	SQL	CALL auto_update_job_priorities (_infoOnly => false);	\N	\N	f	t	0
-25	17	10	Auto update QC_Shew dataset rating	SQL	CALL auto_update_dataset_rating_via_qc_metrics (\r\n   _campaignName => 'QC-Shew-Standard', \r\n   _experimentExclusion => '%Intact%',\r\n   _datasetCreatedMinimum => '2012-10-01', \r\n   _infoOnly => false);	\N	\N	f	t	0
 26	21	10	Sleep 40 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 27	21	20	Backfill pipeline jobs	SQL	CALL backfill_pipeline_jobs (_infoOnly => false);	\N	\N	f	t	0
 28	22	10	Sleep 38 seconds	BUILTIN	Sleep	\N	\N	f	f	0
@@ -66,6 +65,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 57	33	20	Disable chain 33	SQL	CALL disable_timetable_chain (_chainID => 33);	\N	\N	f	t	0
 55	32	20	Disable chain 32	SQL	CALL disable_timetable_chain (_chainID => 32);	\N	\N	f	t	0
 63	35	20	Disable chain 35	SQL	CALL disable_timetable_chain (_chainID => 35);	\N	\N	f	t	0
+25	17	10	Auto update QC_Shew dataset rating	SQL	CALL auto_update_dataset_rating_via_qc_metrics\r\n    _campaignName => 'QC-Shew-Standard', \r\n    _experimentExclusion => '%Intact%',\r\n    _datasetCreatedMinimum => '2012-10-01', \r\n    _infoOnly => false);	\N	\N	f	t	0
 48	28	10	Clear data package manager errors	SQL	DELETE FROM dpkg.T_Log_Entries\r\nWHERE (message LIKE '%has an existing metadata file between 2 and 6.5 days old%' OR\r\n   message LIKE '%has not been validated in the archive after 5 days; %' OR\r\n   message LIKE '%is not available in MyEMSL after 24 hours; see %' OR\r\n   message LIKE '%was previously uploaded to MyEMSL, yet Simple Search did not return any files for this dataset%Skipping this data package %')\r\n    AND (type = 'error');	\N	\N	f	t	0
 65	36	20	Disable chain 36	SQL	CALL disable_timetable_chain (_chainID => 36);	\N	\N	f	t	0
 51	30	10	Delete old historic DMS DB logs	SQL	CALL logdms.delete_old_events_and_historic_logs (_infoOnly => false);	\N	\N	f	t	0
@@ -160,7 +160,6 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 132	71	10	Update dataset interval for multiple instruments	SQL	CALL update_dataset_interval_for_multiple_instruments (\r\n           _daysToProcess => 60,\r\n           _updateEMSLInstrumentUsage => false);	\N	\N	f	t	0
 127	68	10	Sleep 42 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 143	76	20	Update experiment usage	SQL	CALL update_experiment_usage (_infoOnly => false);	\N	\N	f	t	0
-144	77	10	Update job step processing stats	SQL	CALL update_job_step_processing_stats (_infoOnly => false);	\N	\N	f	t	0
 145	78	10	Update missed DMS file info	SQL	CALL cap.update_missed_dms_file_info (\r\n                 _deleteFromTableOnSuccess => true,\r\n                 _replaceExistingData => false,\r\n                 _infoOnly => false);	\N	\N	f	t	0
 100	54	10	Sleep 40 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 121	64	20	Update cached secondary sep usage	SQL	CALL update_cached_secondary_sep_usage ();	\N	\N	f	t	0
@@ -190,6 +189,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 157	85	20	Update tissue usage	SQL	CALL ont.update_bto_usage_proc (_infoOnly => false);	\N	\N	f	t	0
 68	38	10	Sleep 5 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 64	36	10	Enable archive-dependent CTM step tools	SQL	SELECT * FROM cap.enable_disable_archive_step_tools (_enable => true, _disableComment => 'Disabled for scheduled archive maintenance');	\N	\N	f	t	0
+144	77	10	Update job step processing stats	SQL	CALL sw.update_job_step_processing_stats (_infoOnly => false);	\N	\N	f	t	0
 128	68	20	Update charge codes from warehouse	SQL	CALL update_charge_codes_from_warehouse (_infoOnly => false);	\N	\N	f	t	0
 129	69	10	Update data package EUS info	SQL	CALL dpkg.update_data_package_eus_info ('0');	\N	\N	f	t	0
 130	70	10	Sleep 10 seconds	BUILTIN	Sleep	\N	\N	f	f	0
