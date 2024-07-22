@@ -4,8 +4,8 @@
 
 CREATE TABLE pc.t_protein_collection_states (
     collection_state_id smallint NOT NULL,
-    state public.citext,
-    description public.citext
+    state public.citext NOT NULL,
+    description public.citext NOT NULL
 );
 
 
