@@ -9,6 +9,7 @@ CREATE VIEW pc.v_protein_collections_by_organism AS
     pc.source,
     pc.collection_state_id,
     pcs.state AS state_name,
+    pcs.description AS state_description,
     pc.collection_type_id,
     pctypes.type,
     pc.num_proteins,
