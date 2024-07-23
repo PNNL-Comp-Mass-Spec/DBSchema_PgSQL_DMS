@@ -30,7 +30,7 @@ ALTER TABLE ONLY public.t_cached_instrument_usage_by_proposal
 --
 
 ALTER TABLE ONLY public.t_cached_instrument_usage_by_proposal
-    ADD CONSTRAINT fk_t_cached_instrument_usage_by_proposal_t_instrument_group FOREIGN KEY (instrument_group) REFERENCES public.t_instrument_group(instrument_group);
+    ADD CONSTRAINT fk_t_cached_instrument_usage_by_proposal_t_instrument_group FOREIGN KEY (instrument_group) REFERENCES public.t_instrument_group(instrument_group) ON UPDATE CASCADE;
 
 --
 -- Name: TABLE t_cached_instrument_usage_by_proposal; Type: ACL; Schema: public; Owner: d3l243
