@@ -18,8 +18,9 @@ CREATE OR REPLACE PROCEDURE public.backup_storage_state(INOUT _message text DEFA
 **  Date:   04/18/2002
 **          04/07/2006 grk - Got rid of CDBurn stuff
 **          05/01/2009 mem - Updated description field in T_Storage_Path and T_Storage_Path_Bkup to be named SP_description
-**          08/30/2010 mem - Now copying IN_Created
+**          08/30/2010 mem - Now copying column created
 **          05/07/2023 mem - Ported to PostgreSQL
+**          07/23/2024 mem - Also copy data from columns instrument_group and status
 **
 *****************************************************/
 DECLARE
@@ -39,13 +40,23 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO t_storage_path_bkup (
-        storage_path_id, storage_path, vol_name_client,
-        vol_name_server, storage_path_function, instrument,
-        storage_path_code, description
+        storage_path_id,
+        storage_path,
+        vol_name_client,
+        vol_name_server,
+        storage_path_function,
+        instrument,
+        storage_path_code,
+        description
     )
-    SELECT storage_path_id, storage_path, vol_name_client,
-       vol_name_server, storage_path_function, instrument,
-       storage_path_code, description
+    SELECT storage_path_id,
+           storage_path,
+           vol_name_client,
+           vol_name_server,
+           storage_path_function,
+           instrument,
+           storage_path_code,
+           description
     FROM t_storage_path;
 
     ---------------------------------------------------
@@ -59,22 +70,26 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO t_instrument_name_bkup (
-        instrument,
         instrument_id,
+        instrument,
         instrument_class,
+        instrument_group,
         source_path_id,
         storage_path_id,
         capture_method,
+        status,
         room_number,
         description,
         created
     )
-    SELECT instrument,
-           instrument_id,
+    SELECT instrument_id,
+           instrument,
            instrument_class,
+           instrument_group,
            source_path_id,
            storage_path_id,
            capture_method,
+           status,
            room_number,
            description,
            created
