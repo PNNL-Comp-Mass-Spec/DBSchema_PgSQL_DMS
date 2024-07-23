@@ -47,7 +47,7 @@ CREATE VIEW public.v_protein_collection_name AS
              JOIN pc.t_protein_collection_types pct ON ((pc.collection_type_id = pct.collection_type_id)))
              JOIN pc.t_protein_collection_states pcs ON ((pc.collection_state_id = pcs.collection_state_id)))
              JOIN public.t_organisms org_1 ON ((orgxref.organism_id = org_1.organism_id)))
-          WHERE (COALESCE(pcs.state, ''::public.citext) OPERATOR(public.<>) 'Retired'::public.citext)) lookupq
+          WHERE (NOT (pcs.collection_state_id = ANY (ARRAY[0, 4, 5])))) lookupq
      LEFT JOIN public.t_organisms org ON ((lookupq.organism_name OPERATOR(public.=) org.organism)))
      LEFT JOIN public.t_protein_collection_usage pcu ON ((lookupq.protein_collection_id = pcu.protein_collection_id)))
   GROUP BY lookupq.collection_name, lookupq.type, lookupq.description, lookupq.entries, lookupq.organism_name, lookupq.protein_collection_id, lookupq.typesortorder, pcu.most_recently_used, pcu.job_usage_count, pcu.job_usage_count_last12months, org.organism_db_name;
