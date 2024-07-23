@@ -4,7 +4,7 @@
 
 CREATE VIEW public.v_protein_collection_name AS
  SELECT lookupq.collection_name AS name,
-    lookupq.type,
+    lookupq.state,
         CASE
             WHEN (COALESCE(org.organism_db_name, ''::public.citext) OPERATOR(public.=) lookupq.collection_name) THEN
             CASE
@@ -14,34 +14,46 @@ CREATE VIEW public.v_protein_collection_name AS
             ELSE lookupq.description
         END AS description,
         CASE
-            WHEN (lookupq.type OPERATOR(public.=) ANY (ARRAY['Internal_standard'::public.citext, 'contaminant'::public.citext, 'old_contaminant'::public.citext])) THEN NULL::integer
+            WHEN (lookupq.type OPERATOR(public.=) ANY (ARRAY['internal_standard'::public.citext, 'contaminant'::public.citext, 'old_contaminant'::public.citext])) THEN NULL::integer
             ELSE pcu.job_usage_count_last12months
         END AS usage_last_12_months,
         CASE
-            WHEN (lookupq.type OPERATOR(public.=) ANY (ARRAY['Internal_standard'::public.citext, 'contaminant'::public.citext, 'old_contaminant'::public.citext])) THEN NULL::integer
+            WHEN (lookupq.type OPERATOR(public.=) ANY (ARRAY['internal_standard'::public.citext, 'contaminant'::public.citext, 'old_contaminant'::public.citext])) THEN NULL::integer
             ELSE pcu.job_usage_count
         END AS usage_all_years,
         CASE
-            WHEN (lookupq.type OPERATOR(public.=) ANY (ARRAY['Internal_standard'::public.citext, 'contaminant'::public.citext, 'old_contaminant'::public.citext])) THEN NULL::date
+            WHEN (lookupq.type OPERATOR(public.=) ANY (ARRAY['internal_standard'::public.citext, 'contaminant'::public.citext, 'old_contaminant'::public.citext])) THEN NULL::date
             ELSE (pcu.most_recently_used)::date
         END AS most_recent_usage,
     lookupq.entries,
     lookupq.organism_name,
+    lookupq.type,
+    lookupq.sort_weight,
     lookupq.protein_collection_id AS id
    FROM ((( SELECT pc.collection_name,
-            pct.type,
+            pcs.state,
             pc.description,
             pc.num_proteins AS entries,
                 CASE
-                    WHEN (pct.type OPERATOR(public.=) ANY (ARRAY['Internal_Standard'::public.citext, 'contaminant'::public.citext, 'old_contaminant'::public.citext])) THEN ''::public.citext
+                    WHEN (pct.type OPERATOR(public.=) ANY (ARRAY['internal_standard'::public.citext, 'contaminant'::public.citext, 'old_contaminant'::public.citext])) THEN ''::public.citext
                     ELSE org_1.organism
                 END AS organism_name,
             pc.protein_collection_id,
                 CASE
-                    WHEN (pct.type OPERATOR(public.=) 'Internal_Standard'::public.citext) THEN 1
-                    WHEN (pct.type OPERATOR(public.=) ANY (ARRAY['contaminant'::public.citext, 'old_contaminant'::public.citext])) THEN 2
-                    ELSE 0
-                END AS typesortorder
+                    WHEN (pc.collection_state_id = ANY (ARRAY[1, 2, 3])) THEN
+                    CASE
+                        WHEN (pct.type OPERATOR(public.=) 'internal_standard'::public.citext) THEN 3
+                        WHEN (pct.type OPERATOR(public.=) ANY (ARRAY['contaminant'::public.citext, 'old_contaminant'::public.citext])) THEN 2
+                        ELSE 1
+                    END
+                    ELSE
+                    CASE
+                        WHEN (pct.type OPERATOR(public.=) 'internal_standard'::public.citext) THEN 6
+                        WHEN (pct.type OPERATOR(public.=) ANY (ARRAY['contaminant'::public.citext, 'old_contaminant'::public.citext])) THEN 5
+                        ELSE 4
+                    END
+                END AS sort_weight,
+            pct.type
            FROM ((((pc.t_protein_collections pc
              JOIN pc.t_collection_organism_xref orgxref ON ((pc.protein_collection_id = orgxref.protein_collection_id)))
              JOIN pc.t_protein_collection_types pct ON ((pc.collection_type_id = pct.collection_type_id)))
@@ -50,7 +62,7 @@ CREATE VIEW public.v_protein_collection_name AS
           WHERE (NOT (pcs.collection_state_id = ANY (ARRAY[0, 4, 5])))) lookupq
      LEFT JOIN public.t_organisms org ON ((lookupq.organism_name OPERATOR(public.=) org.organism)))
      LEFT JOIN public.t_protein_collection_usage pcu ON ((lookupq.protein_collection_id = pcu.protein_collection_id)))
-  GROUP BY lookupq.collection_name, lookupq.type, lookupq.description, lookupq.entries, lookupq.organism_name, lookupq.protein_collection_id, lookupq.typesortorder, pcu.most_recently_used, pcu.job_usage_count, pcu.job_usage_count_last12months, org.organism_db_name;
+  GROUP BY lookupq.collection_name, lookupq.state, org.organism_db_name, lookupq.description, pcu.job_usage_count, pcu.job_usage_count_last12months, pcu.most_recently_used, lookupq.entries, lookupq.organism_name, lookupq.type, lookupq.sort_weight, lookupq.protein_collection_id;
 
 
 ALTER VIEW public.v_protein_collection_name OWNER TO d3l243;
