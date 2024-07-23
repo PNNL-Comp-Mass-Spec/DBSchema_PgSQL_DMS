@@ -6,9 +6,11 @@ CREATE TABLE public.t_instrument_name_bkup (
     instrument_id integer NOT NULL,
     instrument public.citext,
     instrument_class public.citext,
+    instrument_group public.citext,
     source_path_id integer,
     storage_path_id integer,
     capture_method public.citext,
+    status public.citext,
     room_number public.citext,
     description public.citext,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP
