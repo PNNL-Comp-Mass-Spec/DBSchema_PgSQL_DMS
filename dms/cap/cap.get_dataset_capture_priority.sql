@@ -9,7 +9,7 @@ CREATE OR REPLACE FUNCTION cap.get_dataset_capture_priority(_datasetname text, _
 **
 **  Desc:
 **      Determine if the dataset warrants preferential processing priority for dataset capture
-**      This procedure is used by make_new_tasks_from_dms() to define the capture job priority
+**      This function is used by procedure make_new_tasks_from_dms() to define the capture job priority
 **
 **      If the dataset name matches one of the filters below, the capture priority will be 2 instead of 4
 **      Otherwise, if the instrument group matches one of the filters, the capture priority will be 6 instead of 4
@@ -19,7 +19,7 @@ CREATE OR REPLACE FUNCTION cap.get_dataset_capture_priority(_datasetname text, _
 **    _instrumentGroup  Instrument group
 **
 **  Returns:
-**      2 if high priority; 4 if medium priority, 6 if low priority
+**      2 if high priority, 4 if medium priority, 6 if low priority
 **
 **  Auth:   mem
 **  Date:   06/27/2019 mem - Initial version
@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION cap.get_dataset_capture_priority(_datasetname text, _
 **          05/22/2023 mem - Capitalize reserved word
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          01/21/2024 mem - Change data type of function arguments to text
+**          07/23/2024 mem - Add/update imaging instrument groups
 **
 *****************************************************/
 DECLARE
@@ -43,7 +44,7 @@ BEGIN
         _datasetName::citext SIMILAR TO 'QC[_]PP[_]MCF-7%'
        ) AND NOT _datasetName ILIKE '%-bad' Then
          _priority := 2;
-    ElsIf _instrumentGroup::citext In ('TSQ', 'Bruker_FTMS', 'MALDI-Imaging') Then
+    ElsIf _instrumentGroup::citext In ('TSQ', 'Bruker_FTMS', 'MALDI_Imaging', 'MALDI_timsTOF_Imaging', 'QExactive_Imaging') Then
         _priority := 6;
     Else
         _priority := 4;
