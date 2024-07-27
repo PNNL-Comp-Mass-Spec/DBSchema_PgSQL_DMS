@@ -14,6 +14,7 @@ CREATE OR REPLACE PROCEDURE pc.delete_protein_collection_members(IN _collectioni
 **  Arguments:
 **    _collectionID             Protein collection ID
 **    _numProteinsForReload     Number of proteins that will be associated with this collection after they are added to the database following this delete
+**                              If 0 or negative, table T_Protein_Collections is not updated
 **    _message                  Status message
 **    _returnCode               Return code
 **
@@ -23,12 +24,14 @@ CREATE OR REPLACE PROCEDURE pc.delete_protein_collection_members(IN _collectioni
 **          09/14/2015 mem - Added parameter _numProteinsForReload
 **          08/21/2023 mem - Ported to PostgreSQL
 **          07/26/2024 mem - Allow protein collections with state Offline or Proteins_Deleted to have their protein collection member entries deleted (since they already should be deleted)
+**                         - Do not update protein and residue counts in T_Protein_Collections if _numProteinsForReload is negative
 **
 *****************************************************/
 DECLARE
     _collectionState int;
     _collectionName text;
     _stateName text;
+    _deleteCount int;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -39,6 +42,8 @@ BEGIN
 
     _collectionID         := Coalesce(_collectionID, 0);
     _numProteinsForReload := Coalesce(_numProteinsForReload, 0);
+
+    RAISE INFO '';
 
     ---------------------------------------------------
     -- Check if collection is OK to delete
@@ -79,14 +84,28 @@ BEGIN
     DELETE FROM pc.t_protein_collection_members
     WHERE protein_collection_id = _collectionID;
 
+    GET DIAGNOSTICS _deleteCount = ROW_COUNT;
+
+    If _deleteCount = 0 Then
+        RAISE INFO 'Protein collection ID % does not have any rows in t_protein_collection_members', _collectionID;
+    Else
+        RAISE INFO 'Deleted % rows in t_protein_collection_members for protein collection ID %', _deleteCount, _collectionID;
+    End If;
+
     ---------------------------------------------------
     -- Update the protein and residue counts in t_protein_collections
     ---------------------------------------------------
 
+    If _numProteinsForReload < 0 Then
+        RAISE INFO 'Skipped update of protein and residue counts in t_protein_collections for protein collection ID % since _numProteinsForReload negative', _collectionID;
+    Else
         UPDATE pc.t_protein_collections
         SET num_proteins = _numProteinsForReload,
             num_residues = 0
         WHERE protein_collection_id = _collectionID;
+
+        RAISE INFO 'Set num_proteins to % and num_residues to 0 in t_protein_collections for protein collection ID %', _numProteinsForReload, _collectionID;
+    End If;
 
 END
 $$;
