@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE pc.delete_protein_collection_members(IN _collectioni
 **          07/20/2015 mem - Now setting NumProteins and TotalResidues to 0 in T_Protein_Collections
 **          09/14/2015 mem - Added parameter _numProteinsForReload
 **          08/21/2023 mem - Ported to PostgreSQL
+**          07/26/2024 mem - Allow protein collections with state Offline or Proteins_Deleted to have their protein collection member entries deleted (since they already should be deleted)
 **
 *****************************************************/
 DECLARE
@@ -61,7 +62,9 @@ BEGIN
     FROM pc.t_protein_collection_states
     WHERE collection_state_id = _collectionState;
 
-    If _collectionState > 2 Then
+    -- Protein collections with state Unknown, New, Provisional, Offline, or Proteins_Deleted can be updated
+    -- Protein collections with state Production or Retired cannot be deleted
+    If _collectionState IN (3, 4) Then
         _message := format('Cannot delete protein collection %s since it has state %s', _collectionName, _stateName);
         RAISE WARNING '%', _message;
 
