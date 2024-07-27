@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE pc.delete_protein_collection(IN _collectionid intege
 **          06/20/2018 mem - Delete entries in T_Protein_Collection_Members_Cached
 **                         - Add RAISERROR calls with severity level 11 (forcing the Catch block to be entered)
 **          08/21/2023 mem - Ported to PostgreSQL
+**          07/26/2024 mem - Set _numProteinsForReload to 0 when calling delete_protein_collection_members
 **
 *****************************************************/
 DECLARE
@@ -51,6 +52,8 @@ BEGIN
 
     BEGIN
         _currentLocation := 'Examine collection_state_id in pc.t_protein_collections';
+
+        RAISE INFO '';
 
         ---------------------------------------------------
         -- Check if collection is OK to delete
@@ -92,8 +95,9 @@ BEGIN
 
         CALL pc.delete_protein_collection_members (
                     _collectionID,
-                    _message    => _message,        -- Output
-                    _returnCode => _returnCode);    -- Output
+                    _numProteinsForReload => 0,
+                    _message              => _message,      -- Output
+                    _returnCode           => _returnCode);  -- Output
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -169,6 +173,8 @@ BEGIN
         -- Delete the entry from pc.t_protein_collections
         DELETE FROM pc.t_protein_collections
         WHERE protein_collection_id = _collectionID;
+
+        RAISE INFO 'Deleted protein collection ID %', _collectionID;
 
     EXCEPTION
         WHEN OTHERS THEN
