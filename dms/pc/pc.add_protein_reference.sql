@@ -2,7 +2,7 @@
 -- Name: add_protein_reference(text, text, integer, integer, text, integer, text, text); Type: PROCEDURE; Schema: pc; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE pc.add_protein_reference(IN _name text, IN _description text, IN _authorityid integer, IN _proteinid integer, IN _namedeschash text, IN _maxproteinnamelength integer DEFAULT 32, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE pc.add_protein_reference(IN _proteinname text, IN _description text, IN _authorityid integer, IN _proteinid integer, IN _namedeschash text, IN _maxproteinnamelength integer DEFAULT 32, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -11,7 +11,7 @@ CREATE OR REPLACE PROCEDURE pc.add_protein_reference(IN _name text, IN _descript
 **      Add a new protein reference entry to pc.t_protein_names
 **
 **  Arguments:
-**    _name                     Protein name
+**    _proteinName              Protein name
 **    _description              Protein description
 **    _authorityID              Authority ID
 **    _proteinID                Protein ID (corresponding to pc.t_proteins)
@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE pc.add_protein_reference(IN _name text, IN _descript
 **          08/20/2023 mem - Ported to PostgreSQL
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          11/20/2023 mem - Add missing semicolon before Return statement
+**          07/26/2024 mem - Rename protein name argument to _proteinName
 **
 *****************************************************/
 DECLARE
@@ -58,16 +59,16 @@ BEGIN
     -- Verify that protein name does not contain a space and is not too long
     ---------------------------------------------------
 
-    If _name Like '% %' Then
-        _message := format('Protein name contains a space: %s', _name);
+    If _proteinName Like '% %' Then
+        _message := format('Protein name contains a space: %s', _proteinName);
         RAISE WARNING '%', _message;
 
         _returnCode := '0';
         RETURN;
     End If;
 
-    If char_length(_name) > _maxProteinNameLength Then
-        _message := format('Protein name is too long; max length is %s characters: _name', _maxProteinNameLength, _name);
+    If char_length(_proteinName) > _maxProteinNameLength Then
+        _message := format('Protein name is too long; max length is %s characters: _proteinName', _maxProteinNameLength, _proteinName);
         RAISE WARNING '%', _message;
 
         _returnCode := '0';
@@ -96,7 +97,7 @@ BEGIN
         reference_fingerprint,
         date_added, protein_id
     ) VALUES (
-        _name,
+        _proteinName,
         _description,
         _authorityID,
         _nameDescHash,
@@ -111,11 +112,11 @@ END
 $$;
 
 
-ALTER PROCEDURE pc.add_protein_reference(IN _name text, IN _description text, IN _authorityid integer, IN _proteinid integer, IN _namedeschash text, IN _maxproteinnamelength integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE pc.add_protein_reference(IN _proteinname text, IN _description text, IN _authorityid integer, IN _proteinid integer, IN _namedeschash text, IN _maxproteinnamelength integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE add_protein_reference(IN _name text, IN _description text, IN _authorityid integer, IN _proteinid integer, IN _namedeschash text, IN _maxproteinnamelength integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: pc; Owner: d3l243
+-- Name: PROCEDURE add_protein_reference(IN _proteinname text, IN _description text, IN _authorityid integer, IN _proteinid integer, IN _namedeschash text, IN _maxproteinnamelength integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: pc; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE pc.add_protein_reference(IN _name text, IN _description text, IN _authorityid integer, IN _proteinid integer, IN _namedeschash text, IN _maxproteinnamelength integer, INOUT _message text, INOUT _returncode text) IS 'AddProteinReference';
+COMMENT ON PROCEDURE pc.add_protein_reference(IN _proteinname text, IN _description text, IN _authorityid integer, IN _proteinid integer, IN _namedeschash text, IN _maxproteinnamelength integer, INOUT _message text, INOUT _returncode text) IS 'AddProteinReference';
 
