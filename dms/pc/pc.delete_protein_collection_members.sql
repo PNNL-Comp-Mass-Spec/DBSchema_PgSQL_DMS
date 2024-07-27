@@ -8,19 +8,19 @@ CREATE OR REPLACE PROCEDURE pc.delete_protein_collection_members(IN _collectioni
 /****************************************************
 **
 **  Desc:
-**      Delete Protein Collection Member Entries for a given Protein Collection ID
+**      Delete protein collection member entries for a given Protein Collection ID
 **      Called by the Organism Database Handler when replacing the proteins for an existing protein collection
 **
 **  Arguments:
 **    _collectionID             Protein collection ID
-**    _numProteinsForReLoad     Number of proteins that will be associated with this collection after they are added to the database following this delete
+**    _numProteinsForReload     Number of proteins that will be associated with this collection after they are added to the database following this delete
 **    _message                  Status message
 **    _returnCode               Return code
 **
 **  Auth:   kja
 **  Date:   10/07/2004 kja - Initial version
 **          07/20/2015 mem - Now setting NumProteins and TotalResidues to 0 in T_Protein_Collections
-**          09/14/2015 mem - Added parameter _numProteinsForReLoad
+**          09/14/2015 mem - Added parameter _numProteinsForReload
 **          08/21/2023 mem - Ported to PostgreSQL
 **
 *****************************************************/
@@ -32,8 +32,12 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _collectionID := Coalesce(_collectionID, 0);
-    _numProteinsForReLoad := Coalesce(_numProteinsForReLoad, 0);
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _collectionID         := Coalesce(_collectionID, 0);
+    _numProteinsForReload := Coalesce(_numProteinsForReload, 0);
 
     ---------------------------------------------------
     -- Check if collection is OK to delete
@@ -76,10 +80,10 @@ BEGIN
     -- Update the protein and residue counts in t_protein_collections
     ---------------------------------------------------
 
-    UPDATE pc.t_protein_collections
-    SET num_proteins = _numProteinsForReLoad,
-        num_residues = 0
-    WHERE protein_collection_id = _collectionID;
+        UPDATE pc.t_protein_collections
+        SET num_proteins = _numProteinsForReload,
+            num_residues = 0
+        WHERE protein_collection_id = _collectionID;
 
 END
 $$;
