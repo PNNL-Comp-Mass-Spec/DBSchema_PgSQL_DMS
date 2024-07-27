@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE pc.add_update_protein_collection_member(IN _referenc
 **          11/23/2005 kja - Added parameters
 **          12/11/2012 mem - Removed transaction
 **          08/21/2023 mem - Ported to PostgreSQL
+**          07/26/2024 mem - Assure that _mode is lowercase
 **
 *****************************************************/
 DECLARE
@@ -35,6 +36,12 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
+
+    ---------------------------------------------------
+    -- Assure that _mode is lowercase
+    ---------------------------------------------------
+
+    _mode := Trim(Lower(Coalesce(_mode, '')));
 
     If _mode = 'add' Then
         ---------------------------------------------------

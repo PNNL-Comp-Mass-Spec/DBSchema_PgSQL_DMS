@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE pc.add_protein_sequence(IN _sequence text, IN _lengt
 **  Date:   10/06/2004
 **          12/11/2012 mem - Removed transaction
 **          08/20/2023 mem - Ported to PostgreSQL
+**          07/26/2024 mem - Assure that _mode is lowercase
 **
 *****************************************************/
 DECLARE
@@ -37,6 +38,12 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
+
+    ---------------------------------------------------
+    -- Assure that _mode is lowercase
+    ---------------------------------------------------
+
+    _mode := Trim(Lower(Coalesce(_mode, '')));
 
     ---------------------------------------------------
     -- Does entry already exist?
