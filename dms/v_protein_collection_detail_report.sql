@@ -14,7 +14,7 @@ CREATE VIEW public.v_protein_collection_detail_report AS
             ELSE lookupq.description
         END AS description,
     lookupq.organism_name,
-    (((lookupq.state)::text || '; '::text) || (lookupq.state_description)::text) AS "?column?",
+    (((lookupq.state)::text || '; '::text) || (lookupq.state_description)::text) AS state,
     lookupq.entries,
     lookupq.residues,
         CASE
