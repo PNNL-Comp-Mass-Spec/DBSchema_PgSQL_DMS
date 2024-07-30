@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_datasets
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
 **          12/12/2023 mem - Change columns in temp tables from int to boolean
+**          07/23/2024 mem - Call procedure public.validate_protein_collection_states()
 **
 *****************************************************/
 DECLARE
@@ -48,6 +49,8 @@ DECLARE
     _startTime timestamp;
     _collectionInfo record;
     _matchCount int;
+    _invalidCount int;
+    _offlineCount int;
     _collectionWithContaminants text;
     _datasetCountTotal int;
     _experimentCountTotal int;
@@ -84,7 +87,8 @@ BEGIN
     CREATE TEMP TABLE Tmp_ProteinCollections (
         RowNumberID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Protein_Collection_Name citext NOT NULL,
-        Collection_Appended boolean NOT NULL
+        Collection_Appended boolean NOT NULL,
+        Collection_State_ID int NOT NULL
     );
 
     CREATE TEMP TABLE Tmp_ProteinCollectionsToAdd (
@@ -103,8 +107,8 @@ BEGIN
     -- Populate Tmp_ProteinCollections with the protein collections in _protCollNameList
     --------------------------------------------------------------
 
-    INSERT INTO Tmp_ProteinCollections (Protein_Collection_Name, Collection_Appended)
-    SELECT Value, false AS Collection_Appended
+    INSERT INTO Tmp_ProteinCollections (Protein_Collection_Name, Collection_Appended, Collection_State_ID)
+    SELECT Value, false AS Collection_Appended, 0 AS Collection_State_ID
     FROM public.parse_delimited_list(_protCollNameList);
 
     --------------------------------------------------------------
@@ -137,6 +141,35 @@ BEGIN
         FROM Tmp_ProteinCollections;
 
         RAISE INFO 'Protein collections: %', _message;
+    End If;
+
+    --------------------------------------------------------------
+    -- Look for protein collections with state 'Offline' or 'Proteins_Deleted'
+    --------------------------------------------------------------
+
+    CALL public.validate_protein_collection_states (
+            _invalidCount => _invalidCount,     -- Output
+            _offlineCount => _offlineCount,     -- Output
+            _message      => _message,          -- Output
+            _returncode   => _returncode,       -- Output
+            _showDebug    => _showDebug);
+
+    If Coalesce(_invalidCount, 0) > 0 Or Coalesce(_offlineCount, 0) > 0 Then
+        If Coalesce(_message, '') = '' Then
+            If _invalidCount > 0 Then
+                _message := format('The protein collection list has %s invalid protein %s',
+                                   _invalidCount, public.check_plural(_invalidCount, 'collection', 'collections'));
+            Else
+                _message := format('The protein collection list has %s offline protein %s; contact an admin to restore the proteins',
+                                   _offlineCount, public.check_plural(_offlineCount, 'collection', 'collections'));
+            End If;
+        End If;
+
+        If Coalesce(_returncode, '') = '' Then
+            _returnCode := 'U5330';
+        End If;
+
+        RETURN;
     End If;
 
     --------------------------------------------------------------

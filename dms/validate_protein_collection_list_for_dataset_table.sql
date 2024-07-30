@@ -49,10 +49,13 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_dataset_
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
 **          12/12/2023 mem - Rename argument _showMessages to _listAddedCollections
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          07/23/2024 mem - Call procedure public.validate_protein_collection_states()
 **
 *****************************************************/
 DECLARE
     _matchCount int;
+    _invalidCount int;
+    _offlineCount int;
     _collectionInfo record;
     _collectionWithContaminants text;
     _datasetCountTotal int;
@@ -97,7 +100,8 @@ BEGIN
     CREATE TEMP TABLE Tmp_ProteinCollections (
         Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
         Protein_Collection_Name citext NOT NULL,
-        Collection_Appended int NOT NULL
+        Collection_Appended int NOT NULL,
+        Collection_State_ID int NOT NULL
     );
 
     CREATE TEMP TABLE Tmp_ProteinCollectionsToAdd (
@@ -112,8 +116,8 @@ BEGIN
     -- Populate Tmp_ProteinCollections with the protein collections in _protCollNameList
     --------------------------------------------------------------
 
-    INSERT INTO Tmp_ProteinCollections (Protein_Collection_Name, Collection_Appended)
-    SELECT Value, 0 AS Collection_Appended
+    INSERT INTO Tmp_ProteinCollections (Protein_Collection_Name, Collection_Appended, Collection_State_ID)
+    SELECT Value, 0 AS Collection_Appended, 0 AS Collection_State_ID
     FROM public.parse_delimited_list(_protCollNameList);
 
     --------------------------------------------------------------
@@ -138,6 +142,35 @@ BEGIN
                                FROM Tmp_ProteinCollections
                                GROUP BY Protein_Collection_Name);
 
+    End If;
+
+    --------------------------------------------------------------
+    -- Look for protein collections with state 'Offline' or 'Proteins_Deleted'
+    --------------------------------------------------------------
+
+    CALL public.validate_protein_collection_states (
+            _invalidCount => _invalidCount,     -- Output
+            _offlineCount => _offlineCount,     -- Output
+            _message      => _message,          -- Output
+            _returncode   => _returncode,       -- Output
+            _showDebug    => _showDebug);
+
+    If Coalesce(_invalidCount, 0) > 0 Or Coalesce(_offlineCount, 0) > 0 Then
+        If Coalesce(_message, '') = '' Then
+            If _invalidCount > 0 Then
+                _message := format('The protein collection list has %s invalid protein %s',
+                                   _invalidCount, public.check_plural(_invalidCount, 'collection', 'collections'));
+            Else
+                _message := format('The protein collection list has %s offline protein %s; contact an admin to restore the proteins',
+                                   _offlineCount, public.check_plural(_offlineCount, 'collection', 'collections'));
+            End If;
+        End If;
+
+        If Coalesce(_returncode, '') = '' Then
+            _returnCode := 'U5330';
+        End If;
+
+        RETURN;
     End If;
 
     If _showDebug Then
@@ -301,7 +334,9 @@ BEGIN
                 RAISE INFO 'Not adding enzyme-associated protein collections (typically contaminant collections) since % already includes contaminants', _collectionWithContaminants;
             End If;
 
-            _message := format('Did not add contaminants since %s already includes contaminant proteins', _collectionWithContaminants);
+            _msg := format('Did not add contaminants since %s already includes contaminant proteins', _collectionWithContaminants);
+
+            _message := public.append_to_text(_message, _msg);
 
             -- Remove the contaminant collections
 
@@ -670,7 +705,7 @@ BEGIN
         End If;
 
         If Trim(Coalesce(_message, '')) <> '' Then
-            _message := format('%s; %s', _message, _msg);
+            _message := public.append_to_text(_message, _msg);
         Else
             _message := format('Note: %s', _msg);
         End If;

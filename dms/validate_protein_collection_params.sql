@@ -36,12 +36,15 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_params(IN _toolna
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/11/2023 mem - Remove unnecessary _trimWhitespace argument when calling validate_na_parameter
+**          07/23/2024 mem - Call procedure public.validate_protein_collection_states()
 **
 *****************************************************/
 DECLARE
     _result int;
     _orgDbReqd int;
     _organismMatch text := '';
+    _invalidCount int;
+    _offlineCount int;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -101,6 +104,50 @@ BEGIN
     If char_length(_protCollNameList) > 4000 Then
         _message := 'Protein collection list is too long; maximum length is 4000 characters';
         _returnCode := 'U5310';
+        RETURN;
+    End If;
+
+    --------------------------------------------------------------
+    -- Populate Tmp_ProteinCollections with the protein collections in _protCollNameList
+    --------------------------------------------------------------
+
+    CREATE TEMP TABLE Tmp_ProteinCollections (
+        RowNumberID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        Protein_Collection_Name citext NOT NULL,
+        Collection_State_ID int NOT NULL
+    );
+
+    INSERT INTO Tmp_ProteinCollections (Protein_Collection_Name, Collection_State_ID)
+    SELECT Value, 0 AS Collection_State_ID
+    FROM public.parse_delimited_list(_protCollNameList);
+
+    --------------------------------------------------------------
+    -- Look for protein collections with state 'Offline' or 'Proteins_Deleted'
+    --------------------------------------------------------------
+
+    CALL public.validate_protein_collection_states (
+            _invalidCount => _invalidCount,     -- Output
+            _offlineCount => _offlineCount,     -- Output
+            _message      => _message,          -- Output
+            _returncode   => _returncode,       -- Output
+            _showDebug    => _showDebug);
+
+
+    If Coalesce(_invalidCount, 0) > 0 Or Coalesce(_offlineCount, 0) > 0 Then
+        If Coalesce(_message, '') = '' Then
+            If _invalidCount > 0 Then
+                _message := format('The protein collection list has %s invalid protein %s',
+                                   _invalidCount, public.check_plural(_invalidCount, 'collection', 'collections'));
+            Else
+                _message := format('The protein collection list has %s offline protein %s; contact an admin to restore the proteins',
+                                   _offlineCount, public.check_plural(_offlineCount, 'collection', 'collections'));
+            End If;
+        End If;
+
+        If Coalesce(_returncode, '') = '' Then
+            _returnCode := 'U5330';
+        End If;
+
         RETURN;
     End If;
 
