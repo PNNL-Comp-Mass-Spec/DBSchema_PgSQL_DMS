@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_datasets
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
 **          12/12/2023 mem - Change columns in temp tables from int to boolean
 **          07/23/2024 mem - Call procedure public.validate_protein_collection_states()
+**          07/30/2024 mem - Store a value in Collection_State_ID when appending protein collections to Tmp_ProteinCollections
 **
 *****************************************************/
 DECLARE
@@ -389,9 +390,10 @@ BEGIN
     -- Now append them to Tmp_ProteinCollections
     -- Note that we first append collections that did not come from digestion enzymes
 
-    INSERT INTO Tmp_ProteinCollections (Protein_Collection_Name, Collection_Appended)
+    INSERT INTO Tmp_ProteinCollections (Protein_Collection_Name, Collection_Appended, Collection_State_ID)
     SELECT Protein_Collection_Name,
-           true AS Collection_Appended
+           true AS Collection_Appended,
+           0 AS Collection_State_ID
     FROM Tmp_ProteinCollectionsToAdd
     GROUP BY Enzyme_Contaminant_Collections, Protein_Collection_Name
     ORDER BY Enzyme_Contaminant_Collections, Protein_Collection_Name;
