@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE public.set_dataset_create_task_complete(IN _entryid 
 **          10/25/2023 mem - Initial version
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          07/31/2024 mem - Set the task state to 1 if _completionCode is -1, since the Data Import Manager uses that completion code when it is run in preview mode
 **
 *****************************************************/
 DECLARE
@@ -103,13 +104,15 @@ BEGIN
 
         ---------------------------------------------------
         -- Determine completion state
+        --
+        -- A completion code of -1 means the Data Import Manager was run in preview mode,
+        -- and the dataset creation task needs to be reset to new
         ---------------------------------------------------
 
-        If _completionCode = 0 Then
-            _stateID = 3;
-        Else
-            _stateID = 4;
-        End If;
+        _stateID := CASE WHEN _completionCode =  0 THEN 3
+                         WHEN _completionCode = -1 THEN 1
+                         ELSE 4
+                    END;
 
         ---------------------------------------------------
         -- Update the state, finish time, and completion code
