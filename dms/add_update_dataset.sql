@@ -158,6 +158,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset(IN _datasetname text, IN _
 **          01/20/2024 mem - Ignore case when resolving dataset name to ID
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          07/31/2024 mem - Remove the leading semicolon when removing the requested run comment from the dataset comment
 **
 *****************************************************/
 DECLARE
@@ -878,11 +879,12 @@ BEGIN
             -- Assure that _reqRunComment doesn't have &quot; or &#34; or &amp;
             _reqRunComment := public.replace_character_codes(_reqRunComment);
 
-            If Trim(Coalesce(_reqRunComment)) <> '' And (_comment = _reqRunComment Or _comment ILike _reqRunComment || '%') Then
+            If Trim(Coalesce(_reqRunComment, '')) <> '' And (_comment = _reqRunComment Or _comment ILike _reqRunComment || '%') Then
                 If char_length(_comment) = char_length(_reqRunComment) Then
+                    RAISE INFO 'Setting the dataset comment to an empty string since it matches the requested run comment';
                     _comment := '';
                 Else
-                    _comment := LTrim(Substring(_comment, char_length(_reqRunComment) + 1, char_length(_comment)));
+                    _comment := LTrim(Substring(_comment, char_length(_reqRunComment) + 2, char_length(_comment)));
                 End If;
             End If;
         End If;
