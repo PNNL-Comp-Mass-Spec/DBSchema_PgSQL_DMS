@@ -27,6 +27,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_states(INOUT _inv
 **
 **  Auth:   mem
 **  Date:   07/23/2024 mem - Initial release
+**          08/01/2024 mem - Ignore protein collections named 'na'
 **
 *****************************************************/
 DECLARE
@@ -59,12 +60,12 @@ BEGIN
     SELECT COUNT(*)
     INTO _invalidCount
     FROM Tmp_ProteinCollections
-    WHERE Collection_State_ID IN (0, 5);
+    WHERE Collection_State_ID IN (0, 5) AND Not Protein_Collection_Name IN ('na');
 
     SELECT COUNT(*)
     INTO _offlineCount
     FROM Tmp_ProteinCollections
-    WHERE Collection_State_ID IN (6);
+    WHERE Collection_State_ID IN (6) AND Not Protein_Collection_Name IN ('na');
 
     --------------------------------------------------------------
     -- Look for unrecognized protein collections
@@ -73,7 +74,7 @@ BEGIN
     SELECT string_agg(Protein_Collection_Name, ',' ORDER BY Protein_Collection_Name)
     INTO _msg
     FROM Tmp_ProteinCollections
-    WHERE Collection_State_ID = 0;
+    WHERE Collection_State_ID = 0 AND Not Protein_Collection_Name IN ('na');
 
     If _msg <> '' Then
         _msg := format('Unrecognized protein %s: %s',
