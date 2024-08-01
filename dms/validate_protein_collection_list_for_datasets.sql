@@ -43,6 +43,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_list_for_datasets
 **          12/12/2023 mem - Change columns in temp tables from int to boolean
 **          07/23/2024 mem - Call procedure public.validate_protein_collection_states()
 **          07/30/2024 mem - Store a value in Collection_State_ID when appending protein collections to Tmp_ProteinCollections
+**          08/01/2024 mem - Select a single column instead of * when checking for data in Tmp_ProteinCollections and Tmp_IntStds
 **
 *****************************************************/
 DECLARE
@@ -324,10 +325,10 @@ BEGIN
     -- remove 'HumanContam' from Tmp_IntStds since every protein in 'HumanContam' is also in 'Tryp_Pig_Bov'
     --------------------------------------------------------------
 
-    If Exists (SELECT *
+    If Exists (SELECT RowNumberID
                FROM Tmp_ProteinCollections
                WHERE Protein_Collection_Name = 'Tryp_Pig_Bov') AND
-       Exists (SELECT *
+       Exists (SELECT Internal_Std_Mix_ID
                FROM Tmp_IntStds
                WHERE Protein_Collection_Name = 'HumanContam') Then
 
@@ -335,7 +336,7 @@ BEGIN
         WHERE Protein_Collection_Name = 'HumanContam';
 
         If _showDebug Then
-            If Exists (SELECT * FROM Tmp_IntStds) Then
+            If Exists (SELECT Internal_Std_Mix_ID FROM Tmp_IntStds) Then
                 RAISE INFO 'Removed HumanContam from Tmp_IntStds since Tmp_ProteinCollections has Tryp_Pig_Bov';
             Else
                 RAISE INFO 'Tmp_IntStds is empty after removing HumanContam';
@@ -365,7 +366,7 @@ BEGIN
     WHERE PC.Protein_Collection_Name IS NULL
     GROUP BY I.Protein_Collection_Name;
 
-    If Not Exists (SELECT * FROM Tmp_ProteinCollectionsToAdd) Then
+    If Not Exists (SELECT UniqueID FROM Tmp_ProteinCollectionsToAdd) Then
         If _showDebug Then
             RAISE INFO 'Protein collections validated; nothing to add';
             RAISE INFO 'Elapsed time: % msec',  Round(Extract(epoch from (clock_timestamp() - _startTime)) * 1000, 3);
