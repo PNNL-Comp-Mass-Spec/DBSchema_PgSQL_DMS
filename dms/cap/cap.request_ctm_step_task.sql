@@ -2,7 +2,7 @@
 -- Name: request_ctm_step_task(text, integer, refcursor, text, text, integer, text, integer, integer); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, INOUT _jobnumber integer DEFAULT 0, INOUT _results refcursor DEFAULT '_results'::refcursor, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infolevel integer DEFAULT 0, IN _managerversion text DEFAULT ''::text, IN _jobcounttopreview integer DEFAULT 10, IN _serverperspectiveenabled integer DEFAULT 0)
+CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, INOUT _job integer DEFAULT 0, INOUT _results refcursor DEFAULT '_results'::refcursor, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infolevel integer DEFAULT 0, IN _managerversion text DEFAULT ''::text, IN _jobcounttopreview integer DEFAULT 10, IN _serverperspectiveenabled integer DEFAULT 0)
     LANGUAGE plpgsql
     AS $_$
 /****************************************************
@@ -24,7 +24,7 @@ CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, IN
 **
 **  Arguments:
 **    _processorName                Capture task manager name
-**    _jobNumber                    Capture task job number assigned; 0 if no job available
+**    _job                          Capture task job number assigned; 0 if no job available
 **    _results                      Cursor for retrieving the job parameters
 **    _message                      Status message (if an error)
 **    _returnCode                   Return code (if an error)
@@ -41,7 +41,7 @@ CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, IN
     LANGUAGE plpgsql
     $$
     DECLARE
-        _jobNumber int;
+        _job int;
         _results refcursor;
         _message text;
         _returnCode text;
@@ -51,7 +51,7 @@ CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, IN
     BEGIN
         CALL cap.request_ctm_step_task(
                     _processorName     => 'Proto-3_CTM',
-                    _jobNumber         => _jobNumber,
+                    _job               => _job,
                     _results           => _results,
                     _message           => _message,
                     _returnCode        => _returnCode,
@@ -91,10 +91,10 @@ CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, IN
 **          03/21/2011 mem - Switched t_tasks.State test from State IN (1, 2) to State < 100
 **          04/12/2011 mem - Now making an entry in T_task_Step_Processing_Log for each capture task job step assigned
 **          05/18/2011 mem - No longer making an entry in T_task_Request_Log for every request
-**                         - Now showing the top _jobCountToPreview candidate steps when _infoLevel is > 0
+**                         - Now showing the top _jobCountToPreview candidate steps when _infoOnly is > 0
 **          07/26/2012 mem - Added parameter _serverPerspectiveEnabled
 **          09/17/2012 mem - Now returning metadata for step tool DatasetQuality instead of step tool DatasetInfo
-**          02/25/2013 mem - Now returning the Machine name when _infoLevel > 0
+**          02/25/2013 mem - Now returning the Machine name when _infoOnly > 0
 **          09/24/2014 mem - Removed reference to Machine in t_task_steps
 **          11/05/2015 mem - Consider column Enabled when checking T_Processor_Instrument for _processorName
 **          01/11/2016 mem - When looking for running capture task jobs for each instrument, now ignoring job steps that started over 18 hours ago
@@ -114,6 +114,7 @@ CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, IN
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          08/04/2024 mem - Rename _jobNumber argument to _job
 **
 *****************************************************/
 DECLARE
@@ -189,7 +190,7 @@ BEGIN
         ---------------------------------------------------
 
         _processorName            := Trim(Coalesce(_processorName, ''));
-        _jobNumber                := 0;
+        _job                      := 0;
         _infoLevel                := Coalesce(_infoLevel, 0);
         _managerVersion           := Trim(Coalesce(_managerVersion, ''));
         _jobCountToPreview        := Coalesce(_jobCountToPreview, 10);
@@ -533,7 +534,7 @@ BEGIN
             SELECT TS.Job,
                    TS.Step,
                    TS.Tool
-            INTO _jobNumber, _step, _stepTool
+            INTO _job, _step, _stepTool
             FROM cap.t_task_steps TS
                  INNER JOIN Tmp_CandidateJobSteps CJS
                    ON CJS.Job = TS.Job AND
@@ -547,7 +548,7 @@ BEGIN
                 _jobAssigned := true;
 
                 If _infoLevel > 0 Then
-                    RAISE INFO 'Would assign Capture Task Job %, Step %', _jobNumber, _step;
+                    RAISE INFO 'Would assign Capture Task Job %, Step %', _job, _step;
                 End If;
             End If;
 
@@ -564,7 +565,7 @@ BEGIN
                     Processor = _processorName,
                     Start = CURRENT_TIMESTAMP,
                     Finish = NULL
-                WHERE Job = _jobNumber AND
+                WHERE Job = _job AND
                       Step = _step;
             End If;
 
@@ -626,7 +627,7 @@ BEGIN
                 _currentLocation := 'Add entry to T_task_Step_Processing_Log';
 
                 INSERT INTO cap.t_task_step_processing_log (job, step, processor)
-                VALUES (_jobNumber, _step, _processorName);
+                VALUES (_job, _step, _processorName);
             End If;
 
             If _infoLevel > 1 Then
@@ -641,7 +642,7 @@ BEGIN
 
             INSERT INTO Tmp_JobParamsTable (Section, Name, Value)
             SELECT Src.Section, Src.Name, Src.Value
-            FROM cap.get_task_step_params(_jobNumber, _step) Src;
+            FROM cap.get_task_step_params(_job, _step) Src;
 
         Else
             ---------------------------------------------------
@@ -819,11 +820,11 @@ END
 $_$;
 
 
-ALTER PROCEDURE cap.request_ctm_step_task(IN _processorname text, INOUT _jobnumber integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text, IN _infolevel integer, IN _managerversion text, IN _jobcounttopreview integer, IN _serverperspectiveenabled integer) OWNER TO d3l243;
+ALTER PROCEDURE cap.request_ctm_step_task(IN _processorname text, INOUT _job integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text, IN _infolevel integer, IN _managerversion text, IN _jobcounttopreview integer, IN _serverperspectiveenabled integer) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE request_ctm_step_task(IN _processorname text, INOUT _jobnumber integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text, IN _infolevel integer, IN _managerversion text, IN _jobcounttopreview integer, IN _serverperspectiveenabled integer); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: PROCEDURE request_ctm_step_task(IN _processorname text, INOUT _job integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text, IN _infolevel integer, IN _managerversion text, IN _jobcounttopreview integer, IN _serverperspectiveenabled integer); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.request_ctm_step_task(IN _processorname text, INOUT _jobnumber integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text, IN _infolevel integer, IN _managerversion text, IN _jobcounttopreview integer, IN _serverperspectiveenabled integer) IS 'RequestCTMStepTask or RequestStepTask';
+COMMENT ON PROCEDURE cap.request_ctm_step_task(IN _processorname text, INOUT _job integer, INOUT _results refcursor, INOUT _message text, INOUT _returncode text, IN _infolevel integer, IN _managerversion text, IN _jobcounttopreview integer, IN _serverperspectiveenabled integer) IS 'RequestCTMStepTask or RequestStepTask';
 
