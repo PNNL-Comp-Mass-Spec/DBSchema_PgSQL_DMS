@@ -115,6 +115,7 @@ CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, IN
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          08/04/2024 mem - Rename _jobNumber argument to _job
+**                         - Remove explicit Commit
 **
 *****************************************************/
 DECLARE
@@ -600,8 +601,10 @@ BEGIN
     END;
 
     If _jobAssigned And _infoLevel = 0 Then
-        _currentLocation := 'Commit since _jobAssigned is true';
-        COMMIT;
+        _currentLocation := '_jobAssigned is true';
+
+        -- Previously would commit, but that leads to error "invalid transaction termination" when this procedure is called from C#
+        -- COMMIT;
     End If;
 
     BEGIN
