@@ -11,7 +11,15 @@ CREATE OR REPLACE FUNCTION sw.enable_disable_step_tool_for_debugging(_tool text 
 **      Bulk enables or disables a step tool to allow for debugging
 **
 **  Arguments:
-**    _debugMode   True to disable on pubs to allow for debugging; false to enable on pubs
+**    _tool             Step tool name
+**    _debugMode        True to disable managers (and thus allow for debugging); false to re-enable the managers
+**    _infoOnly         View step tools that would be updated
+**
+**  Example usage:
+**    SELECT * FROM sw.enable_disable_step_tool_for_debugging('MSGFPlus', _debugMode => true, _infoOnly => true);
+**    SELECT * FROM sw.enable_disable_step_tool_for_debugging('MSGFPlus', _debugMode => true, _infoOnly => false);
+**    SELECT * FROM sw.enable_disable_step_tool_for_debugging('MSGFPlus', _debugMode => false, _infoOnly => true);
+**    SELECT * FROM sw.enable_disable_step_tool_for_debugging('MSGFPlus', _debugMode => false, _infoOnly => false);
 **
 **  Auth:   mem
 **  Date:   10/22/2013 mem - Initial version
@@ -23,6 +31,7 @@ CREATE OR REPLACE FUNCTION sw.enable_disable_step_tool_for_debugging(_tool text 
 **          09/07/2023 mem - Align assignment statements
 **          12/08/2023 mem - Select a single column when using If Not Exists()
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          08/04/2024 mem - Ignore case when filtering on tool name
 **
 *****************************************************/
 DECLARE
@@ -47,13 +56,22 @@ BEGIN
     SELECT PTG.group_id
     INTO _groupID
     FROM sw.t_processor_tool_groups PTG
-    WHERE PTG.group_name = _groupName;
+    WHERE PTG.group_name = _groupName::citext;
 
     If Not FOUND Then
         _message := format('Error, group not found: %s', _groupName);
     ElsIf Not Exists (SELECT PTGD.tool_name FROM sw.t_processor_tool_group_details PTGD WHERE PTGD.tool_name = _tool::citext) Then
         _message := format('Error, tool not found: %s', _tool);
     End If;
+
+    ---------------------------------------------------
+    -- Assure that tool name is properly capitalized
+    ---------------------------------------------------
+
+    SELECT PTGD.tool_name
+    INTO _tool
+    FROM sw.t_processor_tool_group_details PTGD
+    WHERE PTGD.tool_name = _tool::citext;
 
     If _message <> '' Then
         RETURN QUERY
@@ -78,7 +96,7 @@ BEGIN
         If Not _infoOnly Then
             UPDATE sw.t_processor_tool_group_details Target
             SET enabled = 1
-            WHERE Target.tool_name = _tool AND Target.enabled < 0 AND Target.group_id <> _groupID;
+            WHERE Target.tool_name = _tool::citext AND Target.enabled < 0 AND Target.group_id <> _groupID;
             --
             GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -86,7 +104,7 @@ BEGIN
 
             UPDATE sw.t_processor_tool_group_details Target
             SET enabled = 0
-            WHERE Target.tool_name = _tool AND Target.enabled <> 0 AND Target.group_id = _groupID;
+            WHERE Target.tool_name = _tool::citext AND Target.enabled <> 0 AND Target.group_id = _groupID;
             --
             GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -111,7 +129,7 @@ BEGIN
                    PTGD.max_job_priority,
                    PTGD.last_affected
             FROM sw.t_processor_tool_group_details PTGD
-            WHERE PTGD.tool_name = _tool AND PTGD.enabled < 0 AND PTGD.group_id <> _groupID
+            WHERE PTGD.tool_name = _tool::citext AND PTGD.enabled < 0 AND PTGD.group_id <> _groupID
             UNION
             SELECT 'Set enabled to 0' AS Action,
                    PTGD.group_id,
@@ -124,7 +142,7 @@ BEGIN
                    PTGD.max_job_priority,
                    PTGD.last_affected
             FROM sw.t_processor_tool_group_details PTGD
-            WHERE PTGD.tool_name = _tool AND PTGD.enabled <> 0 AND PTGD.group_id = _groupID;
+            WHERE PTGD.tool_name = _tool::citext AND PTGD.enabled <> 0 AND PTGD.group_id = _groupID;
 
             If Not FOUND Then
                 RETURN QUERY
@@ -139,7 +157,7 @@ BEGIN
                        PTGD.max_job_priority,
                        PTGD.last_affected
                 FROM sw.t_processor_tool_group_details PTGD
-                WHERE PTGD.tool_name = _tool AND PTGD.enabled > 0;
+                WHERE PTGD.tool_name = _tool::citext AND PTGD.enabled > 0;
             End If;
         End If;
 
@@ -149,7 +167,7 @@ BEGIN
         If Not _infoOnly Then
             UPDATE sw.t_processor_tool_group_details Target
             SET enabled = -1
-            WHERE Target.tool_name = _tool AND Target.enabled > 0 AND Target.group_id <> _groupID;
+            WHERE Target.tool_name = _tool::citext AND Target.enabled > 0 AND Target.group_id <> _groupID;
             --
             GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -157,7 +175,7 @@ BEGIN
 
             UPDATE sw.t_processor_tool_group_details Target
             SET enabled = 1
-            WHERE Target.tool_name = _tool AND Target.enabled <> 1 AND Target.group_id = _groupID;
+            WHERE Target.tool_name = _tool::citext AND Target.enabled <> 1 AND Target.group_id = _groupID;
             --
             GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -182,7 +200,7 @@ BEGIN
                    PTGD.max_job_priority,
                    PTGD.last_affected
             FROM sw.t_processor_tool_group_details PTGD
-            WHERE PTGD.tool_name = _tool AND PTGD.enabled > 0 AND PTGD.group_id <> _groupID
+            WHERE PTGD.tool_name = _tool::citext AND PTGD.enabled > 0 AND PTGD.group_id <> _groupID
             UNION
             SELECT 'Set enabled to 1' AS Action,
                    PTGD.group_id,
@@ -195,7 +213,7 @@ BEGIN
                    PTGD.max_job_priority,
                    PTGD.last_affected
             FROM sw.t_processor_tool_group_details PTGD
-            WHERE PTGD.tool_name = _tool AND PTGD.enabled <> 1 AND PTGD.group_id = _groupID;
+            WHERE PTGD.tool_name = _tool::citext AND PTGD.enabled <> 1 AND PTGD.group_id = _groupID;
 
             If Not FOUND Then
                 RETURN QUERY
@@ -210,7 +228,7 @@ BEGIN
                        PTGD.max_job_priority,
                        PTGD.last_affected
                 FROM sw.t_processor_tool_group_details PTGD
-                WHERE PTGD.tool_name = _tool AND PTGD.enabled > 0;
+                WHERE PTGD.tool_name = _tool::citext AND PTGD.enabled > 0;
             End If;
         End If;
 

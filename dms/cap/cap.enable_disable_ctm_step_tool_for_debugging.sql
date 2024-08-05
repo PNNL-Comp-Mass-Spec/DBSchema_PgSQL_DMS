@@ -8,12 +8,18 @@ CREATE OR REPLACE FUNCTION cap.enable_disable_ctm_step_tool_for_debugging(_tool 
 /****************************************************
 **
 **  Desc:
-**   Bulk enables or disables a step tool to allow for debugging
+**      Bulk enables or disables a step tool to allow for debugging
 **
 **  Arguments:
 **    _tool             Step tool name
 **    _debugMode        True to disable managers (and thus allow for debugging); false to re-enable the managers
 **    _infoOnly         View step tools that would be updated
+**
+**  Example usage:
+**    SELECT * FROM cap.enable_disable_ctm_step_tool_for_debugging('DatasetInfo', _debugMode => true, _infoOnly => true);
+**    SELECT * FROM cap.enable_disable_ctm_step_tool_for_debugging('DatasetInfo', _debugMode => true, _infoOnly => false);
+**    SELECT * FROM cap.enable_disable_ctm_step_tool_for_debugging('DatasetInfo', _debugMode => false, _infoOnly => true);
+**    SELECT * FROM cap.enable_disable_ctm_step_tool_for_debugging('DatasetInfo', _debugMode => false, _infoOnly => false);
 **
 **  Auth:   mem
 **  Date:   10/29/2013 mem - Initial version
@@ -26,6 +32,7 @@ CREATE OR REPLACE FUNCTION cap.enable_disable_ctm_step_tool_for_debugging(_tool 
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/08/2023 mem - Select a single column when using If Not Exists()
+**          08/04/2024 mem - Ignore case when filtering on tool name
 **
 *****************************************************/
 DECLARE
@@ -41,10 +48,19 @@ BEGIN
     _debugMode := Coalesce(_debugMode, false);
     _infoOnly  := Coalesce(_infoOnly, false);
 
-    If Not Exists (SELECT T.tool_name FROM cap.t_processor_tool T WHERE T.tool_name = _tool) Then
+    If Not Exists (SELECT T.tool_name FROM cap.t_processor_tool T WHERE T.tool_name = _tool::citext) Then
         RAISE INFO 'Tool not found: "%"; cannot continue', _tool;
         RETURN;
     End If;
+
+    ---------------------------------------------------
+    -- Assure that tool name is properly capitalized
+    ---------------------------------------------------
+
+    SELECT T.tool_name
+    INTO _tool
+    FROM cap.t_processor_tool T
+    WHERE T.tool_name = _tool::citext;
 
     If Not _debugMode Then
         -- Disable debugging
@@ -52,7 +68,7 @@ BEGIN
         If Not _infoOnly Then
             UPDATE cap.t_processor_tool T
             SET enabled = 1
-            WHERE T.tool_name = _tool AND T.enabled < 0 AND T.processor_name <> 'Monroe_CTM';
+            WHERE T.tool_name = _tool::citext AND T.enabled < 0 AND T.processor_name <> 'Monroe_CTM';
             --
             GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -60,7 +76,7 @@ BEGIN
 
             UPDATE cap.t_processor_tool T
             SET enabled = 0
-            WHERE T.tool_name = _tool AND T.enabled <> 0 AND T.processor_name = 'Monroe_CTM';
+            WHERE T.tool_name = _tool::citext AND T.enabled <> 0 AND T.processor_name = 'Monroe_CTM';
             --
             GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -85,17 +101,17 @@ BEGIN
             RETURN QUERY
             SELECT 'Set enabled to 1' AS task, T.processor_name, T.tool_name, T.priority, T.enabled, T.comment, T.last_affected
             FROM cap.t_processor_tool T
-            WHERE T.tool_name = _tool AND T.enabled < 0 AND T.processor_name <> 'Monroe_CTM'
+            WHERE T.tool_name = _tool::citext AND T.enabled < 0 AND T.processor_name <> 'Monroe_CTM'
             UNION
             SELECT 'Set enabled to 0' AS task, T.processor_name, T.tool_name, T.priority, T.enabled, T.comment, T.last_affected
             FROM cap.t_processor_tool T
-            WHERE T.tool_name = _tool AND T.enabled <> 0 AND T.processor_name = 'Monroe_CTM';
+            WHERE T.tool_name = _tool::citext AND T.enabled <> 0 AND T.processor_name = 'Monroe_CTM';
 
             If Not FOUND Then
                 RETURN QUERY
                 SELECT 'Debug mode is already disabled' AS task, T.processor_name, T.tool_name, T.priority, T.enabled, T.comment, T.last_affected
                 FROM cap.t_processor_tool T
-                WHERE T.tool_name = _tool and T.enabled > 0;
+                WHERE T.tool_name = _tool::citext AND T.enabled > 0;
             End If;
         End If;
 
@@ -105,7 +121,7 @@ BEGIN
         If Not _infoOnly Then
             UPDATE cap.t_processor_tool T
             SET enabled = -1
-            WHERE T.tool_name = _tool AND T.enabled > 0 AND T.processor_name <> 'Monroe_CTM';
+            WHERE T.tool_name = _tool::citext AND T.enabled > 0 AND T.processor_name <> 'Monroe_CTM';
             --
             GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -113,7 +129,7 @@ BEGIN
 
             UPDATE cap.t_processor_tool t
             SET enabled = 1
-            WHERE T.tool_name = _tool AND T.enabled <> 1 AND T.processor_name = 'Monroe_CTM';
+            WHERE T.tool_name = _tool::citext AND T.enabled <> 1 AND T.processor_name = 'Monroe_CTM';
             --
             GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -138,17 +154,17 @@ BEGIN
             RETURN QUERY
             SELECT 'Set enabled to -1' AS task, T.processor_name, T.tool_name, T.priority, T.enabled, T.comment, T.last_affected
             FROM cap.t_processor_tool T
-            WHERE T.tool_name = _tool AND T.enabled > 0 AND T.processor_name <> 'Monroe_CTM'
+            WHERE T.tool_name = _tool::citext AND T.enabled > 0 AND T.processor_name <> 'Monroe_CTM'
             UNION
             SELECT 'Set enabled to 1' AS task, T.processor_name, T.tool_name, T.priority, T.enabled, T.comment, T.last_affected
             FROM cap.t_processor_tool T
-            WHERE T.tool_name = _tool AND T.enabled <> 1 AND T.processor_name = 'Monroe_CTM';
+            WHERE T.tool_name = _tool::citext AND T.enabled <> 1 AND T.processor_name = 'Monroe_CTM';
 
             If Not FOUND Then
                 RETURN QUERY
                 SELECT 'Debug mode is already enabled' AS task, T.processor_name, T.tool_name, T.priority, T.enabled, T.comment, T.last_affected
                 FROM cap.t_processor_tool T
-                WHERE T.tool_name = _tool AND T.enabled > 0;
+                WHERE T.tool_name = _tool::citext AND T.enabled > 0;
             End If;
         End If;
     End If;
