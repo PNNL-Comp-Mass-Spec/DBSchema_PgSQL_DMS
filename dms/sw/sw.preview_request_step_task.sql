@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION sw.preview_request_step_task(_processorname text, _jo
 **          05/18/2017 mem - Call Get_Default_Remote_Info_For_Manager to retrieve the _remoteInfo XML for _processorName
 **                           Pass this to Request_Step_Task_XML
 **          06/10/2023 mem - Ported to PostgreSQL
+**          08/03/2024 mem - Fix bug referencing sw.t_jobs when no job was assigned
 **
 *****************************************************/
 DECLARE
@@ -68,8 +69,7 @@ BEGIN
                ''::citext AS Dataset,
                '' AS Processor,
                '' AS Parameters,
-               _message AS Message
-        FROM sw.t_jobs J;
+               _message AS Message;
     End If;
 
 END
