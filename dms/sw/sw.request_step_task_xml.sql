@@ -130,6 +130,7 @@ CREATE OR REPLACE PROCEDURE sw.request_step_task_xml(IN _processorname text, INO
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          08/03/2024 mem - Ignore case when filtering on processor name
 **
 *****************************************************/
 DECLARE
@@ -287,7 +288,7 @@ BEGIN
                processor_id
         INTO _processorDoesGP, _machine, _processorName, _processorState, _processorID
         FROM sw.t_local_processors
-        WHERE processor_name = _processorName;
+        WHERE processor_name = _processorName::citext;
 
         If Not FOUND Then
             ---------------------------------------------------
