@@ -37,6 +37,15 @@ COPY public.t_analysis_tool (analysis_tool_id, analysis_tool, tool_base_name, pa
 22	DTA_Gen	DTA_Gen	1014	\\\\gigasax\\DMS_Parameter_Files\\DTA_Gen	G:\\DMS_Parameter_Files\\DTA_Gen	DTAGen_ExtractMSn.xml	DTA_Peak	no	1	(na)	0	N	\N	0	1	0
 23	MSClusterDAT_Gen	MSClusterDAT_Gen	1	\\\\gigasax\\DMS_Parameter_Files\\MSClusterDAT_Gen	G:\\DMS_Parameter_Files\\MSClusterDAT_Gen	MSClusterDAT_ExtractMSn.xml	MSClusterDAT	no	0	(na)	0	N	\N	0	1	0
 24	DTA_Import	DTA_Import	1014	\\\\gigasax\\DMS_Parameter_Files\\DTA_Import	G:\\DMS_Parameter_Files\\DTA_Import	SWTest_ExtDTA_Import.xml	DTA_Peak	no	1	(na)	0	N	\N	0	1	1
+0	(none)	(none)	1	(na)	(na)	(na)	\N	no	0	(na)	0	N	\N	0	1	1
+1	Sequest	Sequest	1000	\\\\gigasax\\DMS_Parameter_Files\\Sequest	G:\\DMS_Parameter_Files\\Sequest	LCQDefSettings.txt	Peptide_Hit	no	0	Individual_DTA	1	Y	Search MS/MS spectra with Sequest	0	1	1
+2	ICR2LS	ICR2LS	1003	\\\\gigasax\\DMS_Parameter_Files\\ICR2LS	G:\\DMS_Parameter_Files\\ICR2LS	FTICRDefSettings.txt	HMMA_Peak	yes	0	(na)	0	N	\N	0	1	1
+3	TurboSequest	Sequest	1000	\\\\gigasax\\DMS_Parameter_Files\\Sequest	G:\\DMS_Parameter_Files\\Sequest	LCQDefSettings.txt	Peptide_Hit	yes	0	Individual_DTA	1	Y	\N	0	1	1
+4	TIC_ICR	ICR2LS	1003	\\\\gigasax\\DMS_Parameter_Files\\ICR2LS	G:\\DMS_Parameter_Files\\ICR2LS	(na)	TIC	yes	0	(na)	0	N	\N	0	0	0
+5	TIC_LCQ	TIC_LCQ	1	\\\\gigasax\\DMS_Parameter_Files\\Sequest	G:\\DMS_Parameter_Files\\Sequest	(na)	TIC	yes	0	(na)	0	N	\N	0	0	0
+6	QTOFSequest	Sequest	1000	\\\\gigasax\\DMS_Parameter_Files\\Sequest	G:\\DMS_Parameter_Files\\Sequest	LCQDefSettings.txt	Peptide_Hit	yes	0	(na)	1	Y	\N	0	1	1
+7	QTOFPek	QTOFPek	1001	\\\\gigasax\\DMS_Parameter_Files\\QTOFPek	G:\\DMS_Parameter_Files\\QTOFPek	QTOFPekDefSettings.txt	HMMA_Peak	yes	0	(na)	0	N	\N	0	1	1
+8	DeNovoID	DeNovoID	1002	\\\\gigasax\\DMS_Parameter_Files\\DeNovoPeak	G:\\DMS_Parameter_Files\\DeNovoPeak	DeNovo_Default.xml	\N	yes	0	(na)	1	N	\N	0	1	1
 25	Sequest_UseExistingExternalDTA	Sequest	1000	\\\\gigasax\\DMS_Parameter_Files\\Sequest	G:\\DMS_Parameter_Files\\Sequest	LCQDefSettings.txt	Peptide_Hit	no	0	Individual_DTA	1	Y	\N	0	1	1
 26	XTandem_UseExistingExternalDTA	XTandem	1008	\\\\gigasax\\DMS_Parameter_Files\\XTandem	G:\\DMS_Parameter_Files\\XTandem	??	XT_Peptide_Hit	no	0	Concat_DTA, MGF, PKL, mzXML	1	Y	\N	0	1	1
 27	Decon2LS_V2	Decon2LS	1010	\\\\gigasax\\DMS_Parameter_Files\\Decon2LS	G:\\DMS_Parameter_Files\\Decon2LS	??	HMMA_Peak	yes	1	(na)	0	N	Extract deconvolved MS1 scan information	0	0	1
@@ -89,15 +98,6 @@ COPY public.t_analysis_tool (analysis_tool_id, analysis_tool, tool_base_name, pa
 74	MODPlus_NoRefine	MODPlus	1028	\\\\gigasax\\DMS_Parameter_Files\\MODPlus	G:\\DMS_Parameter_Files\\MODPlus	\N	MODPlus_Peptide_Hit	no	0	mzML	1	Y	Search MS/MS	0	1	1
 75	QC-ART	QC-ART	1029	\\\\gigasax\\DMS_Parameter_Files\\QC-ART	G:\\DMS_Parameter_Files\\QC-ART	??	QCA	no	1	(na)	0	N	QC of iTRAQ datasets using SMAQC results	1	0	1
 76	PBF_Gen	PBF_Gen	1	(na)	(na)	(na)	\N	no	1	(na)	0	N	\N	0	1	0
-0	(none)	(none)	1	(na)	(na)	(na)	\N	no	0	(na)	0	N	\N	0	1	1
-1	Sequest	Sequest	1000	\\\\gigasax\\DMS_Parameter_Files\\Sequest	G:\\DMS_Parameter_Files\\Sequest	LCQDefSettings.txt	Peptide_Hit	no	0	Individual_DTA	1	Y	Search MS/MS spectra with Sequest	0	1	1
-2	ICR2LS	ICR2LS	1003	\\\\gigasax\\DMS_Parameter_Files\\ICR2LS	G:\\DMS_Parameter_Files\\ICR2LS	FTICRDefSettings.txt	HMMA_Peak	yes	0	(na)	0	N	\N	0	1	1
-3	TurboSequest	Sequest	1000	\\\\gigasax\\DMS_Parameter_Files\\Sequest	G:\\DMS_Parameter_Files\\Sequest	LCQDefSettings.txt	Peptide_Hit	yes	0	Individual_DTA	1	Y	\N	0	1	1
-4	TIC_ICR	ICR2LS	1003	\\\\gigasax\\DMS_Parameter_Files\\ICR2LS	G:\\DMS_Parameter_Files\\ICR2LS	(na)	TIC	yes	0	(na)	0	N	\N	0	0	0
-5	TIC_LCQ	TIC_LCQ	1	\\\\gigasax\\DMS_Parameter_Files\\Sequest	G:\\DMS_Parameter_Files\\Sequest	(na)	TIC	yes	0	(na)	0	N	\N	0	0	0
-6	QTOFSequest	Sequest	1000	\\\\gigasax\\DMS_Parameter_Files\\Sequest	G:\\DMS_Parameter_Files\\Sequest	LCQDefSettings.txt	Peptide_Hit	yes	0	(na)	1	Y	\N	0	1	1
-7	QTOFPek	QTOFPek	1001	\\\\gigasax\\DMS_Parameter_Files\\QTOFPek	G:\\DMS_Parameter_Files\\QTOFPek	QTOFPekDefSettings.txt	HMMA_Peak	yes	0	(na)	0	N	\N	0	1	1
-8	DeNovoID	DeNovoID	1002	\\\\gigasax\\DMS_Parameter_Files\\DeNovoPeak	G:\\DMS_Parameter_Files\\DeNovoPeak	DeNovo_Default.xml	\N	yes	0	(na)	1	N	\N	0	1	1
 77	NOMSI_MzXML	NOMSI	1027	\\\\gigasax\\DMS_Parameter_Files\\NOMSI	G:\\DMS_Parameter_Files\\NOMSI	NOMSI_Malak_Transformations.xml	NOM_Search	no	1	(na)	0	N	\N	0	1	1
 78	MSGFPlus_DTARefinery_SplitFasta	MSGFPlus_DTARefinery	1018	\\\\gigasax\\DMS_Parameter_Files\\MSGFPlus	G:\\DMS_Parameter_Files\\MSGFPlus	MSGFPlus_DeconMSn_Centroid_Top500_DTARef_NoMods_15Parts_MergeResults_Top1.xml	MSG_Peptide_Hit	no	0	Concat_DTA	1	Y	\N	0	1	1
 79	MSGFPlus_MzML_SplitFasta	MSGFPlus_MzML	1018	\\\\gigasax\\DMS_Parameter_Files\\MSGFPlus	G:\\DMS_Parameter_Files\\MSGFPlus	IonTrapDefSettings_MzML_StatCysAlk_6plexTMT_phospho_5Parts_MergeResults_Top1.xml	MSG_Peptide_Hit	no	1	mzML	1	Y	\N	0	1	1

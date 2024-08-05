@@ -47,6 +47,23 @@ COPY public.t_analysis_status_monitor_params (processor_id, status_file_name_pat
 300	\\\\Monroe2\\DMS_Programs\\Status.xml	0	0
 303	\\\\WD37447\\DMS_Programs\\AnalysisToolManager\\Status.xml	1	1
 306	\\\\SeqCluster5\\DMS_Programs\\AnalysisToolManager\\Status.xml	1	1
+249	\\\\pub-27\\DMS_Programs\\AnalysisToolManager1\\Status.xml	1	1
+250	\\\\pub-28\\DMS_Programs\\AnalysisToolManager1\\Status.xml	1	1
+251	\\\\pub-29\\DMS_Programs\\AnalysisToolManager1\\Status.xml	1	1
+252	\\\\pub-29\\DMS_Programs\\AnalysisToolManager2\\Status.xml	1	1
+254	\\\\pub-30\\DMS_Programs\\AnalysisToolManager1\\Status.xml	1	1
+255	\\\\pub-30\\DMS_Programs\\AnalysisToolManager2\\Status.xml	1	1
+257	\\\\pub-31\\DMS_Programs\\AnalysisToolManager1\\Status.xml	1	1
+258	\\\\pub-31\\DMS_Programs\\AnalysisToolManager2\\Status.xml	1	1
+260	\\\\Pub-40\\DMS_Programs\\AnalysisToolManager1\\Status.xml	1	1
+261	\\\\Pub-40\\DMS_Programs\\AnalysisToolManager2\\Status.xml	1	1
+262	\\\\Pub-41\\DMS_Programs\\AnalysisToolManager1\\Status.xml	1	1
+263	\\\\Pub-41\\DMS_Programs\\AnalysisToolManager2\\Status.xml	1	1
+264	\\\\Pub-42\\DMS_Programs\\AnalysisToolManager1\\Status.xml	1	1
+265	\\\\Pub-42\\DMS_Programs\\AnalysisToolManager2\\Status.xml	1	1
+266	\\\\Pub-43\\DMS_Programs\\AnalysisToolManager1\\Status.xml	1	1
+267	\\\\Pub-43\\DMS_Programs\\AnalysisToolManager2\\Status.xml	1	1
+268	\\\\SeqCluster1\\DMS_Programs\\AnalysisToolManager\\Status.xml	1	1
 307	\\\\Mash-06\\DMS_Programs\\AnalysisToolManager\\Status.xml	1	1
 308	\\\\Proto-3\\DMS_Programs\\AnalysisToolManager\\Status.xml	1	1
 309	\\\\Proto-4\\DMS_Programs\\AnalysisToolManager\\Status.xml	1	1
@@ -84,23 +101,6 @@ COPY public.t_analysis_status_monitor_params (processor_id, status_file_name_pat
 343	\\\\Pub-35\\DMS_Programs\\AnalysisToolManager4\\Status.xml	1	1
 344	\\\\Pub-01\\DMS_Programs\\AnalysisToolManager1\\Status.xml	1	1
 345	\\\\Pub-01\\DMS_Programs\\AnalysisToolManager2\\Status.xml	1	1
-249	\\\\pub-27\\DMS_Programs\\AnalysisToolManager1\\Status.xml	1	1
-250	\\\\pub-28\\DMS_Programs\\AnalysisToolManager1\\Status.xml	1	1
-251	\\\\pub-29\\DMS_Programs\\AnalysisToolManager1\\Status.xml	1	1
-252	\\\\pub-29\\DMS_Programs\\AnalysisToolManager2\\Status.xml	1	1
-254	\\\\pub-30\\DMS_Programs\\AnalysisToolManager1\\Status.xml	1	1
-255	\\\\pub-30\\DMS_Programs\\AnalysisToolManager2\\Status.xml	1	1
-257	\\\\pub-31\\DMS_Programs\\AnalysisToolManager1\\Status.xml	1	1
-258	\\\\pub-31\\DMS_Programs\\AnalysisToolManager2\\Status.xml	1	1
-260	\\\\Pub-40\\DMS_Programs\\AnalysisToolManager1\\Status.xml	1	1
-261	\\\\Pub-40\\DMS_Programs\\AnalysisToolManager2\\Status.xml	1	1
-262	\\\\Pub-41\\DMS_Programs\\AnalysisToolManager1\\Status.xml	1	1
-263	\\\\Pub-41\\DMS_Programs\\AnalysisToolManager2\\Status.xml	1	1
-264	\\\\Pub-42\\DMS_Programs\\AnalysisToolManager1\\Status.xml	1	1
-265	\\\\Pub-42\\DMS_Programs\\AnalysisToolManager2\\Status.xml	1	1
-266	\\\\Pub-43\\DMS_Programs\\AnalysisToolManager1\\Status.xml	1	1
-267	\\\\Pub-43\\DMS_Programs\\AnalysisToolManager2\\Status.xml	1	1
-268	\\\\SeqCluster1\\DMS_Programs\\AnalysisToolManager\\Status.xml	1	1
 \.
 
 

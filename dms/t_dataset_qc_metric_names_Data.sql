@@ -45,6 +45,15 @@ ms1_tic_change_q4	Quameter_IDFree	MS1 Signal		ESI Stability		Ratio	Lower		The lo
 ms1_tic_q2	Quameter_IDFree	MS1 Signal		Dynamic Range		Ratio			The log ratio for 50%ile of TIC over 25%ile of TIC	0	24
 ms1_tic_q3	Quameter_IDFree	MS1 Signal		Dynamic Range		Ratio			The log ratio for 75%ile of TIC over 50%ile of TIC	0	25
 ms1_tic_q4	Quameter_IDFree	MS1 Signal		Dynamic Range		Ratio			The log ratio for largest TIC over 75%ile TIC	0	26
+p_2c	SMAQC	Peptide Identification	Unique peptides	Peptide counts	Peptides	Count	Higher	A good overall performance measure	Number of tryptic peptides; unique peptide count (MSGFSpecProb < 1E-12)	0	-11
+amts_10pct_fdr	VIPER	MS1 Signal	VIPER	Peptide counts	peptides	Count	Higher	Total number of identified LC-MS features	Number of LC-MS features	0	-10
+amts_25pct_fdr	VIPER	MS1 Signal	VIPER	Peptide counts	peptides	Count	Higher	Total number of identified LC-MS features	Number of LC-MS features	0	-9
+mass_error_ppm	DtaRefinery	MS1 Signal	PSM based	Parent Ion Mass Error (ppm)	ppm mean	ppm	Lower	Measures the accuracy of the identifications (and the instrument calibration)	Either a duplicate of MS1_5C, or the value reported by DTA_Refinery before refinement	0	-8
+mass_error_ppm_viper	VIPER	MS1 Signal		Parent Ion Mass Error (ppm)	ppm median	ppm	Lower	Measures the accuracy of the identifications	Median of the precursor mass error (ppm)	0	-7
+xic_fwhm_q3	Quameter_IDFree	Chromatography		Peak width variability		seconds			75%ile of peak widths for the wide XICs	0	-6
+xic_wide_frac	Quameter_IDFree	Chromatography		Peak width variability		Ratio			Fraction of precursor ions accounting for the top half of all peak width	0	-5
+qcart	Aggregate	Quality Control	QC-ART aggregate score	Overall Quality Control metric	Likelihood good dataset	None	Lower		Overall confidence using model developed by Allison Thompson and Ryan Butner	0	-4
+phos_2c	SMAQC	Peptide Identification	Unique phosphopeptides	Peptide counts	Peptides	Count	Higher	A good overall performance measure for phospho samples	Number of tryptic phosphopeptides; unique peptide count (MSGFSpecProb < 1E-12)	0	-3
 ms1_count	Quameter_IDFree	Acquisition Stats		Spectrum counts		Count			Number of MS spectra collected	0	27
 ms1_freq_max	Quameter_IDFree	Acquisition Stats		Acquisition Rate		Hz			Fastest frequency for MS collection in any minute	0	28
 ms1_density_q1	Quameter_IDFree	Acquisition Stats		Spectrum counts		Count			25%ile of MS scan peak counts	0	29
@@ -97,6 +106,7 @@ ms1_4b	SMAQC	MS1 Signal	Ignore	MS1 intensity variation for peptides	Betw/in	Rati
 ms1_5a	SMAQC	MS1 Signal	Mass error, Th	Precursor m/z – Peptide ion m/z	Median	Th	Lower	Measures the accuracy of the identifications	Median of precursor mass error (Th, MSGFSpecProb < 1E-12)	0	77
 ms1_5b	SMAQC	MS1 Signal	Abs[Mass error], Th	Precursor m/z – Peptide ion m/z	Mean absolute	Th	Lower	Measures the accuracy of the identifications	Median of absolute value of precursor mass error (Th, MSGFSpecProb < 1E-12)	0	78
 ms1_5c	SMAQC	MS1 Signal	Mass error, ppm	Precursor m/z – Peptide ion m/z	ppm median	ppm	Lower	Measures the accuracy of the identifications	Median of precursor mass error (ppm, MSGFSpecProb < 1E-12)	0	79
+is_1a	SMAQC	Ion Source	MS1 jump 10x	MS1 during middle (and early) peptide retention period	MS1 jumps >10x	Count	Lower	Flags ESI instability	Occurrences of MS1 jumping >10x	0	64
 ms1_5d	SMAQC	MS1 Signal	Mass error, interquartile	Precursor m/z – Peptide ion m/z	ppm interQ	ppm	Lower	Measures the distribution of the real accuracy measurements	Interquartile distance in ppm-based precursor mass error (MSGFSpecProb < 1E-12)	0	80
 ms2_1	SMAQC	MS2 Signal	Ion injection time	Ion injection times for IDs	MS2 median	Milliseconds	Lower	Reflects sample concentration.  Lower concentrations lead to higher ion injection times.	Median MS2 ion injection time for identified peptides (MSGFSpecProb < 1E-12)	0	81
 ms2_2	SMAQC	MS2 Signal	S/N	MS2 ID S/N	Median	Ratio	Higher	Higher S/N correlates with increased frequency of peptide identification	Median S/N value for identified MS2 spectra (MSGFSpecProb < 1E-12)	0	82
@@ -109,16 +119,6 @@ p_1a	SMAQC	Peptide Identification	PSM Score	MS2 ID score	Median	fval	Higher	High
 p_1b	SMAQC	Peptide Identification	PSM Score	MS2 ID Score	Median	None	Lower	Lower scores correlate with higher S/N and frequency of identification	Median peptide ID score ( Log10(MSGF_SpecProb) or X!Tandem Peptide_Expectation_Value_Log(e))	0	89
 p_2a	SMAQC	Peptide Identification	Total PSMs	Peptide counts	Identifications	Count	Higher	Total identifications correlate with high levels of peptide signals, performance	Number of fully tryptic peptides; total spectra count (MSGFSpecProb < 1E-12)	0	90
 p_2b	SMAQC	Peptide Identification	Unique peptide and charge	Peptide counts	Ions	Count	Higher	A good overall performance measure	Number of tryptic peptides; unique peptide & charge count (MSGFSpecProb < 1E-12)	0	91
-p_2c	SMAQC	Peptide Identification	Unique peptides	Peptide counts	Peptides	Count	Higher	A good overall performance measure	Number of tryptic peptides; unique peptide count (MSGFSpecProb < 1E-12)	0	-11
-amts_10pct_fdr	VIPER	MS1 Signal	VIPER	Peptide counts	peptides	Count	Higher	Total number of identified LC-MS features	Number of LC-MS features	0	-10
-amts_25pct_fdr	VIPER	MS1 Signal	VIPER	Peptide counts	peptides	Count	Higher	Total number of identified LC-MS features	Number of LC-MS features	0	-9
-mass_error_ppm	DtaRefinery	MS1 Signal	PSM based	Parent Ion Mass Error (ppm)	ppm mean	ppm	Lower	Measures the accuracy of the identifications (and the instrument calibration)	Either a duplicate of MS1_5C, or the value reported by DTA_Refinery before refinement	0	-8
-mass_error_ppm_viper	VIPER	MS1 Signal		Parent Ion Mass Error (ppm)	ppm median	ppm	Lower	Measures the accuracy of the identifications	Median of the precursor mass error (ppm)	0	-7
-xic_fwhm_q3	Quameter_IDFree	Chromatography		Peak width variability		seconds			75%ile of peak widths for the wide XICs	0	-6
-xic_wide_frac	Quameter_IDFree	Chromatography		Peak width variability		Ratio			Fraction of precursor ions accounting for the top half of all peak width	0	-5
-qcart	Aggregate	Quality Control	QC-ART aggregate score	Overall Quality Control metric	Likelihood good dataset	None	Lower		Overall confidence using model developed by Allison Thompson and Ryan Butner	0	-4
-phos_2c	SMAQC	Peptide Identification	Unique phosphopeptides	Peptide counts	Peptides	Count	Higher	A good overall performance measure for phospho samples	Number of tryptic phosphopeptides; unique peptide count (MSGFSpecProb < 1E-12)	0	-3
-is_1a	SMAQC	Ion Source	MS1 jump 10x	MS1 during middle (and early) peptide retention period	MS1 jumps >10x	Count	Lower	Flags ESI instability	Occurrences of MS1 jumping >10x	0	64
 p_3	SMAQC	Peptide Identification	Semi/fully-tryptic	Peptide counts	Semi/tryptic peptides	Ratio	N/A	Indicates prevalence of semitryptic peptides in sample; increasing ratios may indicate changes in sample or in source	Ratio of unique semi-tryptic / unique fully tryptic peptides (MSGFSpecProb < 1E-12)	0	93
 phos_2a	SMAQC	Peptide Identification	Total phosphopeptides PSMs	Peptide counts	Identifications	Count	Higher	Total identifications correlate with high levels of peptide signals, performance	Number of tryptic phosphopeptides; total spectra count (MSGFSpecProb < 1E-12)	0	94
 keratin_2a	SMAQC	Peptide Identification	Total keratin PSMs	Peptide counts	Identifications	Count	Lower	Higher values mean higher contamination during sample prep	Number of keratin peptides (full or partial trypsin); total spectra count (MSGFSpecProb < 1E-12)	0	95

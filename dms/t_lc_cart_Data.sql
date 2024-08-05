@@ -22,17 +22,46 @@ SET row_security = off;
 
 COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, created) FROM stdin;
 44	Lion	10	Second Dimension HILIC cart.  Next Generation LC 3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2010-10-21 11:58:00
+1	unknown	1	Not a valid cart	\N
+2	No_Cart	2	An ad hoc or non cart based LC apparatus was used	2006-03-10 10:34:00
+11	Andromeda	10	Single emmitter system.	2006-03-10 12:47:00
+12	Doc	10		2006-03-10 10:28:00
+13	Draco	10		2006-03-14 09:07:00
+14	Earth	10		2006-03-13 07:36:00
+15	Firefly	2	nanoPOTS autosampler	2006-03-10 16:14:00
+16	Griffin	10		2006-03-20 07:30:00
+17	Pegasus	10	Fast Separation	2006-06-20 11:52:00
+18	Phoenix	10	Installed Eksigent pumps November 2012.	2006-03-13 15:04:00
+19	Raptor	10		2007-06-08 14:17:00
+20	Roc	10	Metabolomics Cart	2006-03-10 09:52:00
+27	Falcon	10	LC ISCO Formic, 4 column 10k constant pressure system. The Flagship of our LC fleet.	2006-05-22 08:36:00
+28	Hawk	10		2006-04-18 11:06:00
+29	Sphinx	10		2006-03-10 17:34:00
+30	Agilent	2	Commercial Agilent 1100 capillary HPLC system outfitted with binary pumps, autosampler, degasser and solvent tray	2006-03-13 12:30:00
+31	Protein_RP	10	This is a manual LC system used for intact protein separations. Comprised of 2 10k-psi ISCO pumps and controller, 10k-psi (1/16" fittings) valves with back-side pressure sealing. Valve configurations; 6 port injection valve, 4 port mobile phase select valve, and 4 port column select valve. Home-made mixer for gradient formation. On/off valve for selecting between mixer purge and splitter column.	2006-03-10 17:37:00
+32	Yufeng_20k-psi	10	This is an R&D LC system used primarily by Yufeng Shen and is modified routinely for different applications. Revision history will NOT be maintained for this LC system.	2006-05-01 09:09:00
+33	Pluto	10	Manual LC cart	2006-04-05 21:32:00
+34	Owl	10		2006-09-06 08:14:00
+35	Eagle	10	Dedicated to IMS capability development 3/9/2010. Configured for extended separations.	2006-09-18 17:01:00
+36	Kestrel	10	20,000 psi mixers	2008-03-18 16:40:00
+37	Osprey	10	15 Minute Separation	2009-06-16 15:35:00
+38	VENUS	10	metal-free, up to 5k psi	2009-02-12 13:00:00
+39	SATURN	10	manual single column LC cart w/ SPE	2009-05-13 13:15:00
+40	2D_online	10	1st Dimension, HILIC,2nd Dimension, RPLC,20 online fractionation storage loops	2009-06-22 10:58:00
+41	Tambora	10	Agilent cart	2009-10-01 14:24:00
+42	Mazama	10	Agilent Cart	2009-09-29 16:10:00
+43	Tiger	2	First ARRA NexGen L 3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2010-03-16 12:38:00
 45	Lynx	3	2nd ARRA Next-Gen 3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2010-04-16 22:17:00
 46	Cougar	10	3rd ARRA Next Generation LC 3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2010-05-21 18:14:00
 47	Cheetah	10	4th ARRA Next Gen Platform 3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2010-06-23 17:43:00
 48	Harrier	10	4 Column Phospho Cart	2010-09-23 13:51:00
 49	Gandalf	2	#4 2D Waters NanoAcquity LC, easy conversion to 1D cart.  Serial numbers nBSM:F10NPB865N;nBSM2:F10NPB866N;nSM:F10NPS742M.	2010-08-23 11:44:00
 50	Aragorn	2	#2 2D Waters NanoAcquity LC, easy conversion to 1D cart.  Serial numbers nBSM:G10NPB891N;nBSM2:E10NPB862N;nSM:F10NPS739M.	2010-08-23 11:45:00
+57	Auto_2D_online	10	Auto version of 2D_online. Fractions from 1st D RPLC are transferred online w/ UV monitoring to 2nd D WCX-HILIC which has 4 SPEs and 4 columns.	2010-12-02 09:07:00
 51	Legolas	3	#3 2D Waters NanoAcquity LC, easy conversion to 1D cart.  Serial numbers nBSM:E10NPB863N;nSM:F10NPS741M.	2010-08-23 11:44:00
 52	Gimli	2	#1 2D Waters NanoAcquity LC, easy conversion to 1D cart.  Serial numbers nBSM:E10NPB859N;nSM:L10NPS876M.	2010-08-23 11:30:00
 53	Frodo	2	#5 2D Waters NanoAcquity LC, easy conversion to 1D cart.  Serial numbers nBSM:F10NPB868N;nBSM2:F10NPB869N;nSM:F10NPS743M.	2010-09-14 16:53:00
 54	Sauron	2	#6 2D Waters NanoAcquity LC, easy conversion to 1D cart.  Serial numbers nBSM:H10NPB926N;nBSM2:F10NPB872N;nSM:F10NPS745M.	2010-08-23 11:25:00
-57	Auto_2D_online	10	Auto version of 2D_online. Fractions from 1st D RPLC are transferred online w/ UV monitoring to 2nd D WCX-HILIC which has 4 SPEs and 4 columns.	2010-12-02 09:07:00
 58	Polaroid	2	Constant Flow Waters Nano-Acquity (1d only). Serial numbers nBSM:M10NPB053N;nSM:A11NPS920M.	2011-02-19 12:28:00
 60	Jaguar	10	3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2011-04-13 09:55:00
 61	Samwise	2	NanoAcquity cart acquired from Tox-Refurbished for Global Lipidomics. Serial numbers nBSM:M08NPB528N;nBSM2:A09NPB545N;nSM:A09NPS508M.	2012-08-04 08:46:00
@@ -68,6 +97,7 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 95	Magnolia	2	Micro-flow infusion cart	2017-03-15 12:15:00
 96	Aspen	10	Infusion system composed of a PAL autosampler and an Agilent nano pump.	2017-06-16 14:50:00
 97	IronMan	2	Dionex Ultimate 3000 nano RSLC for metallomics	2017-08-30 09:18:00
+98	Yew	10		2017-09-28 12:52:00
 107	GCQE01	2	Thermo GC Q-Exactive	2017-11-21 14:17:00
 108	ValcoNanoPump	2	This is manual testing configuration for pump from Valco Feb 2018	2018-02-22 13:12:00
 109	Juniper	10	Thermo/Dionex pump (800 bar). Long armed pal. LCMSnet controlled. Small form factor cart, laptop computer	2018-03-02 17:53:00
@@ -83,36 +113,6 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 120	Cicero	2	Thermo Dionex Ultimate 3000 with autosampler, gradient pump, loading pump, and column heating / trapping compartment	2020-01-16 13:57:00
 121	Kristin	2	Agilent 1290 LC system	2020-03-18 12:48:00
 122	Guam	10	Agilent 1290 Infinity ALS (Autosampler) Model: G1329A Serial: DE64776208, Agilent 1200 Bin Pump Model: G1312A Serial: DE63060488	2020-10-07 14:18:00
-1	unknown	1	Not a valid cart	\N
-2	No_Cart	2	An ad hoc or non cart based LC apparatus was used	2006-03-10 10:34:00
-11	Andromeda	10	Single emmitter system.	2006-03-10 12:47:00
-12	Doc	10		2006-03-10 10:28:00
-13	Draco	10		2006-03-14 09:07:00
-14	Earth	10		2006-03-13 07:36:00
-15	Firefly	2	nanoPOTS autosampler	2006-03-10 16:14:00
-16	Griffin	10		2006-03-20 07:30:00
-17	Pegasus	10	Fast Separation	2006-06-20 11:52:00
-18	Phoenix	10	Installed Eksigent pumps November 2012.	2006-03-13 15:04:00
-19	Raptor	10		2007-06-08 14:17:00
-20	Roc	10	Metabolomics Cart	2006-03-10 09:52:00
-27	Falcon	10	LC ISCO Formic, 4 column 10k constant pressure system. The Flagship of our LC fleet.	2006-05-22 08:36:00
-28	Hawk	10		2006-04-18 11:06:00
-29	Sphinx	10		2006-03-10 17:34:00
-30	Agilent	2	Commercial Agilent 1100 capillary HPLC system outfitted with binary pumps, autosampler, degasser and solvent tray	2006-03-13 12:30:00
-31	Protein_RP	10	This is a manual LC system used for intact protein separations. Comprised of 2 10k-psi ISCO pumps and controller, 10k-psi (1/16" fittings) valves with back-side pressure sealing. Valve configurations; 6 port injection valve, 4 port mobile phase select valve, and 4 port column select valve. Home-made mixer for gradient formation. On/off valve for selecting between mixer purge and splitter column.	2006-03-10 17:37:00
-32	Yufeng_20k-psi	10	This is an R&D LC system used primarily by Yufeng Shen and is modified routinely for different applications. Revision history will NOT be maintained for this LC system.	2006-05-01 09:09:00
-33	Pluto	10	Manual LC cart	2006-04-05 21:32:00
-34	Owl	10		2006-09-06 08:14:00
-35	Eagle	10	Dedicated to IMS capability development 3/9/2010. Configured for extended separations.	2006-09-18 17:01:00
-36	Kestrel	10	20,000 psi mixers	2008-03-18 16:40:00
-37	Osprey	10	15 Minute Separation	2009-06-16 15:35:00
-38	VENUS	10	metal-free, up to 5k psi	2009-02-12 13:00:00
-39	SATURN	10	manual single column LC cart w/ SPE	2009-05-13 13:15:00
-40	2D_online	10	1st Dimension, HILIC,2nd Dimension, RPLC,20 online fractionation storage loops	2009-06-22 10:58:00
-41	Tambora	10	Agilent cart	2009-10-01 14:24:00
-42	Mazama	10	Agilent Cart	2009-09-29 16:10:00
-43	Tiger	2	First ARRA NexGen L 3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2010-03-16 12:38:00
-98	Yew	10		2017-09-28 12:52:00
 141	Barney	2	Thermo Vanquish Neo system - Autosampler and Binary Pump	2024-04-25 09:56:00
 142	Moe	2	Thermo Vanquish Neo system - Autosampler and Binary Pump	2024-04-25 09:56:00
 143	Monty	2	Thermo Vanquish Neo system - Autosampler and Binary Pump	2024-05-30 09:55:00

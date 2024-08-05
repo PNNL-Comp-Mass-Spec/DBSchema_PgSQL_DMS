@@ -23,6 +23,29 @@ SET row_security = off;
 COPY public.t_wellplates (wellplate_id, wellplate, description, created) FROM stdin;
 1021	WP-1020	Yellow_C13	2010-01-18 16:54:36
 1022	SBEP_STM_01	Created by experiment fraction entry (1911)	2010-01-19 12:02:45
+1031	WP-1031	MG_formic Fractions Plate 1	2010-02-26 15:14:46
+1113	HURN_Iraq_urine	HURN_Iraq_urine	2013-03-14 15:16:15
+1306	DAISY_P01	DAISY Plate 01	2019-09-30 07:08:06
+1000	na	(no wellplate)	2009-07-24 20:10:02
+1001	ABS_VP2P106	Created by experiment fraction entry (ABS_VP2P106)	2009-07-30 17:49:07
+1002	COPD_ADA_Lung_PosPool	Created by experiment fraction entry (COPD_ADA_Lung_PosPool)	2009-08-13 14:50:52
+1003	WP-1003	HPlas_IgY12_FT2_08 SCX fractions	2009-08-20 14:27:05
+1004	SBEP_STM_PTM_001	Created by experiment fraction entry (SBEP_STM_PTM_001_06232009)	2009-08-25 13:19:00
+1005	WP-1005	Baynes2SC Mouse Adipocyte Proteins	2009-08-26 14:02:42
+1006	SBEP_STM_PTM_003	Created by experiment fraction entry (SBEP_STM_PTM_003_06232009)	2009-08-27 10:24:44
+1007	SBEP_STM_PTM_006	Created by experiment fraction entry (SBEP_STM_PTM_006_06232009)	2009-08-27 10:25:22
+1008	SBEP_STM_PTM_008	Created by experiment fraction entry (SBEP_STM_PTM_008_06232009)	2009-08-27 10:25:50
+1009	SH_SBI_04a	Created by experiment fraction entry (SH_SBI_04a)	2009-08-27 12:41:16
+1010	SBEP_YPCO_007	Created by experiment fraction entry (SBEP_YPCO_007_07102009)	2009-08-27 12:46:11
+1011	SBEP_YPCO_008	Created by experiment fraction entry (SBEP_YPCO_008_07102009)	2009-08-27 12:46:29
+1012	WP-1012	JGI fungus_06, Carries Re_Averia	2009-08-31 08:30:49
+1013	Micromonas_pool	Created by experiment fraction entry (Micromonas_pool)	2009-10-09 14:53:55
+1014	Euplotes_1_SCX	Created by experiment fraction entry (Euplotes_1_SCX)	2009-11-09 15:14:17
+1015	SysVirol_ICL004_AI_SCX	SysVirol_ICL004_AI_Pool 1_0,3,7 hrs (1 thru 24), SysVirol_ICL004_AI__Pool 2_12,18,24 hrs (1 thru 24), SysVirol_ICL004_AI_Pool 3_Mock 0-24 hrs (1 thru 24),	2009-11-10 14:00:10
+1016	WP-1016	Multi-enzyme digestion of Ecoli - fractions	2009-11-30 13:23:14
+1017	WP-1017	150ug of NCI_NormalFFPool, NCI_NormalBFPool, NCI_CancerFFPool, NCI_CancerBFPool	2010-01-13 08:16:27
+1018	WP-1018	Cornell_RK4353-WT_pool - Fractions from 4 wild type cell cultures that were pooled for database creation.	2010-01-14 13:10:25
+1019	WP-1019	Yellow_C12 & C13	2010-01-18 16:54:20
 1023	SBEP_STM_02	Created by experiment fraction entry (1914)	2010-01-19 12:10:18
 1024	SBEP_STM_03	Created by experiment fraction entry (1916)	2010-01-19 12:13:18
 1025	SBEP_STM_04	Created by experiment fraction entry (1920)	2010-01-19 12:16:15
@@ -31,7 +54,6 @@ COPY public.t_wellplates (wellplate_id, wellplate, description, created) FROM st
 1028	WP-1028	Fractions of GLBRC Ecoli for Formic Acid Database Creation	2010-02-01 10:19:07
 1029	PNWRCE_RIGI_Spleen-1&2_SCX	PNWRCE_RIGI_Spleen-1 and 2 (25 fractions/sample)	2010-02-08 15:48:56
 1030	PNWRCE_RIGI_Liver-3 and 4	PNWRCE_RIGI_Spleen-3 and 4 (25 fractions/sample)	2010-02-08 16:55:24
-1031	WP-1031	MG_formic Fractions Plate 1	2010-02-26 15:14:46
 1032	WP-1032	MG_formic Fractions Plate 2	2010-02-26 15:15:07
 1033	WP-1033	MG_formic Fractions Plate 3	2010-02-26 15:15:26
 1034	WP-1034	NR_formic Fractions Plate 1	2010-02-26 15:15:40
@@ -80,6 +102,7 @@ COPY public.t_wellplates (wellplate_id, wellplate, description, created) FROM st
 1077	Aze_FX2P50	Created by experiment fraction entry (Aze_FX2P50_Global_Proteomics)	2010-12-03 17:22:35
 1078	TM_Stat_Pools	Created by experiment fraction entry (TM_Stat_G_Pool)	2010-12-07 12:13:57
 1079	TM_ML_Pools	Created by experiment fraction entry (TM_ML_G_Pool)	2010-12-07 12:28:29
+1080	Tray_01	\N	2010-12-08 17:49:41
 1081	Tray_02	\N	2010-12-08 17:49:46
 1082	Cyano_B_Pool	Created by experiment fraction entry (Cyano_B_Pool)	2010-12-20 14:07:50
 1083	Cel_FX2P53_Young	Created by experiment fraction entry (Cel_FX2P53_Young)	2010-12-20 14:35:50
@@ -112,7 +135,6 @@ COPY public.t_wellplates (wellplate_id, wellplate, description, created) FROM st
 1110	Sarwal_urine_plate_4	Sarwal_urine_plate_4	2013-02-06 14:53:45
 1111	TCGA_QC	CPTAC TCGA samples for quality test	2013-02-07 13:06:20
 1112	CompRef_QC	CPTAC CompRef samples for quality test	2013-02-07 13:06:42
-1113	HURN_Iraq_urine	HURN_Iraq_urine	2013-03-14 15:16:15
 1114	mhp_1	Desmond Smith hypothalamus study.  Main study plate 1 of 2	2013-04-22 14:33:57
 1115	mhp_2	Desmond Smith hypothalamus study.  Main study plate 2 of 2	2013-04-22 14:34:07
 1116	HURN_Iraq_wControls_urine	HURN Iraq urine with controls added	2013-04-24 13:46:41
@@ -305,7 +327,6 @@ COPY public.t_wellplates (wellplate_id, wellplate, description, created) FROM st
 1303	TEDDY_Val_B6_P46	TEDDY Validation Phase Shipment Batch 6 Plate 46	2019-08-21 06:46:57
 1304	TEDDY_Val_B6_P47	TEDDY Validation Phase Shipment Batch 6 Plate 47	2019-09-20 13:46:03
 1305	TEDDY_Val_B6_P48	TEDDY Validation Phase Shipment Batch 6 Plate 48	2019-09-20 13:46:10
-1306	DAISY_P01	DAISY Plate 01	2019-09-30 07:08:06
 1307	DAISY_P02	DAISY Plate 02	2019-09-30 07:08:13
 1308	IROA_Set2_Plate_01	IROA Standards Plate 1 (Stock solutions, 100 uM or 500 uM)	2019-10-04 09:53:22
 1309	IROA_Set2_Plate_02	IROA Standards Plate 2 (Stock solutions, 100 uM or 500 uM)	2019-10-04 09:53:31
@@ -384,26 +405,6 @@ COPY public.t_wellplates (wellplate_id, wellplate, description, created) FROM st
 1382	TB3_NTP4_TS01244544	TBSmart; NTP_04 (relapsed, 52 data points and WD) - Plate Barcode TS01244544 - digests for SRM	2021-12-11 15:24:52
 1383	MNST-3_DSC	Moonshot-3 Discovery Digested Peptides	2021-12-27 11:15:57
 1384	Tafesse_Peptides	Digested peptides from Tafesse prep	2022-01-07 07:48:42
-1000	na	(no wellplate)	2009-07-24 20:10:02
-1001	ABS_VP2P106	Created by experiment fraction entry (ABS_VP2P106)	2009-07-30 17:49:07
-1002	COPD_ADA_Lung_PosPool	Created by experiment fraction entry (COPD_ADA_Lung_PosPool)	2009-08-13 14:50:52
-1003	WP-1003	HPlas_IgY12_FT2_08 SCX fractions	2009-08-20 14:27:05
-1004	SBEP_STM_PTM_001	Created by experiment fraction entry (SBEP_STM_PTM_001_06232009)	2009-08-25 13:19:00
-1005	WP-1005	Baynes2SC Mouse Adipocyte Proteins	2009-08-26 14:02:42
-1006	SBEP_STM_PTM_003	Created by experiment fraction entry (SBEP_STM_PTM_003_06232009)	2009-08-27 10:24:44
-1007	SBEP_STM_PTM_006	Created by experiment fraction entry (SBEP_STM_PTM_006_06232009)	2009-08-27 10:25:22
-1008	SBEP_STM_PTM_008	Created by experiment fraction entry (SBEP_STM_PTM_008_06232009)	2009-08-27 10:25:50
-1009	SH_SBI_04a	Created by experiment fraction entry (SH_SBI_04a)	2009-08-27 12:41:16
-1010	SBEP_YPCO_007	Created by experiment fraction entry (SBEP_YPCO_007_07102009)	2009-08-27 12:46:11
-1011	SBEP_YPCO_008	Created by experiment fraction entry (SBEP_YPCO_008_07102009)	2009-08-27 12:46:29
-1012	WP-1012	JGI fungus_06, Carries Re_Averia	2009-08-31 08:30:49
-1013	Micromonas_pool	Created by experiment fraction entry (Micromonas_pool)	2009-10-09 14:53:55
-1014	Euplotes_1_SCX	Created by experiment fraction entry (Euplotes_1_SCX)	2009-11-09 15:14:17
-1015	SysVirol_ICL004_AI_SCX	SysVirol_ICL004_AI_Pool 1_0,3,7 hrs (1 thru 24), SysVirol_ICL004_AI__Pool 2_12,18,24 hrs (1 thru 24), SysVirol_ICL004_AI_Pool 3_Mock 0-24 hrs (1 thru 24),	2009-11-10 14:00:10
-1016	WP-1016	Multi-enzyme digestion of Ecoli - fractions	2009-11-30 13:23:14
-1017	WP-1017	150ug of NCI_NormalFFPool, NCI_NormalBFPool, NCI_CancerFFPool, NCI_CancerBFPool	2010-01-13 08:16:27
-1018	WP-1018	Cornell_RK4353-WT_pool - Fractions from 4 wild type cell cultures that were pooled for database creation.	2010-01-14 13:10:25
-1019	WP-1019	Yellow_C12 & C13	2010-01-18 16:54:20
 1385	Smallwood_Plasma_Peptides	Digested peptides from Smallwood lab	2022-03-14 10:42:23
 1386	Smallwood_NRF_Peptides	Digested peptides from Smallwood lab	2022-03-14 10:42:33
 1387	Obesity_459Prep_P1	Prep of 459 Obesity samples, Plate 1	2022-04-27 14:20:16
@@ -419,7 +420,15 @@ COPY public.t_wellplates (wellplate_id, wellplate, description, created) FROM st
 1435	Wistar_Peptides_Plate5	Wistar peptides from urea digest - Plate 5	2024-06-25 12:04:02
 1436	Wistar_Peptides_Plate6	Wistar peptides from urea digest - Plate 6	2024-06-25 12:04:10
 1437	Wistar_Peptides_Plate7	Wistar peptides from urea digest - Plate 7	2024-06-25 12:04:18
-1080	Tray_01	\N	2010-12-08 17:49:41
+1438	A2CPS_Plate21	A2CPS Digested Peptides - Plate 21	2024-07-12 06:00:36
+1439	A2CPS_Plate22	A2CPS Digested Peptides - Plate 22	2024-07-12 06:00:43
+1440	A2CPS_Plate23	A2CPS Digested Peptides - Plate 23	2024-07-12 06:00:51
+1441	A2CPS_Plate24	A2CPS Digested Peptides - Plate 24	2024-07-12 06:00:58
+1442	A2CPS_Plate25	A2CPS Digested Peptides - Plate 25	2024-07-12 06:01:04
+1443	A2CPS_Plate26	A2CPS Digested Peptides - Plate 26	2024-07-12 06:01:13
+1444	A2CPS_Plate27	A2CPS Digested Peptides - Plate 27	2024-07-12 06:01:19
+1424	A2CPS_Plate17	A2CPS Digested Peptides - Plate 17	2024-04-04 13:40:22
+1425	A2CPS_Plate18	A2CPS Digested Peptides - Plate 18	2024-04-04 13:40:30
 1390	Obesity_459Prep_P5	Prep of 459 Obesity samples, Plate 5	2022-04-27 14:20:45
 1391	Obesity_459Prep_P6	Prep of 459 Obesity samples, Plate 6	2022-04-27 14:20:52
 1392	Obesity_459Prep_P4	Prep of 459 Obesity samples, Plate 4	2022-04-27 14:21:06
@@ -454,8 +463,6 @@ COPY public.t_wellplates (wellplate_id, wellplate, description, created) FROM st
 1421	OHSU_mac_Prep4_Plate	OHSU_mac Digested Peptides Prep 4 (Feb 2024)	2024-02-14 14:38:38
 1422	A2CPS_Plate15	A2CPS Digested Peptides - Plate 15	2024-04-04 13:40:06
 1423	A2CPS_Plate16	A2CPS Digested Peptides - Plate 16	2024-04-04 13:40:15
-1424	A2CPS_Plate17	A2CPS Digested Peptides - Plate 17	2024-04-04 13:40:22
-1425	A2CPS_Plate18	A2CPS Digested Peptides - Plate 18	2024-04-04 13:40:30
 1426	A2CPS_Plate19	A2CPS Digested Peptides - Plate 19	2024-04-04 13:40:37
 1427	A2CPS_Plate20	A2CPS Digested Peptides - Plate 20	2024-04-04 13:40:47
 \.
@@ -465,7 +472,7 @@ COPY public.t_wellplates (wellplate_id, wellplate, description, created) FROM st
 -- Name: t_wellplates_wellplate_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_wellplates_wellplate_id_seq', 1437, true);
+SELECT pg_catalog.setval('public.t_wellplates_wellplate_id_seq', 1444, true);
 
 
 --

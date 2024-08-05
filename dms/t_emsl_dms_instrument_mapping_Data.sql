@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
+-- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
@@ -117,6 +117,8 @@ COPY public.t_emsl_dms_instrument_mapping (eus_instrument_id, dms_instrument_id)
 35033	198
 35036	199
 35030	239
+35047	255
+35047	256
 \.
 
 

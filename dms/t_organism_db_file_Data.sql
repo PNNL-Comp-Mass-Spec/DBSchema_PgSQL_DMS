@@ -21,12 +21,28 @@ SET row_security = off;
 --
 
 COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, description, active, num_proteins, num_residues, valid, file_size_kb, created) FROM stdin;
+245	human.fasta	8		0	56104	13239234	1	0	2001-09-07 11:33:00
+100	Zebrafish_2002-03-29.fasta	18		0	586	254576	1	299	2002-03-29 00:00:00
+101	Zebrafish_2002-04-03.fasta	18		0	3010	1139405	1	1343	2002-04-03 00:00:00
 132	Shewanella_2003-12-19.fasta	4		0	4898	1451178	1	1662	2003-12-19 12:50:00
+102	Y_Pestis_2002-07-22.fasta	20		0	9586	2991911	1	3735	2002-07-23 11:02:00
+103	Y_Pestis_KIM_2004-01-26.fasta	20		0	4237	1313961	1	1578	2004-01-28 14:11:00
+104	Y_Pestis_KIM_2004-02-11.fasta	20		0	4286	1320982	1	1603	2004-02-12 16:56:00
 133	Shewanella_2003-12-19_PCQ_Stds.fasta	4		0	4962	1462947	1	1678	2004-01-23 18:09:00
+105	Y_Pestis_KIM_2004-02-11_reversed.fasta	20		0	4286	1320982	1	1603	2004-07-15 20:03:00
 134	Shewanella_2003-12-19_PepStds.fasta	4		0	4911	1451305	1	1663	2004-01-07 10:36:00
+226	Mouse_mRNA_2001-11-12.fasta	24		0	7794	606252	1	0	2001-11-12 00:00:00
 135	Shewanella_2004-02-04_PCQ_Stds.fasta	4		0	4951	1462780	1	1677	2004-02-04 15:37:00
+106	Y_Pestis_StoS25_2003-06-20.fasta	20		0	110474	6241391	1	7536	2003-06-20 00:00:00
+107	Y_Pestis_TIGR_2002-07-29.fasta	20		0	4083	1286481	1	1519	2002-07-29 16:59:00
 136	Shewanella_23peptide_12Prot_mix_2004-02-03.fasta	4		0	4534	1431708	1	1712	2004-02-03 17:27:00
+108	Y_Pestis_TIGR_2003-04-22.fasta	20		0	4082	1286481	1	1542	2003-06-16 16:59:00
+109	NC_Yeast_Mitochondrial_Ident_2002-06-10.fasta	2		0	584	228865	1	268	2002-06-20 08:51:00
 137	Shewanella_Heme_proteins_2003-11-19.fasta	4		0	45	15408	1	18	2003-11-19 13:16:00
+110	UBAlpha_RAM_2003-10-14.fasta	2		0	61	43881	1	48	2003-10-14 10:47:00
+111	yeast_1999-02-23.fasta	2		0	8443	3963210	1	6143	1999-02-23 00:00:00
+112	yeast_2001-01-08.fasta	2		0	6297	2975027	1	3230	2001-06-14 17:32:00
+113	Yeast_2003-01-06.fasta	2		0	6360	2985326	1	3585	2003-01-06 17:03:00
 138	Shewanella_StoS_2004-01-12_Final.fasta	4		0	84657	5347793	1	11789	2004-03-30 11:41:00
 139	SO1777_MtrA.fasta	4		0	1	333	1	1	2004-07-15 20:02:00
 141	R_Sphaerodoides_2003-04-28.fasta	27		0	3980	1256074	1	1526	2003-04-28 16:08:00
@@ -52,6 +68,8 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 167	NC_Yeast_Mitochondrial_Ident_2002-02-08.fasta	15		0	423	162258	1	192	2002-02-08 15:18:00
 169	N_Crassa_2002-01-31.fasta	15		0	82	30851	1	38	2002-02-04 10:12:00
 170	N_Crassa_3_DB_2002-09-09.fasta	15		0	10082	4841972	1	5375	2002-09-10 16:37:00
+171	N_Crassa_Mitop_2002-04-30.fasta	15		0	326	150462	1	174	2002-06-20 08:51:00
+172	bacteriorhodopsin_2002-08-02.fasta	16		0	1	262	1	1	2002-08-02 11:57:00
 176	Bovine_RNase_BSA_2003-02-27.fasta	16		0	2	757	1	1	2003-02-27 17:20:00
 178	Chicken_MBP_2003-01-06.fasta	16		0	1	173	1	1	2003-01-08 06:42:00
 179	Chimeric_Prot_Mix_2002-03-04.fasta	16		0	5	1553	1	2	2002-03-04 14:23:00
@@ -67,8 +85,25 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 194	M156R_2002-03-22.fasta	16		0	1	122	1	1	2002-03-22 15:36:00
 195	M156R_y67a_2002-04-25.fasta	16		0	1	122	1	1	2002-04-25 16:59:00
 196	Masto7_2002-06-12.fasta	16		0	1	14	1	1	2002-06-12 15:08:00
+120	T_Palladium_2002-01-17.fasta	10		0	1293	174551	1	283	2002-01-18 10:36:00
 197	Multiple_Cyt_C_2002-09-20.fasta	16		0	4	827	1	1	2002-09-24 16:49:00
 198	Multiple_Cyt_C_2002-09-30.fasta	16		0	4	827	1	2	2002-09-30 17:52:00
+199	MXXFXK.fasta	16		0	6860	89154	1	229	2004-09-03 17:22:00
+114	Yeast_2003-01-06_PepStds.fasta	2	Yeast_2003-01-06 with Peptide Standards	0	6374	2985529	1	3586	2004-01-07 16:39:00
+115	yeast_mitoprot_030303.fasta	2		0	400	149650	1	174	2003-03-27 15:18:00
+116	yeast_mitoprot_030530.fasta	2		0	454	167921	1	195	2003-05-30 09:49:00
+117	yeast_proteins_030303.fasta	2		0	6237	2912160	1	3297	2003-03-27 15:18:00
+118	yeast_proteosome_092303.fasta	2		0	39	15361	1	18	2003-09-23 16:09:00
+119	T_Palladium_2001-09-25_N14.fasta	10		0	24	8425	1	11	2001-10-17 14:02:00
+124	shewanella_1999-12-08.fasta	4		0	6008	1544829	1	1635	1999-12-08 00:00:00
+125	shewanella_2001-01-08.fasta	4		0	4756	1469878	1	1509	2001-01-08 00:00:00
+126	Shewanella_2001-03-27.fasta	4		0	6117	1572434	1	1665	2001-05-20 19:00:00
+127	Shewanella_2001-07-26.fasta	4		0	4904	1442723	1	1667	2001-07-26 00:00:00
+128	Shewanella_2001-08-10.fasta	4		0	4944	1457749	1	1683	2001-10-22 07:10:00
+129	Shewanella_2001-08-10_NTM.fasta	4		0	4944	1429796	1	1676	2001-08-10 00:00:00
+130	Shewanella_2002-08-07.fasta	4		0	4867	1435188	1	1745	2003-01-10 17:00:00
+131	Shewanella_2003-10-13.fasta	4		0	4886	1448888	1	1657	2003-10-17 17:16:00
+140	SO1778.fasta	4		0	1	671	1	1	2004-06-02 10:01:00
 200	PCQ_ETJ_2004-01-21.fasta	16		0	65	11845	1	16	2004-02-04 17:09:00
 201	PepStds_RJM_2004-01-06.fasta	16		0	14	203	1	1	2004-01-07 17:11:00
 202	Peptide_Mix_RJM_2002-03-18.fasta	16		0	20	277	1	1	2002-03-18 11:53:00
@@ -83,6 +118,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 211	Protein_Mix_PLF_2003-04-21.fasta	16		0	13	4658	1	0	2003-05-08 07:21:00
 212	Protein_Mix_PLF_2003-05-09.fasta	16		0	42	7200	1	0	2003-05-15 08:59:00
 214	WQ_2002-06-20.fasta	16		0	2	17	1	1	2002-06-20 08:24:00
+215	WXXFXK.fasta	16		0	6860	89154	1	229	2004-09-03 17:27:00
 216	YXXFXK.fasta	16		0	6860	89154	1	229	2004-09-03 17:23:00
 217	M_Barkeri_2004-06-10.fasta	34		0	5072	1188605	1	1419	2004-08-05 17:16:00
 220	Mm_seq_uniqClean.fasta	24		0	1163310	36073690	1	53733	2001-04-25 16:03:00
@@ -103,7 +139,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 241	AG_Proteins_2003-09-17.fasta	8		0	127	69329	1	91	2003-09-17 12:11:00
 242	HelaNuc_GT50_2003-09-09.fasta	8		0	3156	330626	1	384	2003-10-02 09:02:00
 243	HelaNuc_Proteins_IPI_2003-09-09.fasta	8		0	1138	543547	1	607	2004-06-23 15:37:00
-245	human.fasta	8		0	56104	13239234	1	0	2001-09-07 11:33:00
 246	Human_BSP_2001-09-27.fasta	8		0	56104	13238674	1	0	2001-10-01 16:57:00
 247	Human_BSP_JNA_2001-12-04.fasta	8		0	17448	6013647	1	0	2001-12-04 12:07:00
 248	Human_Cytokines_JMJ_2003-04-03.fasta	8		0	10	1639	1	3	2003-04-03 15:19:00
@@ -145,6 +180,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 286	Carb_Anhydrase_2001-08-20.fasta	3		0	1	259	1	1	2001-08-21 15:55:00
 287	E_Coli+Mod_SecB_2002-10-23.fasta	3		0	4290	1359145	1	1706	2003-07-08 17:00:00
 288	E_Coli+SecB013_2002-10-23.fasta	3		0	4290	1359144	1	1706	2003-11-24 15:25:00
+244	hmga_project_db6.fasta	8		0	5	530	1	0	2002-03-08 15:41:00
 289	E_Coli+SecB014_2002-10-23.fasta	3		0	4290	1359144	1	1706	2003-11-24 15:25:00
 290	E_Coli+SecB015_2002-10-23.fasta	3		0	4290	1359144	1	1706	2003-11-24 15:26:00
 291	E_Coli+SecB016_2002-10-23.fasta	3		0	4290	1359144	1	1706	2003-11-24 15:26:00
@@ -390,7 +426,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 536	NCBI_mammalia_Jan2007_nr_fixedSP.fasta	16	Copied over from Nikola, redundant lines removed	0	541272	211521957	1	260881	2007-05-22 11:40:00
 537	UniProt_SPROT_2007-04-20.fasta	16	Copied over from Nikola, no modifications necessary	0	264492	96880444	1	127759	2007-05-22 14:13:00
 538	H_sapiens_IPI_2006-08-22_pI_Range_3pt5_to_4pt3.fasta	8	Created by Matt using H_sapiens_IPI_2006-08-22.fasta, but filtering for pI 3.5 to 4.3	0	135722	4936562	1	10993	2007-06-01 17:17:00
-100	Zebrafish_2002-03-29.fasta	18		0	586	254576	1	299	2002-03-29 00:00:00
 539	H_sapiens_IPI_2006-08-22_pI_Range_4_to_4pt7.fasta	8	Created by Matt using H_sapiens_IPI_2006-08-22.fasta, but filtering for pI 4.0 to 4.7	0	574261	19233696	1	45224	2007-06-02 17:09:00
 540	H_sapiens_IPI_2006-08-22_pI_Range_4_to_5pt8.fasta	8	Created by Matt using H_sapiens_IPI_2006-08-22.fasta, but filtering for pI 4.0 to 5.8	0	1519216	51583540	1	120125	2007-06-02 17:11:00
 541	H_sapiens_IPI_2006-08-22_pI_Range_5pt4_to_7pt5.fasta	8	Created by Matt using H_sapiens_IPI_2006-08-22.fasta, but filtering for pI 5.4 to 7.5	0	1213205	33022424	1	87428	2007-06-02 17:12:00
@@ -582,7 +617,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 750	A_thaliana_TAIR10_plus_RNASeq_2014-01-22_10x_09.fasta	32	Auto-created	0	40015	22517527	1	26913	2014-01-22 20:35:00
 751	A_thaliana_TAIR10_plus_RNASeq_2014-01-22_10x_10.fasta	32	Auto-created	0	40203	22515684	1	26912	2014-01-22 20:35:00
 752	Hopland_Isolates_2014-01-31.fasta	1321	Collection of 35 isolates sequenced by JGI; provided by Eoin Brodie via Mary Lipton	1	171370	54261185	1	65694	2014-01-31 16:13:00
-101	Zebrafish_2002-04-03.fasta	18		0	3010	1139405	1	1343	2002-04-03 00:00:00
 768	uniref50_2013-02-14_15x_01.fasta.deleted	1687	Auto-created	0	451272	145957276	1	192137	2013-03-27 16:15:00
 769	uniref50_2013-02-14_15x_02.fasta.deleted	1687	Auto-created	0	451105	145957220	1	192125	2013-03-27 16:15:00
 770	uniref50_2013-02-14_15x_03.fasta.deleted	1687	Auto-created	0	452094	145957894	1	192217	2013-03-27 16:15:00
@@ -694,7 +728,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 876	Seawater_sponge_community_db_v2_072914_15x_09.fasta	1140	Auto-created	0	42611	12114577	1	14483	2014-07-30 16:49:00
 877	Seawater_sponge_community_db_v2_072914_15x_10.fasta	1140	Auto-created	0	42321	12114451	1	14483	2014-07-30 16:49:00
 878	Seawater_sponge_community_db_v2_072914_15x_11.fasta	1140	Auto-created	0	42163	12114576	1	14483	2014-07-30 16:49:00
-102	Y_Pestis_2002-07-22.fasta	20		0	9586	2991911	1	3735	2002-07-23 11:02:00
 879	Seawater_sponge_community_db_v2_072914_15x_12.fasta	1140	Auto-created	0	42469	12114592	1	14483	2014-07-30 16:49:00
 880	Seawater_sponge_community_db_v2_072914_15x_13.fasta	1140	Auto-created	0	42129	12114574	1	14483	2014-07-30 16:49:00
 881	Seawater_sponge_community_db_v2_072914_15x_14.fasta	1140	Auto-created	0	42271	12114611	1	14483	2014-07-30 16:49:00
@@ -728,6 +761,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 909	Combined_Fungal_Uniprot_NCBI_2014-09-05_15x_14.fasta	16	Auto-created	0	185472	83304352	1	112408	2014-09-05 19:28:00
 910	Combined_Fungal_Uniprot_NCBI_2014-09-05_15x_15.fasta	16	Auto-created	0	185690	83303947	1	112408	2014-09-05 19:28:00
 911	Combined_Fungal_JGI_2014-09-07.fasta	16	Combination of 389 fungal organisms fasta from JGI (http://genome.jgi.doe.gov/pages/dynamicOrganismDownload.jsf?organism=fungi)	1	4543247	1926529513	1	2.18492e+06	2014-09-07 20:38:00
+912	Combined_Fungal_JGI_2014-09-07_15x_01.fasta	16	Auto-created	0	303700	128437164	1	154271	2014-09-07 20:38:00
 913	Combined_Fungal_JGI_2014-09-07_15x_02.fasta	16	Auto-created	0	303023	128435393	1	154271	2014-09-07 20:38:00
 914	Combined_Fungal_JGI_2014-09-07_15x_03.fasta	16	Auto-created	0	302666	128435315	1	154271	2014-09-07 20:38:00
 915	Combined_Fungal_JGI_2014-09-07_15x_04.fasta	16	Auto-created	0	301846	128435378	1	154271	2014-09-07 20:38:00
@@ -845,7 +879,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 1027	Amazon_Soil_Pasture_Contigs_400bp_2014-11-24_15x_09.fasta	31	Auto-created	0	1397719	141469587	1	243451	2014-11-24 16:34:00
 1028	Amazon_Soil_Pasture_Contigs_400bp_2014-11-24_15x_10.fasta	31	Auto-created	0	1397286	141469870	1	243451	2014-11-24 16:34:00
 1029	Amazon_Soil_Pasture_Contigs_400bp_2014-11-24_15x_11.fasta	31	Auto-created	0	1397271	141470026	1	243451	2014-11-24 16:34:00
-103	Y_Pestis_KIM_2004-01-26.fasta	20		0	4237	1313961	1	1578	2004-01-28 14:11:00
 1030	Amazon_Soil_Pasture_Contigs_400bp_2014-11-24_15x_12.fasta	31	Auto-created	0	1397546	141469783	1	243451	2014-11-24 16:34:00
 1031	Amazon_Soil_Pasture_Contigs_400bp_2014-11-24_15x_13.fasta	31	Auto-created	0	1396974	141469938	1	243451	2014-11-24 16:34:00
 1032	Amazon_Soil_Pasture_Contigs_400bp_2014-11-24_15x_14.fasta	31	Auto-created	0	1397827	141469983	1	243451	2014-11-24 16:34:00
@@ -1020,7 +1053,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 1201	Kansas_Native_prairie_White-moleculo_LongRead_Tryp_Pig_Bov_2015-05-21_25x_10.fasta	31	Auto-created	0	32072	8757213	1	10950	2015-05-29 14:49:00
 1202	Kansas_Native_prairie_White-moleculo_LongRead_Tryp_Pig_Bov_2015-05-21_25x_11.fasta	31	Auto-created	0	32150	8757037	1	10956	2015-05-29 14:49:00
 1203	Kansas_Native_prairie_White-moleculo_LongRead_Tryp_Pig_Bov_2015-05-21_25x_12.fasta	31	Auto-created	0	32200	8757157	1	10958	2015-05-29 14:49:00
-104	Y_Pestis_KIM_2004-02-11.fasta	20		0	4286	1320982	1	1603	2004-02-12 16:56:00
 1204	Kansas_Native_prairie_White-moleculo_LongRead_Tryp_Pig_Bov_2015-05-21_25x_13.fasta	31	Auto-created	0	32228	8756359	1	10960	2015-05-29 14:49:00
 1205	Kansas_Native_prairie_White-moleculo_LongRead_Tryp_Pig_Bov_2015-05-21_25x_14.fasta	31	Auto-created	0	32201	8757436	1	10960	2015-05-29 14:49:00
 1206	Kansas_Native_prairie_White-moleculo_LongRead_Tryp_Pig_Bov_2015-05-21_25x_15.fasta	31	Auto-created	0	32162	8757429	1	10956	2015-05-29 14:49:00
@@ -1614,7 +1646,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 1794	Mouse_Gut_fecal_microbiome_JGI68678_TrypPigBov_2016-06-24_15x_12.fasta	1483	Auto-created	0	162048	42798274	1	51937	2016-06-24 13:20:00
 1795	Mouse_Gut_fecal_microbiome_JGI68678_TrypPigBov_2016-06-24_15x_13.fasta	1483	Auto-created	0	161892	42799190	1	51917	2016-06-24 13:20:00
 1796	Mouse_Gut_fecal_microbiome_JGI68678_TrypPigBov_2016-06-24_15x_14.fasta	1483	Auto-created	0	162231	42799109	1	51930	2016-06-24 13:20:00
-215	WXXFXK.fasta	16		0	6860	89154	1	229	2004-09-03 17:27:00
 1797	Mouse_Gut_fecal_microbiome_JGI68678_TrypPigBov_2016-06-24_15x_15.fasta	1483	Auto-created	0	162008	42798575	1	51947	2016-06-24 13:20:00
 1798	Kansas_RMR_db-1k_qced_TrypPigBov_2016-06-30.fasta	31	From Rick White	1	1508942	345150012	1	487510	2016-07-01 09:12:00
 1799	Kansas_SR_db-1k_qced_TrypPigBov_2016-06-30.fasta	31	From Rick White	1	658457	151550800	1	205581	2016-07-01 09:12:00
@@ -1823,7 +1854,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 2004	KNP_moleculo_contigs_TruSPAdes_prodigal_TrypPigBov_2016-11-04_15x_08.fasta	16	Auto-created	0	56324	15575399	1	24688	2016-11-04 18:28:00
 2005	KNP_moleculo_contigs_TruSPAdes_prodigal_TrypPigBov_2016-11-04_15x_09.fasta	16	Auto-created	0	56558	15574689	1	24721	2016-11-04 18:28:00
 2006	KNP_moleculo_contigs_TruSPAdes_prodigal_TrypPigBov_2016-11-04_15x_10.fasta	16	Auto-created	0	56600	15574673	1	24732	2016-11-04 18:28:00
-105	Y_Pestis_KIM_2004-02-11_reversed.fasta	20		0	4286	1320982	1	1603	2004-07-15 20:03:00
 2007	KNP_moleculo_contigs_TruSPAdes_prodigal_TrypPigBov_2016-11-04_15x_11.fasta	16	Auto-created	0	56509	15574647	1	24717	2016-11-04 18:28:00
 2008	KNP_moleculo_contigs_TruSPAdes_prodigal_TrypPigBov_2016-11-04_15x_12.fasta	16	Auto-created	0	56239	15574805	1	24673	2016-11-04 18:28:00
 2009	KNP_moleculo_contigs_TruSPAdes_prodigal_TrypPigBov_2016-11-04_15x_13.fasta	16	Auto-created	0	56562	15574848	1	24724	2016-11-04 18:28:00
@@ -2278,7 +2308,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 2460	S_Glen_Falls_metagenome_deep_upstream_TrypPigBov_2017-05-31_25x_04.fasta	1561	Auto-created	0	62901	15199646	1	18685	2017-06-01 07:52:00
 2461	S_Glen_Falls_metagenome_deep_upstream_TrypPigBov_2017-05-31_25x_05.fasta	1561	Auto-created	0	63050	15199475	1	18691	2017-06-01 07:52:00
 2462	S_Glen_Falls_metagenome_deep_upstream_TrypPigBov_2017-05-31_25x_06.fasta	1561	Auto-created	0	62274	15199243	1	18651	2017-06-01 07:52:00
-226	Mouse_mRNA_2001-11-12.fasta	24		0	7794	606252	1	0	2001-11-12 00:00:00
 2463	S_Glen_Falls_metagenome_deep_upstream_TrypPigBov_2017-05-31_25x_07.fasta	1561	Auto-created	0	62780	15199235	1	18677	2017-06-01 07:52:00
 2464	S_Glen_Falls_metagenome_deep_upstream_TrypPigBov_2017-05-31_25x_08.fasta	1561	Auto-created	0	62602	15199959	1	18669	2017-06-01 07:52:00
 2465	S_Glen_Falls_metagenome_deep_upstream_TrypPigBov_2017-05-31_25x_09.fasta	1561	Auto-created	0	62747	15199249	1	18676	2017-06-01 07:52:00
@@ -2859,7 +2888,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 3042	U54_HMPII_CombinedRefGenomes_TrypPigBov_2018-03-27_15x_05.fasta	1596	Auto-created	0	84776	26668469	1	31238	2018-03-27 16:31:00
 3043	U54_HMPII_CombinedRefGenomes_TrypPigBov_2018-03-27_15x_06.fasta	1596	Auto-created	0	84796	26668742	1	31228	2018-03-27 16:31:00
 3044	U54_HMPII_CombinedRefGenomes_TrypPigBov_2018-03-27_15x_07.fasta	1596	Auto-created	0	84482	26667467	1	31215	2018-03-27 16:31:00
-106	Y_Pestis_StoS25_2003-06-20.fasta	20		0	110474	6241391	1	7536	2003-06-20 00:00:00
 3045	U54_HMPII_CombinedRefGenomes_TrypPigBov_2018-03-27_15x_08.fasta	1596	Auto-created	0	84446	26669671	1	31215	2018-03-27 16:31:00
 3046	U54_HMPII_CombinedRefGenomes_TrypPigBov_2018-03-27_15x_09.fasta	1596	Auto-created	0	84782	26668931	1	31245	2018-03-27 16:31:00
 3047	U54_HMPII_CombinedRefGenomes_TrypPigBov_2018-03-27_15x_10.fasta	1596	Auto-created	0	84970	26668663	1	31250	2018-03-27 16:31:00
@@ -2941,6 +2969,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 3123	Hopland_Soil_Metagenome_SIP_all_TrypPigBov_2018-05-09_25x_23.fasta	31	Auto-created	0	165216	38534550	1	48702	2018-05-14 14:39:00
 3124	Hopland_Soil_Metagenome_SIP_all_TrypPigBov_2018-05-09_25x_24.fasta	31	Auto-created	0	165671	38534027	1	48731	2018-05-14 14:39:00
 3125	Hopland_Soil_Metagenome_SIP_all_TrypPigBov_2018-05-09_25x_25.fasta	31	Auto-created	0	165394	38534519	1	48714	2018-05-14 14:39:00
+8248	JGI_MG_2022_3_Ga0599150_PSM_2_12_OH_TrypPigBov_2024-04-16_5x_2.fasta	1840	Auto-created	0	727852	133827741	1	271966	2024-05-10 15:19:00
 3126	EMSL_49279_Wilson_June2016WEW_4_10_TrypPigBov_2018-05-17.fasta	1616	https://genome.jgi.doe.gov/portal/June2016WEW_4_10_FD/June2016WEW_4_10_FD.download.html	1	2887730	419692158	1	1.008885e+06	2018-05-18 11:43:00
 3127	EMSL_49279_Wilson_June2016WEW_4_40_TrypPigBov_2018-05-17.fasta	1616	https://genome.jgi.doe.gov/portal/June2016WEW_4_40_FD/June2016WEW_4_40_FD.download.html	1	1547388	237809046	1	548590	2018-05-18 11:45:00
 3128	EMSL_49279_Wilson_June2016WEW_4_100_TrypPigBov_2018-05-17.fasta	1616	https://genome.jgi.doe.gov/portal/June2016WEW_4_10_2_FD/June2016WEW_4_10_2_FD.download.html	1	1318968	214329136	1	479154	2018-05-18 11:47:00
@@ -3467,7 +3496,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 3651	EMSL_49521_StordalenMire_20110800_metagenomes_TryPigBov_25x_06.fasta	1613	Auto-created	0	1072161	139203078	1	339378	2018-07-23 11:30:00
 3652	EMSL_49521_StordalenMire_20110800_metagenomes_TryPigBov_25x_07.fasta	1613	Auto-created	0	1071675	139202473	1	339285	2018-07-23 11:30:00
 3653	EMSL_49521_StordalenMire_20110800_metagenomes_TryPigBov_25x_08.fasta	1613	Auto-created	0	1071119	139203156	1	339196	2018-07-23 11:30:00
-107	Y_Pestis_TIGR_2002-07-29.fasta	20		0	4083	1286481	1	1519	2002-07-29 16:59:00
 3654	EMSL_49521_StordalenMire_20110800_metagenomes_TryPigBov_25x_09.fasta	1613	Auto-created	0	1071861	139202434	1	339321	2018-07-23 11:30:00
 3655	EMSL_49521_StordalenMire_20110800_metagenomes_TryPigBov_25x_10.fasta	1613	Auto-created	0	1072341	139202419	1	339417	2018-07-23 11:30:00
 3656	EMSL_49521_StordalenMire_20110800_metagenomes_TryPigBov_25x_11.fasta	1613	Auto-created	0	1071355	139202474	1	339234	2018-07-23 11:30:00
@@ -3546,6 +3574,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 3754	C3005_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
 3755	C3006_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
 3756	C3007_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
+8249	JGI_MG_2022_3_Ga0599150_PSM_2_12_OH_TrypPigBov_2024-04-16_5x_3.fasta	1840	Auto-created	0	728455	133827791	1	271962	2024-05-10 15:19:00
 3757	C3008_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
 3758	C3009_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
 3759	C3010_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
@@ -3558,7 +3587,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 3766	C3019_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
 3767	C3020_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
 3768	C3021_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
-8195	Sebvebe_JGI506562_Nuccio_Subset_TrypPigBov_2024-02-20_15x_13.fasta	1802	Auto-created	0	264649	70192622	1	94378	2024-02-21 10:07:00
 3769	C3022_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
 3770	C3023_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
 3771	C3024_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
@@ -3593,7 +3621,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 3800	H4010_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
 3801	H4011_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
 3802	H4012_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
-108	Y_Pestis_TIGR_2003-04-22.fasta	20		0	4082	1286481	1	1542	2003-06-16 16:59:00
 3803	H4013_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
 3804	H4014_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
 3805	H4015_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
@@ -3627,8 +3654,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 3833	M2026_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
 3834	M2027_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
 3835	M2028_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
-8196	Sebvebe_JGI506562_Nuccio_Subset_TrypPigBov_2024-02-20_15x_14.fasta	1802	Auto-created	0	264132	70192655	1	94329	2024-02-21 10:07:00
-109	NC_Yeast_Mitochondrial_Ident_2002-06-10.fasta	2		0	584	228865	1	268	2002-06-20 08:51:00
 3836	M2034_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
 3837	M2039_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
 3838	M2041_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-04 13:07:00
@@ -3662,7 +3687,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 3866	C3012_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
 3867	C3013_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
 3868	C3015_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
-110	UBAlpha_RAM_2003-10-14.fasta	2		0	61	43881	1	48	2003-10-14 10:47:00
 3869	C3016_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
 3870	C3017_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
 3871	C3019_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
@@ -3696,8 +3720,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 3899	H4001_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
 3900	H4004_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
 3901	H4006_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
-8197	Sebvebe_JGI506562_Nuccio_Subset_TrypPigBov_2024-02-20_15x_15.fasta	1802	Auto-created	0	264317	70192590	1	94343	2024-02-21 10:07:00
-111	yeast_1999-02-23.fasta	2		0	8443	3963210	1	6143	1999-02-23 00:00:00
 3902	H4007_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
 3903	H4008_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
 3904	H4009_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
@@ -3731,8 +3753,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 3932	M2008_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
 3933	M2010_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
 3934	M2014_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
-8198	LSSW_07cm_wbins_proteome_TrypPigBov_2024-01-17_5x_1.fasta	1795	Auto-created	0	314746	52643186	1	72645	2024-02-23 11:02:00
-112	yeast_2001-01-08.fasta	2		0	6297	2975027	1	3230	2001-06-14 17:32:00
 3935	M2021_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
 3936	M2024_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
 3937	M2025_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
@@ -3766,8 +3786,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 3965	M2086_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
 3966	M2091_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
 3967	M2097_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
-8199	LSSW_07cm_wbins_proteome_TrypPigBov_2024-01-17_5x_2.fasta	1795	Auto-created	0	314982	52643156	1	72672	2024-02-23 11:02:00
-113	Yeast_2003-01-06.fasta	2		0	6360	2985326	1	3585	2003-01-06 17:03:00
 3968	M2103_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
 3969	P6005_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
 3970	P6009_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00
@@ -3895,7 +3913,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 4092	C3015_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_5.fasta	1596	Auto-created	0	252835	58626960	1	71576	2018-09-05 14:10:00
 4093	C3016_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_1.fasta	1596	Auto-created	0	293473	63011581	1	78305	2018-09-05 14:41:00
 4094	C3016_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_2.fasta	1596	Auto-created	0	293928	63009134	1	78320	2018-09-05 14:41:00
-5989	C1-9B_ga0395855_TrypPigBov_2020-07-01_15x_08.fasta	1632	Auto-created	0	185919	19634987	1	41647	2020-07-02 00:04:00
 4095	C3016_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_3.fasta	1596	Auto-created	0	293287	63010236	1	78302	2018-09-05 14:41:00
 4096	C3016_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_4.fasta	1596	Auto-created	0	293660	63008393	1	78325	2018-09-05 14:41:00
 4097	C3016_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_5.fasta	1596	Auto-created	0	293495	63009123	1	78311	2018-09-05 14:41:00
@@ -3944,7 +3961,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 4140	E5002_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_3.fasta	1596	Auto-created	0	196059	54145530	1	64004	2018-09-05 17:14:00
 4141	E5002_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_4.fasta	1596	Auto-created	0	196253	54145665	1	63998	2018-09-05 17:14:00
 4142	E5002_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_5.fasta	1596	Auto-created	0	196435	54146333	1	64012	2018-09-05 17:14:00
-5990	C1-9B_ga0395855_TrypPigBov_2020-07-01_15x_09.fasta	1632	Auto-created	0	185971	19635271	1	41649	2020-07-02 00:04:00
 4143	E5004_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_1.fasta	1596	Auto-created	0	253261	59274767	1	72413	2018-09-05 17:28:00
 4144	E5004_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_2.fasta	1596	Auto-created	0	252738	59274184	1	72407	2018-09-05 17:28:00
 4145	E5004_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_3.fasta	1596	Auto-created	0	253027	59273931	1	72415	2018-09-05 17:28:00
@@ -3993,7 +4009,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 4188	H4009_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_1.fasta	1596	Auto-created	0	285307	61889953	1	77033	2018-09-05 20:05:00
 4189	H4009_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_2.fasta	1596	Auto-created	0	284219	61892167	1	76982	2018-09-05 20:05:00
 4190	H4009_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_3.fasta	1596	Auto-created	0	284413	61889890	1	76976	2018-09-05 20:05:00
-5991	C1-9B_ga0395855_TrypPigBov_2020-07-01_15x_10.fasta	1632	Auto-created	0	186137	19634951	1	41673	2020-07-02 00:04:00
 4191	H4009_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_4.fasta	1596	Auto-created	0	284849	61889707	1	76989	2018-09-05 20:05:00
 4192	H4009_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_5.fasta	1596	Auto-created	0	284821	61891045	1	77014	2018-09-05 20:05:00
 4193	H4010_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_1.fasta	1596	Auto-created	0	248298	58323253	1	71118	2018-09-05 20:21:00
@@ -4042,7 +4057,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 4236	H4023_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_4.fasta	1596	Auto-created	0	328223	65518809	1	82817	2018-09-05 22:37:00
 4237	H4023_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_5.fasta	1596	Auto-created	0	327337	65519582	1	82780	2018-09-05 22:37:00
 4238	H4024_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_1.fasta	1596	Auto-created	0	294857	63141353	1	78546	2018-09-05 22:50:00
-5992	C1-9B_ga0395855_TrypPigBov_2020-07-01_15x_11.fasta	1632	Auto-created	0	186251	19635036	1	41684	2020-07-02 00:04:00
 4239	H4024_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_2.fasta	1596	Auto-created	0	294794	63142040	1	78552	2018-09-05 22:50:00
 4240	H4024_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_3.fasta	1596	Auto-created	0	294520	63144053	1	78525	2018-09-05 22:50:00
 4241	H4024_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_4.fasta	1596	Auto-created	0	294337	63141744	1	78503	2018-09-05 22:50:00
@@ -4091,7 +4105,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 4289	M2014_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_2.fasta	1596	Auto-created	0	259772	60800151	1	74461	2018-09-06 01:22:00
 4290	M2014_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_3.fasta	1596	Auto-created	0	260015	60798444	1	74469	2018-09-06 01:22:00
 4291	M2014_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_4.fasta	1596	Auto-created	0	259474	60798038	1	74421	2018-09-06 01:22:00
-5993	C1-9B_ga0395855_TrypPigBov_2020-07-01_15x_12.fasta	1632	Auto-created	0	186075	19635241	1	41663	2020-07-02 00:04:00
 4292	M2014_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_5.fasta	1596	Auto-created	0	259175	60797469	1	74421	2018-09-06 01:22:00
 4293	M2021_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_1.fasta	1596	Auto-created	0	244334	58582735	1	71294	2018-09-06 01:40:00
 4294	M2021_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_2.fasta	1596	Auto-created	0	244137	58585648	1	71251	2018-09-06 01:40:00
@@ -4140,7 +4153,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 4337	M2042_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_5.fasta	1596	Auto-created	0	438163	76226824	1	99960	2018-09-06 03:48:00
 4338	M2047_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_1.fasta	1596	Auto-created	0	308955	64736314	1	81061	2018-09-06 03:57:00
 4339	M2047_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_2.fasta	1596	Auto-created	0	307988	64735900	1	80991	2018-09-06 03:57:00
-5994	C1-9B_ga0395855_TrypPigBov_2020-07-01_15x_13.fasta	1632	Auto-created	0	186366	19635588	1	41700	2020-07-02 00:04:00
 4340	M2047_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_3.fasta	1596	Auto-created	0	308217	64736820	1	81008	2018-09-06 03:57:00
 4341	M2047_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_4.fasta	1596	Auto-created	0	308906	64738643	1	81057	2018-09-06 03:57:00
 4342	M2047_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_5.fasta	1596	Auto-created	0	308699	64735384	1	81036	2018-09-06 03:57:00
@@ -4189,7 +4201,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 4385	M2075_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_3.fasta	1596	Auto-created	0	273555	60891278	1	75172	2018-09-06 06:34:00
 4386	M2075_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_4.fasta	1596	Auto-created	0	273461	60891319	1	75162	2018-09-06 06:34:00
 4387	M2075_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_5.fasta	1596	Auto-created	0	273363	60893497	1	75139	2018-09-06 06:34:00
-5995	C1-9B_ga0395855_TrypPigBov_2020-07-01_15x_14.fasta	1632	Auto-created	0	186068	19635622	1	41669	2020-07-02 00:04:00
 4388	M2079_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_1.fasta	1596	Auto-created	0	276898	60797999	1	75183	2018-09-06 07:00:00
 4389	M2079_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_2.fasta	1596	Auto-created	0	276866	60795310	1	75181	2018-09-06 07:00:00
 4390	M2079_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_3.fasta	1596	Auto-created	0	276139	60795429	1	75159	2018-09-06 07:00:00
@@ -4238,7 +4249,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 4433	P6013_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_1.fasta	1596	Auto-created	0	216301	55337073	1	66218	2018-09-06 09:22:00
 4434	P6013_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_2.fasta	1596	Auto-created	0	217095	55334419	1	66237	2018-09-06 09:22:00
 4435	P6013_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_3.fasta	1596	Auto-created	0	217534	55334483	1	66298	2018-09-06 09:22:00
-5996	C1-9B_ga0395855_TrypPigBov_2020-07-01_15x_15.fasta	1632	Auto-created	0	186134	19634976	1	41676	2020-07-02 00:04:00
 4436	P6013_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_4.fasta	1596	Auto-created	0	217102	55334236	1	66264	2018-09-06 09:22:00
 4437	P6013_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_5.fasta	1596	Auto-created	0	216743	55334500	1	66227	2018-09-06 09:22:00
 4438	P6014_RefGenomesMetagenes_90_HsapiensSPROT2017_04_TrypPigBov_2018-09-04_5x_1.fasta	1596	Auto-created	0	261933	59934454	1	73472	2018-09-06 09:38:00
@@ -4287,7 +4297,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 4481	C3003_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_4.fasta	1596	Auto-created	0	331444	90801912	1	107419	2018-09-06 11:55:00
 4482	C3003_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_5.fasta	1596	Auto-created	0	330242	90802580	1	107347	2018-09-06 11:55:00
 4483	C3004_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_1.fasta	1596	Auto-created	0	446926	104014019	1	127404	2018-09-06 12:31:00
-5997	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_01.fasta	1632	Auto-created	0	193527	20325830	1	43222	2020-07-02 02:41:00
 4484	C3004_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_2.fasta	1596	Auto-created	0	446488	104013639	1	127391	2018-09-06 12:31:00
 4485	C3004_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_3.fasta	1596	Auto-created	0	446828	104012996	1	127392	2018-09-06 12:31:00
 4486	C3004_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_4.fasta	1596	Auto-created	0	445747	104013676	1	127364	2018-09-06 12:31:00
@@ -4336,7 +4345,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 4529	C3015_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_2.fasta	1596	Auto-created	0	378743	95109742	1	114283	2018-09-06 15:55:00
 4530	C3015_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_3.fasta	1596	Auto-created	0	378124	95110539	1	114225	2018-09-06 15:55:00
 4531	C3015_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_4.fasta	1596	Auto-created	0	378466	95109628	1	114265	2018-09-06 15:55:00
-5998	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_02.fasta	1632	Auto-created	0	193724	20325156	1	43245	2020-07-02 02:41:00
 4532	C3015_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_5.fasta	1596	Auto-created	0	378983	95112546	1	114289	2018-09-06 15:55:00
 4533	C3016_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_1.fasta	1596	Auto-created	0	428886	100244677	1	122298	2018-09-06 16:17:00
 4534	C3016_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_2.fasta	1596	Auto-created	0	428618	100245463	1	122280	2018-09-06 16:17:00
@@ -4385,7 +4393,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 4577	C3034_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_5.fasta	1596	Auto-created	0	321345	90209097	1	106114	2018-09-06 19:21:00
 4578	E5002_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_1.fasta	1596	Auto-created	0	292729	86555742	1	100969	2018-09-06 19:41:00
 4579	E5002_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_2.fasta	1596	Auto-created	0	292490	86557794	1	100956	2018-09-06 19:41:00
-5999	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_03.fasta	1632	Auto-created	0	193692	20325160	1	43240	2020-07-02 02:41:00
 4580	E5002_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_3.fasta	1596	Auto-created	0	292467	86555442	1	100964	2018-09-06 19:41:00
 4581	E5002_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_4.fasta	1596	Auto-created	0	292260	86556540	1	100966	2018-09-06 19:41:00
 4582	E5002_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_5.fasta	1596	Auto-created	0	292434	86555478	1	100959	2018-09-06 19:41:00
@@ -4434,7 +4441,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 4625	H4008_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_3.fasta	1596	Auto-created	0	506185	110564993	1	137696	2018-09-06 22:51:00
 4626	H4008_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_4.fasta	1596	Auto-created	0	504900	110562958	1	137615	2018-09-06 22:51:00
 4627	H4008_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_5.fasta	1596	Auto-created	0	505787	110562349	1	137669	2018-09-06 22:51:00
-6000	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_04.fasta	1632	Auto-created	0	193841	20325812	1	43255	2020-07-02 02:41:00
 4628	H4009_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_1.fasta	1596	Auto-created	0	430829	102226344	1	124873	2018-09-06 23:18:00
 4629	H4009_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_2.fasta	1596	Auto-created	0	431214	102226790	1	124900	2018-09-06 23:18:00
 4630	H4009_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_3.fasta	1596	Auto-created	0	429774	102227499	1	124823	2018-09-06 23:18:00
@@ -4483,7 +4489,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 4673	H4023_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_1.fasta	1596	Auto-created	0	491864	106265629	1	131966	2018-09-07 02:29:00
 4674	H4023_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_2.fasta	1596	Auto-created	0	491241	106266060	1	131931	2018-09-07 02:29:00
 4675	H4023_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_3.fasta	1596	Auto-created	0	492412	106267826	1	131981	2018-09-07 02:29:00
-6001	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_05.fasta	1632	Auto-created	0	193564	20325092	1	43223	2020-07-02 02:41:00
 4676	H4023_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_4.fasta	1596	Auto-created	0	491410	106265848	1	131936	2018-09-07 02:29:00
 4677	H4023_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_5.fasta	1596	Auto-created	0	491826	106266842	1	131954	2018-09-07 02:29:00
 4678	H4024_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_1.fasta	1596	Auto-created	0	447066	103841864	1	126972	2018-09-07 02:44:00
@@ -4532,7 +4537,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 4726	M2008_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_4.fasta	1596	Auto-created	0	325921	90799442	1	107068	2018-09-07 05:32:00
 4727	M2008_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_5.fasta	1596	Auto-created	0	326681	90800710	1	107088	2018-09-07 05:32:00
 4728	M2014_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_1.fasta	1596	Auto-created	0	390449	99109265	1	119358	2018-09-07 05:56:00
-6002	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_06.fasta	1632	Auto-created	0	193650	20325764	1	43232	2020-07-02 02:41:00
 4729	M2014_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_2.fasta	1596	Auto-created	0	390023	99112227	1	119347	2018-09-07 05:56:00
 4730	M2014_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_3.fasta	1596	Auto-created	0	389715	99110815	1	119325	2018-09-07 05:56:00
 4731	M2014_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_4.fasta	1596	Auto-created	0	389325	99109329	1	119311	2018-09-07 05:56:00
@@ -4581,7 +4585,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 4774	M2042_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_2.fasta	1596	Auto-created	0	665803	124496355	1	160376	2018-09-07 09:15:00
 4775	M2042_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_3.fasta	1596	Auto-created	0	664799	124497336	1	160327	2018-09-07 09:15:00
 4776	M2042_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_4.fasta	1596	Auto-created	0	664721	124496080	1	160342	2018-09-07 09:15:00
-6003	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_07.fasta	1632	Auto-created	0	193498	20325779	1	43210	2020-07-02 02:41:00
 4777	M2042_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_5.fasta	1596	Auto-created	0	664556	124496287	1	160310	2018-09-07 09:15:00
 4778	M2047_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_1.fasta	1596	Auto-created	0	459997	103787804	1	127836	2018-09-07 09:34:00
 4779	M2047_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_2.fasta	1596	Auto-created	0	460512	103785607	1	127841	2018-09-07 09:34:00
@@ -4784,8 +4787,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 4976	Sadler_Metagenomes_uniprot_CombinedFungalSubset01_TrypPigBov_2019-01-03_25x_17.fasta	1565	Auto-created	0	115506	54067551	1	69417	2019-01-04 08:14:00
 4977	Sadler_Metagenomes_uniprot_CombinedFungalSubset01_TrypPigBov_2019-01-03_25x_18.fasta	1565	Auto-created	0	115597	54067282	1	69424	2019-01-04 08:14:00
 4978	Sadler_Metagenomes_uniprot_CombinedFungalSubset01_TrypPigBov_2019-01-03_25x_19.fasta	1565	Auto-created	0	115909	54067424	1	69460	2019-01-04 08:14:00
-5010	EMSL_49965_Walsh_AG5_323_2019-02-14.fasta	1647		1	1617879	232251535	1	321496	2019-02-14 11:59:00
-171	N_Crassa_Mitop_2002-04-30.fasta	15		0	326	150462	1	174	2002-06-20 08:51:00
 4979	Sadler_Metagenomes_uniprot_CombinedFungalSubset01_TrypPigBov_2019-01-03_25x_20.fasta	1565	Auto-created	0	115382	54068337	1	69402	2019-01-04 08:14:00
 4980	Sadler_Metagenomes_uniprot_CombinedFungalSubset01_TrypPigBov_2019-01-03_25x_21.fasta	1565	Auto-created	0	115435	54067291	1	69406	2019-01-04 08:14:00
 4981	Sadler_Metagenomes_uniprot_CombinedFungalSubset01_TrypPigBov_2019-01-03_25x_22.fasta	1565	Auto-created	0	115741	54067288	1	69448	2019-01-04 08:14:00
@@ -4817,6 +4818,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 5007	Tropical_soils_tim00Cox0000000H_2_JGI125968_TrypPigBov_2018-07-26_25x_23.fasta	31	Auto-created	0	270432	35253411	1	53682	2019-01-04 20:43:00
 5008	Tropical_soils_tim00Cox0000000H_2_JGI125968_TrypPigBov_2018-07-26_25x_24.fasta	31	Auto-created	0	270364	35253472	1	53690	2019-01-04 20:43:00
 5009	Tropical_soils_tim00Cox0000000H_2_JGI125968_TrypPigBov_2018-07-26_25x_25.fasta	31	Auto-created	0	270042	35252870	1	53680	2019-01-04 20:43:00
+5010	EMSL_49965_Walsh_AG5_323_2019-02-14.fasta	1647		1	1617879	232251535	1	321496	2019-02-14 11:59:00
 5011	EMSL_49965_Walsh_AG5_331_2019-02-14.fasta	1647		1	2277203	307867911	1	430618	2019-02-14 12:01:00
 5012	EMSL_49965_Walsh_AG5_Bottom_2019-02-14.fasta	1647		1	1513774	213370511	1	296612	2019-02-14 12:01:00
 5013	EMSL_49965_Walsh_AG5_SCM_2019-02-14.fasta	1647		1	1119455	157948084	1	216592	2019-02-14 12:02:00
@@ -4835,7 +4837,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 5026	EMSL_49965_Walsh_Prot_Database_JOIS2017_AG5all_cluster100_2019-02-14_25x_10.fasta	1647	Auto-created	0	290674	41538355	1	56796	2019-02-14 20:42:00
 5027	EMSL_49965_Walsh_Prot_Database_JOIS2017_AG5all_cluster100_2019-02-14_25x_11.fasta	1647	Auto-created	0	290169	41537456	1	56781	2019-02-14 20:42:00
 5028	EMSL_49965_Walsh_Prot_Database_JOIS2017_AG5all_cluster100_2019-02-14_25x_12.fasta	1647	Auto-created	0	290477	41537813	1	56785	2019-02-14 20:42:00
-172	bacteriorhodopsin_2002-08-02.fasta	16		0	1	262	1	1	2002-08-02 11:57:00
 5029	EMSL_49965_Walsh_Prot_Database_JOIS2017_AG5all_cluster100_2019-02-14_25x_13.fasta	1647	Auto-created	0	290390	41538330	1	56783	2019-02-14 20:42:00
 5030	EMSL_49965_Walsh_Prot_Database_JOIS2017_AG5all_cluster100_2019-02-14_25x_14.fasta	1647	Auto-created	0	290008	41538570	1	56764	2019-02-14 20:42:00
 5031	EMSL_49965_Walsh_Prot_Database_JOIS2017_AG5all_cluster100_2019-02-14_25x_15.fasta	1647	Auto-created	0	290440	41537949	1	56783	2019-02-14 20:42:00
@@ -5693,8 +5694,29 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 5986	C1-9B_ga0395855_TrypPigBov_2020-07-01_15x_05.fasta	1632	Auto-created	0	186211	19635828	1	41673	2020-07-02 00:04:00
 5987	C1-9B_ga0395855_TrypPigBov_2020-07-01_15x_06.fasta	1632	Auto-created	0	186294	19634994	1	41686	2020-07-02 00:04:00
 5988	C1-9B_ga0395855_TrypPigBov_2020-07-01_15x_07.fasta	1632	Auto-created	0	186051	19635646	1	41658	2020-07-02 00:04:00
+5989	C1-9B_ga0395855_TrypPigBov_2020-07-01_15x_08.fasta	1632	Auto-created	0	185919	19634987	1	41647	2020-07-02 00:04:00
+5990	C1-9B_ga0395855_TrypPigBov_2020-07-01_15x_09.fasta	1632	Auto-created	0	185971	19635271	1	41649	2020-07-02 00:04:00
+5991	C1-9B_ga0395855_TrypPigBov_2020-07-01_15x_10.fasta	1632	Auto-created	0	186137	19634951	1	41673	2020-07-02 00:04:00
+5992	C1-9B_ga0395855_TrypPigBov_2020-07-01_15x_11.fasta	1632	Auto-created	0	186251	19635036	1	41684	2020-07-02 00:04:00
+5993	C1-9B_ga0395855_TrypPigBov_2020-07-01_15x_12.fasta	1632	Auto-created	0	186075	19635241	1	41663	2020-07-02 00:04:00
+5994	C1-9B_ga0395855_TrypPigBov_2020-07-01_15x_13.fasta	1632	Auto-created	0	186366	19635588	1	41700	2020-07-02 00:04:00
+5995	C1-9B_ga0395855_TrypPigBov_2020-07-01_15x_14.fasta	1632	Auto-created	0	186068	19635622	1	41669	2020-07-02 00:04:00
+5996	C1-9B_ga0395855_TrypPigBov_2020-07-01_15x_15.fasta	1632	Auto-created	0	186134	19634976	1	41676	2020-07-02 00:04:00
+5997	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_01.fasta	1632	Auto-created	0	193527	20325830	1	43222	2020-07-02 02:41:00
+5998	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_02.fasta	1632	Auto-created	0	193724	20325156	1	43245	2020-07-02 02:41:00
+5999	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_03.fasta	1632	Auto-created	0	193692	20325160	1	43240	2020-07-02 02:41:00
+6000	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_04.fasta	1632	Auto-created	0	193841	20325812	1	43255	2020-07-02 02:41:00
+6001	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_05.fasta	1632	Auto-created	0	193564	20325092	1	43223	2020-07-02 02:41:00
+6002	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_06.fasta	1632	Auto-created	0	193650	20325764	1	43232	2020-07-02 02:41:00
+6003	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_07.fasta	1632	Auto-created	0	193498	20325779	1	43210	2020-07-02 02:41:00
 6004	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_08.fasta	1632	Auto-created	0	193838	20325159	1	43249	2020-07-02 02:41:00
 6005	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_09.fasta	1632	Auto-created	0	193560	20325311	1	43221	2020-07-02 02:41:00
+6006	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_10.fasta	1632	Auto-created	0	193721	20325772	1	43237	2020-07-02 02:41:00
+6007	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_11.fasta	1632	Auto-created	0	193425	20325735	1	43212	2020-07-02 02:41:00
+6008	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_12.fasta	1632	Auto-created	0	193419	20325369	1	43209	2020-07-02 02:41:00
+6009	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_13.fasta	1632	Auto-created	0	193219	20325397	1	43187	2020-07-02 02:41:00
+6010	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_14.fasta	1632	Auto-created	0	193436	20325169	1	43209	2020-07-02 02:41:00
+6011	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_15.fasta	1632	Auto-created	0	193685	20325305	1	43238	2020-07-02 02:41:00
 6012	C7-1C_ga0395835_TrypPigBov_2020-07-01_15x_01.fasta	1632	Auto-created	0	145559	14727764	1	31946	2020-07-02 03:04:00
 6013	C7-1C_ga0395835_TrypPigBov_2020-07-01_15x_02.fasta	1632	Auto-created	0	145344	14728425	1	31924	2020-07-02 03:04:00
 6014	C7-1C_ga0395835_TrypPigBov_2020-07-01_15x_03.fasta	1632	Auto-created	0	145443	14727757	1	31930	2020-07-02 03:04:00
@@ -5787,7 +5809,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 6102	C4-3_combined_proteins_TrypPigBov_2020-07-13.fasta	1632	Created from C4-3A_ga0394844,C4-3B_ga0394845, and C4-3C_ga0394846 metagenomes combined with TrypPigBov, 737 duplicates collapsed	1	775239	70027255	1	100000	2020-07-13 16:10:00
 6103	C4-5_combined_proteins_TrypPigBov_2020-07-13.fasta	1632	Created from C4-5A_ga0394847,C4-5B_ga0394848, and C4-5C_ga0394848 metagenomes combined with TrypPigBov, 836 duplicates collapsed	1	880106	81141375	1	100000	2020-07-13 16:15:00
 6104	C4-7_combined_proteins_TrypPigBov_2020-07-13.fasta	1632	Created from C4-7A_ga0394850,C4-7B_ga0394851, and C4-7C_ga0394852 metagenomes combined with TrypPigBov, 857 duplicates collapsed	1	799785	73184729	1	100000	2020-07-13 16:17:00
-8200	LSSW_07cm_wbins_proteome_TrypPigBov_2024-01-17_5x_3.fasta	1795	Auto-created	0	314834	52643133	1	72634	2024-02-23 11:02:00
 6105	C4-9_combined_proteins_TrypPigBov_2020-07-13.fasta	1632	Created from C4-9A_ga0394853,C4-9B_ga0394854, and C4-9C_ga0394855 metagenomes combined with TrypPigBov, 2,100 duplicates collapsed	1	1213821	113286955	1	100000	2020-07-13 16:19:00
 6106	C5-1_combined_proteins_TrypPigBov_2020-07-13.fasta	1632	Created from C5-1A_ga0394856,C5-1B_ga0394857, and C5-1C_ga0394857 metagenomes combined with TrypPigBov, 3,566 duplicates collapsed	1	1559770	148175002	1	100000	2020-07-13 16:20:00
 6107	C5-3_combined_proteins_TrypPigBov_2020-07-13.fasta	1632	Created from C5-3A_ga0394858,C5-2B_ga0394859, and C5-3C_ga0394860 metagenomes combined with TrypPigBov, 2,932 duplicates collapsed	1	1353081	129616282	1	100000	2020-07-13 16:22:00
@@ -6335,7 +6356,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 6675	CTC2_Sept24_scaffolds_min1000_TrypPigBov_12112020_5x_1.fasta	1681	Auto-created	0	186777	47971587	1	77201	2021-02-02 14:26:00
 6676	CTC2_Sept24_scaffolds_min1000_TrypPigBov_12112020_5x_2.fasta	1681	Auto-created	0	186483	47971936	1	77156	2021-02-02 14:26:00
 6677	CTC2_Sept24_scaffolds_min1000_TrypPigBov_12112020_5x_3.fasta	1681	Auto-created	0	186551	47971821	1	77171	2021-02-02 14:26:00
-6006	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_10.fasta	1632	Auto-created	0	193721	20325772	1	43237	2020-07-02 02:41:00
 6678	CTC2_Sept24_scaffolds_min1000_TrypPigBov_12112020_5x_4.fasta	1681	Auto-created	0	186899	47972244	1	77224	2021-02-02 14:26:00
 6679	CTC2_Sept24_scaffolds_min1000_TrypPigBov_12112020_5x_5.fasta	1681	Auto-created	0	186774	47971909	1	77200	2021-02-02 14:26:00
 6680	WA_v2_0_JGI_derep_1_0_TryPigBov_2021-01-28_25x_01.fasta	1689	Auto-created	0	2131623	316412942	1	489920	2021-02-02 16:40:00
@@ -6442,7 +6462,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 6782	Yellowstone_2014_New_Pit_metagenome_JGI_66600_TrypPigBov_2021-03-23_5x_5.fasta	1579	Auto-created	0	243041	35728951	1	49057	2021-03-23 19:11:00
 6783	Viral_Proteins_NCBI_IMGVR_TrypPigBov_2021-04-08.fasta	1689	Viral proteins compiled from NCBI and IMGVR by Ruonan Wu using prodigal (-p meta); sequences supplied by Nikola Tolic	1	12121982	3135714030	1	5.190673e+06	2021-04-08 15:32:00
 6784	Viral_Proteins_NCBI_IMGVR_TrypPigBov_2021-04-08_25x_01.fasta	1689	Auto-created	0	483534	125428630	1	207427	2021-04-09 09:50:00
-6007	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_11.fasta	1632	Auto-created	0	193425	20325735	1	43212	2020-07-02 02:41:00
 6785	Viral_Proteins_NCBI_IMGVR_TrypPigBov_2021-04-08_25x_02.fasta	1689	Auto-created	0	485323	125428162	1	207591	2021-04-09 09:50:00
 6786	Viral_Proteins_NCBI_IMGVR_TrypPigBov_2021-04-08_25x_03.fasta	1689	Auto-created	0	484752	125428204	1	207516	2021-04-09 09:50:00
 6787	Viral_Proteins_NCBI_IMGVR_TrypPigBov_2021-04-08_25x_04.fasta	1689	Auto-created	0	484465	125428661	1	207588	2021-04-09 09:50:00
@@ -6493,7 +6512,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 6832	Baldrian_metagenome_Ga0435267_WithIsolates_TrypPigBov_2021-02-17_25x_24.fasta	1557	Auto-created	0	561901	85300370	1	127490	2021-04-12 15:10:00
 6833	Baldrian_metagenome_Ga0435267_WithIsolates_TrypPigBov_2021-02-17_25x_25.fasta	1557	Auto-created	0	561249	85300262	1	127463	2021-04-12 15:10:00
 6834	Prosser_diamond_kaiko_25p_uniref_top100_Bacteria_Fungi_TrypPigBov.fasta	1689	Kaiko derived sequences pulled from UniRef via Joon Yong's processing	1	17663316	5983661921	1	8.248601e+06	2021-04-12 16:21:00
-6008	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_12.fasta	1632	Auto-created	0	193419	20325369	1	43209	2020-07-02 02:41:00
 6835	Prosser_diamond_kaiko_25p_uniref_top100_Bacteria_Fungi_TrypPigBov_25x_01.fasta	1689	Auto-created	0	707370	239345859	1	327245	2021-04-12 17:21:00
 6836	Prosser_diamond_kaiko_25p_uniref_top100_Bacteria_Fungi_TrypPigBov_25x_02.fasta	1689	Auto-created	0	707748	239347249	1	327277	2021-04-12 17:21:00
 6837	Prosser_diamond_kaiko_25p_uniref_top100_Bacteria_Fungi_TrypPigBov_25x_03.fasta	1689	Auto-created	0	706477	239345763	1	327163	2021-04-12 17:21:00
@@ -6744,8 +6762,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 7082	Aug2018WEW_P10_D2_FD_Ga0427952_TrypPigBov_2021-07-13.fasta	1616	Aug2018WEW_P10_D2: Project: 1265320, Ga0427952 https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=Aug2018WEW_P10_D_2_FD no duplicates collapsed	1	803672	161534841	1	311870	2021-07-13 20:27:00
 7083	Aug2018WEW_P10_D5_FD_Ga0439249_TrypPigBov_2021-07-13.fasta	1616	Aug2018WEW_P10_D5(v2): Project: 1281225, Ga0439249 https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=Aug2018WEW_P10_D_4_FD no duplicates collapsed	1	1207779	243832172	1	331838	2021-07-13 20:27:00
 7084	Aug2018WEW_P10_D8_FD_Ga0427954_TrypPigBov_2021-07-13.fasta	1616	Aug2018WEW_P10_D8: Project: 1265324, Ga0427954 https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=Aug2018WEW_P10_D_3_FD no duplicates collapsed	1	845567	174297026	1	472064	2021-07-13 20:27:00
-8201	LSSW_07cm_wbins_proteome_TrypPigBov_2024-01-17_5x_4.fasta	1795	Auto-created	0	314809	52643241	1	72662	2024-02-23 11:02:00
-8202	LSSW_07cm_wbins_proteome_TrypPigBov_2024-01-17_5x_5.fasta	1795	Auto-created	0	314966	52643514	1	72664	2024-02-23 11:02:00
 7085	Aug2018WEW_P11_D2_FD_Ga0427928_TrypPigBov_2021-07-13.fasta	1616	Aug2018WEW_P11_D2: Project: 1265272, Ga0427928 https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=Aug2018WEW_P11_D_3_FD no duplicates collapsed	1	59736	8939923	1	19858	2021-07-13 20:27:00
 7086	Aug2018WEW_P11_D5_FD_Ga0427929_TrypPigBov_2021-07-13.fasta	1616	Aug2018WEW_P11_D5: Project: 1265274, Ga0427929 https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=Aug2018WEW_P11_D_2_FD no duplicates collapsed	1	1391186	281831512	1	543005	2021-07-13 20:27:00
 7087	Aug2018WEW_P11_D8_FD_Ga0427930_TrypPigBov_2021-07-13.fasta	1616	Aug2018WEW_P11_D8: Project: 1265276, Ga0427930 https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=Aug2018WEW_P11_D_4_FD no duplicates collapsed	1	398570	81093466	1	155589	2021-07-13 20:27:00
@@ -6861,6 +6877,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 7197	Aug2018WEW_P19_D8_FD_Ga0427938_TrypPigBov_2021-07-13_5x_2.fasta	1616	Auto-created	0	196424	39175727	1	73899	2021-07-17 09:28:00
 7198	Aug2018WEW_P19_D8_FD_Ga0427938_TrypPigBov_2021-07-13_5x_3.fasta	1616	Auto-created	0	196745	39175737	1	73942	2021-07-17 09:28:00
 7199	Aug2018WEW_P19_D8_FD_Ga0427938_TrypPigBov_2021-07-13_5x_4.fasta	1616	Auto-created	0	196095	39175716	1	73776	2021-07-17 09:28:00
+7200	Aug2018WEW_P19_D8_FD_Ga0427938_TrypPigBov_2021-07-13_5x_5.fasta	1616	Auto-created	0	195909	39175732	1	73782	2021-07-17 09:28:00
 7201	Aug2018WEW_P17_D2_FD_Ga0439232_TrypPigBov_2021-07-13_5x_1.fasta	1616	Auto-created	0	425617	80196520	1	158721	2021-07-17 09:30:00
 7202	Aug2018WEW_P17_D2_FD_Ga0439232_TrypPigBov_2021-07-13_5x_2.fasta	1616	Auto-created	0	426803	80196866	1	158845	2021-07-17 09:30:00
 7203	Aug2018WEW_P17_D2_FD_Ga0439232_TrypPigBov_2021-07-13_5x_3.fasta	1616	Auto-created	0	425931	80196547	1	158740	2021-07-17 09:30:00
@@ -6889,7 +6906,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 7226	Aug2018WEW_P20_D2_FD_Ga0439242_TrypPigBov_2021-07-13_5x_1.fasta	1616	Auto-created	0	371965	69229438	1	138162	2021-07-17 18:33:00
 7227	Aug2018WEW_P20_D2_FD_Ga0439242_TrypPigBov_2021-07-13_5x_2.fasta	1616	Auto-created	0	371808	69229016	1	138154	2021-07-17 18:33:00
 7228	Aug2018WEW_P20_D2_FD_Ga0439242_TrypPigBov_2021-07-13_5x_3.fasta	1616	Auto-created	0	371602	69229125	1	137976	2021-07-17 18:33:00
-6009	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_13.fasta	1632	Auto-created	0	193219	20325397	1	43187	2020-07-02 02:41:00
 7229	Aug2018WEW_P20_D2_FD_Ga0439242_TrypPigBov_2021-07-13_5x_4.fasta	1616	Auto-created	0	372067	69229580	1	138184	2021-07-17 18:33:00
 7230	Aug2018WEW_P20_D2_FD_Ga0439242_TrypPigBov_2021-07-13_5x_5.fasta	1616	Auto-created	0	371167	69228469	1	138034	2021-07-17 18:33:00
 7231	Aug2018WEW_P21_D8_FD_Ga0427958_TrypPigBov_2021-07-13_5x_1.fasta	1616	Auto-created	0	149501	30032144	1	56400	2021-07-17 18:33:00
@@ -6936,7 +6952,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 7272	EastRiver_Surface_Near-river_2018_2019_TrypPigBov_2021-10-15.fasta	1718	Compiled from flooded and drained, 2018 & 2019, Near-river, surface metagenomes(12) sequenced at JGI\r\n	1	16162572	1879995822	1	4.761229e+06	2021-10-18 09:25:00
 7273	EastRiver_Surface_Mid-meander_2018_2019_TrypPigBov_2021-10-15.fasta	1718	Compiled from flooded and drained, 2018 & 2019, mid-meander, surface metagenomes(12) sequenced at JGI	1	16213442	2006384092	1	4.889561e+06	2021-10-18 09:26:00
 7274	EastRiver_Subsurface_Near-river_2018_2019_TrypPigBov_2021-10-15_25x_01.fasta	1718	Auto-created	0	787797	92252644	1	232007	2021-10-21 02:33:00
-6010	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_14.fasta	1632	Auto-created	0	193436	20325169	1	43209	2020-07-02 02:41:00
 7275	EastRiver_Subsurface_Near-river_2018_2019_TrypPigBov_2021-10-15_25x_02.fasta	1718	Auto-created	0	787564	92252691	1	231846	2021-10-21 02:33:00
 7276	EastRiver_Subsurface_Near-river_2018_2019_TrypPigBov_2021-10-15_25x_03.fasta	1718	Auto-created	0	787832	92252664	1	232072	2021-10-21 02:33:00
 7277	EastRiver_Subsurface_Near-river_2018_2019_TrypPigBov_2021-10-15_25x_04.fasta	1718	Auto-created	0	788090	92253278	1	232062	2021-10-21 02:33:00
@@ -7037,7 +7052,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 7372	EastRiver_Surface_Mid-meander_2018_2019_TrypPigBov_2021-10-15_25x_24.fasta	1718	Auto-created	0	648448	80255198	1	195672	2021-10-21 10:20:00
 7373	EastRiver_Surface_Mid-meander_2018_2019_TrypPigBov_2021-10-15_25x_25.fasta	1718	Auto-created	0	648744	80255207	1	195554	2021-10-21 10:20:00
 7374	ICBGSID10-spades_bacteria_protCall_2021-12-03.fasta	1135	ICBG735, SIDICBG, and SID proteins	1	78453	23702903	1	33818	2021-12-03 13:10:00
-199	MXXFXK.fasta	16		0	6860	89154	1	229	2004-09-03 17:22:00
 7375	LCA_Fungal_Garden_Kaiko_top100_species_2021-12-03.fasta	1135	LCA fungal garden, top 100 species (from Kaiko)	1	11457708	4081171394	1	5.507165e+06	2021-12-03 13:12:00
 7376	LCA_Fungal_Garden_Kaiko_top100_species_2021-12-03_25x_01.fasta	1135	Auto-created	0	458402	163244385	1	220296	2021-12-03 15:01:00
 7377	LCA_Fungal_Garden_Kaiko_top100_species_2021-12-03_25x_02.fasta	1135	Auto-created	0	457934	163250743	1	220254	2021-12-03 15:01:00
@@ -7616,7 +7630,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 7951	EUP_60009_Metagenomes_DCFS_Ga0586915_TrypPigBov_2023-10-18_15x_04.fasta	1788	Auto-created	0	301796	56568297	1	113810	2023-10-20 09:48:00
 7952	EUP_60009_Metagenomes_DCFS_Ga0586915_TrypPigBov_2023-10-18_15x_05.fasta	1788	Auto-created	0	301589	56568514	1	113736	2023-10-20 09:48:00
 7953	EUP_60009_Metagenomes_DCFS_Ga0586915_TrypPigBov_2023-10-18_15x_06.fasta	1788	Auto-created	0	301734	56568339	1	113749	2023-10-20 09:48:00
-120	T_Palladium_2002-01-17.fasta	10		0	1293	174551	1	283	2002-01-18 10:36:00
 7954	EUP_60009_Metagenomes_DCFS_Ga0586915_TrypPigBov_2023-10-18_15x_07.fasta	1788	Auto-created	0	301046	56568894	1	113640	2023-10-20 09:48:00
 7955	EUP_60009_Metagenomes_DCFS_Ga0586915_TrypPigBov_2023-10-18_15x_08.fasta	1788	Auto-created	0	301048	56568985	1	113670	2023-10-20 09:48:00
 7956	EUP_60009_Metagenomes_DCFS_Ga0586915_TrypPigBov_2023-10-18_15x_09.fasta	1788	Auto-created	0	301657	56568077	1	113741	2023-10-20 09:48:00
@@ -7667,7 +7680,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 8001	EUP_60009_Metagenomes_TREE_Ga0586909_TrypPigBov_2023-10-18_15x_09.fasta	1788	Auto-created	0	217686	38279121	1	78090	2023-10-20 09:52:00
 8002	EUP_60009_Metagenomes_TREE_Ga0586909_TrypPigBov_2023-10-18_15x_10.fasta	1788	Auto-created	0	218070	38279176	1	78167	2023-10-20 09:52:00
 8003	EUP_60009_Metagenomes_TREE_Ga0586909_TrypPigBov_2023-10-18_15x_11.fasta	1788	Auto-created	0	217262	38279758	1	78170	2023-10-20 09:52:00
-6011	C7-1B_ga0395834_TrypPigBov_2020-07-01_15x_15.fasta	1632	Auto-created	0	193685	20325305	1	43238	2020-07-02 02:41:00
 8004	EUP_60009_Metagenomes_TREE_Ga0586909_TrypPigBov_2023-10-18_15x_12.fasta	1788	Auto-created	0	217948	38279242	1	78183	2023-10-20 09:52:00
 8005	EUP_60009_Metagenomes_TREE_Ga0586909_TrypPigBov_2023-10-18_15x_13.fasta	1788	Auto-created	0	217719	38279125	1	78109	2023-10-20 09:52:00
 8006	EUP_60009_Metagenomes_TREE_Ga0586909_TrypPigBov_2023-10-18_15x_14.fasta	1788	Auto-created	0	217728	38279414	1	78161	2023-10-20 09:52:00
@@ -7701,6 +7713,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 8034	MSC1_LRMG_SM_501_528_529_530_531_TrypPigBov_2023-10-24.fasta	1721	combined metagenomes for non-dereplicated SM_0501, SM_528, SM_529, SM_530, SM_531 plus contaminants; 400,671 exact duplicates collapsed	1	264312	67210768	1	155108	2023-10-24 19:03:00
 8035	MAG_OL_09_D0_Ga0613709_TrypPigBov_2023-10-25.fasta	1797	Metagenome Ga0613709 (sample OL_09_D0)  from municipal landfills (Southern Ontario), sequenced at JGI provided by Laura Hug (laura.audrey.hug@gmail.com) on FICUS EUP 60417	1	1047365	129855440	1	310526	2023-10-26 10:53:00
 8036	MAG_OL_09_DP1_Ga0613715_TrypPigBov_2023-10-25.fasta	1797	Metagenome Ga0613715 (sample OL_09_DP1) from municipal landfills (Southern Ontario), sequenced at JGI provided by Laura Hug (laura.audrey.hug@gmail.com) on FICUS EUP 60417	1	733150	85377323	1	214626	2023-10-26 10:53:00
+8037	MAG_OL_09_D0_Ga0613709_TrypPigBov_2023-10-25_5x_1.fasta	1797	Auto-created	0	209360	25970993	1	62074	2023-10-26 18:33:00
 8038	MAG_OL_09_D0_Ga0613709_TrypPigBov_2023-10-25_5x_2.fasta	1797	Auto-created	0	209581	25971108	1	62066	2023-10-26 18:33:00
 8039	MAG_OL_09_D0_Ga0613709_TrypPigBov_2023-10-25_5x_3.fasta	1797	Auto-created	0	209573	25971503	1	62117	2023-10-26 18:33:00
 8040	MAG_OL_09_D0_Ga0613709_TrypPigBov_2023-10-25_5x_4.fasta	1797	Auto-created	0	209535	25971050	1	62156	2023-10-26 18:33:00
@@ -7816,20 +7829,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 8153	Rhiir_JGI_Nuccio_Kaiko_UniProt_TrypPigBov_2024-01-11_5x_3.fasta	1802	Auto-created	0	380193	147882116	1	199469	2024-01-12 15:50:00
 8154	Rhiir_JGI_Nuccio_Kaiko_UniProt_TrypPigBov_2024-01-11_5x_4.fasta	1802	Auto-created	0	380185	147882348	1	199471	2024-01-12 15:50:00
 8155	Rhiir_JGI_Nuccio_Kaiko_UniProt_TrypPigBov_2024-01-11_5x_5.fasta	1802	Auto-created	0	381359	147882013	1	199637	2024-01-12 15:50:00
-114	Yeast_2003-01-06_PepStds.fasta	2	Yeast_2003-01-06 with Peptide Standards	0	6374	2985529	1	3586	2004-01-07 16:39:00
-115	yeast_mitoprot_030303.fasta	2		0	400	149650	1	174	2003-03-27 15:18:00
-116	yeast_mitoprot_030530.fasta	2		0	454	167921	1	195	2003-05-30 09:49:00
-117	yeast_proteins_030303.fasta	2		0	6237	2912160	1	3297	2003-03-27 15:18:00
-118	yeast_proteosome_092303.fasta	2		0	39	15361	1	18	2003-09-23 16:09:00
-119	T_Palladium_2001-09-25_N14.fasta	10		0	24	8425	1	11	2001-10-17 14:02:00
-124	shewanella_1999-12-08.fasta	4		0	6008	1544829	1	1635	1999-12-08 00:00:00
-125	shewanella_2001-01-08.fasta	4		0	4756	1469878	1	1509	2001-01-08 00:00:00
-126	Shewanella_2001-03-27.fasta	4		0	6117	1572434	1	1665	2001-05-20 19:00:00
-127	Shewanella_2001-07-26.fasta	4		0	4904	1442723	1	1667	2001-07-26 00:00:00
-128	Shewanella_2001-08-10.fasta	4		0	4944	1457749	1	1683	2001-10-22 07:10:00
-129	Shewanella_2001-08-10_NTM.fasta	4		0	4944	1429796	1	1676	2001-08-10 00:00:00
-130	Shewanella_2002-08-07.fasta	4		0	4867	1435188	1	1745	2003-01-10 17:00:00
-131	Shewanella_2003-10-13.fasta	4		0	4886	1448888	1	1657	2003-10-17 17:16:00
 8156	MMB_sorts_proteomes_TrypPigBov_2024-01-17.fasta	1795	Multicellular magnetotactic bacteria from LSSM described in https://doi.org/10.1101/2023.11.27.568837; meta-proteome provided by Stavros Trimmer <strimm20@gmail.com> from Montana State University.	1	78336	39490354	1	47002	2024-01-18 18:37:00
 8157	LCB070_proteome_TrypPigBov_2024-01-17.fasta	1795	Meta-proteome for Lower Culex Basin hot spring number 70 at YellowStone National Park provided by Stavros Trimmer <strimm20@gmail.com> from Montana State University.	1	760101	167591826	1	223232	2024-01-18 18:37:00
 8158	LSSW_13cm_wbins_proteome_TrypPigBov_2024-01-17.fasta	1795	Little Sippewissett salt marsh meta-proteome from the depth of 13cm provided by Stavros Trimmer <strimm20@gmail.com> from Montana State University.	1	1599572	257895182	1	357376	2024-01-18 18:37:00
@@ -7854,11 +7853,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 8177	MSC1_DRAM_LRMG-JGI_SRMG-PNNL_TrypPigBov_2024-02-02_5x_2.fasta	1721	Auto-created	0	168990	31963103	1	49306	2024-02-06 10:36:00
 8178	MSC1_DRAM_LRMG-JGI_SRMG-PNNL_TrypPigBov_2024-02-02_5x_3.fasta	1721	Auto-created	0	168974	31963040	1	49296	2024-02-06 10:36:00
 8179	MSC1_DRAM_LRMG-JGI_SRMG-PNNL_TrypPigBov_2024-02-02_5x_4.fasta	1721	Auto-created	0	168697	31962944	1	49286	2024-02-06 10:36:00
-140	SO1778.fasta	4		0	1	671	1	1	2004-06-02 10:01:00
-244	hmga_project_db6.fasta	8		0	5	530	1	0	2002-03-08 15:41:00
-912	Combined_Fungal_JGI_2014-09-07_15x_01.fasta	16	Auto-created	0	303700	128437164	1	154271	2014-09-07 20:38:00
-7200	Aug2018WEW_P19_D8_FD_Ga0427938_TrypPigBov_2021-07-13_5x_5.fasta	1616	Auto-created	0	195909	39175732	1	73782	2021-07-17 09:28:00
-8037	MAG_OL_09_D0_Ga0613709_TrypPigBov_2023-10-25_5x_1.fasta	1797	Auto-created	0	209360	25970993	1	62074	2023-10-26 18:33:00
 8180	MSC1_DRAM_LRMG-JGI_SRMG-PNNL_TrypPigBov_2024-02-02_5x_5.fasta	1721	Auto-created	0	168505	31963509	1	49281	2024-02-06 10:36:00
 8181	Rhiir_JGI506562_Nuccio_Subset_TrypPigBov_2024-02-20.fasta	1802	JGI sequenced Rhizophagus irregularis DAOM 197198 v2.0 merged with subset of JGI#506562 metaproteome determined from tryptic peptides mappings by Comet search engine	1	3979656	1055130289	1	1.415578e+06	2024-02-20 19:23:00
 8182	Sebvebe_JGI506562_Nuccio_Subset_TrypPigBov_2024-02-20.fasta	1802	JGI sequenced Serendipita vermifera ssp. bescii NFPB0129 merged with subset of JGI#506562 metaproteome determined from tryptic peptides mappings by Comet search engine	1	3967839	1052884008	1	1.405092e+06	2024-02-20 19:23:00
@@ -7874,6 +7868,14 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 8192	Sebvebe_JGI506562_Nuccio_Subset_TrypPigBov_2024-02-20_15x_10.fasta	1802	Auto-created	0	264367	70192649	1	94361	2024-02-21 10:07:00
 8193	Sebvebe_JGI506562_Nuccio_Subset_TrypPigBov_2024-02-20_15x_11.fasta	1802	Auto-created	0	264289	70191981	1	94352	2024-02-21 10:07:00
 8194	Sebvebe_JGI506562_Nuccio_Subset_TrypPigBov_2024-02-20_15x_12.fasta	1802	Auto-created	0	264481	70192007	1	94359	2024-02-21 10:07:00
+8195	Sebvebe_JGI506562_Nuccio_Subset_TrypPigBov_2024-02-20_15x_13.fasta	1802	Auto-created	0	264649	70192622	1	94378	2024-02-21 10:07:00
+8196	Sebvebe_JGI506562_Nuccio_Subset_TrypPigBov_2024-02-20_15x_14.fasta	1802	Auto-created	0	264132	70192655	1	94329	2024-02-21 10:07:00
+8197	Sebvebe_JGI506562_Nuccio_Subset_TrypPigBov_2024-02-20_15x_15.fasta	1802	Auto-created	0	264317	70192590	1	94343	2024-02-21 10:07:00
+8198	LSSW_07cm_wbins_proteome_TrypPigBov_2024-01-17_5x_1.fasta	1795	Auto-created	0	314746	52643186	1	72645	2024-02-23 11:02:00
+8199	LSSW_07cm_wbins_proteome_TrypPigBov_2024-01-17_5x_2.fasta	1795	Auto-created	0	314982	52643156	1	72672	2024-02-23 11:02:00
+8200	LSSW_07cm_wbins_proteome_TrypPigBov_2024-01-17_5x_3.fasta	1795	Auto-created	0	314834	52643133	1	72634	2024-02-23 11:02:00
+8201	LSSW_07cm_wbins_proteome_TrypPigBov_2024-01-17_5x_4.fasta	1795	Auto-created	0	314809	52643241	1	72662	2024-02-23 11:02:00
+8202	LSSW_07cm_wbins_proteome_TrypPigBov_2024-01-17_5x_5.fasta	1795	Auto-created	0	314966	52643514	1	72664	2024-02-23 11:02:00
 8203	Gut-D30_Ctrl_oats_PP_PP_oats_TrypPigBov_2023-12-04.fasta	1791	Tenebrio molitor Gut-D30 microbial community combined from Ctrl_oats, PP, and PP_oats metaproteomes	1	722813	137426715	1	238592	2024-03-14 18:35:00
 8204	Gut-D30_Ctrl_oats_PS_PS_oats_TrypPigBov_2023-12-04.fasta	1791	Tenebrio molitor Gut-D30 microbial community combined from Ctrl_oats, PS, and PS_oats metaproteomes	1	824732	139509931	1	244736	2024-03-14 18:35:00
 8205	Gut-D30_Ctrl_oats_HDPE_HDPE_oats_TrypPigBov_2023-12-04.fasta	1791	Tenebrio molitor Gut-D30 microbial community combined from Ctrl_oats, HDPE, and HDPE_oats metaproteomes	1	692535	129554546	1	224256	2024-03-14 18:35:00
@@ -7900,7 +7902,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 8227	JGI_MG_2022_14_Ga0599161_PSM_1_34_AH_TrypPigBov_2024-04-16.fasta	1840	Protein annotation for Hubbard Brook Experimental Forest JGI sequenced metagenomes from samples submited on EMSL/JGI FICUS project 60427, provided by Jennifer Bhatnagar (jmbhat@bu.edu); 5112 duplicates remoted; 16 contaminants added	1	4152782	773907176	1	1.530921e+06	2024-05-01 16:20:00
 8228	JGI_MG_2022_16_Ga0599163_PSM_2_34_AH_TrypPigBov_2024-04-16.fasta	1840	Protein annotation for Hubbard Brook Experimental Forest JGI sequenced metagenomes from samples submited on EMSL/JGI FICUS project 60427, provided by Jennifer Bhatnagar (jmbhat@bu.edu); 6107 duplicates remoted; 16 contaminants added	1	5111152	960147813	1	1.415577e+06	2024-05-01 16:20:00
 8229	JGI_MG_2022_17_Ga0599164_PSM_3_12_AH_TrypPigBov_2024-04-16.fasta	1840	Protein annotation for Hubbard Brook Experimental Forest JGI sequenced metagenomes from samples submited on EMSL/JGI FICUS project 60427, provided by Jennifer Bhatnagar (jmbhat@bu.edu); 5700 duplicates remoted; 16 contaminants added	1	4148619	781219514	1	1.541406e+06	2024-05-01 16:20:00
-8272	Rhiir_JGI506562_Nuccio_Subset_TrypPigBov_2024-02-20_15x_06.fasta	1802	Auto-created	0	265068	70341784	1	94603	2024-05-13 10:45:00
 8230	JGI_MG_2022_18_Ga0599165_PSM_3_34_AH_TrypPigBov_2024-04-16.fasta	1840	Protein annotation for Hubbard Brook Experimental Forest JGI sequenced metagenomes from samples submited on EMSL/JGI FICUS project 60427, provided by Jennifer Bhatnagar (jmbhat@bu.edu); 3930 duplicates remoted; 16 contaminants added	1	4118153	767957207	1	1.520435e+06	2024-05-01 16:20:00
 8231	JGI_MG_2022_19_Ga0599166_PSM_4_12_AH_TrypPigBov_2024-04-16.fasta	1840	Protein annotation for Hubbard Brook Experimental Forest JGI sequenced metagenomes from samples submited on EMSL/JGI FICUS project 60427, provided by Jennifer Bhatnagar (jmbhat@bu.edu); 10656 duplicates remoted; 16 contaminants added	1	6241356	1202454113	1	2.338324e+06	2024-05-01 16:20:00
 8232	JGI_MG_2022_20_Ga0599167_PSM_4_34_AH_TrypPigBov_2024-04-16.fasta	1840	Protein annotation for Hubbard Brook Experimental Forest JGI sequenced metagenomes from samples submited on EMSL/JGI FICUS project 60427, provided by Jennifer Bhatnagar (jmbhat@bu.edu); 7668 duplicates remoted; 16 contaminants added	1	4224370	781920163	1	1.551892e+06	2024-05-01 16:20:00
@@ -7919,8 +7920,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 8245	JGI_MG_2022_2_Ga0599149_PSM_1_34_OH_TrypPigBov_2024-04-16_5x_4.fasta	1840	Auto-created	0	783204	149224690	1	295124	2024-05-03 11:01:00
 8246	JGI_MG_2022_2_Ga0599149_PSM_1_34_OH_TrypPigBov_2024-04-16_5x_5.fasta	1840	Auto-created	0	782271	149224680	1	295074	2024-05-03 11:01:00
 8247	JGI_MG_2022_3_Ga0599150_PSM_2_12_OH_TrypPigBov_2024-04-16_5x_1.fasta	1840	Auto-created	0	728600	133827793	1	272011	2024-05-10 15:19:00
-8248	JGI_MG_2022_3_Ga0599150_PSM_2_12_OH_TrypPigBov_2024-04-16_5x_2.fasta	1840	Auto-created	0	727852	133827741	1	271966	2024-05-10 15:19:00
-8249	JGI_MG_2022_3_Ga0599150_PSM_2_12_OH_TrypPigBov_2024-04-16_5x_3.fasta	1840	Auto-created	0	728455	133827791	1	271962	2024-05-10 15:19:00
 8250	JGI_MG_2022_3_Ga0599150_PSM_2_12_OH_TrypPigBov_2024-04-16_5x_4.fasta	1840	Auto-created	0	728354	133828133	1	272027	2024-05-10 15:19:00
 8251	JGI_MG_2022_3_Ga0599150_PSM_2_12_OH_TrypPigBov_2024-04-16_5x_5.fasta	1840	Auto-created	0	728372	133827697	1	272050	2024-05-10 15:19:00
 8252	JGI_MG_2022_4_Ga0599151_PSM_2_34_OH_TrypPigBov_2024-04-16_5x_1.fasta	1840	Auto-created	0	1172953	221223472	1	436031	2024-05-10 15:31:00
@@ -7943,6 +7942,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 8269	Rhiir_JGI506562_Nuccio_Subset_TrypPigBov_2024-02-20_15x_03.fasta	1802	Auto-created	0	265110	70341754	1	94600	2024-05-13 10:45:00
 8270	Rhiir_JGI506562_Nuccio_Subset_TrypPigBov_2024-02-20_15x_04.fasta	1802	Auto-created	0	265085	70341746	1	94595	2024-05-13 10:45:00
 8271	Rhiir_JGI506562_Nuccio_Subset_TrypPigBov_2024-02-20_15x_05.fasta	1802	Auto-created	0	265433	70341958	1	94628	2024-05-13 10:45:00
+8272	Rhiir_JGI506562_Nuccio_Subset_TrypPigBov_2024-02-20_15x_06.fasta	1802	Auto-created	0	265068	70341784	1	94603	2024-05-13 10:45:00
 8273	Rhiir_JGI506562_Nuccio_Subset_TrypPigBov_2024-02-20_15x_07.fasta	1802	Auto-created	0	265056	70342353	1	94598	2024-05-13 10:45:00
 8274	Rhiir_JGI506562_Nuccio_Subset_TrypPigBov_2024-02-20_15x_08.fasta	1802	Auto-created	0	265264	70341740	1	94611	2024-05-13 10:45:00
 8275	Rhiir_JGI506562_Nuccio_Subset_TrypPigBov_2024-02-20_15x_09.fasta	1802	Auto-created	0	265337	70342454	1	94616	2024-05-13 10:45:00

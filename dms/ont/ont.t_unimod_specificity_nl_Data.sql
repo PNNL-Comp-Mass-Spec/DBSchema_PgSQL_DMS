@@ -21,8 +21,39 @@ SET row_security = off;
 --
 
 COPY ont.t_unimod_specificity_nl (unimod_id, specificity_entry_id, neutral_loss_entry_id, mono_mass, avg_mass, composition, flag) FROM stdin;
+143	3	1	406.1588	406.385	HexNAc(2)	f
 144	3	1	486.1585	486.4218	Hex(3)	f
 145	1	1	495.1952	495.4749	dHex(2) HexNAc	f
+144	1	1	486.1585	486.4218	Hex(3)	f
+21	5	1	97.9769	97.9952	H(3) O(4) P	f
+21	6	1	97.9769	97.9952	H(3) O(4) P	f
+35	4	1	63.99828	64.1069	H(4) C O S	f
+37	3	1	59.0735	59.1103	H(9) C(3) N	f
+40	1	1	79.95682	80.0632	O(3) S	f
+40	2	1	79.95682	80.0632	O(3) S	f
+40	3	1	79.95682	80.0632	O(3) S	f
+41	5	1	162.0528	162.1406	Hex	f
+41	7	1	162.0528	162.1406	Hex	f
+41	9	1	162.0528	162.1406	Hex	f
+43	1	1	203.0794	203.1925	HexNAc	f
+43	2	1	203.0794	203.1925	HexNAc	f
+43	3	1	203.0794	203.1925	HexNAc	f
+54	1	1	176.0321	176.1241	HexA	f
+54	2	1	176.0321	176.1241	HexA	f
+60	1	1	59.0735	59.1103	H(9) C(3) N	f
+60	2	1	59.0735	59.1103	H(9) C(3) N	f
+61	1	1	62.09233	62.1287	H(6) 2H(3) C(3) N	f
+61	2	1	62.09233	62.1287	H(6) 2H(3) C(3) N	f
+62	1	1	65.11116	65.1472	H(3) 2H(6) C(3) N	f
+62	2	1	65.11116	65.1472	H(3) 2H(6) C(3) N	f
+63	1	1	68.12999	68.1657	2H(9) C(3) N	f
+63	2	1	68.12999	68.1657	2H(9) C(3) N	f
+137	1	1	1216.423	1217.088	Hex(5) HexNAc(2)	f
+142	1	1	349.1373	349.3337	dHex HexNAc	f
+142	2	1	349.1373	349.3337	dHex HexNAc	f
+142	3	1	349.1373	349.3337	dHex HexNAc	f
+143	1	1	406.1588	406.385	HexNAc(2)	f
+143	2	1	406.1588	406.385	HexNAc(2)	f
 146	1	1	511.1901	511.4743	dHex Hex HexNAc	f
 146	2	1	511.1901	511.4743	dHex Hex HexNAc	f
 146	3	1	511.1901	511.4743	dHex Hex HexNAc	f
@@ -73,6 +104,7 @@ COPY ont.t_unimod_specificity_nl (unimod_id, specificity_entry_id, neutral_loss_
 308	1	1	1768.64	1769.614	dHex Hex(5) HexNAc(4)	f
 309	1	1	1298.476	1299.192	Hex(3) HexNAc(4)	f
 309	2	1	1298.476	1299.192	Hex(3) HexNAc(4)	f
+144	2	1	486.1585	486.4218	Hex(3)	f
 309	3	1	1298.476	1299.192	Hex(3) HexNAc(4)	f
 310	1	1	1460.529	1461.333	Hex(4) HexNAc(4)	f
 310	2	1	1460.529	1461.333	Hex(4) HexNAc(4)	f
@@ -148,7 +180,6 @@ COPY ont.t_unimod_specificity_nl (unimod_id, specificity_entry_id, neutral_loss_
 1431	1	1	453.1483	453.3952	Hex NeuAc	f
 1431	2	1	453.1483	453.3952	Hex NeuAc	f
 1432	1	1	469.1432	469.3946	Hex NeuGc	f
-143	3	1	406.1588	406.385	HexNAc(2)	f
 1432	2	1	469.1432	469.3946	Hex NeuGc	f
 1433	1	1	609.2381	609.5776	HexNAc(3)	f
 1433	2	1	609.2381	609.5776	HexNAc(3)	f
@@ -199,6 +230,7 @@ COPY ont.t_unimod_specificity_nl (unimod_id, specificity_entry_id, neutral_loss_
 1464	1	1	1378.433	1379.255	O(3) S Hex(3) HexNAc(4)	f
 1465	1	1	1378.476	1379.229	Hex(6) HexNAc(2)	f
 1466	1	1	1389.492	1390.255	Hex(4) HexNAc(3) Pent(1)	f
+1448	1	1	648.2113	648.5624	Hex(4)	f
 1467	1	1	1403.507	1404.281	dHex(1) Hex(4) HexNAc(3)	f
 1468	1	1	1419.502	1420.281	Hex(5) HexNAc(3)	f
 1469	1	1	1430.518	1431.307	Hex(3) HexNAc(4) Pent(1)	f
@@ -343,6 +375,8 @@ COPY ont.t_unimod_specificity_nl (unimod_id, specificity_entry_id, neutral_loss_
 1588	2	1	802.2855	802.7289	dHex(1) Hex(1) HexNAc(1) NeuAc(1)	f
 1589	1	1	810.2212	810.7294	O(3) S Hex(2) HexNAc(2)	f
 1589	2	1	810.2212	810.7294	O(3) S Hex(2) HexNAc(2)	f
+1590	1	1	810.2641	810.703	Hex(5)	f
+1590	2	1	810.2641	810.703	Hex(5)	f
 1591	1	1	812.3175	812.7701	HexNAc(4)	f
 1591	2	1	812.3175	812.7701	HexNAc(4)	f
 1592	1	1	817.26	817.7005	HexNAc(1) NeuGc(2)	f
@@ -368,7 +402,6 @@ COPY ont.t_unimod_specificity_nl (unimod_id, specificity_entry_id, neutral_loss_
 1604	1	1	890.2305	890.6829	H O(3) P Hex(5)	f
 1604	2	1	890.2305	890.6829	H O(3) P Hex(5)	f
 1606	1	1	907.3169	907.8182	dHex(2) Hex HexNAc Kdn	f
-1590	2	1	810.2641	810.703	Hex(5)	f
 1606	2	1	907.3169	907.8182	dHex(2) Hex HexNAc Kdn	f
 1607	1	1	915.2526	915.8187	O(3) S dHex Hex(3) HexNAc	f
 1607	2	1	915.2526	915.8187	O(3) S dHex Hex(3) HexNAc	f
@@ -413,6 +446,7 @@ COPY ont.t_unimod_specificity_nl (unimod_id, specificity_entry_id, neutral_loss_
 1628	2	1	1015.397	1015.963	HexNAc(5)	f
 1629	1	1	1021.36	1021.921	dHex(1) Hex(1) HexNAc(2) NeuGc(1)	f
 1629	2	1	1021.36	1021.921	dHex(1) Hex(1) HexNAc(2) NeuGc(1)	f
+1612	1	1	940.3271	940.8448	dHex(2) Hex(4)	f
 1630	1	1	1031.344	1031.916	Ac(2) Hex HexNAc NeuAc(2)	f
 1630	2	1	1031.344	1031.916	Ac(2) Hex HexNAc NeuAc(2)	f
 1631	1	1	1037.355	1037.92	Hex(2) HexNAc(2) NeuGc(1)	f
@@ -577,7 +611,6 @@ COPY ont.t_unimod_specificity_nl (unimod_id, specificity_entry_id, neutral_loss_
 1713	2	1	1482.444	1483.317	O(3) S Hex(3) HexNAc(3) NeuGc	f
 1714	1	1	1490.503	1491.315	dHex(1) Hex(2) HexNAc(2) NeuGc(2)	f
 1714	2	1	1490.503	1491.315	dHex(1) Hex(2) HexNAc(2) NeuGc(2)	f
-144	1	1	486.1585	486.4218	Hex(3)	f
 1715	1	1	1491.523	1492.343	dHex(2) Hex(3) HexNAc(2) NeuGc(1)	f
 1715	2	1	1491.523	1492.343	dHex(2) Hex(3) HexNAc(2) NeuGc(1)	f
 1716	1	1	1497.443	1498.328	O(3) S dHex Hex(3) HexA HexNAc(3)	f
@@ -680,35 +713,6 @@ COPY ont.t_unimod_specificity_nl (unimod_id, specificity_entry_id, neutral_loss_
 1764	2	1	1118.332	1119.011	O(3) S dHex Hex(3) HexNAc(2)	f
 1764	3	1	1118.332	1119.011	O(3) S dHex Hex(3) HexNAc(2)	f
 1765	1	1	1184.433	1185.089	dHex(2) Hex(3) HexNAc(2)	f
-21	5	1	97.9769	97.9952	H(3) O(4) P	f
-21	6	1	97.9769	97.9952	H(3) O(4) P	f
-35	4	1	63.99828	64.1069	H(4) C O S	f
-37	3	1	59.0735	59.1103	H(9) C(3) N	f
-40	1	1	79.95682	80.0632	O(3) S	f
-40	2	1	79.95682	80.0632	O(3) S	f
-40	3	1	79.95682	80.0632	O(3) S	f
-41	5	1	162.0528	162.1406	Hex	f
-41	7	1	162.0528	162.1406	Hex	f
-41	9	1	162.0528	162.1406	Hex	f
-43	1	1	203.0794	203.1925	HexNAc	f
-43	2	1	203.0794	203.1925	HexNAc	f
-43	3	1	203.0794	203.1925	HexNAc	f
-54	1	1	176.0321	176.1241	HexA	f
-54	2	1	176.0321	176.1241	HexA	f
-60	1	1	59.0735	59.1103	H(9) C(3) N	f
-60	2	1	59.0735	59.1103	H(9) C(3) N	f
-61	1	1	62.09233	62.1287	H(6) 2H(3) C(3) N	f
-61	2	1	62.09233	62.1287	H(6) 2H(3) C(3) N	f
-62	1	1	65.11116	65.1472	H(3) 2H(6) C(3) N	f
-62	2	1	65.11116	65.1472	H(3) 2H(6) C(3) N	f
-63	1	1	68.12999	68.1657	2H(9) C(3) N	f
-63	2	1	68.12999	68.1657	2H(9) C(3) N	f
-137	1	1	1216.423	1217.088	Hex(5) HexNAc(2)	f
-142	1	1	349.1373	349.3337	dHex HexNAc	f
-142	2	1	349.1373	349.3337	dHex HexNAc	f
-142	3	1	349.1373	349.3337	dHex HexNAc	f
-143	1	1	406.1588	406.385	HexNAc(2)	f
-143	2	1	406.1588	406.385	HexNAc(2)	f
 1765	2	1	1184.433	1185.089	dHex(2) Hex(3) HexNAc(2)	f
 1765	3	1	1184.433	1185.089	dHex(2) Hex(3) HexNAc(2)	f
 1782	1	1	1897.682	1898.728	dHex(1) Hex(4) HexNAc(4) NeuAc(1)	f
@@ -725,10 +729,6 @@ COPY ont.t_unimod_specificity_nl (unimod_id, specificity_entry_id, neutral_loss_
 1785	3	1	1955.724	1956.807	dHex(2) Hex(4) HexNAc(5)	f
 1786	1	1	698.2382	698.6244	Ac Hex HexNAc NeuAc	f
 1786	2	1	698.2382	698.6244	Ac Hex HexNAc NeuAc	f
-144	2	1	486.1585	486.4218	Hex(3)	f
-1448	1	1	648.2113	648.5624	Hex(4)	f
-1590	1	1	810.2641	810.703	Hex(5)	f
-1612	1	1	940.3271	940.8448	dHex(2) Hex(4)	f
 1766	1	1	1200.428	1201.089	dHex(1) Hex(4) HexNAc(2)	f
 1766	2	1	1200.428	1201.089	dHex(1) Hex(4) HexNAc(2)	f
 1766	3	1	1200.428	1201.089	dHex(1) Hex(4) HexNAc(2)	f

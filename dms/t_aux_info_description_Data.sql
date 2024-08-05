@@ -22,8 +22,67 @@ SET row_security = off;
 
 COPY public.t_aux_info_description (aux_description_id, aux_description, aux_subcategory_id, sequence, data_size, helper_append, active) FROM stdin;
 104	Time	257	3	64	N	Y
+45	Genotype of Bacterium	244	1	64	N	Y
+46	General Description of Experimental Test	244	2	64	N	Y
+47	Date Started	245	1	64	N	Y
+48	Date Completed	245	2	64	N	Y
+49	Growth Media Recipe	245	3	64	N	Y
+50	Source of Innoculum	245	4	64	N	Y
+51	Volume of Culture	245	5	64	N	Y
+52	Vessel used for Culture	245	6	64	N	Y
+53	Growth Temperature	245	7	64	N	Y
+54	Shaker Rate	245	8	64	N	Y
+55	Duration of Incubation	245	9	64	N	Y
+56	Comments	245	10	64	N	Y
+57	Date Started	246	1	64	N	Y
+58	Date Completed	246	2	64	N	Y
+59	Growth Media Recipe	246	3	64	N	Y
+60	Label (N14/N15)	246	4	64	N	Y
+61	Volume of Culture	246	5	64	N	Y
+62	Vessel used for Culture	246	6	64	N	Y
+63	Growth Temperature	246	7	64	N	Y
+64	Shaker Rate	246	8	64	N	Y
+65	Duration of Incubation	246	9	64	N	Y
+66	Harvest Time (after stress)	246	10	64	N	Y
+67	Final OD at 600 (<1 for accuracy)	246	12	64	N	Y
+68	Cell Count	246	13	64	N	Y
+69	Harvest Growth Phase	246	14	64	N	Y
+70	Harvest Conditions	246	15	64	N	Y
+71	Stress Description	246	16	64	N	Y
+72	Comments	246	17	64	N	Y
+73	Centrifugation (G force, duration, temperature)	247	1	64	N	Y
+74	Sample Wash	247	2	64	N	Y
+75	Sample Fractionation	247	3	64	N	Y
+76	Method	248	1	64	Y	Y
+77	Ratio	248	2	64	N	Y
+78	Note	248	3	256	N	Y
+79	Beads	249	1	64	Y	Y
+80	Centrifuge After	249	2	64	N	Y
+81	Repetition	249	3	64	N	Y
+82	Rpm	249	4	64	N	Y
+83	Time	249	5	64	N	Y
+84	Chemical	250	1	64	Y	Y
+85	Time	250	2	64	N	Y
+86	Temperature	251	1	64	N	Y
+87	Time	251	2	64	N	Y
+88	Temperature	252	1	64	N	Y
+89	Time	252	2	64	N	Y
+90	Setting	253	1	64	N	Y
+91	Time	253	2	64	N	Y
+92	Centrifuge Name	254	1	64	N	Y
+93	Centrifuge Time	254	2	64	N	Y
+94	Centrifuge Speed (RPM)	254	3	64	N	Y
+96	Procedure Name	255	1	64	N	Y
+97	Column Type	256	1	64	Y	Y
+98	Buffer A	256	2	64	N	Y
+99	Buffer B	256	3	64	N	Y
+100	Gradient	256	4	64	N	Y
+101	Time	256	5	64	N	Y
+102	Reagent Type	257	1	64	A	Y
+103	Concentration	257	2	64	N	Y
 105	Reagent Type	258	1	64	Y	Y
 106	Concentration	258	2	64	N	Y
+107	Time	258	3	64	N	Y
 108	Reagent Type	259	1	64	Y	Y
 109	Concentration	259	2	64	N	Y
 110	Time	259	3	64	N	Y
@@ -144,65 +203,6 @@ COPY public.t_aux_info_description (aux_description_id, aux_description, aux_sub
 231	Fraction Collection	288	7	64	N	Y
 262	Lysis Disk	287	6	64	Y	Y
 263	Prep by Robot	267	2	5	Y	Y
-45	Genotype of Bacterium	244	1	64	N	Y
-46	General Description of Experimental Test	244	2	64	N	Y
-47	Date Started	245	1	64	N	Y
-48	Date Completed	245	2	64	N	Y
-49	Growth Media Recipe	245	3	64	N	Y
-50	Source of Innoculum	245	4	64	N	Y
-51	Volume of Culture	245	5	64	N	Y
-52	Vessel used for Culture	245	6	64	N	Y
-53	Growth Temperature	245	7	64	N	Y
-54	Shaker Rate	245	8	64	N	Y
-55	Duration of Incubation	245	9	64	N	Y
-56	Comments	245	10	64	N	Y
-57	Date Started	246	1	64	N	Y
-58	Date Completed	246	2	64	N	Y
-59	Growth Media Recipe	246	3	64	N	Y
-60	Label (N14/N15)	246	4	64	N	Y
-61	Volume of Culture	246	5	64	N	Y
-62	Vessel used for Culture	246	6	64	N	Y
-63	Growth Temperature	246	7	64	N	Y
-64	Shaker Rate	246	8	64	N	Y
-65	Duration of Incubation	246	9	64	N	Y
-66	Harvest Time (after stress)	246	10	64	N	Y
-67	Final OD at 600 (<1 for accuracy)	246	12	64	N	Y
-68	Cell Count	246	13	64	N	Y
-69	Harvest Growth Phase	246	14	64	N	Y
-70	Harvest Conditions	246	15	64	N	Y
-71	Stress Description	246	16	64	N	Y
-72	Comments	246	17	64	N	Y
-73	Centrifugation (G force, duration, temperature)	247	1	64	N	Y
-74	Sample Wash	247	2	64	N	Y
-75	Sample Fractionation	247	3	64	N	Y
-76	Method	248	1	64	Y	Y
-77	Ratio	248	2	64	N	Y
-78	Note	248	3	256	N	Y
-79	Beads	249	1	64	Y	Y
-80	Centrifuge After	249	2	64	N	Y
-81	Repetition	249	3	64	N	Y
-82	Rpm	249	4	64	N	Y
-83	Time	249	5	64	N	Y
-84	Chemical	250	1	64	Y	Y
-85	Time	250	2	64	N	Y
-86	Temperature	251	1	64	N	Y
-87	Time	251	2	64	N	Y
-88	Temperature	252	1	64	N	Y
-89	Time	252	2	64	N	Y
-90	Setting	253	1	64	N	Y
-91	Time	253	2	64	N	Y
-92	Centrifuge Name	254	1	64	N	Y
-93	Centrifuge Time	254	2	64	N	Y
-94	Centrifuge Speed (RPM)	254	3	64	N	Y
-96	Procedure Name	255	1	64	N	Y
-97	Column Type	256	1	64	Y	Y
-98	Buffer A	256	2	64	N	Y
-99	Buffer B	256	3	64	N	Y
-100	Gradient	256	4	64	N	Y
-101	Time	256	5	64	N	Y
-102	Reagent Type	257	1	64	A	Y
-103	Concentration	257	2	64	N	Y
-107	Time	258	3	64	N	Y
 264	Buffer C	288	4	64	N	N
 265	Time Series	293	1	64	N	Y
 266	Replicates	293	2	64	N	Y

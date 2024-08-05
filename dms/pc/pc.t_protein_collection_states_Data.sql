@@ -22,12 +22,12 @@ SET row_security = off;
 
 COPY pc.t_protein_collection_states (collection_state_id, state, description) FROM stdin;
 0	Unknown	protein collection does not exist
-1	New	newly entered, in development
 2	Provisional	in review before release to production
 3	Production	currently in use by analysis jobs
-4	Retired	no longer used for analyses, kept for legacy reasons
 6	Offline	protein names and sequences are no longer in the database; contact an admin to restore this protein collection using the FASTA file
 5	Proteins_Deleted	protein names, descriptions, and sequences have been deleted from the database, and we do not have the corresponding FASTA file
+1	New	not yet used by any analysis jobs
+4	Retired	no longer used for analyses; kept for legacy reasons
 \.
 
 
