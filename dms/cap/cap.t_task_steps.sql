@@ -36,12 +36,6 @@ ALTER TABLE ONLY cap.t_task_steps
     ADD CONSTRAINT pk_t_task_steps PRIMARY KEY (job, step);
 
 --
--- Name: ix_job_plus_step; Type: INDEX; Schema: cap; Owner: d3l243
---
-
-CREATE UNIQUE INDEX ix_job_plus_step ON cap.t_task_steps USING btree (job_plus_step);
-
---
 -- Name: ix_t_task_steps; Type: INDEX; Schema: cap; Owner: d3l243
 --
 
@@ -52,6 +46,12 @@ CREATE INDEX ix_t_task_steps ON cap.t_task_steps USING btree (job);
 --
 
 CREATE INDEX ix_t_task_steps_dependencies_state_include_job_step ON cap.t_task_steps USING btree (dependencies, state) INCLUDE (job, step);
+
+--
+-- Name: ix_t_task_steps_job_plus_step; Type: INDEX; Schema: cap; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_task_steps_job_plus_step ON cap.t_task_steps USING btree (job_plus_step);
 
 --
 -- Name: ix_t_task_steps_output_folder_name_state; Type: INDEX; Schema: cap; Owner: d3l243

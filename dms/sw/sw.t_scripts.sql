@@ -27,10 +27,10 @@ ALTER TABLE ONLY sw.t_scripts
     ADD CONSTRAINT pk_t_scripts PRIMARY KEY (script_id);
 
 --
--- Name: ix_t_scripts; Type: INDEX; Schema: sw; Owner: d3l243
+-- Name: ix_t_scripts_script; Type: INDEX; Schema: sw; Owner: d3l243
 --
 
-CREATE UNIQUE INDEX ix_t_scripts ON sw.t_scripts USING btree (script);
+CREATE UNIQUE INDEX ix_t_scripts_script ON sw.t_scripts USING btree (script);
 
 --
 -- Name: t_scripts trig_t_scripts_after_delete; Type: TRIGGER; Schema: sw; Owner: d3l243

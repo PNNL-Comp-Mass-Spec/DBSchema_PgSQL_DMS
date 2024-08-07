@@ -36,10 +36,10 @@ ALTER TABLE ONLY pc.t_event_log
     ADD CONSTRAINT pk_t_event_log PRIMARY KEY (event_id);
 
 --
--- Name: ix_t_event_log; Type: INDEX; Schema: pc; Owner: d3l243
+-- Name: ix_t_event_log_target_id; Type: INDEX; Schema: pc; Owner: d3l243
 --
 
-CREATE INDEX ix_t_event_log ON pc.t_event_log USING btree (target_id);
+CREATE INDEX ix_t_event_log_target_id ON pc.t_event_log USING btree (target_id);
 
 --
 -- Name: t_event_log fk_t_event_log_t_event_target; Type: FK CONSTRAINT; Schema: pc; Owner: d3l243

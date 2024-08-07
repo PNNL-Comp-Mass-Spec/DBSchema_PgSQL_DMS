@@ -44,12 +44,6 @@ ALTER TABLE ONLY sw.t_job_steps
     ADD CONSTRAINT pk_t_job_steps PRIMARY KEY (job, step);
 
 --
--- Name: ix_job_plus_step; Type: INDEX; Schema: sw; Owner: d3l243
---
-
-CREATE UNIQUE INDEX ix_job_plus_step ON sw.t_job_steps USING btree (job_plus_step);
-
---
 -- Name: ix_t_job_steps; Type: INDEX; Schema: sw; Owner: d3l243
 --
 
@@ -60,6 +54,12 @@ CREATE INDEX ix_t_job_steps ON sw.t_job_steps USING btree (job);
 --
 
 CREATE INDEX ix_t_job_steps_dependencies_state_include_job_step ON sw.t_job_steps USING btree (dependencies, state) INCLUDE (job, step);
+
+--
+-- Name: ix_t_job_steps_job_plus_step; Type: INDEX; Schema: sw; Owner: d3l243
+--
+
+CREATE UNIQUE INDEX ix_t_job_steps_job_plus_step ON sw.t_job_steps USING btree (job_plus_step);
 
 --
 -- Name: ix_t_job_steps_output_folder_name_state; Type: INDEX; Schema: sw; Owner: d3l243
