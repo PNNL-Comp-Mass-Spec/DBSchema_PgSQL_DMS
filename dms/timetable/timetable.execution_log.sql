@@ -27,6 +27,24 @@ ALTER TABLE timetable.execution_log OWNER TO d3l243;
 COMMENT ON TABLE timetable.execution_log IS 'Stores log entries of executed tasks and chains';
 
 --
+-- Name: ix_execution_log_chain_id_task_id; Type: INDEX; Schema: timetable; Owner: d3l243
+--
+
+CREATE INDEX ix_execution_log_chain_id_task_id ON timetable.execution_log USING btree (chain_id, task_id);
+
+--
+-- Name: ix_execution_log_finished; Type: INDEX; Schema: timetable; Owner: d3l243
+--
+
+CREATE INDEX ix_execution_log_finished ON timetable.execution_log USING btree (finished);
+
+--
+-- Name: ix_execution_log_last_run; Type: INDEX; Schema: timetable; Owner: d3l243
+--
+
+CREATE INDEX ix_execution_log_last_run ON timetable.execution_log USING btree (last_run);
+
+--
 -- Name: TABLE execution_log; Type: ACL; Schema: timetable; Owner: d3l243
 --
 
