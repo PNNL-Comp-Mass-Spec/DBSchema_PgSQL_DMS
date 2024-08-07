@@ -21,6 +21,11 @@ SET row_security = off;
 --
 
 COPY public.t_analysis_tool (analysis_tool_id, analysis_tool, tool_base_name, param_file_type_id, param_file_storage_path, param_file_storage_path_local, default_settings_file_name, result_type, auto_scan_folder_flag, active, search_engine_input_file_formats, org_db_required, extraction_required, description, use_special_proc_waiting, settings_file_required, param_file_required) FROM stdin;
+25	Sequest_UseExistingExternalDTA	Sequest	1000	\\\\gigasax\\DMS_Parameter_Files\\Sequest	G:\\DMS_Parameter_Files\\Sequest	LCQDefSettings.txt	Peptide_Hit	no	0	Individual_DTA	1	Y	\N	0	1	1
+26	XTandem_UseExistingExternalDTA	XTandem	1008	\\\\gigasax\\DMS_Parameter_Files\\XTandem	G:\\DMS_Parameter_Files\\XTandem	??	XT_Peptide_Hit	no	0	Concat_DTA, MGF, PKL, mzXML	1	Y	\N	0	1	1
+27	Decon2LS_V2	Decon2LS	1010	\\\\gigasax\\DMS_Parameter_Files\\Decon2LS	G:\\DMS_Parameter_Files\\Decon2LS	??	HMMA_Peak	yes	1	(na)	0	N	Extract deconvolved MS1 scan information	0	0	1
+28	OMSSA	OMSSA	1016	\\\\gigasax\\DMS_Parameter_Files\\OMSSA	G:\\DMS_Parameter_Files\\OMSSA	OMSSA_IonTrapDefSettings.xml	OM_Peptide_Hit	no	0	Concat_DTA	1	Y	\N	0	1	1
+29	Sequest_DTARefinery	Sequest_DTARefinery	1000	\\\\gigasax\\DMS_Parameter_Files\\Sequest	G:\\DMS_Parameter_Files\\Sequest	FinniganDefSettings_DeconMSN_DTARef_NoMods.xml	Peptide_Hit	no	0	Individual_DTA	1	Y	Use DTA_Refinery to refine the parent ion masses, then search MS/MS spectra with Sequest.  Allows you to post-filter the search results with a tight ppm mass error tolerance.	0	1	1
 9	AgilentSequest	Sequest	1000	\\\\gigasax\\DMS_Parameter_Files\\Sequest	G:\\DMS_Parameter_Files\\Sequest	AgilentDefSettings.xml	Peptide_Hit	yes	0	(na)	1	Y	\N	0	1	1
 10	MLynxPek	MLynxPek	1004	\\\\gigasax\\DMS_Parameter_Files\\MLynxPek	G:\\DMS_Parameter_Files\\MLynxPek	MMTofDefSettings.xml	HMMA_Peak	yes	0	(na)	0	N	\N	0	1	1
 11	AgilentTOFPek	AgilentTOFPek	1005	\\\\gigasax\\DMS_Parameter_Files\\AgilentTOFPek	G:\\DMS_Parameter_Files\\AgilentTOFPek	AgTofDefSettings.xml	HMMA_Peak	yes	0	(na)	0	N	\N	0	1	1
@@ -37,6 +42,13 @@ COPY public.t_analysis_tool (analysis_tool_id, analysis_tool, tool_base_name, pa
 22	DTA_Gen	DTA_Gen	1014	\\\\gigasax\\DMS_Parameter_Files\\DTA_Gen	G:\\DMS_Parameter_Files\\DTA_Gen	DTAGen_ExtractMSn.xml	DTA_Peak	no	1	(na)	0	N	\N	0	1	0
 23	MSClusterDAT_Gen	MSClusterDAT_Gen	1	\\\\gigasax\\DMS_Parameter_Files\\MSClusterDAT_Gen	G:\\DMS_Parameter_Files\\MSClusterDAT_Gen	MSClusterDAT_ExtractMSn.xml	MSClusterDAT	no	0	(na)	0	N	\N	0	1	0
 24	DTA_Import	DTA_Import	1014	\\\\gigasax\\DMS_Parameter_Files\\DTA_Import	G:\\DMS_Parameter_Files\\DTA_Import	SWTest_ExtDTA_Import.xml	DTA_Peak	no	1	(na)	0	N	\N	0	1	1
+30	XTandem_HPC	XTandem	1008	\\\\gigasax\\DMS_Parameter_Files\\XTandem	G:\\DMS_Parameter_Files\\XTandem	??	XT_Peptide_Hit	no	0	Concat_DTA, MGF, PKL, mzXML	1	Y	\N	0	1	1
+31	XTandem_DTARefinery	XTandem_DTARefinery	1008	\\\\gigasax\\DMS_Parameter_Files\\XTandem	G:\\DMS_Parameter_Files\\XTandem	??	XT_Peptide_Hit	no	0	Concat_DTA, MGF, PKL, mzXML	1	Y	\N	0	1	1
+32	Inspect_UseExistingExternalDTA	Inspect	1012	\\\\gigasax\\DMS_Parameter_Files\\Inspect	G:\\DMS_Parameter_Files\\Inspect	IonTrapDefSettings.xml	IN_Peptide_Hit	no	0	Concat_DTA, mzXML	1	Y	\N	0	1	1
+33	LCMSFeature_Finder	LCMSFeature_Finder	1	\\\\gigasax\\DMS_Parameter_Files\\LCMSFeatureFinder	G:\\DMS_Parameter_Files\\LCMSFeatureFinder	??	HMMA_Peak	yes	0	(na)	0	N	\N	0	1	0
+34	MSXML_Bruker	MSXML_Bruker	1	\\\\gigasax\\DMS_Parameter_Files\\MSXML_Bruker	G:\\DMS_Parameter_Files\\MSXML_Bruker	mzXML_Bruker.xml	XML_Raw	no	1	(na)	0	N	\N	0	1	0
+35	MultiAlign	MultiAlign	1017	\\\\gigasax\\DMS_Parameter_Files\\MultiAlign	G:\\DMS_Parameter_Files\\MultiAlign	??	MA_Peak_Matching	no	0	(na)	0	N	\N	0	0	1
+36	MSGFPlus	MSGFPlus	1018	\\\\gigasax\\DMS_Parameter_Files\\MSGFPlus	G:\\DMS_Parameter_Files\\MSGFPlus	IonTrapDefSettings.xml	MSG_Peptide_Hit	no	0	Concat_DTA	1	Y	Search MS/MS spectra with MS-GF+	0	1	1
 0	(none)	(none)	1	(na)	(na)	(na)	\N	no	0	(na)	0	N	\N	0	1	1
 1	Sequest	Sequest	1000	\\\\gigasax\\DMS_Parameter_Files\\Sequest	G:\\DMS_Parameter_Files\\Sequest	LCQDefSettings.txt	Peptide_Hit	no	0	Individual_DTA	1	Y	Search MS/MS spectra with Sequest	0	1	1
 2	ICR2LS	ICR2LS	1003	\\\\gigasax\\DMS_Parameter_Files\\ICR2LS	G:\\DMS_Parameter_Files\\ICR2LS	FTICRDefSettings.txt	HMMA_Peak	yes	0	(na)	0	N	\N	0	1	1
@@ -46,18 +58,6 @@ COPY public.t_analysis_tool (analysis_tool_id, analysis_tool, tool_base_name, pa
 6	QTOFSequest	Sequest	1000	\\\\gigasax\\DMS_Parameter_Files\\Sequest	G:\\DMS_Parameter_Files\\Sequest	LCQDefSettings.txt	Peptide_Hit	yes	0	(na)	1	Y	\N	0	1	1
 7	QTOFPek	QTOFPek	1001	\\\\gigasax\\DMS_Parameter_Files\\QTOFPek	G:\\DMS_Parameter_Files\\QTOFPek	QTOFPekDefSettings.txt	HMMA_Peak	yes	0	(na)	0	N	\N	0	1	1
 8	DeNovoID	DeNovoID	1002	\\\\gigasax\\DMS_Parameter_Files\\DeNovoPeak	G:\\DMS_Parameter_Files\\DeNovoPeak	DeNovo_Default.xml	\N	yes	0	(na)	1	N	\N	0	1	1
-25	Sequest_UseExistingExternalDTA	Sequest	1000	\\\\gigasax\\DMS_Parameter_Files\\Sequest	G:\\DMS_Parameter_Files\\Sequest	LCQDefSettings.txt	Peptide_Hit	no	0	Individual_DTA	1	Y	\N	0	1	1
-26	XTandem_UseExistingExternalDTA	XTandem	1008	\\\\gigasax\\DMS_Parameter_Files\\XTandem	G:\\DMS_Parameter_Files\\XTandem	??	XT_Peptide_Hit	no	0	Concat_DTA, MGF, PKL, mzXML	1	Y	\N	0	1	1
-27	Decon2LS_V2	Decon2LS	1010	\\\\gigasax\\DMS_Parameter_Files\\Decon2LS	G:\\DMS_Parameter_Files\\Decon2LS	??	HMMA_Peak	yes	1	(na)	0	N	Extract deconvolved MS1 scan information	0	0	1
-28	OMSSA	OMSSA	1016	\\\\gigasax\\DMS_Parameter_Files\\OMSSA	G:\\DMS_Parameter_Files\\OMSSA	OMSSA_IonTrapDefSettings.xml	OM_Peptide_Hit	no	0	Concat_DTA	1	Y	\N	0	1	1
-29	Sequest_DTARefinery	Sequest_DTARefinery	1000	\\\\gigasax\\DMS_Parameter_Files\\Sequest	G:\\DMS_Parameter_Files\\Sequest	FinniganDefSettings_DeconMSN_DTARef_NoMods.xml	Peptide_Hit	no	0	Individual_DTA	1	Y	Use DTA_Refinery to refine the parent ion masses, then search MS/MS spectra with Sequest.  Allows you to post-filter the search results with a tight ppm mass error tolerance.	0	1	1
-30	XTandem_HPC	XTandem	1008	\\\\gigasax\\DMS_Parameter_Files\\XTandem	G:\\DMS_Parameter_Files\\XTandem	??	XT_Peptide_Hit	no	0	Concat_DTA, MGF, PKL, mzXML	1	Y	\N	0	1	1
-31	XTandem_DTARefinery	XTandem_DTARefinery	1008	\\\\gigasax\\DMS_Parameter_Files\\XTandem	G:\\DMS_Parameter_Files\\XTandem	??	XT_Peptide_Hit	no	0	Concat_DTA, MGF, PKL, mzXML	1	Y	\N	0	1	1
-32	Inspect_UseExistingExternalDTA	Inspect	1012	\\\\gigasax\\DMS_Parameter_Files\\Inspect	G:\\DMS_Parameter_Files\\Inspect	IonTrapDefSettings.xml	IN_Peptide_Hit	no	0	Concat_DTA, mzXML	1	Y	\N	0	1	1
-33	LCMSFeature_Finder	LCMSFeature_Finder	1	\\\\gigasax\\DMS_Parameter_Files\\LCMSFeatureFinder	G:\\DMS_Parameter_Files\\LCMSFeatureFinder	??	HMMA_Peak	yes	0	(na)	0	N	\N	0	1	0
-34	MSXML_Bruker	MSXML_Bruker	1	\\\\gigasax\\DMS_Parameter_Files\\MSXML_Bruker	G:\\DMS_Parameter_Files\\MSXML_Bruker	mzXML_Bruker.xml	XML_Raw	no	1	(na)	0	N	\N	0	1	0
-35	MultiAlign	MultiAlign	1017	\\\\gigasax\\DMS_Parameter_Files\\MultiAlign	G:\\DMS_Parameter_Files\\MultiAlign	??	MA_Peak_Matching	no	0	(na)	0	N	\N	0	0	1
-36	MSGFPlus	MSGFPlus	1018	\\\\gigasax\\DMS_Parameter_Files\\MSGFPlus	G:\\DMS_Parameter_Files\\MSGFPlus	IonTrapDefSettings.xml	MSG_Peptide_Hit	no	0	Concat_DTA	1	Y	Search MS/MS spectra with MS-GF+	0	1	1
 37	MSGFPlus_DTARefinery	MSGFPlus_DTARefinery	1018	\\\\gigasax\\DMS_Parameter_Files\\MSGFPlus	G:\\DMS_Parameter_Files\\MSGFPlus	IonTrapDefSettings_DeconMSN_DTARef_NoMods.xml	MSG_Peptide_Hit	no	0	Concat_DTA	1	Y	Use DTA_Refinery to refine the parent ion masses, then search MS/MS spectra with MS-GF+. Allows you to post-filter the search results with a tight ppm mass error tolerance.	0	1	1
 38	MSAlign	MSAlign	1019	\\\\gigasax\\DMS_Parameter_Files\\MSAlign	G:\\DMS_Parameter_Files\\MSAlign	??	MSA_Peptide_Hit	no	1	msalign	1	N	\N	0	1	1
 39	MSGFPlus_MzXML	MSGFPlus	1018	\\\\gigasax\\DMS_Parameter_Files\\MSGFPlus	G:\\DMS_Parameter_Files\\MSGFPlus	IonTrapDefSettings_MzXML.xml	MSG_Peptide_Hit	no	0	mzXML	1	Y	\N	0	1	1
@@ -70,6 +70,15 @@ COPY public.t_analysis_tool (analysis_tool_id, analysis_tool, tool_base_name, pa
 46	MAC_IMPROV	Broker_Job	1	(na)	(na)	(na)	\N	no	0	(na)	0	N	\N	0	0	0
 47	MSDeconv_Bruker	MSDeconv	1019	\\\\gigasax\\DMS_Parameter_Files\\MSAlign	G:\\DMS_Parameter_Files\\MSAlign	??	MSD_HMMA_Peak	no	0	mzXML	0	N	\N	0	1	0
 48	MSGFPlus_Bruker	MSGFPlus	1018	\\\\gigasax\\DMS_Parameter_Files\\MSGFPlus	G:\\DMS_Parameter_Files\\MSGFPlus	MSGFPlus_MzXML_Bruker.xml	MSG_Peptide_Hit	no	0	mzXML	1	Y	\N	0	1	1
+67	MSPathFinder	MSPathFinder	1025	\\\\gigasax\\DMS_Parameter_Files\\MSPathFinder	G:\\DMS_Parameter_Files\\MSPathFinder	MSPF_TopDown_Standard.xml	MSP_Peptide_Hit	no	1	(na)	1	Y	Search MS/MS spectra with MSPathFinder	0	1	1
+68	MSGFPlus_MzML	MSGFPlus_MzML	1018	\\\\gigasax\\DMS_Parameter_Files\\MSGFPlus	G:\\DMS_Parameter_Files\\MSGFPlus	IonTrapDefSettings_MzXML.xml	MSG_Peptide_Hit	no	1	mzML	1	Y	Use MZ_Refinery to refine the parent ion masses, then search MS/MS spectra with MS-GF+.  Creates .mzML files	0	1	1
+69	MSGFPlus_MzML_NoRefine	MSGFPlus_MzML	1018	\\\\gigasax\\DMS_Parameter_Files\\MSGFPlus	G:\\DMS_Parameter_Files\\MSGFPlus	IonTrapDefSettings_MzML_NoRefine.xml	MSG_Peptide_Hit	no	1	mzML	1	Y	Use MZ_Refinery to characterize the parent ion distribute, but does not refine.  Creates .mzML files	0	1	1
+71	ProMex_Bruker	ProMex	1026	\\\\gigasax\\DMS_Parameter_Files\\ProMex	G:\\DMS_Parameter_Files\\ProMex	ProMex_TopDown_Standard.xml	PMX_MS1FT	no	1	(na)	0	N	\N	0	1	1
+72	NOMSI	NOMSI	1027	\\\\gigasax\\DMS_Parameter_Files\\NOMSI	G:\\DMS_Parameter_Files\\NOMSI	NOMSI_Malak_Transformations.xml	NOM_Search	no	1	(na)	0	N	\N	0	1	1
+73	MODPlus	MODPlus	1028	\\\\gigasax\\DMS_Parameter_Files\\MODPlus	G:\\DMS_Parameter_Files\\MODPlus	\N	MODPlus_Peptide_Hit	no	1	mzML	1	Y	Search MS/MS	0	1	1
+74	MODPlus_NoRefine	MODPlus	1028	\\\\gigasax\\DMS_Parameter_Files\\MODPlus	G:\\DMS_Parameter_Files\\MODPlus	\N	MODPlus_Peptide_Hit	no	0	mzML	1	Y	Search MS/MS	0	1	1
+75	QC-ART	QC-ART	1029	\\\\gigasax\\DMS_Parameter_Files\\QC-ART	G:\\DMS_Parameter_Files\\QC-ART	??	QCA	no	1	(na)	0	N	QC of iTRAQ datasets using SMAQC results	1	0	1
+76	PBF_Gen	PBF_Gen	1	(na)	(na)	(na)	\N	no	1	(na)	0	N	\N	0	1	0
 49	MAC_Label_Free	Broker_Job	1	(na)	(na)	(na)	\N	no	0	(na)	0	N	\N	0	0	0
 50	MAC_iTRAQ	Broker_Job	1	(na)	(na)	(na)	\N	no	0	(na)	0	N	\N	0	0	0
 51	LipidMapSearch	LipidMapSearch	1021	\\\\gigasax\\DMS_Parameter_Files\\LipidMapSearch	G:\\DMS_Parameter_Files\\LipidMapSearch	??	LMS	no	0	(na)	0	N	\N	1	0	1
@@ -88,16 +97,7 @@ COPY public.t_analysis_tool (analysis_tool_id, analysis_tool, tool_base_name, pa
 64	MODa	MODa	1023	\\\\gigasax\\DMS_Parameter_Files\\MODa	G:\\DMS_Parameter_Files\\MODa	IonTrapDefSettings_DeconMSN.xml	MODa_Peptide_Hit	no	1	Concat_DTA	1	Y	Search MS/MS spectra with MODa	0	1	1
 65	MODa_DTARefinery	MODa_DTARefinery	1023	\\\\gigasax\\DMS_Parameter_Files\\MODa	G:\\DMS_Parameter_Files\\MODa	IonTrapDefSettings_DeconMSN_DTARef_NoMods.xml	MODa_Peptide_Hit	no	0	Concat_DTA	1	Y	Search MS/MS spectra with MODa	0	1	1
 66	GlyQ-IQ	GlyQ-IQ	1024	\\\\gigasax\\DMS_Parameter_Files\\GlyQ-IQ	G:\\DMS_Parameter_Files\\GlyQ-IQ	GlyQIQ_HPC.xml	Gly_ID	no	0	(na)	0	N	\N	0	1	1
-67	MSPathFinder	MSPathFinder	1025	\\\\gigasax\\DMS_Parameter_Files\\MSPathFinder	G:\\DMS_Parameter_Files\\MSPathFinder	MSPF_TopDown_Standard.xml	MSP_Peptide_Hit	no	1	(na)	1	Y	Search MS/MS spectra with MSPathFinder	0	1	1
-68	MSGFPlus_MzML	MSGFPlus_MzML	1018	\\\\gigasax\\DMS_Parameter_Files\\MSGFPlus	G:\\DMS_Parameter_Files\\MSGFPlus	IonTrapDefSettings_MzXML.xml	MSG_Peptide_Hit	no	1	mzML	1	Y	Use MZ_Refinery to refine the parent ion masses, then search MS/MS spectra with MS-GF+.  Creates .mzML files	0	1	1
-69	MSGFPlus_MzML_NoRefine	MSGFPlus_MzML	1018	\\\\gigasax\\DMS_Parameter_Files\\MSGFPlus	G:\\DMS_Parameter_Files\\MSGFPlus	IonTrapDefSettings_MzML_NoRefine.xml	MSG_Peptide_Hit	no	1	mzML	1	Y	Use MZ_Refinery to characterize the parent ion distribute, but does not refine.  Creates .mzML files	0	1	1
 70	ProMex	ProMex	1026	\\\\gigasax\\DMS_Parameter_Files\\ProMex	G:\\DMS_Parameter_Files\\ProMex	ProMex_TopDown_Standard.xml	PMX_MS1FT	no	1	(na)	0	N	\N	0	1	1
-71	ProMex_Bruker	ProMex	1026	\\\\gigasax\\DMS_Parameter_Files\\ProMex	G:\\DMS_Parameter_Files\\ProMex	ProMex_TopDown_Standard.xml	PMX_MS1FT	no	1	(na)	0	N	\N	0	1	1
-72	NOMSI	NOMSI	1027	\\\\gigasax\\DMS_Parameter_Files\\NOMSI	G:\\DMS_Parameter_Files\\NOMSI	NOMSI_Malak_Transformations.xml	NOM_Search	no	1	(na)	0	N	\N	0	1	1
-73	MODPlus	MODPlus	1028	\\\\gigasax\\DMS_Parameter_Files\\MODPlus	G:\\DMS_Parameter_Files\\MODPlus	\N	MODPlus_Peptide_Hit	no	1	mzML	1	Y	Search MS/MS	0	1	1
-74	MODPlus_NoRefine	MODPlus	1028	\\\\gigasax\\DMS_Parameter_Files\\MODPlus	G:\\DMS_Parameter_Files\\MODPlus	\N	MODPlus_Peptide_Hit	no	0	mzML	1	Y	Search MS/MS	0	1	1
-75	QC-ART	QC-ART	1029	\\\\gigasax\\DMS_Parameter_Files\\QC-ART	G:\\DMS_Parameter_Files\\QC-ART	??	QCA	no	1	(na)	0	N	QC of iTRAQ datasets using SMAQC results	1	0	1
-76	PBF_Gen	PBF_Gen	1	(na)	(na)	(na)	\N	no	1	(na)	0	N	\N	0	1	0
 77	NOMSI_MzXML	NOMSI	1027	\\\\gigasax\\DMS_Parameter_Files\\NOMSI	G:\\DMS_Parameter_Files\\NOMSI	NOMSI_Malak_Transformations.xml	NOM_Search	no	1	(na)	0	N	\N	0	1	1
 78	MSGFPlus_DTARefinery_SplitFasta	MSGFPlus_DTARefinery	1018	\\\\gigasax\\DMS_Parameter_Files\\MSGFPlus	G:\\DMS_Parameter_Files\\MSGFPlus	MSGFPlus_DeconMSn_Centroid_Top500_DTARef_NoMods_15Parts_MergeResults_Top1.xml	MSG_Peptide_Hit	no	0	Concat_DTA	1	Y	\N	0	1	1
 79	MSGFPlus_MzML_SplitFasta	MSGFPlus_MzML	1018	\\\\gigasax\\DMS_Parameter_Files\\MSGFPlus	G:\\DMS_Parameter_Files\\MSGFPlus	IonTrapDefSettings_MzML_StatCysAlk_6plexTMT_phospho_5Parts_MergeResults_Top1.xml	MSG_Peptide_Hit	no	1	mzML	1	Y	\N	0	1	1

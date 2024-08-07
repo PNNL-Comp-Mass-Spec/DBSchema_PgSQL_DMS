@@ -42,6 +42,11 @@ COPY public.t_default_psm_job_parameters (entry_id, job_type_name, tool_name, dy
 30	iTRAQ 8-plex	MSGFPlus_MzML	0	0	1	MSGFPlus_PartTryp_DynSTYPhos_iTRAQ_8Plex_20ppmParTol.txt	1
 31	iTRAQ 8-plex	MSGFPlus_MzML	0	1	0	MSGFPlus_PartTryp_Stat_CysAlk_iTRAQ_8Plex_20ppmParTol.txt	1
 32	iTRAQ 8-plex	MSGFPlus_MzML	0	1	1	MSGFPlus_PartTryp_DynSTYPhos_Stat_CysAlk_iTRAQ_8Plex_20ppmParTol.txt	1
+79	iTRAQ 4-plex	MODa	0	1	1	MODa_PartTryp_CysAlk_iTRAQ_4Plex_Par20ppm_Frag0pt6Da.txt	1
+80	iTRAQ 8-plex	MODa	0	0	1	MODa_PartTryp_iTRAQ_8Plex_Par20ppm_Frag0pt6Da.txt	1
+81	iTRAQ 8-plex	MODa	0	1	1	MODa_PartTryp_CysAlk_iTRAQ_8Plex_Par20ppm_Frag0pt6Da.txt	1
+82	Low Res MS1	MODa	0	0	1	MODa_PartTryp_Par3Da_Frag0pt6Da.txt	1
+83	Low Res MS1	MODa	0	1	1	MODa_PartTryp_CysAlk_Par3Da_Frag0pt6Da.txt	1
 2	High Res MS1	Sequest	0	0	0	sequest_N14_PartTryp.params	0
 3	iTRAQ 4-plex	Sequest	0	0	0	sequest_HCD_N14_PartTryp_ITRAQ_4PLEX_Par50ppmFrag0pt05Da.params	0
 4	iTRAQ 4-plex	Sequest	0	0	1	sequest_HCD_N14_PartTryp_DynSTYPhos_ITRAQ_4PLEX_Par50ppmFrag0pt05Da.params	0
@@ -75,11 +80,6 @@ COPY public.t_default_psm_job_parameters (entry_id, job_type_name, tool_name, dy
 76	High Res MS1	MODa	0	0	1	MODa_PartTryp_Par20ppm_Frag0pt6Da.txt	1
 77	High Res MS1	MODa	0	1	1	MODa_PartTryp_CysAlk_Par20ppm_Frag0pt6Da.txt	1
 78	iTRAQ 4-plex	MODa	0	0	1	MODa_PartTryp_iTRAQ_4Plex_Par20ppm_Frag0pt6Da.txt	1
-79	iTRAQ 4-plex	MODa	0	1	1	MODa_PartTryp_CysAlk_iTRAQ_4Plex_Par20ppm_Frag0pt6Da.txt	1
-80	iTRAQ 8-plex	MODa	0	0	1	MODa_PartTryp_iTRAQ_8Plex_Par20ppm_Frag0pt6Da.txt	1
-81	iTRAQ 8-plex	MODa	0	1	1	MODa_PartTryp_CysAlk_iTRAQ_8Plex_Par20ppm_Frag0pt6Da.txt	1
-82	Low Res MS1	MODa	0	0	1	MODa_PartTryp_Par3Da_Frag0pt6Da.txt	1
-83	Low Res MS1	MODa	0	1	1	MODa_PartTryp_CysAlk_Par3Da_Frag0pt6Da.txt	1
 84	High Res MS1	MSGFPlus_MzML	0	0	1	MSGFPlus_PartTryp_DynSTYPhos_20ppmParTol.txt	1
 85	High Res MS1	MSGFPlus_MzML	0	1	1	MSGFPlus_Tryp_DynSTYPhos_Stat_CysAlk_20ppmParTol.txt	1
 92	TMT 6-plex	MSGFPlus_MzML	0	0	0	MSGFPlus_PartTryp_TMT_6Plex_20ppmParTol.txt	1

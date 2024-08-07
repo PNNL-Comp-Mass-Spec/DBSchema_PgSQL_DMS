@@ -21,7 +21,6 @@ SET row_security = off;
 --
 
 COPY public.t_separation_group (separation_group, comment, active, sample_prep_visible, fraction_count) FROM stdin;
-LC-PCR-Tube		1	0	0
 CE		1	0	0
 Evosep_100_SPD_11min		1	1	0
 Evosep_200_SPD_6min		1	1	0
@@ -76,6 +75,7 @@ LC-MicroHpH-96	Use for placeholder requested runs that can be converted into req
 LC-MicroSCX-12	Use for placeholder requested runs that can be converted into requested run fractions	1	0	12
 LC-MicroSCX-6	Use for placeholder requested runs that can be converted into requested run fractions	1	0	6
 LC-NanoHpH-12	Use for placeholder requested runs that can be converted into requested run fractions	1	0	12
+LC-PCR-Tube		1	0	0
 LC-NanoHpH-24	Use for placeholder requested runs that can be converted into requested run fractions	1	0	24
 LC-NanoHpH-6	Use for placeholder requested runs that can be converted into requested run fractions	1	0	6
 LC-NanoHpH-96	Use for placeholder requested runs that can be converted into requested run fractions	1	0	96

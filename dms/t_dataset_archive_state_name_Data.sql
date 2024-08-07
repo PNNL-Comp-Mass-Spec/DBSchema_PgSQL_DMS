@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
+-- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
@@ -35,8 +35,8 @@ COPY public.t_dataset_archive_state_name (archive_state_id, archive_state, comme
 11	Verification Required	No longer used
 12	Verification In Progress	No longer used
 13	Verification Failed	No longer used
-14	Purged Instrument Data (plus auto-purge)	Corresponds to Purge_Policy=0 (purge instrument data plus any auto-purge items)
 15	Purged all data except QC folder	Corresponds to Purge_Policy=1 (purge all except QC folder)
+14	Purged Instrument Data (plus auto-purge)	Corresponds to Purge_Policy=0 (purge instrument data plus any auto-purge items)
 \.
 
 

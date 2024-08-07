@@ -34,11 +34,11 @@ COPY public.t_sp_authorization (entry_id, procedure_name, login_name, host_name,
 20	*	DMSWebUser	WE43320	130.20.228.1
 21	add_requested_run_batch_location_scan	LCMSNetUser	*	*
 23	*	DMSWebUser	prismweb2_IPv6	2620:0:50f1:118::5fd
-24	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::199
 25	*	pgdms	localhost	127.0.0.1
 26	*	DMSWebUser	prismweb2_IPv6_alt	2620:0:50f1:118::11fd
 27	*	DMSWebUser	proto-2	130.20.230.113
 28	*	DMSWebUser	proto-2_IPv6	2620:0:50f1:118::193b
+24	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::1199
 \.
 
 

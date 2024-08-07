@@ -22,6 +22,7 @@ SET row_security = off;
 
 COPY public.t_filter_sets (filter_set_id, filter_type_id, filter_set_name, filter_set_description, date_created, date_modified) FROM stdin;
 113	3	Yates custom 6, no cleavage rules	XCorr >= 1.9, 2.2, or 3.0 for 1+, 2+, or >=3+ if seen once, XCorr >= 1.9 if seen >= 2 times, no cleavage rules, min length 4	2004-07-23 12:14:00	2004-08-19 14:21:10
+167	3	Bryan Ham custom 3	XCorr >= 3.0 for 2+, 3+ or 4+,DelCn2 >=0.09, no tryptic rules	2007-04-17 10:06:50	2007-04-17 10:06:50
 114	3	Weijun Qian custom 3	XCorr >= 1.5, 1.8, or 2.8 for 1+, 2+, or 3+ fully tryptic, and >= 2.1, 2.7, or 3.9 for partially tryptic or non-tryptic protein terminal peptide, min length 6	2004-07-23 13:08:00	2005-03-26 14:20:00
 115	3	Weijun Qian custom 4	XCorr >= 1.5, 1.5, or 2.4 for 1+, 2+, or 3+ fully tryptic, and >= 2.5, 3.5, or 4.0 for partially tryptic or non-tryptic protein terminal peptide, min length 6, Max DelCn 0.05	2004-08-02 22:16:20	2005-03-26 14:20:00
 116	3	Weijun Qian custom 5	XCorr >= 1.5, 1.9, or 2.9 for 1+, 2+, or 3+ fully tryptic, and >= 3.1, 3.8, or 4.5 for partially tryptic or non-tryptic protein terminal peptide, min length 6, Max DelCn 0.05	2004-08-02 22:17:30	2005-03-26 14:20:00
@@ -31,6 +32,13 @@ COPY public.t_filter_sets (filter_set_id, filter_type_id, filter_set_name, filte
 122	3	Tao Liu custom 1 (for LTQ)	XCorr >= 1.5, 2.2, or 2.9 for 1+, 2+, or 3+ fully tryptic, and >= 100, 4.0, or 4.6 for partially tryptic or non-tryptic protein terminal peptide, min length 6, Max DelCn 0.05	2004-09-29 15:16:09	2005-03-26 14:20:00
 124	1	DelCn <=0.1 Only	no XCorr rules, DeltaCN <= 0.1	2004-11-04 16:19:28	2004-11-04 16:19:28
 125	2	DelCn =0 Only	no XCorr rules, DeltaCN = 0; this will give the top scoring match for each spectrum (equivalent to RankScore = 1 aka RankXC = 1)	2004-11-08 15:09:10	2004-11-08 15:09:10
+126	1	Peptide DB minima 3	XCorr >= 1.5 if mass < 1000, XCorr >= 2.0 if mass > 1000, partially or fully tryptic or non-tryptic protein terminal peptide, DeltaCn <= 0.1; alternatively, Discriminant_Initial_Filter >= 1 for all peptides with XCorr >= 1	2004-11-08 15:24:04	2005-03-27 17:49:00
+127	3	Yates custom 6, no cleavage rules	XCorr >= 2.0, 2.2, or 3.5 for 1+, 2+, or >=3+ if seen once, XCorr >= 1.8, 2.0, or 3.2 for 1+, 2+, or >=3+ if seen >= 2 times, no cleavage rules, min length 6	2004-12-13 17:04:55	2004-12-13 18:49:00
+128	3	Yates custom 7, no cleavage rules	XCorr >= 1.9, 2.2, or 3.5 for 1+, 2+, or >=3+ if seen once, XCorr >= 1.7, 1.9, or 2.9 for 1+, 2+, or >=3+ if seen >= 2 times, no cleavage rules, min length 6	2004-12-13 20:22:35	2004-12-13 20:22:35
+129	2	Minimum length 6 only	no XCorr or analysis count filters, any tryptic state, min length 6	2004-12-28 11:54:00	2004-12-28 11:54:00
+130	3	Washburn/Yates, partially tryptic, top hit only	XCorr >= 1.9, 2.2, or 3.75 for 1+, 2+, or >=3+, partially or fully tryptic or non-tryptic protein terminal peptide, min length 6, DelCn = 0, DelCn2 >= 0.08	2005-01-19 16:31:53	2005-03-27 17:49:00
+131	3	Yates custom 8, no cleavage rules	XCorr >= 2.0, 2.5, or 3.5 for 1+, 2+, or >=3+ if seen once, XCorr >= 1.8, 2.2, or 3.2 for 1+, 2+, or >=3+ if seen >= 2 times, no cleavage rules, min length 6	2005-03-02 19:45:00	2005-03-02 19:45:00
+132	1	Peptide DB reverse search minima 1	XCorr >= 1.9, 2.2, or 3.75 for 1+, 2+, or 3+, partially or fully tryptic or non-tryptic protein terminal peptide, min length 6, DelCn = 0, DelCn2 >= 0.1	2005-03-09 18:46:00	2005-03-27 17:49:00
 100	3	Yates custom 1, no cleavage rules	XCorr >= 1.9, 2.2, or 3.5 for 1+, 2+, or >=3+ if seen once, XCorr >= 1.9 if seen >= 2 times, no cleavage rules, min length 4	2004-03-27 13:59:48	2004-08-19 14:21:10
 101	3	Yates custom 2, no cleavage rules	XCorr >= 1.9, 2.2, or 3.5 for 1+, 2+, or >=3+ if seen once or twice, XCorr >= 1.9 if seen >= 3 times, no cleavage rules, min length 4	2004-03-27 13:59:48	2004-08-19 14:21:10
 102	3	Yates custom 3, no cleavage rules	XCorr >= 1.9, 2.2, or 3.5 for 1+, 2+, or >=3+, no cleavage rules, min length 4	2004-03-27 13:59:48	2004-08-19 14:21:10
@@ -45,13 +53,6 @@ COPY public.t_filter_sets (filter_set_id, filter_type_id, filter_set_name, filte
 111	3	Ruihua custom 1	XCorr >= 1.9, 1.9, or 3.2 for 1+, 2+, or 3+, partially or fully tryptic, min length 6	2004-07-20 14:04:05	2004-08-19 14:21:10
 112	3	Washburn/Yates, no cleavage rules	XCorr >= 1.9, 2.2, or 3.75 for 1+, 2+, or >=3+, no cleavage rules, min length 6	2004-07-21 16:15:52	2004-08-19 14:21:10
 118	2	Fully tryptic	fully tryptic only, accept all XCorr, lengths, etc.	2004-08-12 14:39:05	2004-08-19 14:21:10
-126	1	Peptide DB minima 3	XCorr >= 1.5 if mass < 1000, XCorr >= 2.0 if mass > 1000, partially or fully tryptic or non-tryptic protein terminal peptide, DeltaCn <= 0.1; alternatively, Discriminant_Initial_Filter >= 1 for all peptides with XCorr >= 1	2004-11-08 15:24:04	2005-03-27 17:49:00
-127	3	Yates custom 6, no cleavage rules	XCorr >= 2.0, 2.2, or 3.5 for 1+, 2+, or >=3+ if seen once, XCorr >= 1.8, 2.0, or 3.2 for 1+, 2+, or >=3+ if seen >= 2 times, no cleavage rules, min length 6	2004-12-13 17:04:55	2004-12-13 18:49:00
-128	3	Yates custom 7, no cleavage rules	XCorr >= 1.9, 2.2, or 3.5 for 1+, 2+, or >=3+ if seen once, XCorr >= 1.7, 1.9, or 2.9 for 1+, 2+, or >=3+ if seen >= 2 times, no cleavage rules, min length 6	2004-12-13 20:22:35	2004-12-13 20:22:35
-129	2	Minimum length 6 only	no XCorr or analysis count filters, any tryptic state, min length 6	2004-12-28 11:54:00	2004-12-28 11:54:00
-130	3	Washburn/Yates, partially tryptic, top hit only	XCorr >= 1.9, 2.2, or 3.75 for 1+, 2+, or >=3+, partially or fully tryptic or non-tryptic protein terminal peptide, min length 6, DelCn = 0, DelCn2 >= 0.08	2005-01-19 16:31:53	2005-03-27 17:49:00
-131	3	Yates custom 8, no cleavage rules	XCorr >= 2.0, 2.5, or 3.5 for 1+, 2+, or >=3+ if seen once, XCorr >= 1.8, 2.2, or 3.2 for 1+, 2+, or >=3+ if seen >= 2 times, no cleavage rules, min length 6	2005-03-02 19:45:00	2005-03-02 19:45:00
-132	1	Peptide DB reverse search minima 1	XCorr >= 1.9, 2.2, or 3.75 for 1+, 2+, or 3+, partially or fully tryptic or non-tryptic protein terminal peptide, min length 6, DelCn = 0, DelCn2 >= 0.1	2005-03-09 18:46:00	2005-03-27 17:49:00
 133	3	Weijun Qian custom 6	XCorr >= 1.5, 1.9, or 2.3 for 1+, 2+, or 3+ fully tryptic, and >= 2.5, 3.1, or 3.8 for partially tryptic or non-tryptic protein terminal peptide, min length 6, DeltaCn <= 0.05	2005-03-14 08:54:41	2005-03-26 14:20:00
 134	3	Weijun Qian custom 7	XCorr >= 1.5, 2.7, or 3.3 for 1+, 2+, or 3+ fully tryptic, and >= 3.0, 3.7, or 4.5 for partially tryptic or non-tryptic protein terminal peptide, min length 6, DeltaCn <= 0.05	2005-03-14 08:54:45	2005-03-26 14:20:00
 137	2	Minimum length 6, DeltaCn <= 0.05 only	no XCorr, analysis count, discriminant or NET filters, min length 6, DeltaCn <= 0.05	2005-04-29 11:13:48	2005-04-29 11:13:48
@@ -83,7 +84,6 @@ COPY public.t_filter_sets (filter_set_id, filter_type_id, filter_set_name, filte
 164	3	Bryan Ham custom 1	XCorr >= 1.4, 2.0, or 2.2 for 1+, 2+, or >=3+, no tryptic rules	2007-02-08 17:39:16	2007-02-08 17:39:16
 165	3	Bryan Ham custom 2	XCorr >= 1.4, 2.4, or 3.3 for 1+, 2+, or >=3+, DelCn2 >= 0.13, no tryptic rules	2007-02-21 11:33:26	2007-02-21 11:33:26
 166	1	RankXc=1 only	RankXc = 1, no other filters; this will give the top scoring match for each spectrum	2007-02-27 11:30:55	2007-02-27 11:30:55
-167	3	Bryan Ham custom 3	XCorr >= 3.0 for 2+, 3+ or 4+,DelCn2 >=0.09, no tryptic rules	2007-04-17 10:06:50	2007-04-17 10:06:50
 168	3	Jon Jacobs Custom 1	XCorr >= 1.5, 2.3, or 3.1 for 1+, 2+, or 3+ fully tryptic, and >= 3.0, 3.7, or 4.4 for partially tryptic or non-tryptic protein terminal peptide, min length 6, DeltaCn <= 0.05	2007-10-11 18:17:53	2007-10-11 18:17:53
 169	3	Bryan Ham custom 4	XCorr >= 1.4, 2.2, 2.7, or 2.6 for 1+, 2+, 3+, >=4+, DelCn2 >= 0.13, no tryptic rules	2007-10-22 16:41:57	2007-10-22 16:41:57
 170	3	Yates custom 10	XCorr >= 1.9, 2.2, or 3.0 for 1+, 2+, or >=3+, Log_EValue <= -2, observation count >= 10, partially or fully tryptic or non-tryptic protein terminal peptide, min length 6	2008-03-01 23:40:22	2008-03-01 23:40:22
@@ -94,13 +94,13 @@ COPY public.t_filter_sets (filter_set_id, filter_type_id, filter_set_name, filte
 177	3	Vlad Petyuk custom 3, 10% FDR	XCorr >= 1.6, 2.1, or 2.8 and DeltaCN2 >= 0.11, 0.19, or 0.21 for 1+, 2+, or >=3+ partially tryptic or non-tryptic protein terminal peptide	2009-02-02 15:50:10	2009-02-02 15:50:10
 178	3	Vlad Petyuk custom 4, 3.16% FDR	XCorr >= 1.6, 2.4, or 2.9 and DeltaCN2 >= 0.19, 0.22, or 0.26 for 1+, 2+, or >=3+ partially tryptic or non-tryptic protein terminal peptide	2009-02-02 15:58:47	2009-02-02 15:58:47
 179	3	Vlad Petyuk custom 5, 1% FDR	XCorr >= 1.9, 2.5, or 2.8 and DeltaCN2 >= 0.21, 0.26, or 0.32 for 1+, 2+, or >=3+ partially tryptic or non-tryptic protein terminal peptide	2009-02-02 15:58:53	2009-02-02 15:58:53
-180	3	Vlad Petyuk custom 6, 0.32% FDR	XCorr >= 1.9, 2.8, or 2.8 and DeltaCN2 >= 0.28, 0.27, or 0.35 for 1+, 2+, or >=3+ partially tryptic or non-tryptic protein terminal peptide	2009-02-02 15:58:59	2009-02-02 15:58:59
 181	3	Xu Zhang custom 1	XCorr >= 1.5, 1.9, or 2.3 (or XT LogEValue <= -1) for 1+, 2+, or 3+ fully tryptic, and >= 2.5, 3.1, or 3.83 (or XT LogEValue <= -2) for partially tryptic or non-tryptic protein terminal, min length 6, DeltaCn <= 0.05; XCorr's are from Filter Set 133	2009-02-04 12:40:30	2009-02-04 12:40:30
 182	3	Xu Zhang custom 2	XCorr >= 1.5, 2.7, or 3.3 (or XT LogEValue <= -1.25)  for 1+, 2+, or 3+ fully tryptic, and >= 3.0, 3.7, or 4.5 (or XT LogEValue <= -2.25) for partially tryptic or non-tryptic protein terminal, min length 6, DeltaCn <= 0.05; XCorr's are from Filter Set 134	2009-02-04 12:40:33	2009-02-04 12:40:33
 183	3	Inspect PValue <= .375	Inspect pvalue <= 0.375	2009-07-20 11:57:15	2009-07-20 11:57:15
 184	3	Tom Metz custom 5	XCorr >= 2, 2.6, or 3.3 for 1+, 2+, or >=3+ fully tryptic, and >= 100, 3.6, or 4.1 for partially tryptic or non-tryptic protein terminal peptide, min length 6, DelCn2 >= 0.1	2009-10-02 14:01:59	2009-10-02 14:01:59
 186	3	Hee Jung Custom 1, 1% FDR	XCorr >= 1.5, 1.75, 1.9, 2.5, etc. and DeltaCN2 >= 0.1, 0.12, 0.15, etc. for charge 1+, 2+, etc. fully tryptic; XCorr >= 2.6, 3.7, 4.15, etc. and DeltaCN2 >= 0.13, 0.01, etc. for 1+, 2+, etc. partially tryptic	2009-11-10 13:12:39	2009-11-10 13:12:39
 188	3	Yuexi Wang Custom 1	XCorr >= 1.4, 2, and 2.2 and DeltaCN2 >= 0.05 for 1+, 2+, or 3+ fully tryptic; XCorr >= 2, 2.1, or 3 and DeltaCN2 >= 0.05 for 1+, 2+, or 3+ partially tryptic; XCorr >= 1.5, 1.9, or 2.5 and DeltaCN2 >= 0.1 for 1+, 2+, or 3+ partially tryptic	2009-12-11 18:24:37	2009-12-11 18:24:37
+180	3	Vlad Petyuk custom 6, 0.32% FDR	XCorr >= 1.9, 2.8, or 2.8 and DeltaCN2 >= 0.28, 0.27, or 0.35 for 1+, 2+, or >=3+ partially tryptic or non-tryptic protein terminal peptide	2009-02-02 15:58:59	2009-02-02 15:58:59
 189	3	Varnum Custom 1	XCorr >= 1.9, 2.2, or 3.75 for 1+, 2+, or 3+ fully tryptic, and >= 3.0, 3.7, or 4.5 for partially tryptic or non-tryptic protein terminal peptide, min length 6	2010-01-29 15:31:52	2010-01-29 15:31:52
 190	3	Modified Washburn/Yates - Purvine	XCorr >= 1.9, 2.2, or 3.2 for 1+, 2+, or >=3+, for partially tryptic or non-tryptic protein terminal peptide, DelCN2 >= 0.1, Top XCorr data only (first hits), X!Tandem Log_EValue <= -2	2010-02-10 17:15:31	2010-02-10 17:15:31
 191	3	Qibin Custom 1	XCorr >= 2.05, 2.6, 3.5, or 4.25 for 2+, 3+, 4+, or 5+ full tryptic, XCorr >= 4.2, 4.5, or 4.55 for 3+, 4+ or 5+ partially tryptic, DelCN2 >= 0.1	2010-02-17 13:57:27	2010-02-17 13:57:27

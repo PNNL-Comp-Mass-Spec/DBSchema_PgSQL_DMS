@@ -22,6 +22,10 @@ SET row_security = off;
 
 COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, created) FROM stdin;
 44	Lion	10	Second Dimension HILIC cart.  Next Generation LC 3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2010-10-21 11:58:00
+50	Aragorn	2	#2 2D Waters NanoAcquity LC, easy conversion to 1D cart.  Serial numbers nBSM:G10NPB891N;nBSM2:E10NPB862N;nSM:F10NPS739M.	2010-08-23 11:45:00
+57	Auto_2D_online	10	Auto version of 2D_online. Fractions from 1st D RPLC are transferred online w/ UV monitoring to 2nd D WCX-HILIC which has 4 SPEs and 4 columns.	2010-12-02 09:07:00
+58	Polaroid	2	Constant Flow Waters Nano-Acquity (1d only). Serial numbers nBSM:M10NPB053N;nSM:A11NPS920M.	2011-02-19 12:28:00
+65	Leopard	10	New, used to be Roc	2013-01-15 11:56:00
 1	unknown	1	Not a valid cart	\N
 2	No_Cart	2	An ad hoc or non cart based LC apparatus was used	2006-03-10 10:34:00
 11	Andromeda	10	Single emmitter system.	2006-03-10 12:47:00
@@ -56,19 +60,15 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 47	Cheetah	10	4th ARRA Next Gen Platform 3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2010-06-23 17:43:00
 48	Harrier	10	4 Column Phospho Cart	2010-09-23 13:51:00
 49	Gandalf	2	#4 2D Waters NanoAcquity LC, easy conversion to 1D cart.  Serial numbers nBSM:F10NPB865N;nBSM2:F10NPB866N;nSM:F10NPS742M.	2010-08-23 11:44:00
-50	Aragorn	2	#2 2D Waters NanoAcquity LC, easy conversion to 1D cart.  Serial numbers nBSM:G10NPB891N;nBSM2:E10NPB862N;nSM:F10NPS739M.	2010-08-23 11:45:00
-57	Auto_2D_online	10	Auto version of 2D_online. Fractions from 1st D RPLC are transferred online w/ UV monitoring to 2nd D WCX-HILIC which has 4 SPEs and 4 columns.	2010-12-02 09:07:00
+60	Jaguar	10	3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2011-04-13 09:55:00
+61	Samwise	2	NanoAcquity cart acquired from Tox-Refurbished for Global Lipidomics. Serial numbers nBSM:M08NPB528N;nBSM2:A09NPB545N;nSM:A09NPS508M.	2012-08-04 08:46:00
+62	Blue_Spruce	10	Advion Nanomate with LESA upgrade (Infusion, LC Coupling and LSEA tissue)	2012-10-23 08:45:00
 51	Legolas	3	#3 2D Waters NanoAcquity LC, easy conversion to 1D cart.  Serial numbers nBSM:E10NPB863N;nSM:F10NPS741M.	2010-08-23 11:44:00
 52	Gimli	2	#1 2D Waters NanoAcquity LC, easy conversion to 1D cart.  Serial numbers nBSM:E10NPB859N;nSM:L10NPS876M.	2010-08-23 11:30:00
 53	Frodo	2	#5 2D Waters NanoAcquity LC, easy conversion to 1D cart.  Serial numbers nBSM:F10NPB868N;nBSM2:F10NPB869N;nSM:F10NPS743M.	2010-09-14 16:53:00
 54	Sauron	2	#6 2D Waters NanoAcquity LC, easy conversion to 1D cart.  Serial numbers nBSM:H10NPB926N;nBSM2:F10NPB872N;nSM:F10NPS745M.	2010-08-23 11:25:00
-58	Polaroid	2	Constant Flow Waters Nano-Acquity (1d only). Serial numbers nBSM:M10NPB053N;nSM:A11NPS920M.	2011-02-19 12:28:00
-60	Jaguar	10	3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2011-04-13 09:55:00
-61	Samwise	2	NanoAcquity cart acquired from Tox-Refurbished for Global Lipidomics. Serial numbers nBSM:M08NPB528N;nBSM2:A09NPB545N;nSM:A09NPS508M.	2012-08-04 08:46:00
-62	Blue_Spruce	10	Advion Nanomate with LESA upgrade (Infusion, LC Coupling and LSEA tissue)	2012-10-23 08:45:00
 63	Pippin	2	NanoAcquity cart acquired from Tox-Refurbished for Global Lipidomics. Serial numbers nBSM:M08NPB528N;nBSM2:A09NPB545N;nSM:A09NPS508M.	2012-11-28 10:53:00
 64	Iris	10	Manual LC in BSF 1208 for sample prep use	2012-12-10 15:56:00
-65	Leopard	10	New, used to be Roc	2013-01-15 11:56:00
 66	Methow	10	Eksigent pumps. Used to be Phoenix	2013-01-15 18:09:00
 67	Rogue	2	Used to be Lion, changed naming convention	2013-01-18 11:14:00
 68	Snake	10	Used to be Eagle renamed to reflect Eksigent	2013-01-21 06:04:00

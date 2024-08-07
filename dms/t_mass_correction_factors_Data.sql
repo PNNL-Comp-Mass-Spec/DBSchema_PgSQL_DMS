@@ -23,10 +23,11 @@ SET row_security = off;
 COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, description, monoisotopic_mass, average_mass, affected_atom, original_source, original_source_name, alternative_name, empirical_formula) FROM stdin;
 1535	MethNoTMT	Methylation on TMT-labeled samples; remove 6-plex TMT and add Methyl	-215.147283	\N	-	PNNL	MethylNoTMT	\N	H(-18) C(-7) 13C(-4) N(-1) 15N(-1) O(-2)
 1536	UbNoTMT16	Ubiquitination on TMT-labeled samples; remove 16-plex TMT and add Ubiq	-190.164215	\N	-	PNNL	UbiqNoTMT16	\N	\N
-1048	EDT_D0	EDT_D0-SP	177.1055	0	-	PNNL		EDT_D0	\N
+1054	Hexose	Hexose Addition (also for Amadori glycation)	162.052826	162.1406	-	UniMod	Hex	Hexose	C(6) H(10) O(5)
 1529	AcNoTMT16	Acetylation on TMT16-labeled samples; for use when using a static TMT 16-plex mod	-262.196586	\N	-	PNNL	AcetNoTMT16	\N	\N
 1530	CbNoTMT16	Carbamylation on TMT-labled samples; for use when using a static TMT 6-plex mod	-261.201332	\N	-	PNNL	CarbamylNoTMT16	\N	\N
 1495	AcNoTMT	Acetylation on TMT-labeled samples; remove 6-plexe TMT and add Acetyl	-187.15234	\N	-	PNNL	AcetNoTMT	\N	H(-18) C(-6) 13C(-4) N(-1) 15N(-1) O(-1)
+1004	PhIATD4	PhIAT d4	494.1993	494.7281	-	PNNL		PhIATD4	\N
 1521	Me3NoTMT	Trimethylation on TMT-labeled samples; remove 6-plex TMT and add tri-methylation	-187.115983	\N	-	PNNL	TrimethylNoTMT	\N	\N
 1518	TriMethNoTMT	Dupe/Obsolete; use ME3NoTMT	-187.1158	\N	-	PNNL	TriMethylNoTMT	\N	\N
 1520	Me3MockNoTMT	Mock trimethyl K residues that do not have TMT	-187.07995	\N	-	PNNL	Me3MockNoTMT	\N	\N
@@ -265,17 +266,17 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1431	NEMsulf	N-ethylmaleimide persulfide	157.019749	\N	-	UniMod	NEMsulfur	S-Nethylmaleimide	H(7) C(6) N O(2) S
 1448	FormylM	Addition of formylated Methionine	159.0354	159.2072	-	UniMod	FormylMet	\N	H(9) C(6) N O(2) S
 1239	PEIAA	-SH to -S-CH2CONHCHCH3C6H5	161.0841	161.2005	-	PNNL		PEIAA	H11 C10 N O
-1054	Hexose	Hexose Addition (also for Amadori glycation)	162.052826	162.1406	-	UniMod	Hex	Hexose	C(6) H(10) O(5)
 1506	OxBenzo	Oxidized Benzothiazole	164.9884498	165.17026	-	PNNL	Oxidized_Benzothiazole		H(3) C(7) O(2) N S
 1514	CysPAT	Alkylation with (2-(2-iodoacetamido)ethyl)phosphonic acid	165.01909	165.084421	-	PNNL		\N	H(8) C(4) N O(4) P
-1279	PEITC	PEITC (+C8H14N2S1) of primary amines	170.0878	\N	-			\N	\N
 1012	SP_Light	SP Light Label	170.1055	0	-	PNNL		SP_Light	\N
+1279	PEITC	PEITC (+C8H14N2S1) of primary amines	170.0878	\N	-			\N	\N
 1277	MEITC	MEITC (+C7H12N2S1O1) of primary amines	172.067	\N	-			\N	\N
 1129	Ubiq_L03	Special Ubiquination Light	172.0942	0	-	PNNL		Ubiq_L03	\N
 1554	Xlink_DTSSP_174	Intact DSP/DTSSP crosslinker	173.980921	174.2406	-	UniMod	Xlink:DTSSP[174]	DSP	H(6) C(6) O(2) S(2)
 1549	Lyso-BCN	Lyso-BCN	176.0837252	176.21178	-	PNNL		\N	C(11) H(12) O(2)
 1135	Ubiq_H03	Special Ubiquination Heavy	176.1255	0	-	PNNL		Ubiq_H03	\N
 1513	HPE-IAM	Cysteine plus N-Iodoacetyltyramine (https://pubchem.ncbi.nlm.nih.gov/compound/193901)	177.0789746	177.19988	-	PNNL	N-Iodoacetyltyramine	ß-(4-Hydroxyphenyl)ethyl iodoacetamide	H(11) C(10) N O(2)
+1048	EDT_D0	EDT_D0-SP	177.1055	0	-	PNNL		EDT_D0	\N
 1013	SP_Heavy	SP Heavy Label	177.1583	0	-	PNNL		SP_Heavy	\N
 1241	DPITC	-NH2(Nterm) to -NHCSNHC6H4NCH3CH3	178.0565	178.2552	-	PNNL		DPITC	H(10) C(9) N(2) S
 1502	+178.063	C10H10O3	178.062991	178.1846	-	PNNL	C10H10O3		H(10) C(10) O(3)
@@ -398,7 +399,6 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1441	Hex3	Three hex groups	486.158471	\N	-	UniMod	Hex(3)	\N	C(18) H(30) O(15)
 1003	PhIATD0	PhIAT d0	490.174225	490.7034	-	UniMod	EDT-iodoacetyl-PEO-biotin	PhIATD0	H(34) C(20) N(4) O(4) S(3)
 1285	FP2	FP2 addition onto Serine	491.2760232	491.558661	-	PNNL		\N	C(22) H(42) N(3) O(7) P
-1004	PhIATD4	PhIAT d4	494.1993	494.7281	-	PNNL		PhIATD4	\N
 1069	TrypPD4	Tryp_PhIATd4	494.74	0	-	PNNL		Tryp_PhIATd4	\N
 1320	Cys498	Click addition of 497.2261	498.2261	\N	-	PNNL		\N	\N
 1203	SumoEstr	Methyl esterified Sumoylation of Lys or Met	498.2417	\N	-	PNNL		Methyl esterified Sumoylation	\N

@@ -39,6 +39,16 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 81	LC-Agilent-Formic_5hr	Agilent constant flow, formic acid, 300 minute (5 hr) separation	0	LC-Formic_5hr	1	2014-04-10 17:50:58
 29	LC-Agilent-Formic_60minute	Agilent constant flow, formic acid solvent, 60 minute separation	1	LC-Formic_1hr	1	2010-01-11 11:05:32
 31	LC-Agilent-Metabolomics_LipidSoluble	Agilent constant flow, mobile phase optimized for lipid soluble metabolites	0	LC-Metabolomics_LipidSoluble	4	2010-06-29 14:40:36
+58	LC-Agilent-Phospho	Phosphopeptide separations using an Agilent LC pump	0	LC-Phospho	1	2012-02-29 16:48:35
+114	LC-Agilent-ZIC-HILIC_22min	Agilent high flow LC, optimized for water soluble metabolites	1	LC-HILIC	3	2019-07-08 15:50:46
+65	LC-AMOLF-Standard	Datasets acquired at AMOLF	0	Other	0	2012-12-03 12:51:19
+49	LC-Broad-Phospho	Datasets acquired at the Broad Institute	0	Other	0	2012-01-13 15:43:56
+10	LC-Broad-Standard	Datasets acquired at the Broad Institute	0	Other	0	2006-10-09 16:22:17
+50	LC-Bruker-Advance	Bruker Advance LC	0	Other	0	2012-01-31 12:15:48
+121	LC-Dionex-Acetylome-2hr	Dionex LC, 2 hr separation	1	LC-Acetylome	1	2021-08-11 09:18:52
+87	LC-Dionex-Formic_100min	Dionex LC, formic acid, 100 minute separation	1	LC-Formic_100min	1	2014-12-11 15:31:52
+132	LC-Dionex-Formic_1hr	Dionex LC, formic acid, 1 hr separation	1	LC-Formic_1hr	1	2023-05-04 08:47:02
+117	LC-Dionex-Formic_2hr	Dionex LC, formic acid, 2 hr separation	1	LC-Formic_2hr	1	2020-10-09 10:49:32
 6	CE	Capillary electrophoresis	1	CE	0	2001-01-24 15:50:06
 5	CIEF	Capillary electrophoresis	0	CE	0	2001-01-24 15:43:06
 134	Evosep_Whisper_20_SPD_60min	Evosep	1	Evosep_Whisper_20_SPD_60min	0	2023-09-12 14:07:31
@@ -54,17 +64,7 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 72	LC-2D-Custom		0	LC-2D-Custom	0	2014-10-07 13:44:40
 75	LC-ABRF-Standard	Datasets associated with ABRF studies	0	Other	0	2013-11-26 17:15:57
 3	LC-Agilent	Non-specific Agilent LC; Please avoid using this type for new datasets	0	LC-Formic_100min	0	2000-05-15 13:13:57
-58	LC-Agilent-Phospho	Phosphopeptide separations using an Agilent LC pump	0	LC-Phospho	1	2012-02-29 16:48:35
 8	LC-Agilent-Special	Non-standard Agilent LC	1	Other	1	2005-01-28 15:19:02
-114	LC-Agilent-ZIC-HILIC_22min	Agilent high flow LC, optimized for water soluble metabolites	1	LC-HILIC	3	2019-07-08 15:50:46
-65	LC-AMOLF-Standard	Datasets acquired at AMOLF	0	Other	0	2012-12-03 12:51:19
-49	LC-Broad-Phospho	Datasets acquired at the Broad Institute	0	Other	0	2012-01-13 15:43:56
-10	LC-Broad-Standard	Datasets acquired at the Broad Institute	0	Other	0	2006-10-09 16:22:17
-50	LC-Bruker-Advance	Bruker Advance LC	0	Other	0	2012-01-31 12:15:48
-121	LC-Dionex-Acetylome-2hr	Dionex LC, 2 hr separation	1	LC-Acetylome	1	2021-08-11 09:18:52
-87	LC-Dionex-Formic_100min	Dionex LC, formic acid, 100 minute separation	1	LC-Formic_100min	1	2014-12-11 15:31:52
-132	LC-Dionex-Formic_1hr	Dionex LC, formic acid, 1 hr separation	1	LC-Formic_1hr	1	2023-05-04 08:47:02
-117	LC-Dionex-Formic_2hr	Dionex LC, formic acid, 2 hr separation	1	LC-Formic_2hr	1	2020-10-09 10:49:32
 115	LC-Dionex-Formic_30min	Dionex LC, formic acid, 30 minute separation	1	LC-Formic_30min	1	2020-02-27 10:00:00
 104	LC-Dionex-Formic_3hr	Dionex LC, formic acid, 180 minute (3 hr) separation	1	LC-Formic_3hr	1	2017-08-31 16:34:20
 88	LC-Dionex-Formic_5hr	Dionex LC, formic acid, 300 minute (5 hr) separation	1	LC-Formic_5hr	1	2016-01-28 21:28:29
@@ -91,15 +91,6 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 18	LC-ISCO-Formic_100minute	ISCO system, formic acid solvent, 100 minute separation (exponential dilution gradient)	0	LC-Formic_100min	1	2007-11-07 23:13:01
 12	LC-ISCO-Formic_15minute	ISCO system, formic acid solvent, 15 minute separation	0	Other	1	2007-03-06 08:23:16
 11	LC-ISCO-Formic_35minute	ISCO system, formic acid solvent, 35 minute separation	0	LC-Formic_30min	0	2006-12-18 11:26:56
-70	LC-Eksigent-Formic_High-pH	Eksigent nanoflow, high pH	0	LC-Eksigent	0	2012-01-17 08:49:39
-74	LC-ISCO-Formic_50minute	ISCO system, formic acid solvent, 50 minute separation (exponential dilution gradient)	0	LC-Formic_1hr	1	2013-02-14 13:25:17
-20	LC-ISCO-Formic_80minute	ISCO system, formic acid solvent, 80 minute separation	0	LC-Formic_80min	1	2008-05-15 09:23:58
-15	LC-ISCO-Metabolomics_LipidSoluble	ISCO system, mobile phase optimized for lipid soluble metabolites	0	LC-Metabolomics_LipidSoluble	4	2007-01-23 14:33:45
-14	LC-ISCO-Metabolomics_WaterSoluble	ISCO system, mobile phase optimized for water soluble metabolites	0	LC-Metabolomics_WaterSoluble	3	2006-05-04 11:32:23
-19	LC-ISCO-Phospho	General setting for Isco Phospho cart work	0	LC-Phospho	1	2008-04-11 14:33:26
-4	LC-ISCO-Special	ISCO system, special mobile phase and/or long gradients	0	Other	1	2000-05-15 13:13:57
-2	LC-ISCO-Standard	ISCO system, standard solvents (TFA), 100 to 180 minute separation (exponential dilution gradient)	0	LC-TFA_100minute	1	2000-05-15 13:13:57
-13	LC-ISCO-Standard_15minute	ISCO system, standard solvents (TFA), 15 minute separation	0	Other	1	2007-05-03 08:40:17
 16	LC-ISCO-Standard_35minute	ISCO system, standard solvents (TFA), 35 minute separation (50 or 75 um column)	0	Other	1	2006-04-05 07:59:47
 17	LC-ISCO-Standard_50minute	ISCO system, standard solvents (TFA), 50 minute separation (150 um column)	0	Other	0	2012-10-17 11:12:28
 77	LC-JCVI-Standard	Datasets acquired at JCVI	0	Other	0	2014-01-20 18:27:53
@@ -109,6 +100,15 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 143	LC-Neo-Formic_10Min	Neo, formic acid, 10 min separation	1	LC-Formic_10Min	1	2024-05-30 10:29:32
 127	LC-Neo-Formic_1hr	Neo, formic acid, 1 hour separation	1	LC-Formic_1hr	1	2022-12-20 12:46:10
 144	LC-Neo-Formic_20Min	Neo, formic acid, 20 Min separation	1	LC-Formic_20Min	1	2024-05-30 10:30:01
+70	LC-Eksigent-Formic_High-pH	Eksigent nanoflow, high pH	0	LC-Eksigent	0	2012-01-17 08:49:39
+74	LC-ISCO-Formic_50minute	ISCO system, formic acid solvent, 50 minute separation (exponential dilution gradient)	0	LC-Formic_1hr	1	2013-02-14 13:25:17
+20	LC-ISCO-Formic_80minute	ISCO system, formic acid solvent, 80 minute separation	0	LC-Formic_80min	1	2008-05-15 09:23:58
+15	LC-ISCO-Metabolomics_LipidSoluble	ISCO system, mobile phase optimized for lipid soluble metabolites	0	LC-Metabolomics_LipidSoluble	4	2007-01-23 14:33:45
+14	LC-ISCO-Metabolomics_WaterSoluble	ISCO system, mobile phase optimized for water soluble metabolites	0	LC-Metabolomics_WaterSoluble	3	2006-05-04 11:32:23
+19	LC-ISCO-Phospho	General setting for Isco Phospho cart work	0	LC-Phospho	1	2008-04-11 14:33:26
+4	LC-ISCO-Special	ISCO system, special mobile phase and/or long gradients	0	Other	1	2000-05-15 13:13:57
+2	LC-ISCO-Standard	ISCO system, standard solvents (TFA), 100 to 180 minute separation (exponential dilution gradient)	0	LC-TFA_100minute	1	2000-05-15 13:13:57
+13	LC-ISCO-Standard_15minute	ISCO system, standard solvents (TFA), 15 minute separation	0	Other	1	2007-05-03 08:40:17
 128	LC-Neo-Formic_2hr	Neo, formic acid, 2 hour separation	1	LC-Formic_2hr	1	2022-12-20 12:46:28
 145	LC-Neo-Formic_30min	Neo LC, formic acid, 30 minute separation	1	LC-Formic_30min	1	2024-05-30 10:33:58
 129	LC-Neo-Formic_3hr	Neo, formic acid, 3 hour separation	1	LC-Formic_3hr	1	2022-12-20 12:46:45

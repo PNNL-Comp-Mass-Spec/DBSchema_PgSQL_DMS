@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
+-- Dumped from database version 16.3
 -- Dumped by pg_dump version 16.2
 
 SET statement_timeout = 0;
@@ -31,8 +31,8 @@ COPY public.t_event_target (target_type_id, target_type, target_table, target_id
 7	Archive Update	t_dataset_archive	dataset_id	archive_update_state_id
 8	Dataset Rating	t_dataset	dataset_id	dataset_rating_id
 9	Campaign Percent EMSL Funded	t_campaign	campaign_id	fraction_emsl_funded
-10	Campaign Data Release State	t_campaign	campaign_id	data_release_restrictions
 11	Requested Run	t_requested_run	request_id	state_name
+10	Campaign Data Release State	t_campaign	campaign_id	data_release_restrictions
 12	Analysis Job Request	t_analysis_job_request	request_id	request_state_id
 13	Reference Compound	t_reference_compound	compound_id	(none)
 14	Requested Run Dataset ID	t_requested_run	dataset_id	(none)

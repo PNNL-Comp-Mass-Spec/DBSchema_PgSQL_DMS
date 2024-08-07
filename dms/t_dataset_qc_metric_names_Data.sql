@@ -22,6 +22,28 @@ SET row_security = off;
 
 COPY public.t_dataset_qc_metric_names (metric, source, category, short_description, metric_group, metric_value, units, optimal, purpose, description, ignored, sort_key) FROM stdin;
 xic_fwhm_q1	Quameter_IDFree	Chromatography		Peak width variability		seconds			25%ile of peak widths for the wide XICs	0	2
+ms1_tic_q4	Quameter_IDFree	MS1 Signal		Dynamic Range		Ratio			The log ratio for largest TIC over 75%ile TIC	0	26
+ms1_freq_max	Quameter_IDFree	Acquisition Stats		Acquisition Rate		Hz			Fastest frequency for MS collection in any minute	0	28
+ms1_density_q1	Quameter_IDFree	Acquisition Stats		Spectrum counts		Count			25%ile of MS scan peak counts	0	29
+ms1_density_q2	Quameter_IDFree	Acquisition Stats		Spectrum counts		Count			50%ile of MS scan peak counts	0	30
+ms1_density_q3	Quameter_IDFree	Acquisition Stats		Spectrum counts		Count			75%ile of MS scan peak counts	0	31
+ms2_count	Quameter_IDFree	Acquisition Stats		Spectrum counts		Count			Number of MS/MS spectra collected	0	32
+ms2_freq_max	Quameter_IDFree	Acquisition Stats		Acquisition Rate		Hz			Fastest frequency for MS/MS collection in any minute	0	33
+ms2_density_q1	Quameter_IDFree	Acquisition Stats		Spectrum counts		Count			25%ile of MS/MS scan peak counts	0	34
+ms2_density_q2	Quameter_IDFree	Acquisition Stats		Spectrum counts		Count			50%ile of MS/MS scan peak counts	0	35
+ms2_density_q3	Quameter_IDFree	Acquisition Stats		Spectrum counts		Count			75%ile of MS/MS scan peak counts	0	36
+ms2_prec_z_1	Quameter_IDFree	Mass Precision		Charge distribution		Fraction	Lower		Fraction of MS/MS precursors that are singly charged	0	37
+ms2_prec_z_2	Quameter_IDFree	Mass Precision		Charge distribution		Fraction	n/a		Fraction of MS/MS precursors that are doubly charged	0	38
+ms2_prec_z_3	Quameter_IDFree	Mass Precision		Charge distribution		Fraction	n/a		Fraction of MS/MS precursors that are triply charged	0	39
+ms2_prec_z_4	Quameter_IDFree	Mass Precision		Charge distribution		Fraction	n/a		Fraction of MS/MS precursors that are quadruply charged	0	40
+ms2_prec_z_5	Quameter_IDFree	Mass Precision		Charge distribution		Fraction	n/a		Fraction of MS/MS precursors that are quintuply charged	0	41
+ms2_prec_z_more	Quameter_IDFree	Mass Precision		Charge distribution		Fraction	n/a		Fraction of MS/MS precursors that are charged higher than +5	0	42
+ms2_prec_z_likely_1	Quameter_IDFree	Mass Precision		Charge distribution		Fraction	Lower		Fraction of MS/MS precursors lack known charge but look like 1+	0	43
+ms2_prec_z_likely_multi	Quameter_IDFree	Mass Precision		Charge distribution		Fraction	n/a		Fraction of MS/MS precursors lack known charge but look like 2+ or higher	0	44
+c_1a	SMAQC	Chromatography	Peptides from fronted peaks	Fraction of repeat peptide IDs with divergent RT	-4 min	Fraction	Lower	Estimates very early peak broadening	Fraction of peptides identified more than 4 minutes earlier than the chromatographic peak apex (MSGFSpecProb < 1E-12)	0	45
+c_1b	SMAQC	Chromatography	Peptides from tailed peaks	Fraction of repeat peptide IDs with divergent RT	+4 min	Fraction	Lower	Estimates very late peak broadening	Fraction of peptides identified more than 4 minutes later than the chromatographic peak apex (MSGFSpecProb < 1E-12)	0	46
+c_2a	SMAQC	Chromatography	Richest ID RT range	Interquartile retention time period	Period (min)	Minutes	Higher	Longer times indicate better chromatographic separation	Time period over which 50% of peptides are identified (MSGFSpecProb < 1E-12)	0	47
+c_2b	SMAQC	Chromatography	ID rate in C_2A	Interquartile retention time period	Pep ID rate	Peps/min	Higher	Higher rates indicate efficient sampling and identification	Rate of peptide identification during C_2A (MSGFSpecProb < 1E-12)	0	48
 xic_fwhm_q2	Quameter_IDFree	Chromatography		Peak width variability		seconds			50%ile of peak widths for the wide XICs	0	3
 xic_height_q2	Quameter_IDFree	Chromatography		Peak height variability					The log ratio for 50%ile of wide XIC heights over 25%ile of heights.	0	5
 xic_height_q3	Quameter_IDFree	Chromatography		Peak height variability					The log ratio for 75%ile of wide XIC heights over 50%ile of heights.	0	6
@@ -44,7 +66,6 @@ ms1_tic_change_q3	Quameter_IDFree	MS1 Signal		ESI Stability		Ratio	Lower		The lo
 ms1_tic_change_q4	Quameter_IDFree	MS1 Signal		ESI Stability		Ratio	Lower		The log ratio for largest TIC change over 75%ile of TIC changes	0	23
 ms1_tic_q2	Quameter_IDFree	MS1 Signal		Dynamic Range		Ratio			The log ratio for 50%ile of TIC over 25%ile of TIC	0	24
 ms1_tic_q3	Quameter_IDFree	MS1 Signal		Dynamic Range		Ratio			The log ratio for 75%ile of TIC over 50%ile of TIC	0	25
-ms1_tic_q4	Quameter_IDFree	MS1 Signal		Dynamic Range		Ratio			The log ratio for largest TIC over 75%ile TIC	0	26
 p_2c	SMAQC	Peptide Identification	Unique peptides	Peptide counts	Peptides	Count	Higher	A good overall performance measure	Number of tryptic peptides; unique peptide count (MSGFSpecProb < 1E-12)	0	-11
 amts_10pct_fdr	VIPER	MS1 Signal	VIPER	Peptide counts	peptides	Count	Higher	Total number of identified LC-MS features	Number of LC-MS features	0	-10
 amts_25pct_fdr	VIPER	MS1 Signal	VIPER	Peptide counts	peptides	Count	Higher	Total number of identified LC-MS features	Number of LC-MS features	0	-9
@@ -55,28 +76,6 @@ xic_wide_frac	Quameter_IDFree	Chromatography		Peak width variability		Ratio			Fr
 qcart	Aggregate	Quality Control	QC-ART aggregate score	Overall Quality Control metric	Likelihood good dataset	None	Lower		Overall confidence using model developed by Allison Thompson and Ryan Butner	0	-4
 phos_2c	SMAQC	Peptide Identification	Unique phosphopeptides	Peptide counts	Peptides	Count	Higher	A good overall performance measure for phospho samples	Number of tryptic phosphopeptides; unique peptide count (MSGFSpecProb < 1E-12)	0	-3
 ms1_count	Quameter_IDFree	Acquisition Stats		Spectrum counts		Count			Number of MS spectra collected	0	27
-ms1_freq_max	Quameter_IDFree	Acquisition Stats		Acquisition Rate		Hz			Fastest frequency for MS collection in any minute	0	28
-ms1_density_q1	Quameter_IDFree	Acquisition Stats		Spectrum counts		Count			25%ile of MS scan peak counts	0	29
-ms1_density_q2	Quameter_IDFree	Acquisition Stats		Spectrum counts		Count			50%ile of MS scan peak counts	0	30
-ms1_density_q3	Quameter_IDFree	Acquisition Stats		Spectrum counts		Count			75%ile of MS scan peak counts	0	31
-ms2_count	Quameter_IDFree	Acquisition Stats		Spectrum counts		Count			Number of MS/MS spectra collected	0	32
-ms2_freq_max	Quameter_IDFree	Acquisition Stats		Acquisition Rate		Hz			Fastest frequency for MS/MS collection in any minute	0	33
-ms2_density_q1	Quameter_IDFree	Acquisition Stats		Spectrum counts		Count			25%ile of MS/MS scan peak counts	0	34
-ms2_density_q2	Quameter_IDFree	Acquisition Stats		Spectrum counts		Count			50%ile of MS/MS scan peak counts	0	35
-ms2_density_q3	Quameter_IDFree	Acquisition Stats		Spectrum counts		Count			75%ile of MS/MS scan peak counts	0	36
-ms2_prec_z_1	Quameter_IDFree	Mass Precision		Charge distribution		Fraction	Lower		Fraction of MS/MS precursors that are singly charged	0	37
-ms2_prec_z_2	Quameter_IDFree	Mass Precision		Charge distribution		Fraction	n/a		Fraction of MS/MS precursors that are doubly charged	0	38
-ms2_prec_z_3	Quameter_IDFree	Mass Precision		Charge distribution		Fraction	n/a		Fraction of MS/MS precursors that are triply charged	0	39
-ms2_prec_z_4	Quameter_IDFree	Mass Precision		Charge distribution		Fraction	n/a		Fraction of MS/MS precursors that are quadruply charged	0	40
-ms2_prec_z_5	Quameter_IDFree	Mass Precision		Charge distribution		Fraction	n/a		Fraction of MS/MS precursors that are quintuply charged	0	41
-ms2_prec_z_more	Quameter_IDFree	Mass Precision		Charge distribution		Fraction	n/a		Fraction of MS/MS precursors that are charged higher than +5	0	42
-ms2_prec_z_likely_1	Quameter_IDFree	Mass Precision		Charge distribution		Fraction	Lower		Fraction of MS/MS precursors lack known charge but look like 1+	0	43
-ms2_prec_z_likely_multi	Quameter_IDFree	Mass Precision		Charge distribution		Fraction	n/a		Fraction of MS/MS precursors lack known charge but look like 2+ or higher	0	44
-c_1a	SMAQC	Chromatography	Peptides from fronted peaks	Fraction of repeat peptide IDs with divergent RT	-4 min	Fraction	Lower	Estimates very early peak broadening	Fraction of peptides identified more than 4 minutes earlier than the chromatographic peak apex (MSGFSpecProb < 1E-12)	0	45
-c_1b	SMAQC	Chromatography	Peptides from tailed peaks	Fraction of repeat peptide IDs with divergent RT	+4 min	Fraction	Lower	Estimates very late peak broadening	Fraction of peptides identified more than 4 minutes later than the chromatographic peak apex (MSGFSpecProb < 1E-12)	0	46
-c_2a	SMAQC	Chromatography	Richest ID RT range	Interquartile retention time period	Period (min)	Minutes	Higher	Longer times indicate better chromatographic separation	Time period over which 50% of peptides are identified (MSGFSpecProb < 1E-12)	0	47
-c_2b	SMAQC	Chromatography	ID rate in C_2A	Interquartile retention time period	Pep ID rate	Peps/min	Higher	Higher rates indicate efficient sampling and identification	Rate of peptide identification during C_2A (MSGFSpecProb < 1E-12)	0	48
-c_3a	SMAQC	Chromatography	Peak width	Peak width at half-height for IDs	Median value	Seconds	Lower	Sharper peak widths indicate better chromatographic separation	Median peak width for all peptides	0	49
 c_3b	SMAQC	Chromatography	Peak width, middle 50%	Peak width at half-height for IDs	Interquartile distance	Seconds	Lower	Tighter distributions indicate more peak width uniformity	Median peak width during middle 50% of separation	0	50
 c_4a	SMAQC	Chromatography	Peak width, first 10%	Peak widths at half-max over RT deciles for IDs	First decile	Seconds	Lower	Estimates peak widths at the beginning of the gradient	Median peak width during first 10% of separation	0	51
 c_4b	SMAQC	Chromatography	Peak width, last 10%	Peak widths at half-max over RT deciles for IDs	Last decile	Seconds	Lower	Estimates peak widths at the end of the gradient	Median peak width during last 10% of separation	0	52
@@ -91,6 +90,7 @@ ds_2a	SMAQC	Dynamic Sampling	MS1 scan count in C_2A	Spectrum counts	MS1 scans/fu
 ds_2b	SMAQC	Dynamic Sampling	MS2 scan count in C_2A	Spectrum counts	MS2 scans	Count	Higher	More MS2 scans indicates more sampling	Number of MS2 scans taken over middle 50% of separation	0	61
 ds_3a	SMAQC	Dynamic Sampling	MS1 max / observed	MS1 max / MS1 sampled abundance ratio IDs	Median all IDs	Ratio	Lower	Estimates position on peak where sampled for peptides of all abundances	Median of MS1 max / MS1 sampled abundance (use PSMs with MSGFSpecProb < 1E-12)	0	62
 ds_3b	SMAQC	Dynamic Sampling	MS1 max / observed, low abu	MS1 max/ MS1 sampled abundance ratio IDs	Med bottom 1/2	Ratio	Lower	Estimates position on peak where sampled for  least  abundant 50% of peptides	Median of MS1 max / MS1 sampled abundance; limit to bottom 50% of peptides by abundance (use PSMs with MSGFSpecProb < 1E-12)	0	63
+c_3a	SMAQC	Chromatography	Peak width	Peak width at half-height for IDs	Median value	Seconds	Lower	Sharper peak widths indicate better chromatographic separation	Median peak width for all peptides	0	49
 is_1b	SMAQC	Ion Source	MS1 fall 10x	MS1 during middle (and early) peptide retention period	MS1 falls >10x	Count	Lower	Flags ESI instability	Occurrences of MS1 falling >10x	0	65
 is_2	SMAQC	Ion Source	Median precursor m/z	Precursor m/z for IDs	Median	Th	Lower	Higher median m/z can correlate with inefficient or partial ionization	Median precursor m/z for all peptides (MSGFSpecProb < 1E-12)	0	66
 is_3a	SMAQC	Ion Source	Count 1+ / 2+	IDs by charge state (relative to 2+)	Charge 1+	Ratio	Lower	High ratio of 1+ / 2+  peptides may indicate inefficient ionization	Count of 1+ peptides / count of 2+ peptides (MSGFSpecProb < 1E-12)	0	67

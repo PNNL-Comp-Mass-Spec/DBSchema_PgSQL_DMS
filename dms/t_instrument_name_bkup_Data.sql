@@ -21,7 +21,12 @@ SET row_security = off;
 --
 
 COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class, instrument_group, source_path_id, storage_path_id, capture_method, status, room_number, description, created) FROM stdin;
+31	LCQ_JA_GTL	Finnigan_Ion_Trap	LCQ	137	136	fso	Inactive	EMSL 2588	Virtual Instrument for GTL_Core	2004-09-27 00:00:00
+32	LTQ_FT1	LTQ_FT	LTQ_FT	139	1054	secfso	Inactive	EMSL 1617	LTQ-FT 1 (LTQ3QFVL41)	2004-10-22 00:00:00
 33	LTQ_2	Finnigan_Ion_Trap	LTQ	141	3049	secfso	Inactive	EMSL 1526	Finnigan LTQ #2	2004-11-08 00:00:00
+34	LTQ_3	Finnigan_Ion_Trap	LTQ_Prep	143	2840	secfso	Inactive	BSF 1208	Finnigan LTQ #3	2004-11-22 00:00:00
+35	11T_Aux2	BRUKERFTMS	FT_ZippedSFolders	145	144	secfso	Inactive	EMSL 1621	Virtual 11T FTICR	2005-02-23 00:00:00
+36	12T_FTICR	BRUKERFTMS	FT_ZippedSFolders	147	247	secfso	Inactive	EMSL 1621	Bruker 12T FTICR magnet	2005-02-24 00:00:00
 1	LCQ_C2	Finnigan_Ion_Trap	LCQ	4	127	secfso	Inactive	EMSL 1526	LCQ-C2	2001-03-12 00:00:00
 2	LCQ_C1	Finnigan_Ion_Trap	LCQ	6	126	secfso	Inactive	EMSL 1326 (not conneted to network)	LCQ-C1	2000-05-15 00:00:00
 3	7T_FTICR	Finnigan_FTICR	Other	8	89	secfso	Inactive	EMSL 1621 (excessed)	7 T FTICR	2000-06-20 00:00:00
@@ -51,11 +56,6 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 28	QC_MM_TOF	Waters_TOF	Waters_TOF	118	117	fso	Inactive	EMSL 1553	Micromass TOF-type instrument for QC Process	2006-11-08 00:00:00
 29	QC_LTQ	Finnigan_Ion_Trap	LTQ	120	190	fso	Inactive	EMSL 1553	LTQ-type instrument for QC Process	2004-10-15 00:00:00
 30	QC_Fin_ICR	Finnigan_FTICR	Other	122	121	fso	Inactive	EMSL 1553	Finnigan FTICR-type instrument for QC Process	2006-12-13 00:00:00
-31	LCQ_JA_GTL	Finnigan_Ion_Trap	LCQ	137	136	fso	Inactive	EMSL 2588	Virtual Instrument for GTL_Core	2004-09-27 00:00:00
-32	LTQ_FT1	LTQ_FT	LTQ_FT	139	1054	secfso	Inactive	EMSL 1617	LTQ-FT 1 (LTQ3QFVL41)	2004-10-22 00:00:00
-34	LTQ_3	Finnigan_Ion_Trap	LTQ_Prep	143	2840	secfso	Inactive	BSF 1208	Finnigan LTQ #3	2004-11-22 00:00:00
-35	11T_Aux2	BRUKERFTMS	FT_ZippedSFolders	145	144	secfso	Inactive	EMSL 1621	Virtual 11T FTICR	2005-02-23 00:00:00
-36	12T_FTICR	BRUKERFTMS	FT_ZippedSFolders	147	247	secfso	Inactive	EMSL 1621	Bruker 12T FTICR magnet	2005-02-24 00:00:00
 37	AgTOF02	Agilent_TOF	Agilent_TOF	1063	1188	fso	Inactive	EMSL 1422	Agilent LC/MSD TOF2	2005-05-04 00:00:00
 38	LTQ_FB1	Finnigan_Ion_Trap	LTQ	153	1247	secfso	Inactive	PSL 522	Agilent LC/Thermo LTQ (Fungal)	2005-04-28 00:00:00
 39	LTQ_4	Finnigan_Ion_Trap	LTQ	156	3855	secfso	Inactive	EMSL 1526	Finnigan LTQ #4	2005-05-27 00:00:00
@@ -102,7 +102,6 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 80	IMS05_AgQTOF04	IMS_Agilent_TOF_UIMF	IMS	1093	1308	secfso	Inactive	EMSL 1426	Deactivated 9/3/2013 since replaced with IMS05_AgQTOF03	2011-03-18 10:06:52
 81	IMS06_AgTOF07	IMS_Agilent_TOF_UIMF	IMS	312	2852	secfso	Inactive	EMSL 1426	IMS Agilent TOF, WD59466 for TOF07	2011-03-18 10:10:14
 82	Exact04	Thermo_Exactive	Exactive	314	3062	secfso	Inactive	EMSL 1426	Coupled to IMS06 in 2016, Given to BYU	2011-03-18 10:40:45
-178	Eclipse02	LTQ_FT	Eclipse	3789	4844	secfso	Active	EMSL 1526	Orbitrap Eclipse Tribrid - CPTAC loan, MS:1003029	2021-04-29 14:55:13
 83	12T_FTICR_Imaging	BrukerMALDI_Imaging_V2	MALDI_Imaging	1397	3762	secfso	Inactive	EMSL 1621	12T FTICR with MALDI imaging; was BrukerMALDI_Imaging prior to October 2012; switched to BrukerMALDI_Imaging_V2 with .D folders in 2012; superseded by 12T_FTICR_P_Imaging	2011-05-27 11:16:10
 84	Thermo_GC_MS_01	Triple_Quad	GC_TSQ	1006	3861	secfso	Inactive	EMSL 1142	GC-MS using a TSQ Quantum XLS; Currently in storage in EMSL 1346	2011-05-27 21:21:20
 85	VOrbi05	LTQ_FT	VelosOrbi	1009	4872	secfso	Active	EMSL 1429	LTQ Velos with an LTQ Orbitrap Velos (no ETD), MS:1000855	2011-06-02 11:20:25
@@ -197,6 +196,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 175	External_Agilent_QQQ	Agilent_TOF_V2	Agilent_QQQ	3709	3714	fso	Active	Offsite	Agilent triple-quad data acquired offsite	2021-01-19 20:47:37
 176	External_Eclipse	LTQ_FT	Eclipse	3710	4868	fso	Active	Offsite	Orbitrap Eclipse data acquired outside PNNL	2021-01-26 17:09:47
 177	External_Orbitrap_Fusion	LTQ_FT	VelosOrbi	3712	4031	fso	Active	Offsite	Orbitrap Fusion Lumos data acquired outside PNNL, MS:1002732	2021-01-28 10:35:08
+178	Eclipse02	LTQ_FT	Eclipse	3789	4844	secfso	Active	EMSL 1526	Orbitrap Eclipse Tribrid - CPTAC loan, MS:1003029	2021-04-29 14:55:13
 179	External_Exploris	LTQ_FT	Exploris	3791	4827	fso	Active	Offsite	Data acquired offsite using a Thermo Exploris mass spec	2021-05-05 15:31:49
 180	QExactHF05_Imaging	LTQ_FT	QExactive_Imaging	1706	4834	secfso	Active	EMSL 1621	Q Exactive HF, MS:1002523. Has HMR/UHMR configuration (boards swapped). Supports MALDI (Spectroglyph), UVPD, and ECD/ETD, depending on the connected hardware. When the MALDI source is attached, use instrument QExactHF05_Imaging for new datasets.	2021-06-24 16:09:22
 181	Agilent_GC_MS_03	Agilent_Ion_Trap	Agilent_GC_MS	3878	4889	secfso	Active	EMSL 1401	Agilent single quadrupole GC-MS for metabolomics. 8890 GC coupled to a 5977 Inert Plus MSD, with a 7693A Autosampler	2021-07-29 17:51:13
@@ -244,11 +244,11 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 223	Samwise	Waters_Acquity_LC	Waters_Acquity_LC	4574	4917	secfso	Active	EMSL 1444	Waters nanoAcquity LC	2023-11-02 17:23:27
 224	Sauron	Waters_Acquity_LC	Waters_Acquity_LC	4575	4918	secfso	Active	EMSL 1521	Waters nanoAcquity LC	2023-11-02 17:24:04
 225	Arwen	Waters_Acquity_LC	Waters_Acquity_LC	4576	4919	secfso	Active	EMSL 1314	Waters Acquity M-Class LC	2023-11-02 17:25:10
+230	Bilbo	Waters_Acquity_LC	Waters_Acquity_LC	4581	4924	secfso	Active	EMSL 1526	Waters nanoAcquity LC	2023-11-03 10:17:43
 226	Balzac	Waters_Acquity_LC	Waters_Acquity_LC	4577	4920	secfso	Active	EMSL 1142	Waters Acquity M-Class LC	2023-11-02 17:25:42
 227	Precious	Waters_Acquity_LC	Waters_Acquity_LC	4578	4921	secfso	Active	EMSL 1142	Waters Acquity M-Class LC	2023-11-02 17:26:15
 228	Rage	Waters_Acquity_LC	Waters_Acquity_LC	4579	4922	secfso	Active	EMSL 1142	Waters Acquity M-Class LC	2023-11-02 17:26:37
 229	Lola	Waters_Acquity_LC	Waters_Acquity_LC	4580	4923	secfso	Active	EMSL 1521	Waters Acquity H-Class LC	2023-11-02 17:27:37
-230	Bilbo	Waters_Acquity_LC	Waters_Acquity_LC	4581	4924	secfso	Active	EMSL 1526	Waters nanoAcquity LC	2023-11-03 10:17:43
 231	Smeagol	Waters_Acquity_LC	Waters_Acquity_LC	4582	4925	secfso	Active	EMSL 1314	Waters nanoAcquity LC	2023-11-03 10:18:01
 232	Brandi	Waters_Acquity_LC	Waters_Acquity_LC	4583	4926	secfso	Active	EMSL 1444	Waters Acquity H-Class LC	2023-11-03 10:18:37
 233	Roxanne	Waters_Acquity_LC	Waters_Acquity_LC	4584	4927	secfso	Active	EMSL 1142	Waters Acquity H-Class LC	2023-11-03 10:18:56

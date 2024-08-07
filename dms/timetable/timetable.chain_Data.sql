@@ -106,13 +106,13 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 96	Update cached dataset stats, mode 2	28 18 * * 6	\N	0	t	f	f	\N	\N
 97	Promote protein collection states	10 20 * * *	\N	0	t	f	f	\N	\N
 98	Promote protein collection states, 100 years	10 21 * * 7	\N	0	t	f	f	\N	\N
-99	Disable all managers once	16 15 * * *	\N	0	f	f	f	\N	\N
 100	Disable analysis managers once	05 16 * * *	\N	0	f	f	f	\N	\N
 101	Disable archive-dependent managers once	22 16 * * *	\N	0	f	f	f	\N	\N
 102	Disable capture task managers once	25 16 * * *	\N	0	f	f	f	\N	\N
 103	Enable all managers once	26 16 * * *	\N	0	f	f	f	\N	\N
 104	Enable archive-dependent managers once	23 16 * * *	\N	0	f	f	f	\N	\N
 32	Disable archive-dependent step tools once	14 20 * * *	\N	0	f	f	f	\N	\N
+99	Disable all managers once	00 10 * * *	\N	0	f	f	f	\N	\N
 36	Enable archive-dependent step tools once	27 20 * * *	\N	0	f	f	f	\N	\N
 35	Enable archive update step tool once	49 20 * * *	\N	0	f	f	f	\N	\N
 \.
