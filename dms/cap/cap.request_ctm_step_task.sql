@@ -116,6 +116,7 @@ CREATE OR REPLACE PROCEDURE cap.request_ctm_step_task(IN _processorname text, IN
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          08/04/2024 mem - Rename _jobNumber argument to _job
 **                         - Remove explicit Commit
+**          08/06/2024 mem - If no tasks are available, return an empty table using the refcursor
 **
 *****************************************************/
 DECLARE
@@ -267,6 +268,18 @@ BEGIN
         End If;
 
         ---------------------------------------------------
+        -- Create a temp table to track job parameters
+        ---------------------------------------------------
+
+        DROP TABLE IF EXISTS Tmp_JobParamsTable;
+
+        CREATE TEMP TABLE Tmp_JobParamsTable (
+            Section text,
+            Name text,
+            Value text
+        );
+
+        ---------------------------------------------------
         -- Get list of step tools currently assigned to processor
         -- active tools that are presently handled by this processor
         -- (don't use tools that require bionet if processor machine doesn't have it)
@@ -331,6 +344,17 @@ BEGIN
         If _infoLevel = 0 And _numTools = 0 Then
             _message := format('No tools presently available for processor "%s"', _processorName);
             _returnCode := _jobNotAvailableErrorCode;
+
+            -- Always return results, even if Tmp_JobParamsTable is empty
+            -- This prevents the following error spamming the logs when Capture Task Managers request tasks but there are not available tasks
+            --
+            -- [dms, svc-dms, 1589814] ERROR:  cursor "_results" does not exist
+            -- [dms, svc-dms, 1589814] STATEMENT:  FETCH ALL FROM _results
+
+            Open _results For
+                SELECT Name AS Parameter,
+                       Value
+                FROM Tmp_JobParamsTable;
 
             DROP TABLE Tmp_AvailableProcessorTools;
             RETURN;
@@ -504,6 +528,13 @@ BEGIN
             _message := 'No candidates presently available';
             _returnCode := _jobNotAvailableErrorCode;
 
+            -- Always return results, even if Tmp_JobParamsTable is empty (see above)
+
+            Open _results For
+                SELECT Name AS Parameter,
+                       Value
+                FROM Tmp_JobParamsTable;
+
             DROP TABLE Tmp_AvailableProcessorTools;
             DROP TABLE Tmp_InstrumentLoading;
             DROP TABLE Tmp_InstrumentProcessor;
@@ -611,14 +642,6 @@ BEGIN
         ---------------------------------------------------
         -- Temp table to hold capture task job parameters
         ---------------------------------------------------
-
-        DROP TABLE IF EXISTS Tmp_JobParamsTable;
-
-        CREATE TEMP TABLE Tmp_JobParamsTable (
-            Section text,
-            Name text,
-            Value text
-        );
 
         If _jobAssigned Then
 
