@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE public.lookup_instrument_run_info_from_experiment_sa
 **          09/13/2023 mem - Ported to PostgreSQL
 **          10/09/2023 mem - Rename parameter _secSep to _separationGroup
 **          10/10/2023 mem - Use renamed column name separation_group in t_sample_prep_request
+**          08/08/2024 mem - Cast experiment name to citext when querying t_experiments
 **
 *****************************************************/
 DECLARE
@@ -56,7 +57,7 @@ BEGIN
     SELECT sample_prep_request_id
     INTO _prepRequestID
     FROM t_experiments
-    WHERE experiment = _experimentName;
+    WHERE experiment = _experimentName::citext;
 
     If Not FOUND Then
         _message := format('Experiment does not exist: %s',_experimentName);
