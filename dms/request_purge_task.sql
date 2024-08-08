@@ -118,6 +118,7 @@ CREATE OR REPLACE PROCEDURE public.request_purge_task(IN _storageservername text
 **          02/02/2018 mem - Change the return code for 'dataset not found' to 53000
 **          02/01/2023 mem - Use new view names
 **          02/15/2024 mem - Ported to PostgreSQL
+**          08/07/2024 mem - Remove unnecessary commit
 **
 *****************************************************/
 DECLARE
@@ -562,8 +563,6 @@ BEGIN
         SET archive_state_id = 7 -- 'purge in progress'
         WHERE dataset_id = _datasetID;
     END;
-
-    COMMIT;
 
     ---------------------------------------------------
     -- Get information for assigned dataset
