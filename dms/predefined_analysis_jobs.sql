@@ -70,6 +70,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs(_datasetname text, _r
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/08/2023 mem - Add support for scan type inclusion or exclusion
 **          08/07/2024 mem - Include table name when querying Tmp_Criteria to avoid error message 'column reference "message" is ambiguous'
+**                         - When returning results, cast empty strings to citext
 **
 *****************************************************/
 DECLARE
@@ -336,12 +337,12 @@ BEGIN
             ''::citext,     -- protein_collection_list
             ''::citext,     -- protein_options_list
             ''::citext,     -- organism_db_name
-            '',             -- owner_username
-            '',             -- comment
-            0,              -- num_jobs
+            ''::citext,     -- owner_username
+            ''::citext,     -- comment
             0::smallint,    -- propagation_mode
             ''::citext,     -- special_processing
             0,              -- id
+            0,              -- existing_job_count
             _message::citext,
             ''::citext AS returncode;
 
