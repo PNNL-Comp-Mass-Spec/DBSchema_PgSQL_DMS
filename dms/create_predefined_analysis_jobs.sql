@@ -54,6 +54,7 @@ CREATE OR REPLACE PROCEDURE public.create_predefined_analysis_jobs(IN _datasetna
 **          12/09/2023 mem - Add parameter _showDebug
 **                         - Use append_to_text() to append messages
 **          12/13/2023 mem - Do not log an error for return codes 'U6251', 'U6253', and 'U6254' from add_update_analysis_job
+**          08/07/2024 mem - Include current location in the exception message
 **
 *****************************************************/
 DECLARE
@@ -70,6 +71,7 @@ DECLARE
     _job text;
     _propagationModeText text;
 
+    _currentLocation text;
     _sqlState text;
     _exceptionMessage text;
     _exceptionDetail text;
@@ -89,6 +91,7 @@ BEGIN
     _showDebug                  := Coalesce(_showDebug, false);
 
     BEGIN
+        _currentLocation := 'Create and populate temp table';
 
         ---------------------------------------------------
         -- Temporary job holding table for jobs to create
@@ -110,7 +113,7 @@ BEGIN
             SpecialProcessing text,
             ExistingJobCount int,
             Message text,
-            Returncode text,
+            ReturnCode text,
             ID int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY
         );
 
@@ -135,13 +138,17 @@ BEGIN
                     _createJobsForUnreviewedDatasets => true,
                     _analysisToolNameFilter => '');
 
-        SELECT message, returncode
+        _currentLocation := 'Examine ReturnCode in Tmp_JobsToCreate';
+
+        SELECT message, ReturnCode
         INTO _message, _returnCode
         FROM Tmp_JobsToCreate
         WHERE _returnCode <> ''
         LIMIT 1;
 
         If FOUND Then
+            _currentLocation := format('Handle return code %s', _returnCode);
+
             _errorMessage := format('predefined_analysis_jobs returned error code %s', _returnCode);
 
             If Not Coalesce(_message, '') = '' Then
@@ -167,6 +174,8 @@ BEGIN
         ---------------------------------------------------
         -- Cycle through the job holding table and make jobs for each entry
         ---------------------------------------------------
+
+        _currentLocation := 'Create pending jobs';
 
         FOR _jobInfo IN
             SELECT Priority,
@@ -221,6 +230,8 @@ BEGIN
             -- Create the job
             ---------------------------------------------------
 
+            _currentLocation := 'Call add_update_analysis_job';
+
             CALL public.add_update_analysis_job (
                             _datasetName                      => _datasetName,
                             _priority                         => _jobInfo.Priority,
@@ -259,6 +270,8 @@ BEGIN
                 CONTINUE;
             End If;
 
+            _currentLocation := 'Update _message';
+
             If _message = '' Then
                 _message := _newMessage;
             Else
@@ -267,6 +280,8 @@ BEGIN
 
             -- Return code 'U5250' means a duplicate job exists; that error can be ignored
             If _returnCode <> 'U5250' Then
+
+                _currentLocation := 'Prepare duplicate job message';
 
                 -- Increment _jobFailCount, but keep trying to create the other predefined jobs for this dataset
                 _jobFailCount := _jobFailCount + 1;
@@ -293,6 +308,7 @@ BEGIN
                 -- Return codes 'U6251', 'U6253', and 'U6254' are warnings from validate_analysis_job_request_datasets and are non-critical errors
 
                 If Not _returnCode In ('U6251', 'U6253', 'U6254') Then
+                    _currentLocation := 'Call post_log_entry with duplicate job message';
                     CALL post_log_entry ('Error', _logMessage, 'Create_Predefined_Analysis_Jobs');
                 End If;
 
@@ -306,6 +322,8 @@ BEGIN
         ---------------------------------------------------
         -- Construct the summary message
         ---------------------------------------------------
+
+        _currentLocation := 'Construct the summary message';
 
         _newMessage := format('Created %s %s', _jobsCreated, public.check_plural(_jobsCreated, 'job', 'jobs'));
 
@@ -342,7 +360,7 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => '', _logError => true);
+                        _callingProcLocation => _currentLocation, _logError => true);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
