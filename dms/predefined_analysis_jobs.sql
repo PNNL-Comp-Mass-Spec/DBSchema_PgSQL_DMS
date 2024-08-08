@@ -69,6 +69,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_jobs(_datasetname text, _r
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/08/2023 mem - Add support for scan type inclusion or exclusion
+**          08/07/2024 mem - Include table name when querying Tmp_Criteria to avoid error message 'column reference "message" is ambiguous'
 **
 *****************************************************/
 DECLARE
@@ -314,7 +315,7 @@ BEGIN
     If Not Exists (SELECT * FROM Tmp_Criteria WHERE Tmp_Criteria.predefine_id > 0) Then
         -- No rules were found (it is possible the dataset is unreviewed and no predefine rules allow for job creation for unreviewed datasets)
 
-        SELECT message
+        SELECT Tmp_Criteria.message
         INTO _message
         FROM Tmp_Criteria
         LIMIT 1;
