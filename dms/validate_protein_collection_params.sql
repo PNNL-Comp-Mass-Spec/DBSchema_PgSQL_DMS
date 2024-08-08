@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_params(IN _toolna
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/11/2023 mem - Remove unnecessary _trimWhitespace argument when calling validate_na_parameter
 **          07/23/2024 mem - Call procedure public.validate_protein_collection_states()
+**          08/07/2024 mem - Fix variable name typo when calling validate_protein_collection_states()
 **
 *****************************************************/
 DECLARE
@@ -130,7 +131,7 @@ BEGIN
             _offlineCount => _offlineCount,     -- Output
             _message      => _message,          -- Output
             _returncode   => _returncode,       -- Output
-            _showDebug    => _showDebug);
+            _showDebug    => _debugMode);
 
 
     If Coalesce(_invalidCount, 0) > 0 Or Coalesce(_offlineCount, 0) > 0 Then
