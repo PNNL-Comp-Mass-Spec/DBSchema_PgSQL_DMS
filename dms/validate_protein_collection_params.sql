@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_params(IN _toolna
 **          12/11/2023 mem - Remove unnecessary _trimWhitespace argument when calling validate_na_parameter
 **          07/23/2024 mem - Call procedure public.validate_protein_collection_states()
 **          08/07/2024 mem - Fix variable name typo when calling validate_protein_collection_states()
+**                         - Add missing Drop Table command for temp table
 **
 *****************************************************/
 DECLARE
@@ -133,6 +134,7 @@ BEGIN
             _returncode   => _returncode,       -- Output
             _showDebug    => _debugMode);
 
+    DROP TABLE Tmp_ProteinCollections;
 
     If Coalesce(_invalidCount, 0) > 0 Or Coalesce(_offlineCount, 0) > 0 Then
         If Coalesce(_message, '') = '' Then
