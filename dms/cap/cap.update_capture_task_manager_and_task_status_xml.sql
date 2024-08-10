@@ -50,6 +50,7 @@ CREATE OR REPLACE PROCEDURE cap.update_capture_task_manager_and_task_status_xml(
 **          03/03/2024 mem - Trim whitespace when extracting values from XML
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          08/10/2024 mem - Cast Status_Date and Last_Start_Time to timestamptz
 **
 *****************************************************/
 DECLARE
@@ -394,8 +395,8 @@ BEGIN
         -- Convert from text-based UTC date to local timestamp
 
         UPDATE Tmp_Processor_Status_Info
-        SET Status_Date_Value     = public.try_cast(Status_Date,     null::timestamp),
-            Last_Start_Time_Value = public.try_cast(Last_Start_Time, null::timestamp);
+        SET Status_Date_Value     = public.try_cast(Status_Date,     null::timestamptz),
+            Last_Start_Time_Value = public.try_cast(Last_Start_Time, null::timestamptz);
 
         ---------------------------------------------------
         -- Update status for existing processors
