@@ -37,4 +37,5 @@ ALTER TABLE ONLY pc.t_encrypted_collection_authorizations
 
 GRANT SELECT ON TABLE pc.t_encrypted_collection_authorizations TO readaccess;
 GRANT SELECT ON TABLE pc.t_encrypted_collection_authorizations TO writeaccess;
+GRANT INSERT,DELETE,UPDATE ON TABLE pc.t_encrypted_collection_authorizations TO pceditor;
 

@@ -37,4 +37,5 @@ ALTER TABLE ONLY pc.t_encrypted_collection_passphrases
 
 GRANT SELECT ON TABLE pc.t_encrypted_collection_passphrases TO readaccess;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE pc.t_encrypted_collection_passphrases TO writeaccess;
+GRANT INSERT,DELETE,UPDATE ON TABLE pc.t_encrypted_collection_passphrases TO pceditor;
 

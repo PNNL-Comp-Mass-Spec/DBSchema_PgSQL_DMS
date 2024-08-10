@@ -85,4 +85,5 @@ ALTER TABLE ONLY pc.t_protein_collection_members
 
 GRANT SELECT ON TABLE pc.t_protein_collection_members TO readaccess;
 GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE pc.t_protein_collection_members TO writeaccess;
+GRANT INSERT,DELETE,UPDATE ON TABLE pc.t_protein_collection_members TO pceditor;
 
