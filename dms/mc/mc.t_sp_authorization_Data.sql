@@ -30,9 +30,9 @@ COPY mc.t_sp_authorization (entry_id, procedure_name, login_name, host_name, hos
 7	*	PNL\\gibb713	*	*
 8	*	PNL\\memadmin	*	*
 9	*	DMSWebUser	prismweb2_IPv6	2620:0:50f1:118::5fd
-10	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::199
 11	*	pgdms	localhost	127.0.0.1
 12	*	DMSWebUser	prismweb2_IPv6_alt	2620:0:50f1:118::11fd
+10	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::1199
 \.
 
 

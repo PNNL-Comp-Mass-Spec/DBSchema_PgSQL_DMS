@@ -21,6 +21,7 @@ SET row_security = off;
 --
 
 COPY sw.t_sp_authorization (entry_id, procedure_name, login_name, host_name, host_ip) FROM stdin;
+13	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::1199
 1	*	DMSWebUser	gigasax	130.20.225.2
 2	*	DMSWebUser	prismweb2	130.20.224.55
 3	*	DMSWebUser	prismweb3	130.20.225.91
@@ -33,7 +34,6 @@ COPY sw.t_sp_authorization (entry_id, procedure_name, login_name, host_name, hos
 10	*	PNL\\msdadmin	seqcluster5	0.0.0.0
 11	*	PNL\\svc-dms	*	*
 12	*	DMSWebUser	prismweb2_IPv6	2620:0:50f1:118::5fd
-13	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::199
 14	*	pgdms	localhost	127.0.0.1
 15	*	DMSWebUser	prismweb2_IPv6_alt	2620:0:50f1:118::11fd
 \.

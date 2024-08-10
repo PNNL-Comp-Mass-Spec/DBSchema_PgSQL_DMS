@@ -21,6 +21,9 @@ SET row_security = off;
 --
 
 COPY admin.all_distinct_dbname_metrics (dbname, metric, created_on) FROM stdin;
+DMSDev	configuration_changes	2024-08-06 22:09:24.178157-07
+DMSDev	object_changes	2024-08-06 22:20:24.289227-07
+DMSDev	sproc_stats	2024-08-06 22:31:24.397446-07
 DMS	index_changes	2024-04-29 23:41:58.638075-07
 DMS	db_stats	2024-04-17 15:08:40.760511-07
 DMS	locks	2024-04-17 15:08:40.761212-07
