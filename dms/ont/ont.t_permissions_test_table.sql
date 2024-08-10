@@ -22,6 +22,5 @@ ALTER TABLE ONLY ont.t_permissions_test_table
 -- Name: TABLE t_permissions_test_table; Type: ACL; Schema: ont; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE ont.t_permissions_test_table TO readaccess;
 GRANT SELECT ON TABLE ont.t_permissions_test_table TO writeaccess;
 
