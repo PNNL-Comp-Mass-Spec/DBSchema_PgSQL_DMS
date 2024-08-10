@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE pc.update_cached_protein_collection_members(IN _coll
 **  Date:   06/24/2016 mem - Initial release
 **          08/22/2023 mem - Ported to PostgreSQL
 **          01/03/2024 mem - Update status message
+**          08/09/2024 mem - Ignore offline protein collections
 **
 *****************************************************/
 DECLARE
@@ -108,7 +109,7 @@ BEGIN
                num_proteins,
                false AS Processed
         FROM pc.t_protein_collections
-        WHERE NOT collection_state_id IN (0, 5);
+        WHERE NOT collection_state_id IN (0, 5, 6);
 
     Else
         -- Only add new protein collections
@@ -124,7 +125,7 @@ BEGIN
         FROM (SELECT protein_collection_id,
                      num_proteins
               FROM pc.t_protein_collections
-              WHERE NOT collection_state_id IN (4, 5)
+              WHERE NOT collection_state_id IN (4, 5, 6)
              ) PC
              LEFT OUTER JOIN (SELECT protein_collection_id,
                                      COUNT(reference_id) AS cached_protein_count
