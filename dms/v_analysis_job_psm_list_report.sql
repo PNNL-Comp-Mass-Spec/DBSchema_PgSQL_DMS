@@ -45,8 +45,8 @@ CREATE VIEW public.v_analysis_job_psm_list_report AS
     aj.request_id AS job_request,
     COALESCE(aj.results_folder_name, '(none)'::public.citext) AS results_folder,
         CASE
-            WHEN (aj.purged = 0) THEN (((((spath.vol_name_client)::text || (spath.storage_path)::text) || (COALESCE(ds.folder_name, ds.dataset))::text) || '\'::text) || (aj.results_folder_name)::text)
-            ELSE (((((dap.archive_path)::text || '\'::text) || (COALESCE(ds.folder_name, ds.dataset))::text) || '\'::text) || (aj.results_folder_name)::text)
+            WHEN (aj.purged = 0) THEN (((dfp.dataset_folder_path)::text || '\'::text) || (aj.results_folder_name)::text)
+            ELSE (((dfp.archive_folder_path)::text || '\'::text) || (aj.results_folder_name)::text)
         END AS results_folder_path,
     dr.dataset_rating AS rating,
     ds.acq_length_minutes AS acq_length,
@@ -54,17 +54,17 @@ CREATE VIEW public.v_analysis_job_psm_list_report AS
     ds.acq_time_start,
     aj.job_state_id AS state_id,
     (aj.progress)::numeric(9,2) AS job_progress,
-    (aj.eta_minutes)::numeric(18,1) AS job_eta_minutes
-   FROM (((public.v_dataset_archive_path dap
-     RIGHT JOIN ((((((((public.t_analysis_job aj
+    (aj.eta_minutes)::numeric(18,1) AS job_eta_minutes,
+    ((dfp.dataset_url)::text || 'QC/index.html'::text) AS qc_link
+   FROM ((((((((((public.t_analysis_job aj
      JOIN public.t_dataset ds ON ((aj.dataset_id = ds.dataset_id)))
-     JOIN public.t_storage_path spath ON ((ds.storage_path_id = spath.storage_path_id)))
+     JOIN public.v_dataset_folder_paths dfp ON ((ds.dataset_id = dfp.dataset_id)))
      JOIN public.t_dataset_rating_name dr ON ((ds.dataset_rating_id = dr.dataset_rating_id)))
      JOIN public.t_organisms org ON ((aj.organism_id = org.organism_id)))
      JOIN public.t_analysis_tool analysistool ON ((aj.analysis_tool_id = analysistool.analysis_tool_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))
-     JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id))) ON ((dap.dataset_id = ds.dataset_id)))
+     JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
      LEFT JOIN public.t_analysis_job_psm_stats psm ON ((aj.job = psm.job)))
      LEFT JOIN public.t_analysis_job_psm_stats_phospho phosphopsm ON ((psm.job = phosphopsm.job)))
   WHERE (aj.analysis_tool_id IN ( SELECT t_analysis_tool.analysis_tool_id

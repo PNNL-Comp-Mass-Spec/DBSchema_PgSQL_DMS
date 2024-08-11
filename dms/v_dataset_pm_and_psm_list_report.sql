@@ -10,7 +10,7 @@ CREATE VIEW public.v_dataset_pm_and_psm_list_report AS
     COALESCE(qcm.mass_error_ppm_viper, (- pm.ppm_shift)) AS mass_error_amts,
     COALESCE(qcm.amts_10pct_fdr, pm.amts_10pct_fdr) AS amts_10pct_fdr,
     COALESCE(qcm.amts_25pct_fdr, pm.amts_25pct_fdr) AS amts_25pct_fdr,
-    ((dfp.dataset_url)::text || 'QC/index.html'::text) AS qc_link,
+    psm.qc_link,
     pm.results_url AS pm_results_url,
     psm.phospho_pep,
     pm.instrument,
@@ -34,8 +34,7 @@ CREATE VIEW public.v_dataset_pm_and_psm_list_report AS
     pm.task_server AS pm_server,
     pm.task_database AS pm_database,
     pm.ini_file_name AS pm_ini_file_name
-   FROM ((((((public.v_mts_pm_results_list_report pm
-     JOIN public.v_dataset_folder_paths dfp ON ((pm.dataset_id = dfp.dataset_id)))
+   FROM (((((public.v_mts_pm_results_list_report pm
      JOIN public.t_dataset ds ON ((pm.dataset_id = ds.dataset_id)))
      JOIN public.t_dataset_type_name dtn ON ((ds.dataset_type_id = dtn.dataset_type_id)))
      JOIN public.t_dataset_rating_name dr ON ((ds.dataset_rating_id = dr.dataset_rating_id)))
