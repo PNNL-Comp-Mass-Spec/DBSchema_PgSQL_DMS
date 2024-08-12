@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_job_processing_stats(IN _job 
 **          08/03/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          08/12/2024 mem - Ignore return code 'U5250' from set_archive_update_required
 **
 *****************************************************/
 DECLARE
@@ -260,6 +261,16 @@ BEGIN
                             _datasetName,
                             _message    => _message,        -- Output
                             _returncode => _returncode);    -- Output
+
+            If _returnCode = 'U5250' Then
+                -- The dataset's archive update state is not 1, 2, 4, or 5, and thus _message has a warning message
+                -- Most likely the state is 3=Update In Progress
+                -- Display the warning, then clear the output variables
+                RAISE INFO 'Warning from set_archive_update_required that can safely be ignored: %', _message;
+
+                _message := '';
+                _returnCode := '';
+            End If;
 
             If _toolName LIKE 'Masic%' Then
                 -- Update the cached MASIC Directory Name
