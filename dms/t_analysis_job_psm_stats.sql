@@ -39,6 +39,12 @@ ALTER TABLE ONLY public.t_analysis_job_psm_stats
     ADD CONSTRAINT pk_t_analysis_job_psm_stats PRIMARY KEY (job);
 
 --
+-- Name: ix_t_analysis_job_psm_stats_last_affected; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_psm_stats_last_affected ON public.t_analysis_job_psm_stats USING btree (last_affected);
+
+--
 -- Name: TABLE t_analysis_job_psm_stats; Type: ACL; Schema: public; Owner: d3l243
 --
 
