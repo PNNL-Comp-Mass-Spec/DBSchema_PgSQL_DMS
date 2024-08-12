@@ -39,7 +39,7 @@ CREATE VIEW public.v_dataset_pm_and_psm_list_report AS
      JOIN public.t_dataset_type_name dtn ON ((ds.dataset_type_id = dtn.dataset_type_id)))
      JOIN public.t_dataset_rating_name dr ON ((ds.dataset_rating_id = dr.dataset_rating_id)))
      LEFT JOIN public.v_dataset_qc_metrics qcm ON ((pm.dataset_id = qcm.dataset_id)))
-     LEFT JOIN public.v_analysis_job_psm_list_report psm ON (((psm.dataset_id = pm.dataset_id) AND (psm.state_id <> ALL (ARRAY[5, 14])))));
+     LEFT JOIN public.v_analysis_job_psm_list_report psm ON (((psm.dataset_id = pm.dataset_id) AND (psm.state_id <> ALL (ARRAY[5, 13, 14])))));
 
 
 ALTER VIEW public.v_dataset_pm_and_psm_list_report OWNER TO d3l243;
