@@ -35,6 +35,7 @@ CREATE OR REPLACE FUNCTION public.get_emsl_instrument_usage_daily_details(_year 
 **          10/22/2022 mem - Directly pass value to function argument
 **          04/20/2023 mem - Cast to float8 for clarity
 **          05/31/2023 mem - Use format() for string concatenation
+**          08/12/2024 mem - Coalesce null InstUsage.minutes values to 0
 **
 *****************************************************/
 DECLARE
@@ -117,7 +118,7 @@ BEGIN
            InstUsageType.usage_type AS Usage,
            InstUsage.users,
            InstUsage.start,
-           InstUsage.minutes * 60 AS Duration_Seconds,
+           Coalesce(InstUsage.minutes * 60, 0) AS Duration_Seconds,
            InstUsage.year,
            InstUsage.month,
            InstUsage.dataset_id_acq_overlap,

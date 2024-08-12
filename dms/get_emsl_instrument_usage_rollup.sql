@@ -28,6 +28,7 @@ CREATE OR REPLACE FUNCTION public.get_emsl_instrument_usage_rollup(_year integer
 **          06/20/2022 mem - Ported to PostgreSQL
 **          10/22/2022 mem - Directly pass value to function argument
 **          04/20/2023 mem - Cast to float8 for clarity
+**          08/12/2024 mem - Coalesce null InstUsage.minutes values to 0
 **
 *****************************************************/
 DECLARE
@@ -91,7 +92,7 @@ BEGIN
            InstUsage.proposal,
            InstUsageType.usage_type AS Usage,
            InstUsage.start,
-           InstUsage.minutes * 60 AS Duration_Seconds,
+           Coalesce(InstUsage.minutes * 60, 0) AS Duration_Seconds,
            InstUsage.year,
            InstUsage.month
     FROM t_emsl_instrument_usage_report InstUsage
