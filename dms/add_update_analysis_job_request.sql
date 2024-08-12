@@ -61,7 +61,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_request(IN _datasets 
 **          10/02/2009 mem - Revert to only allowing updates if the state is 'New' or 'New (Review Required)'
 **          02/12/2010 mem - Now assuring that rating is not -5 (note: when converting a job request to jobs, you can manually add datasets with a rating of -5; procedure Add_Analysis_Job_Group will allow them to be included)
 **          04/21/2010 grk - Use try-catch for error handling
-**          05/05/2010 mem - Now passing _requestorPRN to Validate_Analysis_Job_Parameters as input/output
+**          05/05/2010 mem - Now passing _requesterPRN to Validate_Analysis_Job_Parameters as input/output
 **          05/06/2010 mem - Expanded _settingsFileName to varchar(255)
 **          03/21/2011 mem - Expanded _datasets to varchar(max) and _requestName to varchar(128)
 **                         - Now using SCOPE_IDENTITY() to determine the ID of the newly added request
@@ -98,7 +98,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_request(IN _datasets 
 **          06/16/2017 mem - Restrict access using verify_sp_authorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          12/06/2017 mem - Set _allowNewDatasets to true when calling Validate_Analysis_Job_Parameters
-**          05/23/2018 mem - Do not allow _requestorPRN to be the autouser (login H09090911)
+**          05/23/2018 mem - Do not allow _requesterPRN to be the autouser (login H09090911)
 **          06/12/2018 mem - Send _maxLength to append_to_text
 **          04/17/2019 mem - Auto-change _protCollOptionsList to 'seq_direction=forward,filetype=fasta' when running TopPIC
 **          04/23/2019 mem - Auto-change _protCollOptionsList to 'seq_direction=decoy,filetype=fasta' when running MSFragger
@@ -122,6 +122,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_request(IN _datasets 
 **          02/19/2024 mem - Query tables directly instead of using a view
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          08/12/2024 mem - Do not allow _requesterPRN to be 'pgdms'
 **
 *****************************************************/
 DECLARE
@@ -214,8 +215,8 @@ BEGIN
             RAISE EXCEPTION 'Cannot add: request name must be specified';
         End If;
 
-        If _requesterUsername = 'H09090911' Or _requesterUsername = 'Autouser' Then
-            RAISE EXCEPTION 'Cannot add: the "Requested by" username cannot be the Autouser';
+        If _requesterUsername IN ('H09090911', 'pgdms', 'Autouser', 'PostgresAutoUser') Then
+            RAISE EXCEPTION 'Cannot add: the "Requested by" username cannot be the Autouser, PostgresAutoUser, or pgdms';
         End If;
 
         If _dataPackageID < 0 Then
