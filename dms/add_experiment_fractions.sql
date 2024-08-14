@@ -31,7 +31,8 @@ CREATE OR REPLACE PROCEDURE public.add_experiment_fractions(IN _parentexperiment
 **    _wellNumber           Input/output: well position (aka well number)
 **    _container            Container name: 'na', 'parent', '-20', or actual container ID
 **    _prepLCRunID          Prep LC run ID; allowed to be null
-**    _mode                 Mode: 'add' or 'preview'; when previewing, will show the names of the new fractions
+**    _mode                 Mode: 'add', 'preview', or 'debug'; when previewing, will show the names of the new fractions
+**                                'debug' mode is the same as 'preview' but logs the procedure arguments to t_log_entries
 **    _message              Status message
 **    _returnCode           Return code
 **    _callingUser          Username of the calling user
@@ -80,6 +81,7 @@ CREATE OR REPLACE PROCEDURE public.add_experiment_fractions(IN _parentexperiment
 **          12/10/2023 mem - Ported to PostgreSQL
 **          01/03/2024 mem - Update warning messages
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          08/13/2024 mem - Add support for _mode 'debug'
 **
 *****************************************************/
 DECLARE
@@ -91,6 +93,7 @@ DECLARE
     _startingIndex int := 1;     -- Initial index for automatic naming of new experiments;
     _step int := 1;              -- Step interval in index;
     _fractionsCreated int := 0;
+    _msg text;
 
     _parentExperimentInfo record;
     _experimentIDList text := '';
@@ -167,9 +170,29 @@ BEGIN
         _internalStandard := Trim(Coalesce(_internalStandard, 'parent'));
         _postdigestIntStd := Trim(Coalesce(_postdigestIntStd, 'parent'));
         _researcher       := Trim(Coalesce(_researcher,       'parent'));
-
+        _wellplateName    := Trim(Coalesce(_wellplateName, ''));
+        _wellNumber       := Trim(Coalesce(_wellNumber, ''));
         _container        := Trim(Coalesce(_container, ''));
         _mode             := Trim(Lower(Coalesce(_mode, '')));
+
+        If _mode = 'debug' Then
+            _mode := 'preview';
+
+            _msg := format('Procedure argument values: _parentExperiment="%s", _groupType="%s", _suffix="%s", _nameSearch="%s",
+                           _nameReplace="%s", _groupName="%s", _description="%s", _totalCount="%s",
+                           _addUnderscore="%s", _groupID="%s", _requestOverride="%s", _internalStandard="%s",
+                           _postdigestIntStd="%s", _researcher="%s", _wellplateName="%s", _wellNumber="%s",
+                           _container="%s",  _prepLCRunID="%s"',
+                           _parentExperiment, _groupType, _suffix, _nameSearch,
+                           _nameReplace, _groupName, _description, _totalCount,
+                           _addUnderscore, Coalesce(_groupID, 0), _requestOverride, _internalStandard,
+                           _postdigestIntStd, _researcher, _wellplateName, _wellNumber,
+                           _container, Coalesce(_prepLCRunID, 0));
+
+            RAISE INFO '%', _msg;
+
+            Call Post_Log_Entry('Debug', _msg, 'add_experiment_fractions');
+        End If;
 
         If Not _mode In ('add', 'preview') Then
             RAISE EXCEPTION 'Invalid mode: should be "add" or "preview", not "%"', _mode;
