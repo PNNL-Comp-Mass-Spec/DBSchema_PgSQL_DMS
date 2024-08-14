@@ -693,67 +693,72 @@ BEGIN
 
         If _mode Like '%preview%' Then
             _message := format('Preview of new fraction names: %s', _fractionNamePreviewList);
-        Else
 
-            ---------------------------------------------------
-            -- Resolve parent container name
-            ---------------------------------------------------
-
-            If Lower(_container) = 'parent' Then
-                SELECT container
-                INTO _container
-                FROM t_material_containers
-                WHERE container_id = _parentExperimentInfo.ParentContainerID;
+            If _dropTempTables Then
+                DROP TABLE Tmp_Experiment_to_Biomaterial_Map;
+                DROP TABLE Tmp_ExpToRefCompoundMap;
             End If;
 
-            ---------------------------------------------------
-            -- Move new fraction experiments to container
-            ---------------------------------------------------
+            RETURN;
+        End If;
 
-            CALL public.update_material_items (
-                            _mode        => 'move_material',
-                            _itemList    => _materialIDList,
-                            _itemType    => 'mixed_material',
-                            _newValue    => _container,
-                            _comment     => '',
-                            _message     => _message,       -- Output
-                            _returnCode  => _returnCode,    -- Output
-                            _callingUser => _callingUser);
+        ---------------------------------------------------
+        -- Resolve parent container name
+        ---------------------------------------------------
 
-            If _returnCode <> '' Then
-                RAISE EXCEPTION '%', _message;
-            End If;
+        If Lower(_container) = 'parent' Then
+            SELECT container
+            INTO _container
+            FROM t_material_containers
+            WHERE container_id = _parentExperimentInfo.ParentContainerID;
+        End If;
 
-            ---------------------------------------------------
-            -- Now copy the aux info from the parent experiment
-            -- into the fractionated experiments
-            ---------------------------------------------------
+        ---------------------------------------------------
+        -- Move new fraction experiments to container
+        ---------------------------------------------------
 
-            CALL public.copy_aux_info_multi_id (
-                            _targetName         => 'Experiment',
-                            _targetEntityIDList => _experimentIDList,
-                            _categoryName       => '',
-                            _subCategoryName    => '',
-                            _sourceEntityID     => _parentExperimentInfo.ParentExperimentID,
-                            _mode               => 'copyAll',
-                            _message            => _message,        -- Output
-                            _returnCode         => _returnCode);    -- Output
+        CALL public.update_material_items (
+                        _mode        => 'move_material',
+                        _itemList    => _materialIDList,
+                        _itemType    => 'mixed_material',
+                        _newValue    => _container,
+                        _comment     => '',
+                        _message     => _message,       -- Output
+                        _returnCode  => _returnCode,    -- Output
+                        _callingUser => _callingUser);
 
-            If _returnCode <> '' Then
-                _message := format('Error copying Aux Info from parent Experiment to fractionated experiments, code %s', _returnCode);
-                RAISE EXCEPTION '%', _message;
-            End If;
+        If _returnCode <> '' Then
+            RAISE EXCEPTION '%', _message;
+        End If;
 
-            -- Change _message to an empty string if it is "Switched column name from Experiment_Num to experiment"
+        ---------------------------------------------------
+        -- Now copy the aux info from the parent experiment
+        -- into the fractionated experiments
+        ---------------------------------------------------
 
-            If _message ILike 'Switched column name from%' Then
-                _message := '';
-            End If;
+        CALL public.copy_aux_info_multi_id (
+                        _targetName         => 'Experiment',
+                        _targetEntityIDList => _experimentIDList,
+                        _categoryName       => '',
+                        _subCategoryName    => '',
+                        _sourceEntityID     => _parentExperimentInfo.ParentExperimentID,
+                        _mode               => 'copyAll',
+                        _message            => _message,        -- Output
+                        _returnCode         => _returnCode);    -- Output
 
-            If _message = '' Then
-                _message := format('New fraction names: %s', _fractionNamePreviewList);
-            End If;
+        If _returnCode <> '' Then
+            _message := format('Error copying Aux Info from parent Experiment to fractionated experiments, code %s', _returnCode);
+            RAISE EXCEPTION '%', _message;
+        End If;
 
+        -- Change _message to an empty string if it is "Switched column name from Experiment_Num to experiment"
+
+        If _message ILike 'Switched column name from%' Then
+            _message := '';
+        End If;
+
+        If _message = '' Then
+            _message := format('New fraction names: %s', _fractionNamePreviewList);
         End If;
 
         If _dropTempTables Then
