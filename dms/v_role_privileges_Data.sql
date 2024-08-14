@@ -32,6 +32,14 @@ sw	table	t_log_entries	d3l243	dmswebuser	INSERT
 sw	table	t_log_entries	d3l243	dmswebuser	UPDATE
 public	table	t_requested_run_batch_location_history	d3l243	lcmsnetuser	INSERT
 public	table	t_requested_run_batch_location_history	d3l243	lcmsnetuser	UPDATE
+pc	table	t_annotation_groups	d3l243	pceditor	DELETE
+pc	table	t_annotation_groups	d3l243	pceditor	INSERT
+pc	table	t_annotation_groups	d3l243	pceditor	SELECT
+pc	table	t_annotation_groups	d3l243	pceditor	UPDATE
+pc	table	t_archived_file_creation_options	d3l243	pceditor	DELETE
+pc	table	t_archived_file_creation_options	d3l243	pceditor	INSERT
+pc	table	t_archived_file_creation_options	d3l243	pceditor	SELECT
+pc	table	t_archived_file_creation_options	d3l243	pceditor	UPDATE
 pc	table	t_archived_output_file_collections_xref	d3l243	pceditor	DELETE
 pc	table	t_archived_output_file_collections_xref	d3l243	pceditor	INSERT
 pc	table	t_archived_output_file_collections_xref	d3l243	pceditor	UPDATE
@@ -2166,6 +2174,7 @@ public	view	v_data_helper_dataset_lookup	d3l243	readaccess	SELECT
 public	view	v_data_package_analysis_job_psm_list_report	d3l243	readaccess	SELECT
 public	view	v_data_package_analysis_jobs	d3l243	readaccess	SELECT
 public	view	v_data_package_dataset_psm_and_pm_list_report	d3l243	readaccess	SELECT
+public	view	v_data_package_dataset_psm_list_report	d3l243	readaccess	SELECT
 public	view	v_data_package_datasets_export	d3l243	readaccess	SELECT
 public	view	v_data_package_picklist	d3l243	readaccess	SELECT
 public	view	v_data_release_restriction_picklist	d3l243	readaccess	SELECT
@@ -2198,6 +2207,7 @@ public	view	v_dataset_list_report_2	d3l243	readaccess	SELECT
 public	view	v_dataset_metadata	d3l243	readaccess	SELECT
 public	view	v_dataset_pm_and_psm_list_report	d3l243	readaccess	SELECT
 public	view	v_dataset_psm_and_pm_list_report	d3l243	readaccess	SELECT
+public	view	v_dataset_psm_list_report	d3l243	readaccess	SELECT
 public	view	v_dataset_purge_stats	d3l243	readaccess	SELECT
 public	view	v_dataset_qc_ions_list_report	d3l243	readaccess	SELECT
 public	view	v_dataset_qc_list_report	d3l243	readaccess	SELECT
@@ -4526,6 +4536,7 @@ public	view	v_data_helper_dataset_lookup	d3l243	writeaccess	SELECT
 public	view	v_data_package_analysis_job_psm_list_report	d3l243	writeaccess	SELECT
 public	view	v_data_package_analysis_jobs	d3l243	writeaccess	SELECT
 public	view	v_data_package_dataset_psm_and_pm_list_report	d3l243	writeaccess	SELECT
+public	view	v_data_package_dataset_psm_list_report	d3l243	writeaccess	SELECT
 public	view	v_data_package_datasets_export	d3l243	writeaccess	SELECT
 public	view	v_data_package_picklist	d3l243	writeaccess	SELECT
 public	view	v_data_release_restriction_picklist	d3l243	writeaccess	SELECT
@@ -4558,6 +4569,7 @@ public	view	v_dataset_list_report_2	d3l243	writeaccess	SELECT
 public	view	v_dataset_metadata	d3l243	writeaccess	SELECT
 public	view	v_dataset_pm_and_psm_list_report	d3l243	writeaccess	SELECT
 public	view	v_dataset_psm_and_pm_list_report	d3l243	writeaccess	SELECT
+public	view	v_dataset_psm_list_report	d3l243	writeaccess	SELECT
 public	view	v_dataset_purge_stats	d3l243	writeaccess	SELECT
 public	view	v_dataset_qc_ions_list_report	d3l243	writeaccess	SELECT
 public	view	v_dataset_qc_list_report	d3l243	writeaccess	SELECT
