@@ -1,8 +1,8 @@
 --
--- Name: create_pending_predefined_analysis_tasks(integer, integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: create_pending_predefined_analysis_tasks(integer, integer, boolean, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.create_pending_predefined_analysis_tasks(IN _maxdatasetstoprocess integer DEFAULT 0, IN _datasetid integer DEFAULT 0, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.create_pending_predefined_analysis_tasks(IN _maxdatasetstoprocess integer DEFAULT 0, IN _datasetid integer DEFAULT 0, IN _infoonly boolean DEFAULT false, IN _showdebug boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -16,6 +16,7 @@ CREATE OR REPLACE PROCEDURE public.create_pending_predefined_analysis_tasks(IN _
 **    _maxDatasetsToProcess     Set to a positive number to limit the number of affected datasets
 **    _datasetID                When non-zero, only create jobs for the given dataset ID
 **    _infoOnly                 When true, preview jobs that would be created
+**    _showDebug                When true, show debug messages
 **    _message                  Status message
 **    _returnCode               Return code
 **
@@ -29,6 +30,7 @@ CREATE OR REPLACE PROCEDURE public.create_pending_predefined_analysis_tasks(IN _
 **          03/25/2020 mem - Append a row to T_Predefined_Analysis_Scheduling_Queue_History for each dataset processed
 **          12/13/2023 mem - Add argument _datasetID, which can be used to process a single dataset
 **                         - Ported to PostgreSQL
+**          08/14/2024 mem - Add argument _showDebug
 **
 *****************************************************/
 DECLARE
@@ -50,6 +52,7 @@ BEGIN
     _maxDatasetsToProcess := Coalesce(_maxDatasetsToProcess, 0);
     _datasetID            := Coalesce(_datasetID, 0);
     _infoOnly             := Coalesce(_infoOnly, false);
+    _showDebug            := Coalesce(_showDebug, false);
 
     ---------------------------------------------------
     -- Process 'New' entries in t_predefined_analysis_scheduling_queue
@@ -87,7 +90,8 @@ BEGIN
 
         _currentItemID := _currentItem.ItemID;
 
-        If _infoOnly Then
+        If _infoOnly Or _showDebug Then
+            RAISE INFO '';
             RAISE INFO 'Process Item %: %', _currentItemID, _currentItem.DatasetName;
         End If;
 
@@ -110,7 +114,7 @@ BEGIN
                             _excludeDatasetsNotReleased => _currentItem.ExcludeDatasetsNotReleased,
                             _preventDuplicateJobs       => _currentItem.PreventDuplicateJobs,
                             _infoOnly                   => _infoOnly,
-                            _showDebug                  => false,
+                            _showDebug                  => _showDebug,
                             _message                    => _message,        -- Output
                             _returnCode                 => _returnCode,     -- Output
                             _jobsCreated                => _jobsCreated);   -- Output
@@ -164,13 +168,14 @@ BEGIN
 
     END LOOP;
 
-    If _infoOnly Then
+    If _infoOnly Or _showDebug Then
         If _datasetsProcessed = 0 Then
             _message := 'No candidates were found in t_predefined_analysis_scheduling_queue';
         Else
             _message := format('Processed %s %s', _datasetsProcessed, public.check_plural(_datasetsProcessed, 'dataset', 'datasets'));
         End If;
 
+        RAISE INFO '';
         RAISE INFO '%', _message;
     End If;
 
@@ -178,11 +183,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.create_pending_predefined_analysis_tasks(IN _maxdatasetstoprocess integer, IN _datasetid integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.create_pending_predefined_analysis_tasks(IN _maxdatasetstoprocess integer, IN _datasetid integer, IN _infoonly boolean, IN _showdebug boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE create_pending_predefined_analysis_tasks(IN _maxdatasetstoprocess integer, IN _datasetid integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE create_pending_predefined_analysis_tasks(IN _maxdatasetstoprocess integer, IN _datasetid integer, IN _infoonly boolean, IN _showdebug boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.create_pending_predefined_analysis_tasks(IN _maxdatasetstoprocess integer, IN _datasetid integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'CreatePendingPredefinedAnalysisTasks or CreatePendingPredefinedAnalysesTasks';
+COMMENT ON PROCEDURE public.create_pending_predefined_analysis_tasks(IN _maxdatasetstoprocess integer, IN _datasetid integer, IN _infoonly boolean, IN _showdebug boolean, INOUT _message text, INOUT _returncode text) IS 'CreatePendingPredefinedAnalysisTasks or CreatePendingPredefinedAnalysesTasks';
 
