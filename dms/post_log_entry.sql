@@ -1,14 +1,14 @@
 --
--- Name: post_log_entry(text, text, text, text, integer, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: post_log_entry(text, text, text, text, integer, boolean, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message text, IN _postedby text DEFAULT 'na'::text, IN _targetschema text DEFAULT 'public'::text, IN _duplicateentryholdoffhours integer DEFAULT 0, IN _ignoreerrors boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message text, IN _postedby text DEFAULT 'na'::text, IN _targetschema text DEFAULT 'public'::text, IN _duplicateentryholdoffhours integer DEFAULT 0, IN _ignoreerrors boolean DEFAULT false, IN _logerrorstopubliclogtable boolean DEFAULT true)
     LANGUAGE plpgsql
     AS $_$
 /****************************************************
 **
 **  Desc:
-**      Append a log entry to t_log_entries, either in the public schema or the specified schema
+**      Append a log entry to t_log_entries, either in the public schema or in the specified schema
 **
 **  Arguments:
 **    _type                         Message type, typically Normal, Warning, Error, or Progress, but can be any text value
@@ -17,6 +17,7 @@ CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message tex
 **    _targetSchema                 If blank or 'public', log to public.t_log_entries; otherwise, log to t_log_entries for the given schema (if the table does not exist, uses public.t_log_entries)
 **    _duplicateEntryHoldoffHours   Set this to a value greater than 0 to prevent duplicate entries being posted within the given number of hours
 **    _ignoreErrors                 Set this to true to show a warning if an exception occus (typically due to the calling user not having write access to t_log_entries)
+**    _logErrorsToPublicLogTable    When true, if _type is 'Error' and _targetSchema is not public (or an empty string), also log the error message to public.t_log_entries
 **
 **  Auth:   grk
 **  Date:   01/26/2001
@@ -46,6 +47,7 @@ CREATE OR REPLACE PROCEDURE public.post_log_entry(IN _type text, IN _message tex
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          02/27/2024 mem - Log messages to t_log_entries_local when the target schema is 'logdms', 'logcap', or 'logsw'
 **          05/25/2024 mem - If _targetSchema is not public (or an empty string), but _type is 'Error', also log the error message to public.t_log_entries
+**          08/14/2024 mem - Add argument _logErrorsToPublicLogTable
 **
 *****************************************************/
 DECLARE
@@ -93,6 +95,7 @@ BEGIN
     _postedBy                   := Trim(Coalesce(_postedBy, 'na'));
     _duplicateEntryHoldoffHours := Coalesce(_duplicateEntryHoldoffHours, 0);
     _ignoreErrors               := Coalesce(_ignoreErrors, false);
+    _logErrorsToPublicLogTable  := Coalesce(_logErrorsToPublicLogTable, true);
 
     If _postedBy ILike 'Space%' And _type::citext In ('Health', 'Normal') Then
         -- Auto-update _duplicateEntryHoldoffHours to be 24 if it is zero
@@ -138,7 +141,7 @@ BEGIN
         RAISE WARNING '%', _msg;
     End If;
 
-    If _type::citext = 'Error' And _targetSchema <> 'public' Then
+    If _type::citext = 'Error' And _targetSchema <> 'public' And _logErrorsToPublicLogTable Then
         -- Also log the error in public.t_log_entries so that we can query a single table to check for errors
 
         _s := format('INSERT INTO %s (posted_by, entered, type, message) '
@@ -182,5 +185,5 @@ END
 $_$;
 
 
-ALTER PROCEDURE public.post_log_entry(IN _type text, IN _message text, IN _postedby text, IN _targetschema text, IN _duplicateentryholdoffhours integer, IN _ignoreerrors boolean) OWNER TO d3l243;
+ALTER PROCEDURE public.post_log_entry(IN _type text, IN _message text, IN _postedby text, IN _targetschema text, IN _duplicateentryholdoffhours integer, IN _ignoreerrors boolean, IN _logerrorstopubliclogtable boolean) OWNER TO d3l243;
 
