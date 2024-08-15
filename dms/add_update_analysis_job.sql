@@ -453,13 +453,13 @@ BEGIN
 
         CALL public.validate_analysis_job_parameters (
                                 _toolName                           => _toolName,
-                                _paramFileName                      => _paramFileName,          -- Output
-                                _settingsFileName                   => _settingsFileName,       -- Output
-                                _organismDBName                     => _organismDBName,         -- Output
+                                _paramFileName                      => _paramFileName,          -- Input/Output
+                                _settingsFileName                   => _settingsFileName,       -- Input/Output
+                                _organismDBName                     => _organismDBName,         -- Input/Output
                                 _organismName                       => _organismName,
-                                _protCollNameList                   => _protCollNameList,       -- Output
-                                _protCollOptionsList                => _protCollOptionsList,    -- Output
-                                _ownerUsername                      => _ownerUsername,          -- Output
+                                _protCollNameList                   => _protCollNameList,       -- Input/Output
+                                _protCollOptionsList                => _protCollOptionsList,    -- Input/Output
+                                _ownerUsername                      => _ownerUsername,          -- Input/Output
                                 _mode                               => _mode,
                                 _userID                             => _userID,                 -- Output
                                 _analysisToolID                     => _analysisToolID,         -- Output
@@ -469,7 +469,7 @@ BEGIN
                                 _autoUpdateSettingsFileToCentroided => true,
                                 _allowNewDatasets                   => false,
                                 _warning                            => _warning,                -- Output
-                                _priority                           => _priority,               -- Output
+                                _priority                           => _priority,               -- Input/Output
                                 _showDebugMessages                  => _infoOnly,
                                 _message                            => _msg,                    -- Output
                                 _returnCode                         => _returnCode);            -- Output
