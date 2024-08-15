@@ -55,6 +55,9 @@ CREATE OR REPLACE PROCEDURE public.create_predefined_analysis_jobs(IN _datasetna
 **                         - Use append_to_text() to append messages
 **          12/13/2023 mem - Do not log an error for return codes 'U6251', 'U6253', and 'U6254' from add_update_analysis_job
 **          08/07/2024 mem - Include current location in the exception message
+**          08/14/2024 mem - When counting jobs in Tmp_JobsToCreate, ignore rows with an empty dataset name
+**                         - Check for empty dataset name when looping through jobs in Tmp_JobsToCreate
+**                         - Show additional values when debugging
 **
 *****************************************************/
 DECLARE
@@ -127,7 +130,7 @@ BEGIN
             OwnerUsername, Comment, PropagationMode, SpecialProcessing,
             ExistingJobCount, Message, ReturnCode
         )
-        SELECT dataset, priority, analysis_tool_name, param_file_name, settings_file_name,
+        SELECT Trim(Coalesce(dataset, '')), priority, analysis_tool_name, param_file_name, settings_file_name,
                organism_name, protein_collection_list, protein_options_list, organism_db_name,
                owner_username, comment, propagation_mode, special_processing,
                existing_job_count, message, returncode
@@ -166,7 +169,8 @@ BEGIN
         If _showDebug Then
             SELECT COUNT(*)
             INTO _jobCount
-            FROM Tmp_JobsToCreate;
+            FROM Tmp_JobsToCreate
+            WHERE DatasetName <> '';
 
             RAISE INFO 'Table Tmp_JobsToCreate has % % for dataset %', _jobCount, check_plural(_jobCount, 'job', 'jobs'), _datasetName;
         End If;
@@ -178,7 +182,8 @@ BEGIN
         _currentLocation := 'Create pending jobs';
 
         FOR _jobInfo IN
-            SELECT Priority,
+            SELECT DatasetName,
+                   Priority,
                    AnalysisToolName,
                    ParamFileName,
                    SettingsFileName,
@@ -190,10 +195,21 @@ BEGIN
                    Comment,
                    PropagationMode,
                    SpecialProcessing,
+                   Message,
                    ID
             FROM Tmp_JobsToCreate
             ORDER BY ID
         LOOP
+            If _jobInfo.DatasetName = '' Then
+                -- No predefined rules were found for this dataset
+                -- The Message column will have the details, e.g. No rules found (dataset is unreviewed): Dataset_Name
+
+                If _infoOnly Or _showDebug Then
+                    RAISE INFO '%', _jobInfo.Message;
+                End If;
+
+                CONTINUE;
+            End If;
 
             If _analysisToolNameFilter = '' Then
                 _createJob := true;
@@ -220,10 +236,15 @@ BEGIN
             If _infoOnly Or _showDebug Then
                 RAISE INFO '';
                 RAISE INFO 'Call add_update_analysis_job for';
-                RAISE INFO '  dataset:       %', _datasetName;
-                RAISE INFO '  tool:          %', _jobInfo.AnalysisToolName;
-                RAISE INFO '  param file:    %', _jobInfo.ParamFileName;
-                RAISE INFO '  settings file: %', _jobInfo.SettingsFileName;
+                RAISE INFO '  dataset:            %', _datasetName;
+                RAISE INFO '  tool:               %', _jobInfo.AnalysisToolName;
+                RAISE INFO '  param file:         %', _jobInfo.ParamFileName;
+                RAISE INFO '  settings file:      %', _jobInfo.SettingsFileName;
+                RAISE INFO '  organism:           %', _jobInfo.OrganismName;
+                RAISE INFO '  protein collection: %', _jobInfo.ProteinCollectionList;
+                RAISE INFO '  protein options:    %', _jobInfo.ProteinOptionsList;
+                RAISE INFO '  organism DB:        %', _jobInfo.OrganismDBName;
+                RAISE INFO '  owner username:     %', _jobInfo.OwnerUsername;
             End If;
 
             ---------------------------------------------------
