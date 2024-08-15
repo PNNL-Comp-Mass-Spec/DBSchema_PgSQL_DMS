@@ -79,6 +79,7 @@ CREATE OR REPLACE PROCEDURE sw.set_step_task_complete(IN _job integer, IN _step 
 **          02/08/2024 mem - If _completionCode is 20 and the step tool is DiaNN, set the job step as complete, but skip the subsequent data extraction step
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          08/14/2024 mem - Set _logErrorsToPublicLogTable to false when calling post_log_entry with warning messages
 **
 *****************************************************/
 DECLARE
@@ -271,7 +272,7 @@ BEGIN
                 _stepToolsToSkip := array_append(_stepToolsToSkip, 'LCMSFeatureFinder');
 
                 _message := format('Warning, %s has no results in the DeconTools _isos.csv file; either it is a bad dataset or analysis parameters are incorrect', _jobStepDescription);
-                CALL public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
+                CALL public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw', _logErrorsToPublicLogTable => false);
             End If;
 
             If _jobInfo.StepTool = 'DataExtractor' Then
@@ -282,7 +283,7 @@ BEGIN
                 _stepToolsToSkip := array_cat(_stepToolsToSkip, ARRAY ['MSGF', 'IDPicker', 'MSAlign_Quant']);
 
                 _message := format('Warning, %s has an empty synopsis file (no results above threshold); either it is a bad dataset or analysis parameters are incorrect', _jobStepDescription);
-                CALL public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
+                CALL public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw', _logErrorsToPublicLogTable => false);
             End If;
 
             If _jobInfo.StepTool = 'DiaNN' Then
@@ -293,7 +294,7 @@ BEGIN
                 _stepToolsToSkip := array_append(_stepToolsToSkip, 'DataExtractor');
 
                 _message := format('Warning, %s has an empty report.tsv file (no results above threshold); either it is a bad dataset or analysis parameters are incorrect', _jobStepDescription);
-                CALL post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
+                CALL post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw', _logErrorsToPublicLogTable => false);
             End If;
 
         End If;
