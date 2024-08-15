@@ -47,6 +47,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_user(IN _username text, IN _hanfor
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          05/22/2024 mem - Rename the Hanford ID parameter to _hanfordID
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          08/14/2024 mem - Fix bug validating _userUpdate
 **
 *****************************************************/
 DECLARE
@@ -149,7 +150,7 @@ BEGIN
         If _userUpdate::citext In ('Y', 'Yes', '') Then
             _userUpdate := 'Y';
         ElsIf _userUpdate::citext In ('N', 'No') Then
-            _userUpdate := 'Y';
+            _userUpdate := 'N';
         Else
             RAISE EXCEPTION 'User update should be Y or N' USING ERRCODE = 'U5206';
         End If;
