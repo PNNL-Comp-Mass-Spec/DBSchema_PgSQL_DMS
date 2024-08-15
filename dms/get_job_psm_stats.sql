@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION public.get_job_psm_stats(_job integer) RETURNS text
 **          06/15/2022 mem - Ported to PostgreSQL
 **          12/09/2022 mem - Cast FDR_Threshold to numeric
 **          05/30/2023 mem - Use format() for string concatenation
+**          08/13/2023 mem - Remove extra % in format()
 **
 *****************************************************/
 DECLARE
@@ -32,7 +33,7 @@ BEGIN
                             Spectra_Searched,
                             Total_PSMs_FDR_Filter,
                             CASE WHEN Dynamic_Reporter_Ion > 0
-                                 THEN format(' (%s%%% missing N-Terminal reporter ion)', Percent_PSMs_Missing_NTerm_Reporter_Ion)
+                                 THEN format(' (%s%% missing N-Terminal reporter ion)', Percent_PSMs_Missing_NTerm_Reporter_Ion)
                             ELSE ''
                             END,
                             Unique_Peptides_FDR_Filter,
