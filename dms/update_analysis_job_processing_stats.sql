@@ -40,12 +40,14 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_job_processing_stats(IN _job 
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          08/12/2024 mem - Ignore return code 'U5250' from set_archive_update_required
+**          08/14/2024 mem - Do not call set_archive_update_required() for data package based datasets
 **
 *****************************************************/
 DECLARE
-    _datasetID int := 0;
-    _datasetName text := '';
-    _toolName citext := '';
+    _datasetID int;
+    _datasetName citext;
+    _datasetType citext;
+    _toolName citext;
     _updateCodeExpected int;
 
     _formatSpecifier text;
@@ -242,23 +244,32 @@ BEGIN
     --------------------------------------------------------------
 
     If _newDMSJobState In (4, 14) Then
-        -- Get the dataset ID, dataset name, and tool name
+        -- Get the dataset ID, dataset name, dataset type, and tool name
 
         SELECT DS.dataset_id,
                DS.dataset,
+               DSType.dataset_type,
                T.analysis_tool
-        INTO _datasetID, _datasetName, _toolName
+        INTO _datasetID, _datasetName, _datasetType, _toolName
         FROM t_analysis_job J
              INNER JOIN t_dataset DS
                ON J.dataset_id = DS.dataset_id
+             INNER JOIN t_dataset_type_name DSType
+               ON DS.dataset_type_id = DSType.dataset_type_id
              INNER JOIN t_analysis_tool T
                ON J.analysis_tool_id = T.analysis_tool_id
         WHERE J.job = _job;
 
         If FOUND Then
-            -- Schedule an archive update
+            -- Schedule an archive update (but not for data package based datasets)
+
+            If _datasetName Like 'DataPackage%' And _datasetType = 'DataFiles' Then
+                RAISE INFO 'Skipping call to set_archive_update_required() for data package based dataset %', _datasetName;
+                RETURN;
+            End If;
+
             CALL public.set_archive_update_required (
-                            _datasetName,
+                            _datasetName::text,
                             _message    => _message,        -- Output
                             _returncode => _returncode);    -- Output
 

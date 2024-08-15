@@ -21,6 +21,7 @@ SET row_security = off;
 --
 
 COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, description, monoisotopic_mass, average_mass, affected_atom, original_source, original_source_name, alternative_name, empirical_formula) FROM stdin;
+1571	Sulfo	Sulfonation	79.956815	80.0632	-	UniMod	Sulfo	Sulfation	O(3) S
 1535	MethNoTMT	Methylation on TMT-labeled samples; remove 6-plex TMT and add Methyl	-215.147283	\N	-	PNNL	MethylNoTMT	\N	H(-18) C(-7) 13C(-4) N(-1) 15N(-1) O(-2)
 1536	UbNoTMT16	Ubiquitination on TMT-labeled samples; remove 16-plex TMT and add Ubiq	-190.164215	\N	-	PNNL	UbiqNoTMT16	\N	\N
 1054	Hexose	Hexose Addition (also for Amadori glycation)	162.052826	162.1406	-	UniMod	Hex	Hexose	C(6) H(10) O(5)
@@ -463,7 +464,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 -- Name: t_mass_correction_factors_mass_correction_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1570, true);
+SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1571, true);
 
 
 --

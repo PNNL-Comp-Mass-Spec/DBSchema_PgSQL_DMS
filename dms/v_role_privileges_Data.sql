@@ -2589,6 +2589,7 @@ public	view	v_residues	d3l243	readaccess	SELECT
 public	view	v_rna_prep_request_detail_report	d3l243	readaccess	SELECT
 public	view	v_rna_prep_request_entry	d3l243	readaccess	SELECT
 public	view	v_rna_prep_request_list_report	d3l243	readaccess	SELECT
+public	view	v_role_members	d3l243	readaccess	SELECT
 public	view	v_role_privileges	d3l243	readaccess	SELECT
 public	view	v_run_assignment_wellplate_list_report	d3l243	readaccess	SELECT
 public	view	v_run_factors_export	d3l243	readaccess	SELECT
@@ -4951,6 +4952,7 @@ public	view	v_residues	d3l243	writeaccess	SELECT
 public	view	v_rna_prep_request_detail_report	d3l243	writeaccess	SELECT
 public	view	v_rna_prep_request_entry	d3l243	writeaccess	SELECT
 public	view	v_rna_prep_request_list_report	d3l243	writeaccess	SELECT
+public	view	v_role_members	d3l243	writeaccess	SELECT
 public	view	v_role_privileges	d3l243	writeaccess	SELECT
 public	view	v_run_assignment_wellplate_list_report	d3l243	writeaccess	SELECT
 public	view	v_run_factors_export	d3l243	writeaccess	SELECT

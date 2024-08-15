@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.3
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,28 +21,28 @@ SET row_security = off;
 --
 
 COPY public.t_general_statistics (entry_id, category, label, value, last_affected) FROM stdin;
+1000	Job_Count	All	2296301.000	2024-08-14 20:03:27.11376
+1001	Job_Count	Last 7 days	846.000	2024-08-14 20:03:27.11376
 1018	Organism_Count	Last 30 days	1.000	2024-08-07 20:03:06.815616
+1002	Job_Count	Last 30 days	12691.000	2024-08-14 20:03:27.11376
+1003	Job_Count	New	3.000	2024-08-14 20:03:27.11376
+1010	Dataset_Count	All	1230666.000	2024-08-14 20:03:27.11376
 1020	RawDataTB	Last 7 days	0	2024-08-09 14:03:08.709662
-1013	Experiment_Count	All	379153.000	2024-08-09 17:03:08.851181
-1015	Experiment_Count	Last 30 days	4196.000	2024-08-09 17:03:08.851181
-1000	Job_Count	All	2294785.000	2024-08-09 20:03:08.984617
-1001	Job_Count	Last 7 days	561.000	2024-08-09 20:03:08.984617
-1002	Job_Count	Last 30 days	13275.000	2024-08-09 20:03:08.984617
-1003	Job_Count	New	1.000	2024-08-09 20:03:08.984617
-1004	Campaign_Count	All	2010.000	2024-08-09 20:03:08.984617
-1005	Campaign_Count	Last 7 days	3.000	2024-08-09 20:03:08.984617
-1006	Campaign_Count	Last 30 days	11.000	2024-08-09 20:03:08.984617
+1011	Dataset_Count	Last 7 days	951.000	2024-08-14 20:03:27.11376
+1012	Dataset_Count	Last 30 days	9458.000	2024-08-14 20:03:27.11376
+1014	Experiment_Count	Last 7 days	615.000	2024-08-14 20:03:27.11376
 1019	RawDataTB	All	748	2024-08-08 23:03:08.17413
-1010	Dataset_Count	All	1229238.000	2024-08-09 20:03:08.984617
-1011	Dataset_Count	Last 7 days	632.000	2024-08-09 20:03:08.984617
-1012	Dataset_Count	Last 30 days	9535.000	2024-08-09 20:03:08.984617
-1014	Experiment_Count	Last 7 days	570.000	2024-08-09 20:03:08.984617
+1013	Experiment_Count	All	379928.000	2024-08-14 11:03:26.816785
+1021	RawDataTB	Last 30 days	7	2024-08-14 11:03:26.816785
 1007	CellCulture_Count	All	18022.000	2024-08-06 17:03:05.868691
 1008	CellCulture_Count	Last 7 days	0.000	2024-08-06 17:03:05.868691
 1009	CellCulture_Count	Last 30 days	0.000	2024-08-06 17:03:05.868691
 1016	Organism_Count	All	829.000	2024-08-06 17:03:05.868691
 1017	Organism_Count	Last 7 days	0.000	2024-08-06 17:03:05.868691
-1021	RawDataTB	Last 30 days	10	2024-08-06 17:03:05.868691
+1004	Campaign_Count	All	2011.000	2024-08-13 17:03:13.283497
+1005	Campaign_Count	Last 7 days	1.000	2024-08-13 17:03:13.283497
+1006	Campaign_Count	Last 30 days	12.000	2024-08-13 17:03:13.283497
+1015	Experiment_Count	Last 30 days	4476.000	2024-08-14 14:03:26.921251
 \.
 
 

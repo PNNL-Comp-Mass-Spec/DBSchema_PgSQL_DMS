@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.3
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -49,6 +49,8 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 87	LC-Dionex-Formic_100min	Dionex LC, formic acid, 100 minute separation	1	LC-Formic_100min	1	2014-12-11 15:31:52
 132	LC-Dionex-Formic_1hr	Dionex LC, formic acid, 1 hr separation	1	LC-Formic_1hr	1	2023-05-04 08:47:02
 117	LC-Dionex-Formic_2hr	Dionex LC, formic acid, 2 hr separation	1	LC-Formic_2hr	1	2020-10-09 10:49:32
+143	LC-Neo-Formic_10Min	Neo, formic acid, 10 min separation	1	LC-Formic_10min	1	2024-05-30 10:29:32
+144	LC-Neo-Formic_20Min	Neo, formic acid, 20 Min separation	1	LC-Formic_20min	1	2024-05-30 10:30:01
 6	CE	Capillary electrophoresis	1	CE	0	2001-01-24 15:50:06
 5	CIEF	Capillary electrophoresis	0	CE	0	2001-01-24 15:43:06
 134	Evosep_Whisper_20_SPD_60min	Evosep	1	Evosep_Whisper_20_SPD_60min	0	2023-09-12 14:07:31
@@ -97,9 +99,7 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 62	LC-JHU-Standard	Datasets acquired at Johns Hopkins University	0	Other	0	2012-06-05 21:52:40
 21	LC-KoreaU-Standard	Datasets acquired at Korea University	0	Other	0	2009-07-28 18:58:49
 63	LC-MIT-Standard	Datasets acquired at Forest White's lab at MIT	0	Other	0	2012-06-05 21:52:46
-143	LC-Neo-Formic_10Min	Neo, formic acid, 10 min separation	1	LC-Formic_10Min	1	2024-05-30 10:29:32
 127	LC-Neo-Formic_1hr	Neo, formic acid, 1 hour separation	1	LC-Formic_1hr	1	2022-12-20 12:46:10
-144	LC-Neo-Formic_20Min	Neo, formic acid, 20 Min separation	1	LC-Formic_20Min	1	2024-05-30 10:30:01
 70	LC-Eksigent-Formic_High-pH	Eksigent nanoflow, high pH	0	LC-Eksigent	0	2012-01-17 08:49:39
 74	LC-ISCO-Formic_50minute	ISCO system, formic acid solvent, 50 minute separation (exponential dilution gradient)	0	LC-Formic_1hr	1	2013-02-14 13:25:17
 20	LC-ISCO-Formic_80minute	ISCO system, formic acid solvent, 80 minute separation	0	LC-Formic_80min	1	2008-05-15 09:23:58

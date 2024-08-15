@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.3
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -65,12 +65,12 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 57	33	20	Disable chain 33	SQL	CALL disable_timetable_chain (_chainID => 33);	\N	\N	f	t	0
 55	32	20	Disable chain 32	SQL	CALL disable_timetable_chain (_chainID => 32);	\N	\N	f	t	0
 63	35	20	Disable chain 35	SQL	CALL disable_timetable_chain (_chainID => 35);	\N	\N	f	t	0
-25	17	10	Auto update QC_Shew dataset rating	SQL	CALL auto_update_dataset_rating_via_qc_metrics\r\n    _campaignName => 'QC-Shew-Standard', \r\n    _experimentExclusion => '%Intact%',\r\n    _datasetCreatedMinimum => '2012-10-01', \r\n    _infoOnly => false);	\N	\N	f	t	0
 48	28	10	Clear data package manager errors	SQL	DELETE FROM dpkg.T_Log_Entries\r\nWHERE (message LIKE '%has an existing metadata file between 2 and 6.5 days old%' OR\r\n   message LIKE '%has not been validated in the archive after 5 days; %' OR\r\n   message LIKE '%is not available in MyEMSL after 24 hours; see %' OR\r\n   message LIKE '%was previously uploaded to MyEMSL, yet Simple Search did not return any files for this dataset%Skipping this data package %')\r\n    AND (type = 'error');	\N	\N	f	t	0
 65	36	20	Disable chain 36	SQL	CALL disable_timetable_chain (_chainID => 36);	\N	\N	f	t	0
 51	30	10	Delete old historic DMS DB logs	SQL	CALL logdms.delete_old_events_and_historic_logs (_infoOnly => false);	\N	\N	f	t	0
 67	37	20	Disable chain 37	SQL	CALL disable_timetable_chain (_chainID => 37);	\N	\N	f	t	0
 54	32	10	Disable archive-dependent CTM step tools	SQL	SELECT * FROM cap.enable_disable_archive_step_tools (_enable => false, _disableComment => 'Disabled for scheduled archive maintenance');	\N	\N	f	t	0
+25	17	10	Auto update QC_Shew dataset rating	SQL	CALL auto_update_dataset_rating_via_qc_metrics  (_campaignName => 'QC-Shew-Standard',    _experimentExclusion => '%Intact%',   _datasetCreatedMinimum => '2012-10-01',    _infoOnly => false);	\N	\N	f	t	0
 185	100	10	Disable Analysis Managers	SQL	CALL mc.disable_analysis_managers (_infoOnly => false);	\N	\N	f	t	0
 186	100	20	Disable chain 100	SQL	CALL disable_timetable_chain (_chainID => 100);	\N	\N	f	t	0
 189	101	30	Disable chain 101	SQL	CALL disable_timetable_chain (_chainID => 101);	\N	\N	f	t	0

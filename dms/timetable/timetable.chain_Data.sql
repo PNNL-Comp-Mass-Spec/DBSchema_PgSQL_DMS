@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.3
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -48,10 +48,10 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 27	Cleanup pipeline jobs	15 5 * * 7	\N	0	t	f	f	\N	\N
 28	Clear data package manager errors	48 6 * * *	\N	0	t	f	f	\N	\N
 21	Backfill pipeline jobs	7/15 3-23 * * *	\N	0	t	f	f	\N	\N
-29	Create pending predefined jobs	3/5 * * * *	\N	0	t	f	f	\N	\N
 30	Delete old historic logs	19 19 6 * *	\N	0	t	f	f	\N	\N
 31	Delete orphaned capture tasks	38 7 * * *	\N	0	t	f	f	\N	\N
 34	DMS notification event update	0 12 * * *	\N	0	t	f	f	\N	\N
+29	Create pending predefined jobs	3/5 * * * *	\N	0	t	f	f	\N	\N
 38	Find stale MyEMSL uploads	38 7 * * *	\N	0	t	f	f	\N	\N
 42	Reset failed MyEMSL uploads	17 1-23 * * *	\N	0	t	f	f	\N	\N
 39	Reset failed dataset capture tasks	7/30 * * * *	\N	0	t	f	f	\N	\N
