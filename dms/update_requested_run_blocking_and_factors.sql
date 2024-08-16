@@ -91,6 +91,9 @@ BEGIN
     _debugMode    := Coalesce(_debugMode, false);
     _callingUser  := Trim(Coalesce(_callingUser, ''));
 
+    -- Uncomment to turn on debug mode
+    -- _debugMode := true;
+
     If _debugMode Then
         If _blockingList = '' Then
             _logMessage := '_blockingList is empty';
