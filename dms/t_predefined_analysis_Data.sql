@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.3
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,8 +21,11 @@ SET row_security = off;
 --
 
 COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequence, instrument_class_criteria, instrument_name_criteria, instrument_excl_criteria, campaign_name_criteria, campaign_excl_criteria, experiment_name_criteria, experiment_excl_criteria, exp_comment_criteria, organism_name_criteria, dataset_name_criteria, dataset_excl_criteria, dataset_type_criteria, scan_type_criteria, scan_type_excl_criteria, labelling_incl_criteria, labelling_excl_criteria, separation_type_criteria, scan_count_min_criteria, scan_count_max_criteria, analysis_tool_name, param_file_name, settings_file_name, organism_id, organism_db_name, protein_collection_list, protein_options_list, priority, special_processing, enabled, description, created, creator, next_level, trigger_before_disposition, propagation_mode, last_affected) FROM stdin;
+1850	89	56	LTQ_FT	%		CPTAC%		KidsFirst[_]AML[_]W[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_PartTryp_DynMetOx_Stat_CysAlk_TMT_16Plex_20ppmParTol.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2024-08-15 17:04:34.008162	D3L243	90	1	0	2024-08-15 17:04:34.008162
 1009	120	\N	Finnigan_Ion_Trap			%mouse%											%PEO%			0	0	Sequest	sequest_N15_PEO.params	FinniganDefSettings.xml	5	Mm_seq_uniqClean.fasta	na	na	3		0		2001-09-27 10:25:00		\N	0	0	2001-09-27 10:25:00
 1010	120	\N	Finnigan_Ion_Trap			%mouse%											%ICAT%			0	0	Sequest	sequest_ICAT_D8.params	FinniganDefSettings.xml	5	Mm_seq_uniqClean.fasta	na	na	3		0		2001-05-08 07:25:00		\N	0	0	2001-05-08 07:25:00
+1851	89	56	LTQ_FT	%		CPTAC%		KidsFirst[_]AML[_]P[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynSTYPhos_Stat_CysAlk_TMT_16Plex_Protocol1_20ppmParTol.txt	MzML_StatCysAlk_S_Phospho_Dyn_TY_Phospho_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2024-08-15 17:04:38.966412	D3L243	90	1	0	2024-08-15 17:04:38.966412
+1852	89	56	LTQ_FT	%		CPTAC%		KidsFirst[_]AML[_]A[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynMetOx_TMTExclusive_K_Acetyl_K_Carbamyl_N_Deamid_Stat_CysAlk_TMT_16Plex_20ppmParTol_PlusOne_IsotopeError.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2024-08-15 17:04:43.308799	D3L243	90	1	0	2024-08-15 17:04:43.308799
 1000	100	\N	Finnigan_Ion_Trap			deinococcus														0	0	TurboSequest	sequest_Tryp_4_IC.params	FinniganDefSettings.xml	1	GDR_2000-03-21.fasta.bin	na	na	2		0		2001-05-03 14:55:00		\N	0	0	2001-05-03 14:55:00
 1160	24	\N	BRUKERFTMS	11T_FTICR_B																0	0	ICR2LS	11T-Default061903.Par	FTICRDefSettings.txt	1051	na	na	na	2		0		2004-02-27 12:52:00		\N	0	0	2004-02-27 12:52:00
 1018	100	\N	Finnigan_Ion_Trap			%yeast%														0	0	TurboSequest	sequest_N15_Tryp_4_IC.params	FinniganDefSettings.xml	2	yeast_2001-01-08_n15.fasta.bin	na	na	2		0		2001-06-15 11:20:00		\N	0	0	2001-06-15 11:20:00
@@ -830,13 +833,13 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 1827	89	59	LTQ_FT	%		CPTAC4		PTRC[_]exp10[_]Plex[_]%[_]A%									TMT%			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynMetOx_TMTExclusive_K_Acetyl_K_Carbamyl_N_Deamid_Stat_CysAlk_TMT_6Plex_20ppmParTol_PlusOne_IsotopeError.txt	IonTrapDefSettings_MzML_StatCysAlk_6plexTMT.xml	8	na	H_sapiens_UniProt_SPROT_TrEMBL_2018-04-17,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	3		1		2023-12-03 14:32:34	D3L243	90	1	0	2023-12-03 14:33:35
 1828	85	15	LTQ_FT	Lumos%		Exosome UCSD		Exo_Laurent%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_Stat_CysAlk_Precursor374-949.txt	DiaNN_Standard.xml	8	na	H_sapiens_UniProt_SPROT_2023-09-01	seq_direction=forward,filetype=fasta	4		1		2023-12-05 12:15:09	D3L243	86	1	0	2024-05-14 16:47:09
 1829	85	10	LTQ_FT	Lumos%				QC_Mam%					%QC_Shew%		DIA%					0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_Stat_CysAlk_Precursor374-949.txt	DiaNN_Standard.xml	24	na	M_musculus_UniProt_SPROT_2023-03-01,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		1	Changed trigger mode to "Before Disposition" in May 2024	2023-12-07 16:56:07	D3L243	86	1	0	2024-05-14 16:48:51
+1836	85	15	LTQ_FT	Eclipse%		CPTAC%		KidsFirst_AML%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_Stat_CysAlk_Precursor350-1650.txt	DiaNN_Standard.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	4		0	Disabled August 15, 2024	2024-03-06 10:57:28	D3L243	86	1	0	2024-08-15 17:05:18.877106
 1830	85	10	LTQ_FT	Exploris%				QC_Mam%					%QC_Shew%		DIA%					0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_NTermAcet_Stat_CysAlk_Precursor400-900.txt	DiaNN_Standard.xml	24	na	M_musculus_UniProt_SPROT_2023-03-01,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		1	Changed trigger mode to "Before Disposition" in May 2024	2023-12-07 19:13:11	D3L243	86	1	0	2024-05-14 16:48:55
 1831	91	58	LTQ_FT	%		Myatt_Placenta		Myatt_Placenta%				MIPI_microPOTS_Placenta%								0	0	MSGFPlus_MzML	MSGFPlus_PartTryp_MetOx_StatCysAlk_20ppmParTol.txt	IonTrapDefSettings_MzML_StatCysAlk.xml	8	na	H_sapiens_UniProt_SPROT_2023-03-01,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	3		1		2024-01-04 15:21:05	D3L243	92	1	0	2024-01-04 15:23:31
 1832	90	59	LTQ_FT	%		MoTrPAC		MoTrPAC[_]Tranche%[_]G[_]%						%HCD%			TMT18			0	0	MSGFPlus_MzML	MSGFPlus_PartTryp_DynMetOx_Stat_CysAlk_TMT_16Plex_20ppmParTol.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_UniProt_SPROT_2021-06-20,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	3		1	For MoTrPAC human muscle (HM) and human adipose (HA) samples, global	2024-01-19 14:34:14	D3L243	91	1	0	2024-02-20 12:20:34
 1833	91	57	LTQ_FT	QEHFX%		Alzheimer and Parkinson Diseases		Rush_Global%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_HighResMSn_PartTryp_DynMetOx_CysNEM_CysAlk_Stat_TMT_16plex_20ppmParTol.txt	MzML_Stat_16plexTMT_Dyn_CysAlk.xml	8	na	H_sapiens_UniProt_SPROT_2023-09-01,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	3		1		2024-01-24 16:39:03	D3L243	92	1	0	2024-01-24 16:39:03
 1834	91	57	LTQ_FT	QEHFX%		Alzheimer and Parkinson Diseases		Rush_Redox%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_HighResMSn_PartTryp_DynMetOx_CysNEM_CysAlk_Stat_TMT_16plex_20ppmParTol.txt	MzML_Stat_16plexTMT_Dyn_CysAlk.xml	8	na	H_sapiens_UniProt_SPROT_2023-09-01,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	3		1		2024-01-24 16:39:11	D3L243	92	1	0	2024-01-24 16:39:11
 1835	90	59	LTQ_FT	%		MoTrPAC		MoTrPAC[_]Tranche%[_]P[_]%						%HCD%			TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynSTYPhos_Stat_CysAlk_TMT_16Plex_Protocol1_20ppmParTol.txt	MzML_StatCysAlk_S_Phospho_Dyn_TY_Phospho_16plexTMT.xml	8	na	H_sapiens_UniProt_SPROT_2021-06-20,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	3		1	For MoTrPAC human muscle (HM) and human adipose (HA) samples, phospho	2024-02-20 10:24:02	D3L243	91	1	0	2024-02-20 12:20:53
-1836	85	15	LTQ_FT	Eclipse%		CPTAC%		KidsFirst_AML%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_Stat_CysAlk_Precursor350-1650.txt	DiaNN_Standard.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	4		1		2024-03-06 10:57:28	D3L243	86	1	0	2024-05-14 16:47:16
 1848	91	56	LTQ_FT	QEHFX%		Phosgene_Chlorine_Lung		Duke_Mouse%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_HighResMSn_PartTryp_DynMetOx_CysNEM_CysAlk_Stat_TMT_16plex_20ppmParTol.txt	MzML_Stat_16plexTMT_Dyn_CysAlk.xml	24	na	M_musculus_UniProt_SPROT_2023-03-01,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	3		1		2024-07-09 13:16:12	D3L243	92	1	0	2024-07-09 13:16:12
 1849	85	10	LTQ_FT	Astral%				QC_Mam%					%QC_Shew%		%HCD-HMSn%					0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_NTermAcet_Stat_CysAlk_Precursor400-900.txt	DiaNN_Standard.xml	24	na	M_musculus_UniProt_SPROT_2023-03-01,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		1	Similar to predefine 1830, but for Astral	2024-08-05 18:14:15	D3L243	86	1	0	2024-08-05 18:22:09
 \.
@@ -846,7 +849,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 -- Name: t_predefined_analysis_predefine_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1849, true);
+SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1852, true);
 
 
 --

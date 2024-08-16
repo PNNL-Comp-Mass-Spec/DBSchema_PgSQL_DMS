@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.3
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,6 +21,7 @@ SET row_security = off;
 --
 
 COPY public.t_instrument_name (instrument_id, instrument, instrument_class, instrument_group, source_path_id, storage_path_id, capture_method, status, room_number, description, usage, operations_role, tracking, percent_emsl_owned, max_simultaneous_captures, capture_exclusion_window, created, auto_define_storage_path, auto_sp_vol_name_client, auto_sp_vol_name_server, auto_sp_path_root, auto_sp_url_domain, auto_sp_archive_server_name, auto_sp_archive_path_root, auto_sp_archive_share_path_root, default_purge_policy, perform_calibration, scan_source_dir, default_purge_priority, storage_purge_holdoff_months) FROM stdin;
+259	Exploris07	LTQ_FT	Exploris	4948	2	secfso	Active	BSF 1215	Vlad's Alzheimer projects instrument; Orbitrap Exploris 480, MS:1003028		Production	0	0	1	11	2024-08-15 11:09:11.441472	1	\\\\proto-7\\	E:\\	Exploris07\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Exploris07	\\\\agate.emsl.pnl.gov\\dmsarch\\Exploris07	0	0	1	3	1
 6	3T_FTICR	Finnigan_FTICR	Other	12	34	ftp	Inactive	EMSL 1621 (excessed)	3.5 T FTICR		Unused	0	0	1	11	2000-05-17 00:00:00	0	\N	\N	\N		\N	\N	\N	0	0	1	3	1
 37	AgTOF02	Agilent_TOF	Agilent_TOF	1063	1188	fso	Inactive	EMSL 1422	Agilent LC/MSD TOF2		Research	0	0	1	11	2005-05-04 00:00:00	1	\\\\proto-5\\	I:\\	AgTOF02\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/AgTOF02	\\\\agate.emsl.pnl.gov\\dmsarch\\AgTOF02	0	0	1	3	1
 38	LTQ_FB1	Finnigan_Ion_Trap	LTQ	153	1247	secfso	Inactive	PSL 522	Agilent LC/Thermo LTQ (Fungal)	(Fungal)	Research	0	0	2	11	2005-04-28 00:00:00	1	\\\\Proto-6\\	H:\\	LTQ_FB1\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/LTQ_FB1	\\\\agate.emsl.pnl.gov\\dmsarch\\LTQ_FB1	0	0	1	3	1
