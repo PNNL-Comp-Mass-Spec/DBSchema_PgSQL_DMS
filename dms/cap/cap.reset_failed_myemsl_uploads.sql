@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE cap.reset_failed_myemsl_uploads(IN _infoonly boolean
 **          07/11/2023 mem - Use COUNT(entry_id) and COUNT(job) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
+**          08/16/2024 mem - Pass _logErrorsToPublicLogTable to post_log_entry() for warning messages
 **
 *****************************************************/
 DECLARE
@@ -190,7 +191,7 @@ BEGIN
                 _logMessage := format('%s since the upload has already failed 2 or more times', _logMessage);
 
                 If Not _infoOnly Then
-                    CALL public.post_log_entry ('Error', _logMessage, 'Reset_Failed_MyEMSL_Uploads', 'cap', _duplicateEntryHoldoffHours => 24);
+                    CALL public.post_log_entry ('Error', _logMessage, 'Reset_Failed_MyEMSL_Uploads', 'cap', _duplicateEntryHoldoffHours => 24, _logErrorsToPublicLogTable => false);
                 Else
                     RAISE INFO '%', _logMessage;
                 End If;
@@ -272,7 +273,7 @@ BEGIN
                                     public.check_plural(_jobCount, 'capture task job', 'capture task jobs'),
                                    _jobList);
 
-                CALL public.post_log_entry ('Error', _message, 'Reset_Failed_MyEMSL_Uploads', 'cap');
+                CALL public.post_log_entry ('Error', _message, 'Reset_Failed_MyEMSL_Uploads', 'cap', _logErrorsToPublicLogTable => false);
 
                 RAISE INFO '%', _message;
 
