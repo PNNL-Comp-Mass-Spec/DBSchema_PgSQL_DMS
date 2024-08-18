@@ -1,7 +1,7 @@
 # Overview
 
 This is a collection of DDL files that define the database schema used by
-the Data Management System (DMS) component of the Pan-Omics Research 
+the Data Management System (DMS) component of the Proteomics Research 
 Information Storage and Management system (PRISM) at the Pacific Northwest 
 National Laboratory (PNNL).  PRISM incorporates a diverse set of analysis 
 tools and allows a wide range of operations to be incorporated, leveraging 
@@ -21,7 +21,7 @@ for high-throughput proteomics" published in the journal Proteomics in 2006:
 The original database schema for DMS is in the Microsoft SQL Server format, and can be found 
 in the [DBSchema_DMS repo](https://github.com/PNNL-Comp-Mass-Spec/DBSchema_DMS) on GitHub.
 
-Migration of the SQL Server tables, views, stored procedures and functions to PostgreSQL is a work in progress.
+Migration of the SQL Server tables, views, stored procedures and functions to PostgreSQL was completed in August 2024.
 
 ## Schema
 
@@ -32,12 +32,12 @@ The following table describes the PostgreSQL schemas for DMS, along with the Sou
 | dms     | public   | Main DMS tables                     | DMS5                   |
 | dms     | cap      | Dataset capture and archive tasks   | DMS_Capture            |
 | dms     | sw       | Software analysis jobs              | DMS_Pipeline           |
+| dms     | dpkg     | Data packages                       | DMS_Data_Package       |
 | dms     | mc       | Manager parameters                  | Manager_Control        |
 | dms     | ont      | Ontology tables                     | Ontology_Lookup        |
-| dms     | dpkg     | Data packages                       | DMS_Data_Package       |
 | dms     | pc       | Protein Collections (FASTA files)   | Protein_Sequences      |
-| dms     | logdms   | Historic logs                       | DMSHistoricLog         |
-| dms     | logcap   | Dataset capture historic logs       | DMSHistoricLogCapture  |
+| dms     | logdms   | DMS historic logs                   | DMSHistoricLog         |
+| dms     | logcap   | Capture task historic logs          | DMSHistoricLogCapture  |
 | dms     | logsw    | Software analysis historic logs     | DMSHistoricLogPipeline |
 | mts     | public   | MTS metadata DBs                    | MTS_Master             |
 | mts     | mtmain   | MTS metadata DBs                    | MT_Main                |
@@ -47,7 +47,7 @@ The following table describes the PostgreSQL schemas for DMS, along with the Sou
 
 1. Use SSMS to script out tables, indexes, triggers, relationships, and views from SQL Server
 
-2. Use the DB Schema Export Tool to pre-process the scripted DDL to rename columns and skip unwanted tables and views
+2. Use the DB Schema Export Tool (DB_Schema_Export_Tool) to pre-process the scripted DDL to rename columns and skip unwanted tables and views
 * In the [DB-Schema-Export-Tool repo](https://github.com/PNNL-Comp-Mass-Spec/DB-Schema-Export-Tool) on GitHub
 * Three input files:
   * Schema DDL file from step 1
@@ -79,8 +79,8 @@ The following table describes the PostgreSQL schemas for DMS, along with the Sou
 * Store the scripted objects in a git repo
   * See the [DBSchema_DMS repo](https://github.com/PNNL-Comp-Mass-Spec/DBSchema_DMS)
 
-7. Transfer Table Data
-* Use the DB Schema Export Tool tool to export data from all of the tables in SQL Server
+7. Transfer table data
+* Use the DB Schema Export Tool to export data from all of the tables in SQL Server
 * Three input files:
   * Text file defining the source and target table names, along with primary key columns; also defines tables to skip
   * Text file defining the source and target column names, optionally defining columns to skip
@@ -92,7 +92,7 @@ The following table describes the PostgreSQL schemas for DMS, along with the Sou
 
 8. Append new table data
 * New data added to tables in SQL Server can be added to the PostgreSQL database
-* Use the DB Schema Export Tool tool, with a parameter file that has TableDataDateFilter defined
+* Use the DB Schema Export Tool, with a parameter file that has TableDataDateFilter defined
   * This points to a tab-delimited text file with columns SourceTableName, DateColumnName, and MinimumDate
 * The program will create one file per table
 * It also creates a shell script for loading the data for each table
@@ -100,9 +100,9 @@ The following table describes the PostgreSQL schemas for DMS, along with the Sou
 
 9. Convert stored procedures
 * Use SQL Server Management Studio (SSMS) to script out stored procedures and user defined functions from a database
-* Convert the scripted DDL using the SQLServer Stored Procedure Converter
+* Convert the scripted DDL using the SQLServer Stored Procedure Converter (SQLServer_Stored_Procedure_Converter.exe)
   * See the [SQLServer-Stored-Procedure-Converter repo](https://github.com/PNNL-Comp-Mass-Spec/SQLServer-Stored-Procedure-Converter) on GitHub
-  * Uses the merged ColumnNameMap file created by the PgSqlViewCreatorHelper to rename tables and columns referenced in the stored procedures
+  * Uses the merged ColumnNameMap file (Database_ColumnNameMap_merged.txt) created by the PgSql View Creator Helper to rename tables and columns referenced in the stored procedures
 
 
 # License
