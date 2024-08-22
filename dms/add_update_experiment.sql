@@ -30,7 +30,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_experiment(INOUT _experimentid int
 **    _internalStandard         Internal standard name, e.g. 'MP_10_02'; last used in 2013
 **    _postdigestIntStd         Post-digestion internal standard name, e.g. 'ADHYeast_031411'; last used in 2014
 **    _wellplateName            Wellplate name
-**    _wellNumber               Well position (aka well number)
+**    _wellNumber               Well position (aka well number); traditionally A01, A02, A03, ... A12, B01, B02, etc., but can also be an integer
 **    _alkylation               Alkylation: 'Y' or 'N'
 **    _mode                     Mode: 'add, 'update', 'check_add', 'check_update'
 **    _container                Container name, e.g. 'MC-3375'
@@ -112,6 +112,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_experiment(INOUT _experimentid int
 **          03/04/2024 mem - Use CURRENT_DATE to obtain today's date
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          08/21/2024 mem - Allow _wellNumber to be an integer instead of A1, A2, A3, A04, B06, etc.
+**                         - Customize the well-in-use warning message
 **
 *****************************************************/
 DECLARE
@@ -139,6 +141,8 @@ DECLARE
     _organismID int := 0;
     _totalCount int;
     _wellIndex int;
+    _wellPositionIsInteger boolean := false;
+    _matchingExperiment text;
     _enzymeID int := 0;
     _labelID int := 0;
     _labelName text;
@@ -212,6 +216,8 @@ BEGIN
         _samplePrepRequest     := Coalesce(_samplePrepRequest, 0);
         _internalStandard      := Trim(Coalesce(_internalStandard, ''));
         _postdigestIntStd      := Trim(Coalesce(_postdigestIntStd, ''));
+        _wellplateName         := Trim(Coalesce(_wellplateName, ''));
+        _wellNumber            := Trim(Coalesce(_wellNumber, ''));
         _alkylation            := Trim(Upper(Coalesce(_alkylation, '')));
         _mode                  := Trim(Lower(Coalesce(_mode, '')));
         _barcode               := Trim(Coalesce(_barcode, ''));
@@ -430,25 +436,45 @@ BEGIN
         End If;
 
         CALL public.validate_wellplate_loading (
-                        _wellplateName => _wellplateName,   -- Input/Output
-                        _wellPosition  => _wellNumber,      -- Input/Output
-                        _totalCount    => _totalCount,
-                        _wellIndex     => _wellIndex,       -- Output
-                        _message       => _msg,             -- Output
-                        _returnCode    => _returnCode);     -- Output
+                        _wellplateName         => _wellplateName,           -- Input/Output
+                        _wellPosition          => _wellNumber,              -- Input/Output
+                        _totalCount            => _totalCount,
+                        _wellIndex             => _wellIndex,               -- Output: value between 1 and 96 if _wellNumber is A01, A02, A03, etc.; 0 if _wellNumber is an empty string; equivalent to _wellNumber if _wellNumber is an integer
+                        _wellPositionIsInteger => _wellPositionIsInteger,   -- Output: true if _wellNumber is an integer (including 0), false if _wellNumber is A01, A02, A03, etc.
+                        _message               => _msg,                     -- Output
+                        _returnCode            => _returnCode);             -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        -- Make sure we do not put two experiments in the same place
+        If Coalesce(_wellNumber, '') <> '' Then
+            -- Make sure we do not put two experiments in the same well
 
-        If Exists (SELECT exp_id FROM t_experiments WHERE wellplate = _wellplateName::citext AND well = _wellNumber::citext) AND _mode IN ('add', 'check_add') Then
-            RAISE EXCEPTION 'There is another experiment assigned to the same wellplate and well';
-        End If;
+            SELECT experiment
+            INTO _matchingExperiment
+            FROM t_experiments
+            WHERE wellplate = _wellplateName::citext AND
+                  well      = _wellNumber::citext AND
+                  _mode IN ('add', 'check_add');
 
-        If Exists (SELECT exp_id FROM t_experiments WHERE wellplate = _wellplateName::citext AND well = _wellNumber::citext AND experiment <> _experimentName::citext) AND _mode IN ('update', 'check_update') Then
-            RAISE EXCEPTION 'There is another experiment assigned to the same wellplate and well';
+            If FOUND Then
+                _message := format('Experiment %s is already assigned to wellplate "%s" and well "%s"', _matchingExperiment, _wellplateName, _wellNumber);
+                RAISE EXCEPTION '%', _message;
+            End If;
+
+            SELECT experiment
+            INTO _matchingExperiment
+            FROM t_experiments
+            WHERE wellplate = _wellplateName::citext AND
+                  well      = _wellNumber::citext AND
+                  experiment <> _experimentName::citext AND
+                  _mode IN ('update', 'check_update');
+
+            If FOUND Then
+                _message := format('Experiment %s is already assigned to wellplate "%s" and well "%s"', _matchingExperiment, _wellplateName, _wellNumber);
+                RAISE EXCEPTION '%', _message;
+            End If;
         End If;
 
         ---------------------------------------------------

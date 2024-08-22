@@ -19,7 +19,7 @@ CREATE OR REPLACE PROCEDURE public.add_experiment_fractions(IN _parentexperiment
 **    _nameSearch           Text to find in the parent experiment name, to be replaced by _nameReplace
 **    _nameReplace          Replacement text
 **    _groupName            User-defined name for this experiment group (aka fraction group); previously _tab; allowed to be an empty string
-**    _description          Purpose of group
+**    _description          Purpose of the experiment group
 **    _totalCount           Number of new experiments to automatically create
 **    _addUnderscore        When Yes (or 1 or ''), add an underscore before the fraction number; when _suffix is defined, set this to 'No' if you do not want an underscore between the suffix and the fraction number
 **    _groupID              Output: ID of newly created experiment group
@@ -28,7 +28,7 @@ CREATE OR REPLACE PROCEDURE public.add_experiment_fractions(IN _parentexperiment
 **    _postdigestIntStd     Post digest internal standard name (or 'parent')
 **    _researcher           Researcher username (or 'parent')
 **    _wellplateName        Input/output: wellplate name
-**    _wellNumber           Input/output: well position (aka well number)
+**    _wellNumber           Input/output: well position (aka well number); traditionally A01, A02, A03, ... A12, B01, B02, etc., but can also be an integer
 **    _container            Container name: 'na', 'parent', '-20', or actual container ID
 **    _prepLCRunID          Prep LC run ID; allowed to be null
 **    _mode                 Mode: 'add', 'preview', or 'debug'; when previewing, will show the names of the new fractions
@@ -82,6 +82,7 @@ CREATE OR REPLACE PROCEDURE public.add_experiment_fractions(IN _parentexperiment
 **          01/03/2024 mem - Update warning messages
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          08/13/2024 mem - Add support for _mode 'debug'
+**          08/21/2024 mem - Allow _wellNumber to be an integer instead of A1, A2, A3, A04, B06, etc.
 **
 *****************************************************/
 DECLARE
@@ -99,11 +100,11 @@ DECLARE
     _experimentIDList text := '';
     _materialIDList text := '';
     _fractionNamePreviewList text;
-    _wellPlateMode text;
+    _wellplateMode text;
     _logErrors boolean := false;
     _dropTempTables boolean := false;
     _wellIndex int;
-    _note text;
+    _wellplateDescription text;
     _prepRequestTissueID text := null;
     _tmpID int := null;
     _userID int;
@@ -112,7 +113,8 @@ DECLARE
     _newComment text;
     _newExpName text;
     _expId int;
-    _wn text;
+    _currentWellPosition text;
+    _wellPositionIsInteger boolean := false;
     _nameFractionLinker text;
     _alterEnteredByMessage text;
 
@@ -250,6 +252,11 @@ BEGIN
         -- Make sure _parentExperiment is capitalized properly
         _parentExperiment := _parentExperimentInfo.BaseFractionName;
 
+        -- Make sure lab notebook is not an empty string
+        If Trim(Coalesce(_parentExperimentInfo.LabNotebook, '')) = '' Then
+            _parentExperimentInfo.LabNotebook = 'NA';
+        End If;
+
         -- Search/replace, if defined
         If _nameSearch <> '' Then
             _parentExperimentInfo.BaseFractionName := Replace(_parentExperimentInfo.BaseFractionName, _nameSearch, _nameReplace);
@@ -293,12 +300,13 @@ BEGIN
         ---------------------------------------------------
 
         CALL public.validate_wellplate_loading (
-                        _wellplateName => _wellplateName,   -- Input/Output
-                        _wellPosition  => _wellNumber,      -- Input/Output
-                        _totalCount    => _totalCount,
-                        _wellIndex     => _wellIndex,       -- Output: value between 1 and 96
-                        _message       => _message,         -- Output
-                        _returnCode    => _returnCode);     -- Output
+                        _wellplateName         => _wellplateName,           -- Input/Output
+                        _wellPosition          => _wellNumber,              -- Input/Output
+                        _totalCount            => _totalCount,
+                        _wellIndex             => _wellIndex,               -- Output: value between 1 and 96 if _wellNumber is A01, A02, A03, etc.; 0 if _wellNumber is an empty string; equivalent to _wellNumber if _wellNumber is an integer
+                        _wellPositionIsInteger => _wellPositionIsInteger,   -- Output: true if _wellNumber is an integer (including 0), false if _wellNumber is A01, A02, A03, etc.
+                        _message               => _message,                 -- Output
+                        _returnCode            => _returnCode);             -- Output
 
         If _returnCode <> '' Then
             RAISE EXCEPTION '%', _message;
@@ -313,17 +321,17 @@ BEGIN
         If Not _wellplateName Is Null Then
             If _wellplateName::citext = 'new' Then
                 _wellplateName := '(generate name)';
-                _wellPlateMode := 'add';
+                _wellplateMode := 'add';
             Else
-                _wellPlateMode := 'assure';
+                _wellplateMode := 'assure';
             End If;
 
-            _note := format('Created by experiment fraction entry (%s)', _parentExperiment);
+            _wellplateDescription := format('Created by experiment fraction entry (%s)', _parentExperiment);
 
             CALL public.add_update_wellplate (
                             _wellplateName => _wellplateName,   -- Output
-                            _note          => _note,
-                            _wellPlateMode => _wellPlateMode,
+                            _description   => _wellplateDescription,
+                            _mode          => _wellplateMode,
                             _message       => _message,         -- Output
                             _returnCode    => _returnCode,      -- Output
                             _callingUser   => _callingUser);
@@ -495,7 +503,21 @@ BEGIN
         -- Insert fractionated experiment entries
         ---------------------------------------------------
 
-        _wn := _wellNumber;
+        If _wellPositionIsInteger Then
+            _currentWellPosition := _wellNumber;
+        Else
+            -- Make sure the well position is of the form 'A01' and not 'A1'
+            _currentWellPosition := public.get_well_position(_wellIndex);
+
+            If _currentWellPosition = '' And _wellNumber <> '' Then
+                _message := format('validate_wellplate_loading() returned a _wellIndex value of "%s" for well number "%s"; '
+                                   'this index does not resolve to a valid round-trip well position',
+                                   _wellIndex, _wellNumber);
+
+                RAISE EXCEPTION '%', _message;
+
+            End If;
+        End If;
 
         If _addUnderscore::citext In ('No', 'N', '0') Then
             _nameFractionLinker := '';
@@ -581,7 +603,7 @@ BEGIN
                     _parentExperimentInfo.InternalStandardID,
                     _parentExperimentInfo.PostdigestIntStdID,
                     _wellplateName,
-                    _wn,
+                    _currentWellPosition,
                     _parentExperimentInfo.Alkylation,
                     _parentExperimentInfo.TissueID
                 )
@@ -684,9 +706,14 @@ BEGIN
             -- Increment well number
             ---------------------------------------------------
 
-            If Coalesce(_wn, '') <> '' Then
+            If Coalesce(_currentWellPosition, '') <> '' Then
                 _wellIndex := _wellIndex + 1;
-                _wn := public.get_well_position(_wellIndex);
+
+                If _wellPositionIsInteger Then
+                    _currentWellPosition := _wellIndex::text;
+                Else
+                    _currentWellPosition := public.get_well_position(_wellIndex);
+                End If;
             End If;
 
         END LOOP;

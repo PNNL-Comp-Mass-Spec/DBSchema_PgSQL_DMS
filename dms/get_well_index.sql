@@ -11,8 +11,8 @@ CREATE OR REPLACE FUNCTION public.get_well_index(_wellposition text) RETURNS int
 **      Given a 96 well plate well position (aka well number),
 **      return the index position of the well (value between 1 and 96)
 **
-**      The first row of the plate has wells A1 through A12
-**      The last  row of the plate has wells H1 through H12
+**      The first row of the plate has wells A01 through A12
+**      The last  row of the plate has wells H01 through H12
 **
 **  Returns:
 **      Corresponding well index, or 0 if invalid position
@@ -26,9 +26,11 @@ CREATE OR REPLACE FUNCTION public.get_well_index(_wellposition text) RETURNS int
 **          05/22/2023 mem - Capitalize reserved words
 **          09/11/2023 mem - Use schema name with try_cast
 **          01/21/2024 mem - Change data type of argument _wellPosition to text
+**          08/21/2024 mem - Allow _wellNumber to be an integer instead of A1, A2, A3, A04, B06, etc.
 **
 *****************************************************/
 DECLARE
+    _integerWellNumber int;
     _index int;
     _wpRow int;
     _wpRowCharBase int;
@@ -36,6 +38,13 @@ DECLARE
     _numCols int;
 BEGIN
     _wellPosition := Trim(Coalesce(_wellPosition, ''));
+
+    _integerWellNumber := public.try_cast(_wellPosition, null::int);
+
+    If Not _integerWellNumber Is Null Then
+        -- The well number is an integer
+        RETURN _integerWellNumber;
+    End If;
 
     If char_length(_wellPosition) < 2 Then
         RETURN 0;
