@@ -1209,8 +1209,8 @@ BEGIN
                                             _workPackage => _workPackage,
                                             _msType => _msType,
                                             _instrumentSettings => 'na',
-                                            _wellplateName => NULL,
-                                            _wellNumber => NULL,
+                                            _wellplateName => null,
+                                            _wellNumber => null,
                                             _internalStandard => 'na',
                                             _comment => 'Automatically created by Dataset entry',
                                             _batch => 0,
@@ -1237,7 +1237,7 @@ BEGIN
                                             _returnCode => _returnCode);                            -- Output
 
                     If _returnCode <> '' Then
-                        If _eusProposalID = '' And _eusUsageType = '' and _eusUsersList = '' Then
+                        If _eusProposalID = '' And _eusUsageType = '' And _eusUsersList = '' Then
                             _msg := format('Create AutoReq run request failed: dataset %s; EUS Proposal ID, Usage Type, and Users list cannot all be blank -> %s',
                                             _msType, _message);
                         Else
@@ -1257,7 +1257,7 @@ BEGIN
 
                 If _requestID > 0 And Not _lcCartName::citext In ('', 'no update') Then
 
-                    If Coalesce(_message, '') <> '' and Coalesce(_warning, '') = '' Then
+                    If Coalesce(_message, '') <> '' And Coalesce(_warning, '') = '' Then
                         _warning := _message;
                     End If;
 
