@@ -22,6 +22,7 @@ SET row_security = off;
 
 COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequence, instrument_class_criteria, instrument_name_criteria, instrument_excl_criteria, campaign_name_criteria, campaign_excl_criteria, experiment_name_criteria, experiment_excl_criteria, exp_comment_criteria, organism_name_criteria, dataset_name_criteria, dataset_excl_criteria, dataset_type_criteria, scan_type_criteria, scan_type_excl_criteria, labelling_incl_criteria, labelling_excl_criteria, separation_type_criteria, scan_count_min_criteria, scan_count_max_criteria, analysis_tool_name, param_file_name, settings_file_name, organism_id, organism_db_name, protein_collection_list, protein_options_list, priority, special_processing, enabled, description, created, creator, next_level, trigger_before_disposition, propagation_mode, last_affected) FROM stdin;
 1850	89	56	LTQ_FT	%		CPTAC%		KidsFirst[_]AML[_]W[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_PartTryp_DynMetOx_Stat_CysAlk_TMT_16Plex_20ppmParTol.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2024-08-15 17:04:34.008162	D3L243	90	1	0	2024-08-15 17:04:34.008162
+1853	85	40	LTQ_FT	Exploris%		TB_clinical plasma_SF		Kirpich_CSF_PNL%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_NTermAcet_Precursor350-950.txt	DiaNN_Standard.xml	8	na	H_sapiens_UniProt_SPROT_2023-09-01,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	3		1		2024-08-16 10:59:14.274923	D3L243	86	1	0	2024-08-16 10:59:14.274923
 1009	120	\N	Finnigan_Ion_Trap			%mouse%											%PEO%			0	0	Sequest	sequest_N15_PEO.params	FinniganDefSettings.xml	5	Mm_seq_uniqClean.fasta	na	na	3		0		2001-09-27 10:25:00		\N	0	0	2001-09-27 10:25:00
 1010	120	\N	Finnigan_Ion_Trap			%mouse%											%ICAT%			0	0	Sequest	sequest_ICAT_D8.params	FinniganDefSettings.xml	5	Mm_seq_uniqClean.fasta	na	na	3		0		2001-05-08 07:25:00		\N	0	0	2001-05-08 07:25:00
 1851	89	56	LTQ_FT	%		CPTAC%		KidsFirst[_]AML[_]P[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynSTYPhos_Stat_CysAlk_TMT_16Plex_Protocol1_20ppmParTol.txt	MzML_StatCysAlk_S_Phospho_Dyn_TY_Phospho_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2024-08-15 17:04:38.966412	D3L243	90	1	0	2024-08-15 17:04:38.966412
@@ -849,7 +850,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 -- Name: t_predefined_analysis_predefine_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1852, true);
+SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1853, true);
 
 
 --

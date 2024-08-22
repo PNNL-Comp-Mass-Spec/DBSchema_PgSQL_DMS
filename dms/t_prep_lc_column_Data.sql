@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.3
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -22,6 +22,7 @@ SET row_security = off;
 
 COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, mfg_serial, packing_mfg, packing_type, particle_size, particle_type, column_inner_dia, column_outer_dia, length, state, operator_username, comment, created) FROM stdin;
 1213	ZORBAX_013	ZORBAX	custom	USDHP01254	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	Exclusively for MoTrPAC. POC- M. Gritsenko	2024-08-07 11:57:02.601112
+1215	XBridge_022	Waters XBridge	186003117	02493418613896	Waters	Silica	5 um	C18	4.6 mm	10 mm	250 mm	Active	D3H534	Heather's column. Please ask before using.	2024-08-20 14:25:20.413553
 1214	ZORBAX_014	ZORBAX	custom	USDHP01255	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	Exclusively for CPTAC4. POC- M. Gritsenko	2024-08-07 11:57:44.862537
 1005	SCX-200-05	Poly LC PolysulfoethylA	202SE0503	J2467E	Poly LC	SCX	5 um	300-A	N/A	2.1mm	200mm	Retired	D3M765	This column is for human plasma samples only! Put in use 10/8/07.,,Samples run prior to DMS: 12. Column sent to Broad, SCX-200-08 sent to PNNL as replacement.	2009-08-19 08:44:28
 1010	Mouse_SMix_02	Seppro Supermix Mouse LC5	S5824-1EA	128K0517	Sigma	IgY	N/A	Ig antibodies	N/A	N/A	N/A	Active	D3M765	Received 5/19/09. Weijun's new mouse supermix column.	2009-08-20 08:15:49
@@ -219,7 +220,7 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 -- Name: t_prep_lc_column_prep_column_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_prep_lc_column_prep_column_id_seq', 1214, true);
+SELECT pg_catalog.setval('public.t_prep_lc_column_prep_column_id_seq', 1215, true);
 
 
 --

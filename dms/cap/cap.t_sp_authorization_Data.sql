@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.3
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -22,6 +22,7 @@ SET row_security = off;
 
 COPY cap.t_sp_authorization (entry_id, procedure_name, login_name, host_name, host_ip) FROM stdin;
 11	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::1199
+14	*	PNL\\gibb166	*	*
 1	*	DMSWebUser	gigasax	130.20.225.2
 2	*	DMSWebUser	prismweb2	130.20.224.55
 3	*	DMSWebUser	prismweb3	130.20.225.91
@@ -41,7 +42,7 @@ COPY cap.t_sp_authorization (entry_id, procedure_name, login_name, host_name, ho
 -- Name: t_sp_authorization_entry_id_seq; Type: SEQUENCE SET; Schema: cap; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('cap.t_sp_authorization_entry_id_seq', 13, true);
+SELECT pg_catalog.setval('cap.t_sp_authorization_entry_id_seq', 14, true);
 
 
 --

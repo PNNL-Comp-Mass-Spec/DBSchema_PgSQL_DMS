@@ -21,7 +21,7 @@ SET row_security = off;
 --
 
 COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class, instrument_group, source_path_id, storage_path_id, capture_method, status, room_number, description, created) FROM stdin;
-259	Exploris07	LTQ_FT	Exploris	2	2	secfso	Active	BSF 1215	Vlad's Alzheimer projects instrument; Orbitrap Exploris 480, MS:1003028	2024-08-15 11:09:11.441472
+259	Exploris07	LTQ_FT	Exploris	4948	2	secfso	Active	BSF 1215	Vlad's Alzheimer projects instrument; Orbitrap Exploris 480, MS:1003028	2024-08-15 11:09:11.441472
 6	3T_FTICR	Finnigan_FTICR	Other	12	34	ftp	Inactive	EMSL 1621 (excessed)	3.5 T FTICR	2000-05-17 00:00:00
 37	AgTOF02	Agilent_TOF	Agilent_TOF	1063	1188	fso	Inactive	EMSL 1422	Agilent LC/MSD TOF2	2005-05-04 00:00:00
 38	LTQ_FB1	Finnigan_Ion_Trap	LTQ	153	1247	secfso	Inactive	PSL 522	Agilent LC/Thermo LTQ (Fungal)	2005-04-28 00:00:00
@@ -150,6 +150,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 126	TSQ_5	Triple_Quad	TSQ	1504	3270	secfso	Inactive	EMSL 1401	Thermo TSQ Vantage, MS:1001510	2014-06-26 12:04:38
 127	QExactHF03	LTQ_FT	QExactive	1633	4847	secfso	Active	EMSL 1526	Q Exactive HF, MS:1002523\t	2015-02-19 10:12:31
 128	QExactP04	LTQ_FT	QExactive	1662	4848	secfso	Active	EMSL 1444	Q Exactive Plus, MS:1002634	2015-04-08 14:47:10
+258	ExplorisMX01	LTQ_FT	Exploris	4865	4946	secfso	Active	EMSL 1130	Orbitrap Exploris MX, owned by EMSL	2024-07-03 15:00:57
 129	12T_FTICR_Agilent	Agilent_Ion_Trap	Agilent_FTMS	1701	4879	secfso	Active	EMSL 1621	Agilent 12T FTICR magnet. Originally had a Velos Pro front end, but that was later moved to the 21T and this instrument had Exploris01 as its front end. In FY24 the Velos Pro will move back to this instrument and Exploris01 will move to the 21T. This instrument is active so that helium refills can be tracked.  Datasets are uploaded via either the Velos Pro or the Exploris front end.	2015-06-13 06:12:48
 130	QExactHF05	LTQ_FT	QExactive	1706	4880	secfso	Active	EMSL 1621	Q Exactive HF, MS:1002523. Has HMR/UHMR configuration (boards swapped). Supports MALDI (Spectroglyph), UVPD, and ECD/ETD, depending on the connected hardware. While the MALDI source is attached, use instrument QExactHF05_Imaging for new datasets.	2015-06-29 10:54:50
 131	BSF_GC01	Agilent_Ion_Trap	Agilent_GC	1754	2	secfso	Offline	BSF 1229	GC with FID	2015-07-06 16:23:30
@@ -273,11 +274,10 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 250	Patty	Thermo_SII_LC	Thermo_SII_LC	4835	4939	secfso	Active	EMSL 1444	Vanquish Neo LC (binary pump and autosampler). Used for LCDatasetCapture tasks. The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets. Not EMSL owned	2024-05-21 20:10:05
 251	Selma	Thermo_SII_LC	Thermo_SII_LC	4836	4940	secfso	Active	EMSL 1444	Vanquish Neo LC (binary pump and autosampler). Used for LCDatasetCapture tasks. The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets. Not EMSL owned	2024-05-21 20:10:14
 252	Monty	Thermo_SII_LC	Thermo_SII_LC	4837	4941	secfso	Active	BSF 2235	Vanquish Neo LC (binary pump and autosampler). Used for LCDatasetCapture tasks. The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets. Not EMSL owned	2024-05-21 20:17:11
-257	AgGCQTOF02	Agilent_TOF_V2	Agilent_GC_MS	4864	4945	secfso	Active	EMSL 1130	Agilent GC-QTOF, owned by EMSL	2024-07-03 14:52:21
-258	ExplorisMX01	LTQ_FT	Exploris	4865	4946	secfso	Active	EMSL 1130	Orbitrap Exploris MX, owned by EMSL	2024-07-03 15:00:57
 253	Dragonfly	Thermo_SII_LC	Thermo_SII_LC	4838	4942	secfso	Active	BSF 2235	NanoPOTS with Vanquish Neo Binary Pump. Used for LCDatasetCapture tasks. The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets. Not EMSL owned	2024-05-21 20:18:19
 254	Astral01	LTQ_FT	Astral	4839	4858	secfso	Active	BSF 2235	Thermo Astral instrument, 50% BSD, 50% NSD	2024-05-28 18:03:42
 256	timsTOFFlex02_Imaging	timsTOF_MALDI_Imaging	MALDI_timsTOF_Imaging	4863	4944	secfso	Active	EMSL 1444	Bruker timsTOF Flex with MALDI imaging capability	2024-07-03 13:47:58
+257	AgGCQTOF02	Agilent_TOF_V2	Agilent_GC_MS	4864	4945	secfso	Active	EMSL 1130	Agilent GC-QTOF, owned by EMSL	2024-07-03 14:52:21
 \.
 
 
