@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE cap.check_for_myemsl_errors(IN _mostrecentdays integ
 **          07/11/2023 mem - Use COUNT(entry_id) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
 **          10/12/2023 mem - Use implicit string concatenation
+**          08/16/2024 mem - Pass _logErrorsToPublicLogTable to post_log_entry() for warning message
 **
 *****************************************************/
 DECLARE
@@ -97,7 +98,7 @@ BEGIN
                             Round(_uploadErrorRate*100, 1), _uploadAttempts);
 
         If _logErrors Then
-            CALL public.post_log_entry ('Error', _message, 'Check_For_MyEMSL_Errors', 'cap');
+            CALL public.post_log_entry ('Error', _message, 'Check_For_MyEMSL_Errors', 'cap', _logErrorsToPublicLogTable => false);
         Else
             RAISE INFO '%', _message;
         End If;
@@ -111,7 +112,7 @@ BEGIN
                            Round(_duplicateRate * 100, 1), _datasetFolderUploads);
 
         If _logErrors Then
-            CALL public.post_log_entry ('Error', _message, 'Check_For_MyEMSL_Errors', 'cap');
+            CALL public.post_log_entry ('Error', _message, 'Check_For_MyEMSL_Errors', 'cap', _logErrorsToPublicLogTable => false);
         Else
             RAISE INFO '%', _message;
         End If;
