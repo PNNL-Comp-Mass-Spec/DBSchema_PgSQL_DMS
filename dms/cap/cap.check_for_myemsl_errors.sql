@@ -28,7 +28,7 @@ CREATE OR REPLACE PROCEDURE cap.check_for_myemsl_errors(IN _mostrecentdays integ
 **          07/11/2023 mem - Use COUNT(entry_id) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
 **          10/12/2023 mem - Use implicit string concatenation
-**          08/16/2024 mem - Pass _logErrorsToPublicLogTable to post_log_entry() for warning message
+**          08/16/2024 mem - Pass _logErrorsToPublicLogTable to post_log_entry() for warning messages
 **
 *****************************************************/
 DECLARE

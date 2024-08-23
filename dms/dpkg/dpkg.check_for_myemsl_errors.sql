@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE dpkg.check_for_myemsl_errors(IN _mostrecentdays inte
 **  Date:   12/10/2013 mem - Initial version
 **          08/15/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          08/22/2024 mem - Pass _logErrorsToPublicLogTable to post_log_entry() for warning messages
 **
 *****************************************************/
 DECLARE
@@ -95,7 +96,7 @@ BEGIN
                             Round(_uploadErrorRate * 100, 0), _uploadAttempts);
 
         If _logErrors Then
-            CALL public.post_log_entry ('Error', _msg, 'Check_For_MyEMSL_Errors', 'dpkg');
+            CALL public.post_log_entry ('Error', _msg, 'Check_For_MyEMSL_Errors', 'dpkg', _logErrorsToPublicLogTable => false);
         Else
             If Not _blankLineShown Then
                 RAISE INFO '';
@@ -115,7 +116,7 @@ BEGIN
                        Round(_duplicateRate * 100, 0), _dataPkgFolderUploads);
 
         If _logErrors Then
-            CALL public.post_log_entry ('Error', _msg, 'Check_For_MyEMSL_Errors', 'dpkg');
+            CALL public.post_log_entry ('Error', _msg, 'Check_For_MyEMSL_Errors', 'dpkg', _logErrorsToPublicLogTable => false);
         Else
             If Not _blankLineShown Then
                 RAISE INFO '';
