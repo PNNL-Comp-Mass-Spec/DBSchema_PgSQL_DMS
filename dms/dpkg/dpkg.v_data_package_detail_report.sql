@@ -25,6 +25,7 @@ CREATE VIEW dpkg.v_data_package_detail_report AS
     dp.analysis_job_item_count AS analysis_job_count,
     campaignstats.campaigns AS campaign_count,
     dp.total_item_count,
+    format('data_package_dataset_qc/report/%s'::text, dp.data_pkg_id) AS dataset_qc_report,
     dp.wiki_page_link AS prism_wiki,
     dp.data_doi,
     dp.manuscript_doi,
