@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE public.update_material_containers(IN _mode text, IN 
 **          02/12/2024 mem - Ported to PostgreSQL
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          08/22/2024 mem - Add missing underscore to variable name passed to update_material_items()
 **
 *****************************************************/
 DECLARE
@@ -270,7 +271,7 @@ BEGIN
 
         CALL public.update_material_items (
                         _mode        => 'retire_items',
-                        _itemList    => containerList,
+                        _itemList    => _containerList,
                         _itemType    => 'containers',
                         _newValue    => '',
                         _comment     => _comment,
