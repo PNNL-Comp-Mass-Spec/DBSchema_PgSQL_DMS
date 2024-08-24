@@ -20,7 +20,7 @@ CREATE VIEW public.v_sample_prep_request_active_list_report AS
     spr.assigned_personnel,
     qp.name_with_username AS requester,
     spr.organism,
-    bto.tissue,
+    bto.term_name AS tissue,
     spr.biohazard_level,
     spr.campaign,
     spr.comment,
@@ -53,7 +53,7 @@ CREATE VIEW public.v_sample_prep_request_active_list_report AS
      LEFT JOIN public.v_charge_code_status cc ON ((spr.work_package OPERATOR(public.=) cc.charge_code)))
      LEFT JOIN public.t_eus_proposals eup ON ((spr.eus_proposal_id OPERATOR(public.=) eup.proposal_id)))
      LEFT JOIN public.t_eus_proposal_type ept ON ((eup.proposal_type OPERATOR(public.=) ept.proposal_type)))
-     LEFT JOIN ont.v_bto_id_to_name bto ON ((spr.tissue_id OPERATOR(public.=) bto.identifier)))
+     LEFT JOIN ont.t_cv_bto_cached_names bto ON ((spr.tissue_id OPERATOR(public.=) bto.identifier)))
   WHERE ((NOT (spr.state_id = ANY (ARRAY[0, 4, 5]))) AND (spr.request_type OPERATOR(public.=) 'Default'::public.citext));
 
 

@@ -12,7 +12,7 @@ CREATE VIEW public.v_experiment_export AS
     e.sample_concentration AS concentration,
     e.created,
     c.campaign,
-    bto.tissue,
+    bto.term_name AS tissue,
     cec.biomaterial_list,
     cec.reference_compound_list AS reference_compounds,
     enz.enzyme_name AS enzyme,
@@ -35,7 +35,7 @@ CREATE VIEW public.v_experiment_export AS
      JOIN public.t_organisms ON ((e.organism_id = t_organisms.organism_id)))
      JOIN public.t_material_containers mc ON ((e.container_id = mc.container_id)))
      JOIN public.t_material_locations ml ON ((mc.location_id = ml.location_id)))
-     LEFT JOIN ont.v_bto_id_to_name bto ON ((e.tissue_id OPERATOR(public.=) bto.identifier)))
+     LEFT JOIN ont.t_cv_bto_cached_names bto ON ((e.tissue_id OPERATOR(public.=) bto.identifier)))
      LEFT JOIN public.t_cached_experiment_components cec ON ((e.exp_id = cec.exp_id)));
 
 

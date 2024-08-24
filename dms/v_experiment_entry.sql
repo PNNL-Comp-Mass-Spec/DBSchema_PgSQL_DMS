@@ -23,7 +23,7 @@ CREATE VIEW public.v_experiment_entry AS
     e.wellplate,
     e.well,
     e.alkylation,
-    bto.tissue,
+    bto.term_name AS tissue,
     e.barcode
    FROM (((((((public.t_experiments e
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
@@ -32,7 +32,7 @@ CREATE VIEW public.v_experiment_entry AS
      JOIN public.t_internal_standards postdigestintstd ON ((e.post_digest_internal_std_id = postdigestintstd.internal_standard_id)))
      JOIN public.t_organisms org ON ((e.organism_id = org.organism_id)))
      JOIN public.t_material_containers mc ON ((e.container_id = mc.container_id)))
-     LEFT JOIN ont.v_bto_id_to_name bto ON ((e.tissue_id OPERATOR(public.=) bto.identifier)));
+     LEFT JOIN ont.t_cv_bto_cached_names bto ON ((e.tissue_id OPERATOR(public.=) bto.identifier)));
 
 
 ALTER VIEW public.v_experiment_entry OWNER TO d3l243;

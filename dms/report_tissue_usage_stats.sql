@@ -25,6 +25,7 @@ CREATE OR REPLACE FUNCTION public.report_tissue_usage_stats(_startdate text, _en
 **  Date:   07/23/2019 mem - Initial version
 **          02/20/2024 mem - Ported to PostgreSQL
 **          05/29/2024 mem - For data validation errors, return a single row that has the error message in the instrument_last column
+**          08/23/2024 mem - Directly reference t_cv_bto_cached_names
 **
 *****************************************************/
 DECLARE
@@ -185,7 +186,7 @@ BEGIN
                 -- Use dataset acquisition time (or creation time) for the date filter
                 RETURN QUERY
                 SELECT E.tissue_id AS Tissue_ID,
-                       BTO.tissue AS Tissue,
+                       BTO.term_name AS Tissue,
                        COUNT(DISTINCT E.exp_id)::int AS Experiments,
                        COUNT(DISTINCT DS.dataset_id)::int AS Datasets,
                        COUNT(DISTINCT InstName.instrument_id)::int AS Instruments,
@@ -212,17 +213,17 @@ BEGIN
                        ON E.campaign_id = C.campaign_id
                      INNER JOIN t_organisms Org
                        ON E.organism_id = Org.organism_id
-                     LEFT OUTER JOIN ont.V_BTO_ID_to_Name BTO
-                       ON E.tissue_id = BTO.Identifier
+                     LEFT OUTER JOIN ont.t_cv_bto_cached_names BTO
+                       ON E.tissue_id = BTO.identifier
                 WHERE Coalesce(DS.acq_time_start, DS.created) BETWEEN _stDate AND _eDate
-                GROUP BY E.tissue_id, BTO.tissue;
+                GROUP BY E.tissue_id, BTO.term_name;
 
             End If;
         Else
             -- Use experiment creation time for the date filter
             RETURN QUERY
             SELECT E.tissue_id AS Tissue_ID,
-                   BTO.tissue,
+                   BTO.term_name AS Tissue,
                    COUNT(E.exp_id)::int AS Experiments,
                    0 AS Datasets,
                    0 AS Instruments,
@@ -243,10 +244,10 @@ BEGIN
                    ON E.campaign_id = C.campaign_id
                  INNER JOIN t_organisms Org
                    ON E.organism_id = Org.organism_id
-                 LEFT OUTER JOIN ont.V_BTO_ID_to_Name BTO
-                   ON E.tissue_id = BTO.Identifier
+                 LEFT OUTER JOIN ont.t_cv_bto_cached_names BTO
+                   ON E.tissue_id = BTO.identifier
             WHERE E.created BETWEEN _stDate AND _eDate
-            GROUP BY E.tissue_id, BTO.tissue;
+            GROUP BY E.tissue_id, BTO.term_name;
 
         End If;
 

@@ -6,7 +6,7 @@ CREATE VIEW public.v_dataset_detail_report_ex AS
  SELECT ds.dataset,
     e.experiment,
     og.organism,
-    bto.tissue AS experiment_tissue,
+    bto.term_name AS experiment_tissue,
     instname.instrument,
     ds.separation_type,
     lccart.cart_name AS lc_cart,
@@ -69,7 +69,7 @@ CREATE VIEW public.v_dataset_detail_report_ex AS
     tispre.name AS predigest_int_std,
     tispost.name AS postdigest_int_std,
     t_myemsl_state.myemsl_state_name AS myemsl_state
-   FROM ((((((((((((((ont.v_bto_id_to_name bto
+   FROM ((((((((((((((ont.t_cv_bto_cached_names bto
      RIGHT JOIN ((((((((((public.t_dataset ds
      JOIN public.t_dataset_state_name tdsn ON ((ds.dataset_state_id = tdsn.dataset_state_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))

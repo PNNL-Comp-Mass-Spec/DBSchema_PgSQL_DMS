@@ -18,7 +18,7 @@ CREATE VIEW public.v_analysis_job_detail_report_2 AS
     tool.param_file_storage_path,
     j.settings_file_name AS settings_file,
     exporg.organism,
-    bto.tissue AS experiment_tissue,
+    bto.term_name AS experiment_tissue,
     joborg.organism AS job_organism,
     j.organism_db_name AS organism_db,
     public.get_fasta_file_path((j.organism_db_name)::text, (joborg.organism)::text) AS organism_db_storage_path,
@@ -69,7 +69,7 @@ CREATE VIEW public.v_analysis_job_detail_report_2 AS
     t_yes_no.description AS dataset_unreviewed,
     t_myemsl_state.myemsl_state_name AS myemsl_state,
     ajpg.group_name AS processor_group
-   FROM ((((((ont.v_bto_id_to_name bto
+   FROM ((((((ont.t_cv_bto_cached_names bto
      RIGHT JOIN (((((((((((public.t_analysis_job j
      JOIN public.t_dataset ds ON ((j.dataset_id = ds.dataset_id)))
      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))

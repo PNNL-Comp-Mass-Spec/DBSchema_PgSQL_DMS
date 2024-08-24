@@ -13,7 +13,7 @@ CREATE VIEW public.v_experiment_detail_report_ex AS
     enz.enzyme_name AS digestion_enzyme,
     e.lab_notebook_ref AS lab_notebook,
     c.campaign,
-    bto.tissue AS plant_or_animal_tissue,
+    bto.term_name AS plant_or_animal_tissue,
     cec.biomaterial_list,
     cec.reference_compound_list AS reference_compounds,
     e.labelling,
@@ -61,7 +61,7 @@ CREATE VIEW public.v_experiment_detail_report_ex AS
                    FROM public.t_file_attachment
                   WHERE ((t_file_attachment.entity_type OPERATOR(public.=) 'experiment_group'::public.citext) AND (t_file_attachment.active > 0))
                   GROUP BY t_file_attachment.entity_id) fa ON ((eg.group_id = (fa.entity_id)::integer)))) expgroupfilecount ON ((expgroupfilecount.exp_id = e.exp_id)))
-     LEFT JOIN ont.v_bto_id_to_name bto ON ((e.tissue_id OPERATOR(public.=) bto.identifier)))
+     LEFT JOIN ont.t_cv_bto_cached_names bto ON ((e.tissue_id OPERATOR(public.=) bto.identifier)))
      LEFT JOIN public.t_cached_experiment_components cec ON ((e.exp_id = cec.exp_id)));
 
 

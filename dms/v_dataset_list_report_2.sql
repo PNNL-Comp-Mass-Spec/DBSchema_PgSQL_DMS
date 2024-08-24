@@ -32,7 +32,7 @@ CREATE VIEW public.v_dataset_list_report_2 AS
     rr.work_package,
     rr.requester_username AS requester,
     org.organism,
-    bto.tissue,
+    bto.term_name AS tissue,
     ds.date_sort_key
    FROM (((((((((((((public.t_dataset_state_name dsn
      JOIN public.t_dataset ds ON ((dsn.dataset_state_id = ds.dataset_state_id)))
@@ -47,7 +47,7 @@ CREATE VIEW public.v_dataset_list_report_2 AS
      LEFT JOIN public.t_lc_cart_configuration cartconfig ON ((ds.cart_config_id = cartconfig.cart_config_id)))
      LEFT JOIN public.t_requested_run rr ON ((ds.dataset_id = rr.dataset_id)))
      LEFT JOIN public.t_eus_usage_type eut ON ((rr.eus_usage_type_id = eut.eus_usage_type_id)))
-     LEFT JOIN ont.v_bto_id_to_name bto ON ((bto.identifier OPERATOR(public.=) e.tissue_id)));
+     LEFT JOIN ont.t_cv_bto_cached_names bto ON ((bto.identifier OPERATOR(public.=) e.tissue_id)));
 
 
 ALTER VIEW public.v_dataset_list_report_2 OWNER TO d3l243;

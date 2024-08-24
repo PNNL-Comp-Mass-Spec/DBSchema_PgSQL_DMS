@@ -14,7 +14,7 @@ CREATE VIEW public.v_analysis_job_list_report_2 AS
     j.param_file_name AS param_file,
     j.settings_file_name AS settings_file,
     exporg.organism,
-    bto.tissue,
+    bto.term_name AS tissue,
     joborg.organism AS job_organism,
     j.organism_db_name AS organism_db,
     j.protein_collection_list,
@@ -49,7 +49,7 @@ CREATE VIEW public.v_analysis_job_list_report_2 AS
      JOIN public.t_organisms exporg ON ((e.organism_id = exporg.organism_id)))
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
      LEFT JOIN public.t_cached_dataset_folder_paths dfp ON ((ds.dataset_id = dfp.dataset_id)))
-     LEFT JOIN ont.v_bto_id_to_name bto ON ((bto.identifier OPERATOR(public.=) e.tissue_id)));
+     LEFT JOIN ont.t_cv_bto_cached_names bto ON ((bto.identifier OPERATOR(public.=) e.tissue_id)));
 
 
 ALTER VIEW public.v_analysis_job_list_report_2 OWNER TO d3l243;

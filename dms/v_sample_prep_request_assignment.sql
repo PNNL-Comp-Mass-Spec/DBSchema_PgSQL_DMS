@@ -16,7 +16,7 @@ CREATE VIEW public.v_sample_prep_request_assignment AS
     spr.requested_personnel AS requested,
     spr.assigned_personnel AS assigned,
     spr.organism,
-    bto.tissue,
+    bto.term_name AS tissue,
     spr.biohazard_level AS biohazard,
     spr.campaign,
     spr.number_of_samples AS samples,
@@ -39,7 +39,7 @@ CREATE VIEW public.v_sample_prep_request_assignment AS
      LEFT JOIN public.v_sample_prep_request_queue_times qt ON ((spr.prep_request_id = qt.request_id)))
      LEFT JOIN public.t_eus_proposals eup ON ((spr.eus_proposal_id OPERATOR(public.=) eup.proposal_id)))
      LEFT JOIN public.t_eus_proposal_type ept ON ((eup.proposal_type OPERATOR(public.=) ept.proposal_type)))
-     LEFT JOIN ont.v_bto_id_to_name bto ON ((spr.tissue_id OPERATOR(public.=) bto.identifier)))
+     LEFT JOIN ont.t_cv_bto_cached_names bto ON ((spr.tissue_id OPERATOR(public.=) bto.identifier)))
   WHERE ((spr.state_id > 0) AND (spr.request_type OPERATOR(public.=) 'Default'::public.citext));
 
 

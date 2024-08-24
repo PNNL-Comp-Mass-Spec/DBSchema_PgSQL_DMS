@@ -8,7 +8,7 @@ CREATE VIEW public.v_sample_prep_request_entry AS
     spr.requester_username,
     ((spr.reason)::text || '__NoCopy__'::text) AS reason,
     spr.organism,
-    bto.tissue,
+    bto.term_name AS tissue,
     spr.biohazard_level,
     spr.campaign,
     ((spr.number_of_samples)::text || '__NoCopy__'::text) AS number_of_samples,
@@ -39,7 +39,7 @@ CREATE VIEW public.v_sample_prep_request_entry AS
     ((spr.material_container_list)::text || '__NoCopy__'::text) AS material_container_list
    FROM ((public.t_sample_prep_request spr
      JOIN public.t_sample_prep_request_state_name sn ON ((spr.state_id = sn.state_id)))
-     LEFT JOIN ont.v_bto_id_to_name bto ON ((spr.tissue_id OPERATOR(public.=) bto.identifier)));
+     LEFT JOIN ont.t_cv_bto_cached_names bto ON ((spr.tissue_id OPERATOR(public.=) bto.identifier)));
 
 
 ALTER VIEW public.v_sample_prep_request_entry OWNER TO d3l243;

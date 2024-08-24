@@ -10,7 +10,7 @@ CREATE VIEW public.v_sample_prep_request_detail_report AS
     spr.reason,
     spr.material_container_list AS material_containers,
     spr.organism,
-    bto.tissue AS plant_or_animal_tissue,
+    bto.term_name AS plant_or_animal_tissue,
     spr.biohazard_level,
     spr.number_of_samples,
     spr.block_and_randomize_samples,
@@ -74,7 +74,7 @@ CREATE VIEW public.v_sample_prep_request_detail_report AS
      LEFT JOIN public.t_eus_proposals eup ON ((spr.eus_proposal_id OPERATOR(public.=) eup.proposal_id)))
      LEFT JOIN public.t_eus_proposal_type ept ON ((eup.proposal_type OPERATOR(public.=) ept.proposal_type)))
      LEFT JOIN public.t_eus_proposal_state_name psn ON ((eup.state_id = psn.state_id)))
-     LEFT JOIN ont.v_bto_id_to_name bto ON ((spr.tissue_id OPERATOR(public.=) bto.identifier)))
+     LEFT JOIN ont.t_cv_bto_cached_names bto ON ((spr.tissue_id OPERATOR(public.=) bto.identifier)))
   WHERE (spr.request_type OPERATOR(public.=) 'Default'::public.citext);
 
 

@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE public.get_tissue_id(IN _tissuenameorid text, INOUT 
 **          10/09/2017 mem - Auto-change _tissue to '' if 'none', 'na', or 'n/a'
 **          12/05/2023 mem - Ported to PostgreSQL
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          08/23/2024 mem - Directly reference t_cv_bto_cached_names
 **
 *****************************************************/
 DECLARE
@@ -44,7 +45,7 @@ BEGIN
             SELECT Identifier,
                    Tissue
             INTO _tissueIdentifier, _tissueName
-            FROM ont.V_BTO_ID_to_Name
+            FROM ont.t_cv_bto_cached_names
             WHERE Identifier = _tissueNameOrID::citext;
 
             If Not FOUND Then
@@ -55,7 +56,7 @@ BEGIN
             SELECT Identifier,
                    Tissue
             INTO _tissueIdentifier, _tissueName
-            FROM ont.V_BTO_ID_to_Name
+            FROM ont.t_cv_bto_cached_names
             WHERE Tissue = _tissueNameOrID::citext;
 
             If Not FOUND Then
