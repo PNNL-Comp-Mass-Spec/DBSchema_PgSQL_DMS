@@ -40,6 +40,7 @@ CREATE OR REPLACE PROCEDURE public.backfill_pipeline_jobs(IN _infoonly boolean D
 **          08/10/2023 mem - Add user MSDADMIN to T_Users if missing
 **          12/01/2023 mem - Ported to PostgreSQL
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          08/23/2024 mem - Query tables directly
 **
 *****************************************************/
 DECLARE
@@ -416,16 +417,18 @@ BEGIN
                     -- Lookup the Data Package name for _jobInfo.DataPackageID
                     ------------------------------------------------
 
-                    _dataPackageName := '';
-                    _dataPackageFolder := '';
+                    _dataPackageName     := '';
+                    _dataPackageFolder   := '';
                     _storagePathRelative := '';
 
-                    SELECT Name,
-                           Package_File_Folder,
-                           Storage_Path_Relative
+                    SELECT dp.package_name,
+                           dp.package_folder,
+                           dpp.storage_path_relative
                     INTO _dataPackageName, _dataPackageFolder, _storagePathRelative
-                    FROM dpkg.V_Data_Package_Export
-                    WHERE ID = _jobInfo.DataPackageID;
+                    FROM dpkg.t_data_package dp
+                         INNER JOIN dpkg.v_data_package_paths dpp ON
+                           dp.data_pkg_id = dpp.data_pkg_id
+                    WHERE dp.data_pkg_id = _jobInfo.DataPackageID;
 
                     If Not FOUND Or Coalesce(_dataPackageFolder, '') = '' Then
                         -- Data Package not found (or Package_File_Folder is not defined)
@@ -870,7 +873,6 @@ BEGIN
             _returnCode := _sqlState;
         End If;
     END;
-
 
     DROP TABLE IF EXISTS Tmp_Job_Backfill_Details;
 END
