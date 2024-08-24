@@ -3,28 +3,41 @@
 --
 
 CREATE VIEW public.v_mage_analysis_jobs_multi_folder AS
- SELECT j.job,
-    j.state,
-    j.dataset,
-    j.dataset_id,
-    j.tool,
-    j.parameter_file,
-    j.settings_file,
-    j.instrument,
-    j.experiment,
-    j.campaign,
-    j.organism,
-    j.organism_db,
-    j.protein_collection_list,
-    j.protein_options,
-    j.comment,
-    j.results_folder,
-    ((((COALESCE((((dfp.dataset_folder_path)::text || '\'::text) || (j.results_folder)::text), ''::text) || '|'::text) || COALESCE((((dfp.archive_folder_path)::text || '\'::text) || (j.results_folder)::text), ''::text)) || '|'::text) || COALESCE((((dfp.myemsl_path_flag)::text || '\'::text) || (j.results_folder)::text), ''::text)) AS folder,
-    j.dataset_created,
-    j.job_finish,
-    j.dataset_rating
-   FROM (public.v_mage_analysis_jobs j
-     JOIN public.v_dataset_folder_paths dfp ON ((j.dataset_id = dfp.dataset_id)));
+ SELECT aj.job,
+    aj.state_name_cached AS state,
+    ds.dataset,
+    ds.dataset_id,
+    analysistool.analysis_tool AS tool,
+    aj.param_file_name AS parameter_file,
+    aj.settings_file_name AS settings_file,
+    instname.instrument,
+    e.experiment,
+    c.campaign,
+    org.organism,
+    aj.organism_db_name AS organism_db,
+    aj.protein_collection_list,
+    aj.protein_options_list AS protein_options,
+    aj.comment,
+    COALESCE(aj.results_folder_name, '(none)'::public.citext) AS results_folder,
+    ((((COALESCE((((dfp.dataset_folder_path)::text || '\'::text) || (aj.results_folder_name)::text), ''::text) || '|'::text) || COALESCE((((dfp.archive_folder_path)::text || '\'::text) || (aj.results_folder_name)::text), ''::text)) || '|'::text) || COALESCE((((dfp.myemsl_path_flag)::text || '\'::text) || (aj.results_folder_name)::text), ''::text)) AS folder,
+    ds.created AS dataset_created,
+    aj.finish AS job_finish,
+    dr.dataset_rating,
+    ds.separation_type,
+    dtn.dataset_type,
+    aj.request_id
+   FROM ((((((((((public.t_analysis_job aj
+     JOIN public.t_dataset ds ON ((aj.dataset_id = ds.dataset_id)))
+     JOIN public.t_organisms org ON ((aj.organism_id = org.organism_id)))
+     JOIN public.t_analysis_tool analysistool ON ((aj.analysis_tool_id = analysistool.analysis_tool_id)))
+     JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
+     JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))
+     JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
+     JOIN public.t_storage_path spath ON ((ds.storage_path_id = spath.storage_path_id)))
+     JOIN public.t_dataset_rating_name dr ON ((ds.dataset_rating_id = dr.dataset_rating_id)))
+     JOIN public.t_dataset_type_name dtn ON ((ds.dataset_type_id = dtn.dataset_type_id)))
+     JOIN public.v_dataset_folder_paths dfp ON ((ds.dataset_id = dfp.dataset_id)))
+  WHERE (aj.job_state_id = ANY (ARRAY[4, 7, 14]));
 
 
 ALTER VIEW public.v_mage_analysis_jobs_multi_folder OWNER TO d3l243;

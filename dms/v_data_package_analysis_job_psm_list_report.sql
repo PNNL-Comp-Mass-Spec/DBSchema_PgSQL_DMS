@@ -56,7 +56,7 @@ CREATE VIEW public.v_data_package_analysis_job_psm_list_report AS
     aj.job_state_id AS state_id,
     (aj.progress)::numeric(9,2) AS job_progress,
     (aj.eta_minutes)::numeric(18,1) AS job_eta_minutes
-   FROM ((((((((((((dpkg.v_data_package_analysis_jobs_export dpj
+   FROM ((((((((((((dpkg.t_data_package_analysis_jobs dpj
      JOIN public.t_analysis_job aj ON ((aj.job = dpj.job)))
      JOIN public.t_dataset ds ON ((aj.dataset_id = ds.dataset_id)))
      JOIN public.v_dataset_archive_path dap ON ((dap.dataset_id = ds.dataset_id)))
