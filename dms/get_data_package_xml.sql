@@ -54,6 +54,7 @@ CREATE OR REPLACE FUNCTION public.get_data_package_xml(_datapackageid integer, _
 **          01/04/2024 mem - Remove unnecessary parentheses
 **          01/21/2024 mem - Change data type of argument _options to text
 **          02/19/2024 mem - Query tables directly instead of using views
+**          08/23/2024 mem - Switch from V_Data_Package_Export to V_Data_Package_Paths
 **
 *****************************************************/
 DECLARE
@@ -262,11 +263,11 @@ BEGIN
                 XMLAGG(XMLELEMENT(
                        NAME data_package_path,
                        XMLATTRIBUTES(
-                           share_path,
-                           storage_path_relative))
+                           dpp.share_path,
+                           dpp.storage_path_relative))
                       ) AS xml_item
-              FROM dpkg.V_Data_Package_Export AS DPE
-              WHERE ID = _dataPackageID
+              FROM dpkg.V_Data_Package_Paths dpp
+              WHERE dpp.data_pkg_id = _dataPackageID
             ) AS LookupQ;
 
         _result := format('%s    %s%s', _result, Coalesce(_dpPathXML::text, ''), _newline);
