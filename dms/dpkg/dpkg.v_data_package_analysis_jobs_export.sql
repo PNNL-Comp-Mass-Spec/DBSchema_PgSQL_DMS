@@ -6,6 +6,7 @@ CREATE VIEW dpkg.v_data_package_analysis_jobs_export AS
  SELECT dpj.data_pkg_id,
     dpj.job,
     ds.dataset,
+    ds.dataset_id,
     t.analysis_tool AS tool,
     dpj.package_comment,
     dpj.item_added,
