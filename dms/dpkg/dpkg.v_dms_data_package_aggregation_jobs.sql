@@ -12,7 +12,7 @@ CREATE VIEW dpkg.v_dms_data_package_aggregation_jobs AS
     ds.folder_name AS dataset_folder,
     aj.results_folder_name AS results_folder,
     aj.dataset_id,
-    org.name AS organism,
+    org.organism,
     instname.instrument AS instrument_name,
     instname.instrument_group,
     instname.instrument_class,
@@ -29,10 +29,10 @@ CREATE VIEW dpkg.v_dms_data_package_aggregation_jobs AS
     e.experiment,
     e.reason AS experiment_reason,
     e.comment AS experiment_comment,
-    org.newt_id AS experiment_newt_id,
-    org.newt_name AS experiment_newt_name,
+    org.ncbi_taxonomy_id AS experiment_newt_id,
+    newt.term_name AS experiment_newt_name,
     tpj.data_pkg_id AS data_package_id
-   FROM (((((((((dpkg.t_data_package_analysis_jobs tpj
+   FROM ((((((((((dpkg.t_data_package_analysis_jobs tpj
      JOIN public.t_analysis_job aj ON ((tpj.job = aj.job)))
      JOIN public.t_dataset ds ON ((aj.dataset_id = ds.dataset_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
@@ -40,8 +40,11 @@ CREATE VIEW dpkg.v_dms_data_package_aggregation_jobs AS
      JOIN public.t_storage_path sp ON ((ds.storage_path_id = sp.storage_path_id)))
      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))
      JOIN public.t_analysis_tool analysistool ON ((aj.analysis_tool_id = analysistool.analysis_tool_id)))
-     JOIN public.v_organism_export org ON ((e.organism_id = org.organism_id)))
-     JOIN public.v_dataset_archive_path dsarch ON ((ds.dataset_id = dsarch.dataset_id)));
+     JOIN public.t_organisms org ON ((e.organism_id = org.organism_id)))
+     JOIN public.v_dataset_archive_path dsarch ON ((ds.dataset_id = dsarch.dataset_id)))
+     LEFT JOIN ( SELECT t_cv_newt.term_name,
+            t_cv_newt.identifier
+           FROM ont.t_cv_newt) newt ON ((org.ncbi_taxonomy_id = newt.identifier)));
 
 
 ALTER VIEW dpkg.v_dms_data_package_aggregation_jobs OWNER TO d3l243;
