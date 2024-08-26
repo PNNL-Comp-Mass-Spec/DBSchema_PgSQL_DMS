@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE public.get_tissue_id(IN _tissuenameorid text, INOUT 
 **          12/05/2023 mem - Ported to PostgreSQL
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          08/23/2024 mem - Directly reference t_cv_bto_cached_names
+**          08/26/2024 mem - Fix column name bug referencing t_cv_bto_cached_names
 **
 *****************************************************/
 DECLARE
@@ -42,29 +43,28 @@ BEGIN
 
     If _tissueNameOrID <> '' Then
         If _tissueNameOrID ILike 'BTO:%' Then
-            SELECT Identifier,
-                   Tissue
+            SELECT identifier,
+                   term_name AS tissue
             INTO _tissueIdentifier, _tissueName
             FROM ont.t_cv_bto_cached_names
-            WHERE Identifier = _tissueNameOrID::citext;
+            WHERE identifier = _tissueNameOrID::citext;
 
             If Not FOUND Then
                 _message := format('Identifier not found: %s', _tissueNameOrID);
                 _returnCode := 'U5201';
             End If;
         Else
-            SELECT Identifier,
-                   Tissue
+            SELECT identifier,
+                   term_name AS tissue
             INTO _tissueIdentifier, _tissueName
             FROM ont.t_cv_bto_cached_names
-            WHERE Tissue = _tissueNameOrID::citext;
+            WHERE term_name = _tissueNameOrID::citext;
 
             If Not FOUND Then
                  _message := format('Tissue name not found: %s', _tissueNameOrID);
                 _returnCode := 'U5202';
             End If;
         End If;
-
     End If;
 
 END
