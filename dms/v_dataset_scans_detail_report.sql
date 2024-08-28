@@ -93,13 +93,14 @@ CREATE VIEW public.v_dataset_scans_detail_report AS
             WHEN (COALESCE(dsinfo.elution_time_max, (0)::real) < ('1000000'::numeric)::double precision) THEN dsinfo.elution_time_max
             ELSE ('1000000'::numeric)::real
         END AS elution_time_max,
-    round((((ds.file_size_bytes)::numeric / 1024.0) / 1024.0), 1) AS file_size_mb
+    round((((ds.file_size_bytes)::numeric / 1024.0) / 1024.0), 1) AS file_size_mb,
+    dsinfo.last_affected AS dataset_info_last_affected
    FROM ((((public.t_dataset ds
      JOIN public.t_dataset_type_name dtn ON ((ds.dataset_type_id = dtn.dataset_type_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
      JOIN public.t_dataset_info dsinfo ON ((ds.dataset_id = dsinfo.dataset_id)))
      JOIN public.t_dataset_scan_types dst ON ((ds.dataset_id = dst.dataset_id)))
-  GROUP BY ds.dataset_id, ds.dataset, instname.instrument, dtn.dataset_type, ds.scan_count, dsinfo.elution_time_max, ds.file_size_bytes, dsinfo.scan_types, dsinfo.profile_scan_count_ms, dsinfo.profile_scan_count_msn, dsinfo.centroid_scan_count_ms, dsinfo.centroid_scan_count_msn, dsinfo.scan_count_dia;
+  GROUP BY ds.dataset_id, ds.dataset, instname.instrument, dtn.dataset_type, ds.scan_count, dsinfo.elution_time_max, ds.file_size_bytes, dsinfo.scan_types, dsinfo.profile_scan_count_ms, dsinfo.profile_scan_count_msn, dsinfo.centroid_scan_count_ms, dsinfo.centroid_scan_count_msn, dsinfo.scan_count_dia, dsinfo.last_affected;
 
 
 ALTER VIEW public.v_dataset_scans_detail_report OWNER TO d3l243;
