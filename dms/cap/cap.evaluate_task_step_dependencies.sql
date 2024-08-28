@@ -2,7 +2,7 @@
 -- Name: evaluate_task_step_dependencies(text, text, integer, integer, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.evaluate_task_step_dependencies(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _maxjobstoprocess integer DEFAULT 0, IN _loopingupdateinterval integer DEFAULT 5, IN _showdebug boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE cap.evaluate_task_step_dependencies(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _maxjobstoprocess integer DEFAULT 0, IN _loopingupdateinterval integer DEFAULT 10, IN _showdebug boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE cap.evaluate_task_step_dependencies(INOUT _message t
 **          07/26/2023 mem - Move "Not" keyword to before the field name
 **          09/07/2023 mem - Align assignment statements
 **          01/03/2024 mem - Update warning message
+**          08/27/2024 mem - Change default value for _loopingUpdateInterval to 10 seconds (previously 5 seconds)
 **
 *****************************************************/
 DECLARE
@@ -56,7 +57,7 @@ BEGIN
     ---------------------------------------------------
 
     _maxJobsToProcess      := Coalesce(_maxJobsToProcess, 0);
-    _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
+    _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 10);
     _showDebug             := Coalesce(_showDebug, false);
 
     If _loopingUpdateInterval < 2 Then

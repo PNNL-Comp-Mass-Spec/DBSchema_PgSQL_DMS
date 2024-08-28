@@ -2,7 +2,7 @@
 -- Name: create_task_steps(text, text, boolean, text, integer, text, integer, integer, boolean, integer, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _debugmode boolean DEFAULT false, IN _mode text DEFAULT 'CreateFromImportedJobs'::text, IN _existingjob integer DEFAULT 0, IN _extensionscriptname text DEFAULT ''::text, IN _maxjobstoprocess integer DEFAULT 0, IN _logintervalthreshold integer DEFAULT 15, IN _loggingenabled boolean DEFAULT false, IN _loopingupdateinterval integer DEFAULT 5, IN _infoonly boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _debugmode boolean DEFAULT false, IN _mode text DEFAULT 'CreateFromImportedJobs'::text, IN _existingjob integer DEFAULT 0, IN _extensionscriptname text DEFAULT ''::text, IN _maxjobstoprocess integer DEFAULT 0, IN _logintervalthreshold integer DEFAULT 15, IN _loggingenabled boolean DEFAULT false, IN _loopingupdateinterval integer DEFAULT 10, IN _infoonly boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -52,6 +52,7 @@ CREATE OR REPLACE PROCEDURE cap.create_task_steps(INOUT _message text DEFAULT ''
 **          11/02/2023 mem - Delete job parameters from Tmp_Job_Parameters when skipping a capture task job (bcg)
 **          03/03/2024 mem - Trim whitespace when extracting values from XML
 **          03/04/2024 mem - Customize the warning message shown when tasks exist with state 0 and dataset_id = 0 (or null)
+**          08/27/2024 mem - Change default value for _loopingUpdateInterval to 10 seconds (previously 5 seconds)
 **
 *****************************************************/
 DECLARE
@@ -101,7 +102,7 @@ BEGIN
     _startTime             := CURRENT_TIMESTAMP;
     _loggingEnabled        := Coalesce(_loggingEnabled, false);
     _logIntervalThreshold  := Coalesce(_logIntervalThreshold, 15);
-    _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
+    _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 10);
 
     If _logIntervalThreshold = 0 Then
         _loggingEnabled := true;

@@ -2,7 +2,7 @@
 -- Name: update_job_state(boolean, integer, integer, boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE sw.update_job_state(IN _bypassdms boolean DEFAULT false, IN _maxjobstoprocess integer DEFAULT 0, IN _loopingupdateinterval integer DEFAULT 5, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE sw.update_job_state(IN _bypassdms boolean DEFAULT false, IN _maxjobstoprocess integer DEFAULT 0, IN _loopingupdateinterval integer DEFAULT 10, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -104,6 +104,7 @@ CREATE OR REPLACE PROCEDURE sw.update_job_state(IN _bypassdms boolean DEFAULT fa
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **                         - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          08/27/2024 mem - Change default value for _loopingUpdateInterval to 10 seconds (previously 5 seconds)
 **
 *****************************************************/
 DECLARE
@@ -141,7 +142,7 @@ BEGIN
     _bypassDMS             := Coalesce(_bypassDMS, false);
     _maxJobsToProcess      := Coalesce(_maxJobsToProcess, 0);
     _startTime             := CURRENT_TIMESTAMP;
-    _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
+    _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 10);
     _infoOnly              := Coalesce(_infoOnly, false);
 
     If _loopingUpdateInterval < 2 Then

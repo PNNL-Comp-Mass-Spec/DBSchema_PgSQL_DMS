@@ -2,7 +2,7 @@
 -- Name: update_task_state(boolean, text, text, integer, integer, boolean); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.update_task_state(IN _bypassdms boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _maxjobstoprocess integer DEFAULT 0, IN _loopingupdateinterval integer DEFAULT 5, IN _infoonly boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE cap.update_task_state(IN _bypassdms boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _maxjobstoprocess integer DEFAULT 0, IN _loopingupdateinterval integer DEFAULT 10, IN _infoonly boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -63,6 +63,7 @@ CREATE OR REPLACE PROCEDURE cap.update_task_state(IN _bypassdms boolean DEFAULT 
 **          11/01/2023 mem - If all steps for a capture task job have state 'skipped', set the task state to 'Skipped' (bcg)
 **          11/04/2023 mem - When _infoOnly is true, update Finish_New for capture task jobs with state 15 (Skipped)
 **                         - Replace While loop with a For loop
+**          08/27/2024 mem - Change default value for _loopingUpdateInterval to 10 seconds (previously 5 seconds)
 **
 *****************************************************/
 DECLARE
@@ -93,7 +94,7 @@ BEGIN
 
     _bypassDMS             := Coalesce(_bypassDMS, false);
     _maxJobsToProcess      := Coalesce(_maxJobsToProcess, 0);
-    _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
+    _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 10);
     _infoOnly              := Coalesce(_infoOnly, false);
 
     If _loopingUpdateInterval < 2 Then

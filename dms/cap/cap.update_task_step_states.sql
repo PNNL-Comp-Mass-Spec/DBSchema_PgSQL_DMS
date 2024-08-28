@@ -2,7 +2,7 @@
 -- Name: update_task_step_states(text, text, boolean, integer, integer); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.update_task_step_states(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, IN _maxjobstoprocess integer DEFAULT 0, IN _loopingupdateinterval integer DEFAULT 5)
+CREATE OR REPLACE PROCEDURE cap.update_task_step_states(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, IN _maxjobstoprocess integer DEFAULT 0, IN _loopingupdateinterval integer DEFAULT 10)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE cap.update_task_step_states(INOUT _message text DEFA
 **  Date:   09/02/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          06/01/2020 mem - Tabs to spaces
 **          06/20/2023 mem - Ported to PostgreSQL
+**          08/27/2024 mem - Change default value for _loopingUpdateInterval to 10 seconds (previously 5 seconds)
 **
 *****************************************************/
 DECLARE
@@ -31,7 +32,13 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _maxJobsToProcess := Coalesce(_maxJobsToProcess, 0);
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _infoOnly              := Coalesce(_infoOnly, false);
+    _maxJobsToProcess      := Coalesce(_maxJobsToProcess, 0);
+    _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 10);
 
     ---------------------------------------------------
     -- Perform state evaluation process followed by

@@ -2,7 +2,7 @@
 -- Name: update_dependent_steps(boolean, integer, integer, integer, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE sw.update_dependent_steps(IN _infoonly boolean DEFAULT false, IN _maxjobstoprocess integer DEFAULT 0, IN _loopingupdateinterval integer DEFAULT 5, INOUT _numstepsskipped integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE sw.update_dependent_steps(IN _infoonly boolean DEFAULT false, IN _maxjobstoprocess integer DEFAULT 0, IN _loopingupdateinterval integer DEFAULT 10, INOUT _numstepsskipped integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE sw.update_dependent_steps(IN _infoonly boolean DEFAU
 **          08/02/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
+**          08/27/2024 mem - Change default value for _loopingUpdateInterval to 10 seconds (previously 5 seconds)
 **
 *****************************************************/
 DECLARE
@@ -85,7 +86,7 @@ BEGIN
 
     _infoOnly              := Coalesce(_infoOnly, false);
     _maxJobsToProcess      := Coalesce(_maxJobsToProcess, 0);
-    _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
+    _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 10);
 
     If _loopingUpdateInterval < 2 Then
         _loopingUpdateInterval := 2;

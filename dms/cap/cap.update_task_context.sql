@@ -2,7 +2,7 @@
 -- Name: update_task_context(boolean, integer, integer, boolean, integer, boolean, boolean, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.update_task_context(IN _bypassdms boolean DEFAULT false, IN _maxjobstoprocess integer DEFAULT 0, IN _logintervalthreshold integer DEFAULT 15, IN _loggingenabled boolean DEFAULT false, IN _loopingupdateinterval integer DEFAULT 5, IN _infoonly boolean DEFAULT false, IN _debugmode boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE cap.update_task_context(IN _bypassdms boolean DEFAULT false, IN _maxjobstoprocess integer DEFAULT 0, IN _logintervalthreshold integer DEFAULT 15, IN _loggingenabled boolean DEFAULT false, IN _loopingupdateinterval integer DEFAULT 10, IN _infoonly boolean DEFAULT false, IN _debugmode boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE cap.update_task_context(IN _bypassdms boolean DEFAUL
 **          06/20/2023 mem - Use new step names in cap.t_process_step_control
 **          06/21/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          08/27/2024 mem - Change default value for _loopingUpdateInterval to 10 seconds (previously 5 seconds)
 **
 *****************************************************/
 DECLARE
@@ -68,7 +69,7 @@ BEGIN
 
         _logIntervalThreshold  := Coalesce(_logIntervalThreshold, 15);
         _loggingEnabled        := Coalesce(_loggingEnabled, false);
-        _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
+        _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 10);
 
         _infoOnly              := Coalesce(_infoOnly, false);
         _debugMode             := Coalesce(_debugMode, false);

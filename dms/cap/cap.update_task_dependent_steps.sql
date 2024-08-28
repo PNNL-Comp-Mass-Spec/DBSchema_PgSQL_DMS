@@ -2,7 +2,7 @@
 -- Name: update_task_dependent_steps(text, text, integer, boolean, integer, integer); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.update_task_dependent_steps(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, INOUT _numstepsskipped integer DEFAULT 0, IN _infoonly boolean DEFAULT false, IN _maxjobstoprocess integer DEFAULT 0, IN _loopingupdateinterval integer DEFAULT 5)
+CREATE OR REPLACE PROCEDURE cap.update_task_dependent_steps(INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, INOUT _numstepsskipped integer DEFAULT 0, IN _infoonly boolean DEFAULT false, IN _maxjobstoprocess integer DEFAULT 0, IN _loopingupdateinterval integer DEFAULT 10)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE cap.update_task_dependent_steps(INOUT _message text 
 **          06/20/2023 mem - Ported to PostgreSQL
 **          07/11/2023 mem - Use COUNT(job) instead of COUNT(*)
 **          09/07/2023 mem - Align assignment statements
+**          08/27/2024 mem - Change default value for _loopingUpdateInterval to 10 seconds (previously 5 seconds)
 **
 *****************************************************/
 DECLARE
@@ -59,7 +60,7 @@ BEGIN
 
     _infoOnly              := Coalesce(_infoOnly, false);
     _maxJobsToProcess      := Coalesce(_maxJobsToProcess, 0);
-    _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 5);
+    _loopingUpdateInterval := Coalesce(_loopingUpdateInterval, 10);
 
     If _loopingUpdateInterval < 2 Then
         _loopingUpdateInterval := 2;
