@@ -44,7 +44,8 @@ CREATE OR REPLACE PROCEDURE cap.store_myemsl_upload_stats(IN _job integer, IN _d
 **          06/27/2023 mem - Ported to PostgreSQL
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/08/2023 mem - Select a single column when using If Not Exists()
-**          08/16/2024 mem - Pass _logErrorsToPublicLogTable to post_log_entry() for warning message
+**          08/16/2024 mem - Pass _logErrorsToPublicLogTable to post_log_entry for warning message
+**          08/27/2024 mem - Set _logErrorsToPublicLogTable to false when calling post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -183,7 +184,7 @@ BEGIN
     If _invalidFormat Then
         If Not _infoOnly Then
             If _errorCode = 0 Then
-                CALL public.post_log_entry ('Error', _logMsg, 'Store_MyEMSL_Upload_Stats', 'cap', _logErrorsToPublicLogTable => true);
+                CALL public.post_log_entry ('Error', _logMsg, 'Store_MyEMSL_Upload_Stats', 'cap', _logErrorsToPublicLogTable => false);
             End If;
         Else
             RAISE INFO '%', _logMsg;
