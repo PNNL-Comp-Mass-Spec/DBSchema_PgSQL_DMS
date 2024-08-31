@@ -21,10 +21,10 @@ SET row_security = off;
 --
 
 COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class, instrument_group, source_path_id, storage_path_id, capture_method, status, room_number, description, created) FROM stdin;
-35	11T_Aux2	BRUKERFTMS	FT_ZippedSFolders	145	144	secfso	Inactive	EMSL 1621	Virtual 11T FTICR	2005-02-23 00:00:00
+35	11T_Aux2	BrukerFTMS	FT_ZippedSFolders	145	144	secfso	Inactive	EMSL 1621	Virtual 11T FTICR	2005-02-23 00:00:00
 4	11T_FTICR	Finnigan_FTICR	FT_ZippedSFolders	10	88	ftp	Inactive	EMSL 1621	11.5 T FTICR	2000-05-17 00:00:00
-22	11T_FTICR_B	BRUKERFTMS	FT_ZippedSFolders	106	105	secfso	Inactive	EMSL 1621	11T w/Bruker WS	2004-02-17 00:00:00
-36	12T_FTICR	BRUKERFTMS	FT_ZippedSFolders	147	247	secfso	Inactive	EMSL 1621	Bruker 12T FTICR magnet	2005-02-24 00:00:00
+22	11T_FTICR_B	BrukerFTMS	FT_ZippedSFolders	106	105	secfso	Inactive	EMSL 1621	11T w/Bruker WS	2004-02-17 00:00:00
+36	12T_FTICR	BrukerFTMS	FT_ZippedSFolders	147	247	secfso	Inactive	EMSL 1621	Bruker 12T FTICR magnet	2005-02-24 00:00:00
 129	12T_FTICR_Agilent	Agilent_Ion_Trap	Agilent_FTMS	1701	4879	secfso	Active	EMSL 1621	Agilent 12T FTICR magnet. Originally had a Velos Pro front end, but that was later moved to the 21T and this instrument had Exploris01 as its front end. In FY24 the Velos Pro will move back to this instrument and Exploris01 will move to the 21T. This instrument is active so that helium refills can be tracked.  Datasets are uploaded via either the Velos Pro or the Exploris front end.	2015-06-13 06:12:48
 65	12T_FTICR_B	BrukerFT_BAF	Bruker_FTMS	1397	4111	secfso	Inactive	EMSL 1621	12T FTICR with updated workstation; set to inactive in May 2022 when the 15T instrument (with MALDI and paracell analyzer) was moved to the 12T magnet due to 15T magnet problems and helium rationing; see 12T_FTICR_P & 12T_FTICR_P_Imaging	2010-07-09 00:00:00
 83	12T_FTICR_Imaging	BrukerMALDI_Imaging_V2	MALDI_Imaging	1397	3762	secfso	Inactive	EMSL 1621	12T FTICR with MALDI imaging; was BrukerMALDI_Imaging prior to October 2012; switched to BrukerMALDI_Imaging_V2 with .D folders in 2012; superseded by 12T_FTICR_P_Imaging	2011-05-27 11:16:10
@@ -41,10 +41,10 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 3	7T_FTICR	Finnigan_FTICR	Other	8	89	secfso	Inactive	EMSL 1621 (excessed)	7 T FTICR	2000-06-20 00:00:00
 123	7T_FTICR_B	BrukerFT_BAF	Bruker_FTMS	1502	2426	secfso	Offline	EMSL 1649	7T; not uploading datasets, but still maintaining and entering instrument operation notes; see https://dms2.pnl.gov/instrument_config_history/report/7T	2014-06-20 17:08:16
 124	7T_FTICR_B_Imaging	BrukerMALDI_Imaging_V2	MALDI_Imaging	1502	2313	secfso	Inactive	EMSL 1649	7T, imaging	2014-06-20 17:10:12
-13	9T_FTICR	BRUKERFTMS	FT_ZippedSFolders	46	289	secfso	Inactive	EMSL 1629	9.4T Bruker FTICR	2001-10-22 00:00:00
+13	9T_FTICR	BrukerFTMS	FT_ZippedSFolders	46	289	secfso	Inactive	EMSL 1629	9.4T Bruker FTICR	2001-10-22 00:00:00
 74	9T_FTICR_B	BrukerFT_BAF	Bruker_FTMS	297	296	secfso	Inactive	EMSL 1621	9T FTICR updated WS	2011-01-03 14:06:37
 71	9T_FTICR_Imaging	BrukerMALDI_Imaging	MALDI_Imaging	297	1165	secfso	Inactive	EMSL 1629	Bruker 9T FTICR with MALDI Imaging datasets	2010-11-14 20:20:51
-21	9T_FTICR_Q	BRUKERFTMS	FT_ZippedSFolders	103	173	fso	Inactive	EMSL 1326	9.4T Bruker w/special quad	2004-01-28 00:00:00
+21	9T_FTICR_Q	BrukerFTMS	FT_ZippedSFolders	103	173	fso	Inactive	EMSL 1326	9.4T Bruker w/special quad	2004-01-28 00:00:00
 102	AMOLF_VOrbiETD01	LTQ_FT	VelosOrbi	1230	1231	fso	Inactive	AMOLF (Netherlands)	AMOLF Orbitrap data from Ron Heeren	2012-12-03 12:31:26
 257	AgGCQTOF02	Agilent_TOF_V2	Agilent_GC_MS	4864	4945	secfso	Active	EMSL 1130	Agilent GC-QTOF, owned by EMSL	2024-07-03 14:52:21
 79	AgQTOF03	Agilent_TOF_V2	Agilent_TOF_V2	307	2155	secfso	Inactive	EMSL 1430	Agilent QTOF, WD67695	2011-02-01 16:58:52
@@ -209,7 +209,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 241	PrepHPLC8	PrepHPLC	PrepHPLC	4646	2	secfso	Active	BSF 2240	Thermo Vanquish Flex Autosampler/Fraction Collector, controlled with Chromeleon software	2024-01-02 11:41:48
 27	QC_Ag_TOF	Agilent_TOF	Agilent_TOF	116	188	fso	Inactive	EMSL 1553	Agilent TOF-type instrument for QC Process	2005-05-11 00:00:00
 26	QC_Ag_XCT	Agilent_Ion_Trap	Agilent_Ion_Trap	114	113	fso	Inactive	EMSL 1553	Agilent XCT-type instrument for QC Process	2005-05-01 00:00:00
-25	QC_Bruker_ICR	BRUKERFTMS	Other	112	175	fso	Inactive	EMSL 1553	Bruker-type instrument for QC Process	2004-07-30 00:00:00
+25	QC_Bruker_ICR	BrukerFTMS	Other	112	175	fso	Inactive	EMSL 1553	Bruker-type instrument for QC Process	2004-07-30 00:00:00
 30	QC_Fin_ICR	Finnigan_FTICR	Other	122	121	fso	Inactive	EMSL 1553	Finnigan FTICR-type instrument for QC Process	2006-12-13 00:00:00
 24	QC_LCQ	Finnigan_Ion_Trap	LCQ	110	189	fso	Inactive	EMSL 1553	LCQ-type instrument for QC Process	2004-07-29 00:00:00
 29	QC_LTQ	Finnigan_Ion_Trap	LTQ	120	190	fso	Inactive	EMSL 1553	LTQ-type instrument for QC Process	2004-10-15 00:00:00
@@ -244,7 +244,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 198	SLIM09_QExactP06	LTQ_FT	SLIM	4499	4500	fso	Active	EMSL 1426	SLIM instrument connected to QExactP06, brought online in 2023	2023-08-23 16:15:45
 8	SW_TEST_FTICR	Finnigan_FTICR	Other	18	176	secfso	Inactive	n/a	FTICR TEST	2003-04-29 00:00:00
 7	SW_TEST_LCQ	Finnigan_Ion_Trap	LCQ	16	195	fso	Inactive	n/a	LCQ TEST	2003-04-29 00:00:00
-16	SW_Test_Bruker	BRUKERFTMS	Other	87	177	fso	Inactive	n/a	Bruker SW Test Data	2003-04-29 00:00:00
+16	SW_Test_Bruker	BrukerFTMS	Other	87	177	fso	Inactive	n/a	Bruker SW Test Data	2003-04-29 00:00:00
 72	SW_Test_Bruker_Imaging	BrukerMALDI_Imaging	Other	293	292	fso	Inactive	n/a	Dummy instrument for testing	2010-11-17 09:12:21
 223	Samwise	Waters_Acquity_LC	Waters_Acquity_LC	4574	4917	secfso	Active	EMSL 1444	Waters nanoAcquity LC	2023-11-02 17:23:27
 224	Sauron	Waters_Acquity_LC	Waters_Acquity_LC	4575	4918	secfso	Active	EMSL 1521	Waters nanoAcquity LC	2023-11-02 17:24:04

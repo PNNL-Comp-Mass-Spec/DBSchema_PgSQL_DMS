@@ -24,11 +24,11 @@ COPY public.t_analysis_tool_allowed_instrument_class (analysis_tool_id, instrume
 1	Finnigan_Ion_Trap	
 1	LTQ_FT	
 1	Sciex_TripleTOF	
-2	BRUKERFTMS	
+2	BrukerFTMS	
 2	BrukerFT_BAF	
 2	Finnigan_FTICR	
 3	Finnigan_Ion_Trap	
-4	BRUKERFTMS	
+4	BrukerFTMS	
 4	Finnigan_FTICR	
 5	Finnigan_Ion_Trap	
 6	QStar_QTOF	
@@ -47,7 +47,7 @@ COPY public.t_analysis_tool_allowed_instrument_class (analysis_tool_id, instrume
 15	Finnigan_Ion_Trap	
 15	LTQ_FT	
 15	Sciex_TripleTOF	
-16	BRUKERFTMS	
+16	BrukerFTMS	
 16	Finnigan_FTICR	
 16	Finnigan_Ion_Trap	
 16	IMS_Agilent_TOF_DotD	
@@ -55,7 +55,7 @@ COPY public.t_analysis_tool_allowed_instrument_class (analysis_tool_id, instrume
 16	LTQ_FT	
 16	Thermo_Exactive	
 16	Waters_TOF	
-17	BRUKERFTMS	
+17	BrukerFTMS	
 17	Finnigan_FTICR	
 17	Finnigan_Ion_Trap	
 17	IMS_Agilent_TOF_DotD	
@@ -86,7 +86,7 @@ COPY public.t_analysis_tool_allowed_instrument_class (analysis_tool_id, instrume
 27	Agilent_Ion_Trap	
 27	Agilent_TOF	
 27	Agilent_TOF_V2	
-27	BRUKERFTMS	
+27	BrukerFTMS	
 27	BrukerFT_BAF	
 27	BrukerMALDI_Imaging	
 27	BrukerMALDI_Spot	
@@ -111,7 +111,7 @@ COPY public.t_analysis_tool_allowed_instrument_class (analysis_tool_id, instrume
 32	LTQ_FT	
 33	Agilent_Ion_Trap	
 33	Agilent_TOF_V2	
-33	BRUKERFTMS	
+33	BrukerFTMS	
 33	BrukerFT_BAF	
 33	BrukerMALDI_Imaging	
 33	BrukerMALDI_Spot	
@@ -127,7 +127,7 @@ COPY public.t_analysis_tool_allowed_instrument_class (analysis_tool_id, instrume
 34	Bruker_Amazon_Ion_Trap	
 35	Agilent_Ion_Trap	
 35	Agilent_TOF_V2	
-35	BRUKERFTMS	
+35	BrukerFTMS	
 35	BrukerFT_BAF	
 35	BrukerMALDI_Imaging	
 35	BrukerMALDI_Spot	

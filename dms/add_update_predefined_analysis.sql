@@ -391,7 +391,7 @@ BEGIN
                                WHERE Tool.analysis_tool = _analysisToolName AND
                                    AIC.instrument_class = _instrument.InstrumentClass)
                 Then
-                    -- Example criteria that will result in this message: Instrument Class=BRUKERFTMS, Tool=XTandem
+                    -- Example criteria that will result in this message: Instrument Class=BrukerFTMS, Tool=XTandem
                     -- 2nd example: Instrument Criteria=Agilent_TOF%, Tool=Decon2LS
 
                     SELECT AllowedInstrumentClasses
