@@ -51,6 +51,7 @@ CREATE OR REPLACE PROCEDURE public.rename_dataset(IN _datasetnameold text DEFAUL
 **          02/18/2024 mem - Ported to PostgreSQL
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          08/30/2024 mem - Pass a single backslash to Position()
 **
 *****************************************************/
 DECLARE
@@ -254,7 +255,7 @@ BEGIN
     WHERE Dataset_ID = _datasetID;
 
     -- Extract the parent directory path from _datasetFolderPath
-    _lastSlashReverseText := Position('\\' In Reverse(_datasetFolderPath));
+    _lastSlashReverseText := Position('\' In Reverse(_datasetFolderPath));
     _storageServerSharePath := Substring(_datasetFolderPath, 1, char_length(_datasetFolderPath) - _lastSlashReverseText);
 
     -- Lookup acquisition metadata stored in t_requested_run
