@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.3
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -47,12 +47,8 @@ Exploris_Frac	Requested runs with LC-MicroHpH, LC-MicroSCX, LC-NanoHpH, etc.		1	
 FT_ZippedSFolders	Research		0	1	\N	0	1	\N
 GC_QExactive	Metabolomics	\N	1	41	ORB	1	1	\N
 GC_TSQ	Metabolomics		0	9	GC	0	0	\N
-Illumina	Genomic Sequencing	\N	0	33	SEQ	1	0	\N
 IMS	Ion-mobility LC-IMS-MS		1	6	IMS	1	1	\N
-MALDI_timsTOF_Imaging	MALDI Imaging on timsTOF Flex		1	26	MAL	1	1	\N
-timsTOF_Flex	LC-IMS-MS with MS/MS	Bruker timsTOF Flex	1	30	TOF	1	1	\N
-timsTOF_SCP	LC-IMS-MS with MS/MS	Bruker timsTOF SCP	1	30	TOF	1	1	\N
-TSQ	MRM		1	9	QQQ	1	1	\N
+Illumina	Genomic Sequencing	\N	0	33	SEQ	1	0	\N
 LCMSNet_LC	LCMSNet LCs with no available LC pump data file	If there is a Thermo pump on the LC controlled with SII for Xcalibur, use Thermo_SII_LC instead	1	31	None	0	0	\N
 LCQ	Low res MS/MS		0	2	\N	0	1	\N
 LTQ	Low res MS/MS		1	2	LTQ	0	0	\N
@@ -63,6 +59,7 @@ Lumos	LC-HMS with MS/MS; optionally ETD		1	5	ORB	1	1	\N
 Lumos_Frac	Requested runs with LC-MicroHpH, LC-MicroSCX, LC-NanoHpH, etc.		1	5	ORB	0	1	Lumos
 MALDI_Imaging	MALDI Imaging		1	26	MAL	1	1	\N
 MALDI_TOF	MALDI Spot	\N	0	26	MAL	0	1	\N
+MALDI_timsTOF_Imaging	MALDI Imaging on timsTOF Flex		1	26	MAL	1	1	\N
 NMR	Research	For use in sample prep requests	1	51	NMR	1	0	\N
 Orbitrap	LC-HMS with MS/MS		0	3	ORB	1	0	\N
 Other	Research		1	\N	None	0	1	\N
@@ -73,17 +70,20 @@ QExactive	LC-HMS with MS/MS; optionally HCD	Was originally used by LTQ_Orb_3, bu
 QExactive_Frac	Requested runs with LC-MicroHpH, LC-MicroSCX, LC-NanoHpH, etc.		1	5	ORB	0	1	QExactive
 QExactive_Imaging	QExactive with MALDI source		1	5	ORB	0	0	\N
 QTrap	Research	MRM	0	3	QQQ	0	1	\N
+SLIM	Ion-mobility LC-IMS-MS with SLIM		1	6	IMS	1	1	\N
 Sciex_TripleTOF	Research		0	5	\N	0	0	\N
 Shimadzu_GC	Real-time atmospheric monitoring		1	18	GC	0	1	\N
-SLIM	Ion-mobility LC-IMS-MS with SLIM		1	6	IMS	1	1	\N
-Thermo_SII_LC	LC instruments controlled using SII for Xcalibur	SII - Standard Instrument Integration, allows controlling Chromeleon-supported LC modules from Xcalibur	1	31	None	0	0	\N
-timsTOF	LC-IMS-MS with MS/MS	Bruker timsTOF	0	30	TOF	0	0	\N
+TSQ	MRM		1	9	QQQ	1	1	\N
 TSQ_Frac	Requested runs with LC-MicroHpH, LC-MicroSCX, LC-NanoHpH, etc.		1	9	QQQ	0	1	TSQ
+Thermo_SII_LC	LC instruments controlled using SII for Xcalibur	SII - Standard Instrument Integration, allows controlling Chromeleon-supported LC modules from Xcalibur	1	31	None	0	0	\N
 VelosOrbi	LC-HMS with MS/MS; optionally ETD		1	3	ORB	1	1	\N
 VelosPro	Ion trap instrument with CID, HCD, PQD, or ETD; No orbitrap		0	2	LTQ	0	1	\N
 Waters_Acquity_LC	Waters Acquity LC instruments controlled using MassLynx		1	31	None	0	0	\N
 Waters_IMS	Waters Synapt IMS		1	6	IMS	1	1	\N
 Waters_TOF	Research		1	1	TOF	0	1	\N
+timsTOF	LC-IMS-MS with MS/MS	Bruker timsTOF	0	30	TOF	0	0	\N
+timsTOF_Flex	LC-IMS-MS with MS/MS	Bruker timsTOF Flex	1	30	TOF	1	1	\N
+timsTOF_SCP	LC-IMS-MS with MS/MS	Bruker timsTOF SCP	1	30	TOF	1	1	\N
 \.
 
 

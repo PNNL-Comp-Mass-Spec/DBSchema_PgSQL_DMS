@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.3
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -31,13 +31,8 @@ COPY public.t_analysis_job_processor_group (group_id, group_name, group_descript
 109	Sequest Cluster 4		N	2007-03-06 09:46:16	2016-02-15 17:47:34	PNL\\D3L243
 110	ICR2LS Processors		N	2007-03-15 18:32:39	2011-03-18 16:42:00	pnl\\D3L243
 111	Pub-43	Pub-43 test group using all four processors	N	2007-03-16 14:33:33	2011-03-18 16:40:35	pnl\\D3L243
-113	Pub-01	Group for testing Pub-01	N	2007-04-05 16:44:18	2011-03-18 16:39:13	D3L243 (via DMSWebUser)
-154	R610 Pubs, Group C, Mgrs 3 and 5	Pubs 60-69; Mgrs 3 and 5 (MSGF+ managers) (disabled 2023-07-31 since processor groups were deprecated in May 2015)	N	2016-02-15 17:44:45	2023-07-31 14:41:18	PNL\\D3L243
-155	R610 Pubs, Group D, Mgrs 3 and 5	Pugs 70-79; Mgrs 3 and 5 (MSGF+ managers) (disabled 2023-07-31 since processor groups were deprecated in May 2015)	N	2016-02-15 17:44:57	2023-07-31 14:41:18	PNL\\D3L243
-156	R610 Pubs, Group E, Mgrs 3 and 5	Pubs 80-89; Mgrs 3 and 5 (MSGF+ managers) (disabled 2023-07-31 since processor groups were deprecated in May 2015)	N	2016-02-15 17:45:06	2023-07-31 14:41:18	PNL\\D3L243
-157	R610 Pubs, Group F, Mgrs 3 and 5	Pubs 94-97, mallard, diorite; Mgrs 3 and 5 (MSGF+ managers) (disabled 2023-07-31 since processor groups were deprecated in May 2015)	N	2016-02-15 17:45:28	2023-07-31 14:41:18	PNL\\D3L243
-158	300GB Pubs, Mgrs 3 and 5	Pubs 10-13, Pubs 90-93; Mgrs 3 and 5 (MSGF+ managers); have 300 GB (or larger) drives (disabled 2023-07-31 since processor groups were deprecated in May 2015)	N	2016-02-15 17:46:39	2023-07-31 14:41:18	PNL\\D3L243
 112	Sequest Clusters 1, 2, and 3	All clusters except 4	N	2007-04-04 10:56:37	2016-02-15 17:47:44	PNL\\D3L243
+113	Pub-01	Group for testing Pub-01	N	2007-04-05 16:44:18	2011-03-18 16:39:13	D3L243 (via DMSWebUser)
 114	Xeon Woodcrest Pubs	The 3 fastest Decon2LS PCs	N	2007-04-18 15:07:56	2009-10-13 16:05:27	pnl\\D3L243
 115	MASIC High Performance	MASIC PCs with fast CPUs and >1 GB Ram	N	2007-04-24 07:46:42	2016-02-15 17:47:49	PNL\\D3L243
 116	Sequest Clusters 1 and 2	First 2 clusters (disabled 2023-07-31 since processor groups were deprecated in May 2015)	N	2007-04-24 09:53:31	2023-07-31 14:41:18	PNL\\D3L243
@@ -55,12 +50,12 @@ COPY public.t_analysis_job_processor_group (group_id, group_name, group_descript
 135	Sequest Cluster 5	Sequest cluster 5 only (disabled 2023-07-31 since processor groups were deprecated in May 2015)	N	2008-11-17 10:00:41	2023-07-31 14:41:18	PNL\\D3L243
 136	Sequest Clusters 4 and 5	Clusters 4 and 5	N	2008-12-08 11:25:04	2016-02-15 17:48:02	PNL\\D3L243
 137	Sequest Clusters 1 and 5	Clusters 1 and 5 (disabled 2023-07-31 since processor groups were deprecated in May 2015)	N	2009-01-23 17:54:22	2023-07-31 14:41:18	PNL\\D3L243
-143	Sequest Cluster 1 DTA Testing	\N	N	2009-07-08 11:17:26	2011-03-18 16:42:01	pnl\\D3L243
 138	Pub-17	Pub-17	N	2009-01-25 21:49:41	2011-03-18 16:39:27	D3L243 (via DMSWebUser)
 139	Sequest Clusters 1, 2, and 5	Clusters 1, 2, and 5	N	2009-02-07 23:06:48	2016-02-15 17:48:04	PNL\\D3L243
 140	Sequest Clusters 1, 3, 4, and 5	All except SeqCluster2	N	2009-06-04 15:20:55	2016-02-15 17:48:05	PNL\\D3L243
 141	Sequest Clusters 1, 2, 3, and 4	All except SeqCluster5	N	2009-06-04 15:59:58	2016-02-15 17:48:05	PNL\\D3L243
 142	Decon2LS_V2	Group for Pub boxes running Decon2LS_V2 (supports UIMF files and RAPID processing)	N	2009-06-23 19:56:36	2011-03-18 16:42:00	pnl\\D3L243
+143	Sequest Cluster 1 DTA Testing	\N	N	2009-07-08 11:17:26	2011-03-18 16:42:01	pnl\\D3L243
 144	R610 Pubs 50-59	Dell R610 Pubs 50 through 59	N	2009-11-17 13:44:33	2011-03-18 16:42:01	pnl\\D3L243
 145	Sequest Clusters 3 and 5	Clusters 3 and 5	N	2010-04-05 11:13:48	2016-02-15 17:48:07	PNL\\D3L243
 146	Sequest Clusters 2 and 5	Clusters 2 and 5 (disabled 2023-07-31 since processor groups were deprecated in May 2015)	N	2010-04-20 10:03:45	2023-07-31 14:41:18	PNL\\D3L243
@@ -71,6 +66,11 @@ COPY public.t_analysis_job_processor_group (group_id, group_name, group_descript
 151	R610 Pubs, Group 2, Mgrs 3 and 5	Pubs 70-89; Mgrs 3 and 5 only	N	2013-01-29 17:39:17	2016-02-15 17:46:52	PNL\\D3L243
 152	R610 Pubs, Group A, Mgrs 3 and 5	Pubs 36-39, 44-49; Mgrs 3 and 5 (MSGF+ managers) (disabled 2023-07-31 since processor groups were deprecated in May 2015)	N	2016-02-15 17:44:11	2023-07-31 14:41:18	PNL\\D3L243
 153	R610 Pubs, Group B, Mgrs 3 and 5	Pubs 50-59; Mgrs 3 and 5 (MSGF+ managers) (disabled 2023-07-31 since processor groups were deprecated in May 2015)	N	2016-02-15 17:44:30	2023-07-31 14:41:18	PNL\\D3L243
+154	R610 Pubs, Group C, Mgrs 3 and 5	Pubs 60-69; Mgrs 3 and 5 (MSGF+ managers) (disabled 2023-07-31 since processor groups were deprecated in May 2015)	N	2016-02-15 17:44:45	2023-07-31 14:41:18	PNL\\D3L243
+155	R610 Pubs, Group D, Mgrs 3 and 5	Pugs 70-79; Mgrs 3 and 5 (MSGF+ managers) (disabled 2023-07-31 since processor groups were deprecated in May 2015)	N	2016-02-15 17:44:57	2023-07-31 14:41:18	PNL\\D3L243
+156	R610 Pubs, Group E, Mgrs 3 and 5	Pubs 80-89; Mgrs 3 and 5 (MSGF+ managers) (disabled 2023-07-31 since processor groups were deprecated in May 2015)	N	2016-02-15 17:45:06	2023-07-31 14:41:18	PNL\\D3L243
+157	R610 Pubs, Group F, Mgrs 3 and 5	Pubs 94-97, mallard, diorite; Mgrs 3 and 5 (MSGF+ managers) (disabled 2023-07-31 since processor groups were deprecated in May 2015)	N	2016-02-15 17:45:28	2023-07-31 14:41:18	PNL\\D3L243
+158	300GB Pubs, Mgrs 3 and 5	Pubs 10-13, Pubs 90-93; Mgrs 3 and 5 (MSGF+ managers); have 300 GB (or larger) drives (disabled 2023-07-31 since processor groups were deprecated in May 2015)	N	2016-02-15 17:46:39	2023-07-31 14:41:18	PNL\\D3L243
 \.
 
 

@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.3
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,31 +21,15 @@ SET row_security = off;
 --
 
 COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type, comment) FROM stdin;
-4	HMS-HMSn	
-2	MS	
-4	HMS-HCD-ETD-HMSn	
-36	HMS-HCD-MSn	
-4	HMS-HCD-ETD-MSn	
-70	MS	
-4	HMS-HCD-CID/ETD-HMSn	
-4	HMS-HCD-HMSn	
-4	HMS-HCD-MSn	
-4	HMS-MSn	
-4	HMS-PQD-CID/ETD-MSn	
-4	HMS-PQD-ETD-MSn	
-4	MS-CID/ETD-MSn	
-4	MS-ETD-MSn	
-4	MS-MSn	
-83	MS-ETD-MSn	
 1	DIA-HMS-HCD-HMSn	
 1	HMS-CID/ETD-HMSn	
 1	HMS-CID/ETD-MSn	
+1	HMS-ETD-HMSn	
+1	HMS-ETD-MSn	
 1	HMS-ETciD-EThcD-HMSn	
 1	HMS-ETciD-EThcD-MSn	
 1	HMS-ETciD-HMSn	
 1	HMS-ETciD-MSn	
-1	HMS-ETD-HMSn	
-1	HMS-ETD-MSn	
 1	HMS-EThcD-HMSn	
 1	HMS-EThcD-MSn	
 1	HMS-HCD-CID-HMSn	
@@ -81,6 +65,7 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 2	HMS-MSn	
 2	HMS-PQD-CID/ETD-MSn	
 2	HMS-PQD-ETD-MSn	
+2	MS	
 2	MS-CID/ETD-MSn	
 2	MS-ETD-MSn	
 2	MS-MSn	
@@ -108,7 +93,20 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 4	HMS-ETD-MSn	
 4	HMS-HCD-CID-HMSn	
 4	HMS-HCD-CID-MSn	
+4	HMS-HCD-CID/ETD-HMSn	
 4	HMS-HCD-CID/ETD-MSn	
+4	HMS-HCD-ETD-HMSn	
+4	HMS-HCD-ETD-MSn	
+4	HMS-HCD-HMSn	
+4	HMS-HCD-MSn	
+4	HMS-HMSn	
+4	HMS-MSn	
+4	HMS-PQD-CID/ETD-MSn	
+4	HMS-PQD-ETD-MSn	
+4	MS	
+4	MS-CID/ETD-MSn	
+4	MS-ETD-MSn	
+4	MS-MSn	
 5	DIA-HMS-HCD-HMSn	
 5	HMS	
 5	HMS-ETD-HMSn	
@@ -117,7 +115,6 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 5	HMS-HCD-CID-MSn	
 5	HMS-HCD-CID/ETD-HMSn	
 5	HMS-HCD-CID/ETD-MSn	
-4	MS	
 5	HMS-HCD-ETD-HMSn	
 5	HMS-HCD-ETD-MSn	
 5	HMS-HCD-HMSn	
@@ -218,12 +215,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 13	HMS	
 13	HMS-CID/ETD-HMSn	
 13	HMS-CID/ETD-MSn	
+13	HMS-ETD-HMSn	
+13	HMS-ETD-MSn	
 13	HMS-ETciD-EThcD-HMSn	
 13	HMS-ETciD-EThcD-MSn	
 13	HMS-ETciD-HMSn	
 13	HMS-ETciD-MSn	
-13	HMS-ETD-HMSn	
-13	HMS-ETD-MSn	
 13	HMS-EThcD-HMSn	
 13	HMS-EThcD-MSn	
 13	HMS-HCD-CID-HMSn	
@@ -268,12 +265,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 15	DIA-HMS-HCD-HMSn	
 15	HMS-CID/ETD-HMSn	
 15	HMS-CID/ETD-MSn	
+15	HMS-ETD-HMSn	
+15	HMS-ETD-MSn	
 15	HMS-ETciD-EThcD-HMSn	
 15	HMS-ETciD-EThcD-MSn	
 15	HMS-ETciD-HMSn	
 15	HMS-ETciD-MSn	
-15	HMS-ETD-HMSn	
-15	HMS-ETD-MSn	
 15	HMS-EThcD-HMSn	
 15	HMS-EThcD-MSn	
 15	HMS-HCD-CID-HMSn	
@@ -409,12 +406,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 21	HMS	
 21	HMS-CID/ETD-HMSn	
 21	HMS-CID/ETD-MSn	
+21	HMS-ETD-HMSn	
+21	HMS-ETD-MSn	
 21	HMS-ETciD-EThcD-HMSn	
 21	HMS-ETciD-EThcD-MSn	
 21	HMS-ETciD-HMSn	
 21	HMS-ETciD-MSn	
-21	HMS-ETD-HMSn	
-21	HMS-ETD-MSn	
 21	HMS-EThcD-HMSn	
 21	HMS-EThcD-MSn	
 21	HMS-HCD-CID-HMSn	
@@ -539,12 +536,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 27	HMS	
 27	HMS-CID/ETD-HMSn	
 27	HMS-CID/ETD-MSn	
+27	HMS-ETD-HMSn	
+27	HMS-ETD-MSn	
 27	HMS-ETciD-EThcD-HMSn	
 27	HMS-ETciD-EThcD-MSn	
 27	HMS-ETciD-HMSn	
 27	HMS-ETciD-MSn	
-27	HMS-ETD-HMSn	
-27	HMS-ETD-MSn	
 27	HMS-EThcD-HMSn	
 27	HMS-EThcD-MSn	
 27	HMS-HCD-CID-HMSn	
@@ -585,17 +582,17 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 28	HMS-PQD-CID/ETD-MSn	
 28	HMS-PQD-ETD-MSn	
 28	MS-CID/ETD-MSn	
+28	MS-ETD-MSn	
 28	MS-MSn	
 29	DIA-HMS-HCD-HMSn	
 29	HMS-CID/ETD-HMSn	
 29	HMS-CID/ETD-MSn	
+29	HMS-ETD-HMSn	
+29	HMS-ETD-MSn	
 29	HMS-ETciD-EThcD-HMSn	
 29	HMS-ETciD-EThcD-MSn	
 29	HMS-ETciD-HMSn	
 29	HMS-ETciD-MSn	
-29	HMS-ETD-HMSn	
-29	HMS-ETD-MSn	
-28	MS-ETD-MSn	
 29	HMS-EThcD-HMSn	
 29	HMS-EThcD-MSn	
 29	HMS-HCD-CID-HMSn	
@@ -716,12 +713,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 36	DIA-HMS-HCD-HMSn	
 36	HMS-CID/ETD-HMSn	Must be centroided HMSn spectra
 36	HMS-CID/ETD-MSn	
+36	HMS-ETD-HMSn	Must be centroided HMSn spectra
+36	HMS-ETD-MSn	
 36	HMS-ETciD-EThcD-HMSn	
 36	HMS-ETciD-EThcD-MSn	
 36	HMS-ETciD-HMSn	
 36	HMS-ETciD-MSn	
-36	HMS-ETD-HMSn	Must be centroided HMSn spectra
-36	HMS-ETD-MSn	
 36	HMS-EThcD-HMSn	
 36	HMS-EThcD-MSn	
 36	HMS-HCD-CID-HMSn	Must be centroided HMSn spectra
@@ -731,7 +728,9 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 36	HMS-HCD-ETD-HMSn	Must be centroided HMSn spectra
 36	HMS-HCD-ETD-MSn	
 36	HMS-HCD-HMSn	Must be centroided HMSn spectra
+36	HMS-HCD-MSn	
 36	HMS-HMSn	Must be centroided HMSn spectra
+36	HMS-MSn	
 36	HMS-PQD-CID/ETD-MSn	
 36	HMS-PQD-ETD-MSn	
 36	IMS-HMS-HMSn	
@@ -742,13 +741,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 37	DIA-HMS-HCD-HMSn	
 37	HMS-CID/ETD-HMSn	Must be centroided HMSn spectra
 37	HMS-CID/ETD-MSn	
+37	HMS-ETD-HMSn	Must be centroided HMSn spectra
+37	HMS-ETD-MSn	
 37	HMS-ETciD-EThcD-HMSn	
 37	HMS-ETciD-EThcD-MSn	
 37	HMS-ETciD-HMSn	
 37	HMS-ETciD-MSn	
-37	HMS-ETD-HMSn	Must be centroided HMSn spectra
-36	HMS-MSn	
-37	HMS-ETD-MSn	
 37	HMS-EThcD-HMSn	
 37	HMS-EThcD-MSn	
 37	HMS-HCD-CID-HMSn	Must be centroided HMSn spectra
@@ -769,12 +767,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 38	DIA-HMS-HCD-HMSn	
 38	HMS-CID/ETD-HMSn	
 38	HMS-CID/ETD-MSn	
+38	HMS-ETD-HMSn	
+38	HMS-ETD-MSn	
 38	HMS-ETciD-EThcD-HMSn	
 38	HMS-ETciD-EThcD-MSn	
 38	HMS-ETciD-HMSn	
 38	HMS-ETciD-MSn	
-38	HMS-ETD-HMSn	
-38	HMS-ETD-MSn	
 38	HMS-EThcD-HMSn	
 38	HMS-EThcD-MSn	
 38	HMS-HCD-CID-HMSn	
@@ -819,12 +817,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 41	HMS	
 41	HMS-CID/ETD-HMSn	
 41	HMS-CID/ETD-MSn	
+41	HMS-ETD-HMSn	
+41	HMS-ETD-MSn	
 41	HMS-ETciD-EThcD-HMSn	
 41	HMS-ETciD-EThcD-MSn	
 41	HMS-ETciD-HMSn	
 41	HMS-ETciD-MSn	
-41	HMS-ETD-HMSn	
-41	HMS-ETD-MSn	
 41	HMS-EThcD-HMSn	
 41	HMS-EThcD-MSn	
 41	HMS-HCD-CID-HMSn	
@@ -903,12 +901,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 60	DIA-HMS-HCD-HMSn	
 60	HMS-CID/ETD-HMSn	Must be centroided HMSn spectra
 60	HMS-CID/ETD-MSn	
+60	HMS-ETD-HMSn	Must be centroided HMSn spectra
+60	HMS-ETD-MSn	
 60	HMS-ETciD-EThcD-HMSn	
 60	HMS-ETciD-EThcD-MSn	
 60	HMS-ETciD-HMSn	
 60	HMS-ETciD-MSn	
-60	HMS-ETD-HMSn	Must be centroided HMSn spectra
-60	HMS-ETD-MSn	
 60	HMS-EThcD-HMSn	
 60	HMS-EThcD-MSn	
 60	HMS-HCD-CID-HMSn	Must be centroided HMSn spectra
@@ -967,12 +965,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 64	DIA-HMS-HCD-HMSn	
 64	HMS-CID/ETD-HMSn	
 64	HMS-CID/ETD-MSn	
+64	HMS-ETD-HMSn	
+64	HMS-ETD-MSn	
 64	HMS-ETciD-EThcD-HMSn	
 64	HMS-ETciD-EThcD-MSn	
 64	HMS-ETciD-HMSn	
 64	HMS-ETciD-MSn	
-64	HMS-ETD-HMSn	
-64	HMS-ETD-MSn	
 64	HMS-EThcD-HMSn	
 64	HMS-EThcD-MSn	
 64	HMS-HCD-CID-HMSn	
@@ -993,12 +991,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 65	DIA-HMS-HCD-HMSn	
 65	HMS-CID/ETD-HMSn	
 65	HMS-CID/ETD-MSn	
+65	HMS-ETD-HMSn	
+65	HMS-ETD-MSn	
 65	HMS-ETciD-EThcD-HMSn	
 65	HMS-ETciD-EThcD-MSn	
 65	HMS-ETciD-HMSn	
 65	HMS-ETciD-MSn	
-65	HMS-ETD-HMSn	
-65	HMS-ETD-MSn	
 65	HMS-EThcD-HMSn	
 65	HMS-EThcD-MSn	
 65	HMS-HCD-CID-HMSn	
@@ -1022,12 +1020,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 67	DIA-HMS-HCD-HMSn	
 67	HMS-CID/ETD-HMSn	Must be centroided HMSn spectra
 67	HMS-CID/ETD-MSn	
+67	HMS-ETD-HMSn	Must be centroided HMSn spectra
+67	HMS-ETD-MSn	
 67	HMS-ETciD-EThcD-HMSn	
 67	HMS-ETciD-EThcD-MSn	
 67	HMS-ETciD-HMSn	
 67	HMS-ETciD-MSn	
-67	HMS-ETD-HMSn	Must be centroided HMSn spectra
-67	HMS-ETD-MSn	
 67	HMS-EThcD-HMSn	
 67	HMS-EThcD-MSn	
 67	HMS-HCD-CID-HMSn	Must be centroided HMSn spectra
@@ -1049,12 +1047,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 68	DIA-HMS-HCD-HMSn	
 68	HMS-CID/ETD-HMSn	Must be centroided HMSn spectra
 68	HMS-CID/ETD-MSn	
+68	HMS-ETD-HMSn	Must be centroided HMSn spectra
+68	HMS-ETD-MSn	
 68	HMS-ETciD-EThcD-HMSn	
 68	HMS-ETciD-EThcD-MSn	
 68	HMS-ETciD-HMSn	
 68	HMS-ETciD-MSn	
-68	HMS-ETD-HMSn	Must be centroided HMSn spectra
-68	HMS-ETD-MSn	
 68	HMS-EThcD-HMSn	
 68	HMS-EThcD-MSn	
 68	HMS-HCD-CID-HMSn	Must be centroided HMSn spectra
@@ -1080,12 +1078,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 69	DIA-HMS-HCD-HMSn	
 69	HMS-CID/ETD-HMSn	Must be centroided HMSn spectra
 69	HMS-CID/ETD-MSn	
+69	HMS-ETD-HMSn	Must be centroided HMSn spectra
+69	HMS-ETD-MSn	
 69	HMS-ETciD-EThcD-HMSn	
 69	HMS-ETciD-EThcD-MSn	
 69	HMS-ETciD-HMSn	
 69	HMS-ETciD-MSn	
-69	HMS-ETD-HMSn	Must be centroided HMSn spectra
-69	HMS-ETD-MSn	
 69	HMS-EThcD-HMSn	
 69	HMS-EThcD-MSn	
 69	HMS-HCD-CID-HMSn	Must be centroided HMSn spectra
@@ -1111,12 +1109,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 70	HMS	
 70	HMS-CID/ETD-HMSn	
 70	HMS-CID/ETD-MSn	
+70	HMS-ETD-HMSn	
+70	HMS-ETD-MSn	
 70	HMS-ETciD-EThcD-HMSn	
 70	HMS-ETciD-EThcD-MSn	
 70	HMS-ETciD-HMSn	
 70	HMS-ETciD-MSn	
-70	HMS-ETD-HMSn	
-70	HMS-ETD-MSn	
 70	HMS-EThcD-HMSn	
 70	HMS-EThcD-MSn	
 70	HMS-HCD-CID-HMSn	
@@ -1131,6 +1129,7 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 70	HMS-MSn	
 70	HMS-PQD-CID/ETD-MSn	
 70	HMS-PQD-ETD-MSn	
+70	MS	
 70	MS-CID/ETD-MSn	
 70	MS-ETD-MSn	
 70	MS-MSn	
@@ -1142,12 +1141,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 73	DIA-HMS-HCD-HMSn	
 73	HMS-CID/ETD-HMSn	
 73	HMS-CID/ETD-MSn	
+73	HMS-ETD-HMSn	
+73	HMS-ETD-MSn	
 73	HMS-ETciD-EThcD-HMSn	
 73	HMS-ETciD-EThcD-MSn	
 73	HMS-ETciD-HMSn	
 73	HMS-ETciD-MSn	
-73	HMS-ETD-HMSn	
-73	HMS-ETD-MSn	
 73	HMS-EThcD-HMSn	
 73	HMS-EThcD-MSn	
 73	HMS-HCD-CID-HMSn	
@@ -1168,14 +1167,15 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 74	DIA-HMS-HCD-HMSn	
 74	HMS-CID/ETD-HMSn	
 74	HMS-CID/ETD-MSn	
+74	HMS-ETD-HMSn	
+74	HMS-ETD-MSn	
 74	HMS-ETciD-EThcD-HMSn	
 74	HMS-ETciD-EThcD-MSn	
 74	HMS-ETciD-HMSn	
 74	HMS-ETciD-MSn	
-74	HMS-ETD-HMSn	
-74	HMS-ETD-MSn	
 74	HMS-EThcD-HMSn	
 74	HMS-EThcD-MSn	
+74	HMS-HCD-CID-HMSn	
 74	HMS-HCD-CID-MSn	
 74	HMS-HCD-CID/ETD-HMSn	
 74	HMS-HCD-CID/ETD-MSn	
@@ -1184,7 +1184,6 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 74	HMS-HCD-HMSn	
 74	HMS-HCD-MSn	
 74	HMS-HMSn	
-74	HMS-HCD-CID-HMSn	
 74	HMS-MSn	
 74	HMS-PQD-CID/ETD-MSn	
 74	HMS-PQD-ETD-MSn	
@@ -1195,12 +1194,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 75	HMS	
 75	HMS-CID/ETD-HMSn	
 75	HMS-CID/ETD-MSn	
+75	HMS-ETD-HMSn	
+75	HMS-ETD-MSn	
 75	HMS-ETciD-EThcD-HMSn	
 75	HMS-ETciD-EThcD-MSn	
 75	HMS-ETciD-HMSn	
 75	HMS-ETciD-MSn	
-75	HMS-ETD-HMSn	
-75	HMS-ETD-MSn	
 75	HMS-EThcD-HMSn	
 75	HMS-EThcD-MSn	
 75	HMS-HCD-CID-HMSn	
@@ -1223,12 +1222,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 76	DIA-HMS-HCD-HMSn	
 76	HMS-CID/ETD-HMSn	Must be centroided HMSn spectra
 76	HMS-CID/ETD-MSn	
+76	HMS-ETD-HMSn	Must be centroided HMSn spectra
+76	HMS-ETD-MSn	
 76	HMS-ETciD-EThcD-HMSn	
 76	HMS-ETciD-EThcD-MSn	
 76	HMS-ETciD-HMSn	
 76	HMS-ETciD-MSn	
-76	HMS-ETD-HMSn	Must be centroided HMSn spectra
-76	HMS-ETD-MSn	
 76	HMS-EThcD-HMSn	
 76	HMS-EThcD-MSn	
 76	HMS-HCD-CID-HMSn	Must be centroided HMSn spectra
@@ -1250,12 +1249,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 78	DIA-HMS-HCD-HMSn	
 78	HMS-CID/ETD-HMSn	Must be centroided HMSn spectra
 78	HMS-CID/ETD-MSn	
+78	HMS-ETD-HMSn	Must be centroided HMSn spectra
+78	HMS-ETD-MSn	
 78	HMS-ETciD-EThcD-HMSn	
 78	HMS-ETciD-EThcD-MSn	
 78	HMS-ETciD-HMSn	
 78	HMS-ETciD-MSn	
-78	HMS-ETD-HMSn	Must be centroided HMSn spectra
-78	HMS-ETD-MSn	
 78	HMS-EThcD-HMSn	
 78	HMS-EThcD-MSn	
 78	HMS-HCD-CID-HMSn	Must be centroided HMSn spectra
@@ -1277,12 +1276,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 79	DIA-HMS-HCD-HMSn	
 79	HMS-CID/ETD-HMSn	Must be centroided HMSn spectra
 79	HMS-CID/ETD-MSn	
+79	HMS-ETD-HMSn	Must be centroided HMSn spectra
+79	HMS-ETD-MSn	
 79	HMS-ETciD-EThcD-HMSn	
 79	HMS-ETciD-EThcD-MSn	
 79	HMS-ETciD-HMSn	
 79	HMS-ETciD-MSn	
-79	HMS-ETD-HMSn	Must be centroided HMSn spectra
-79	HMS-ETD-MSn	
 79	HMS-EThcD-HMSn	
 79	HMS-EThcD-MSn	
 79	HMS-HCD-CID-HMSn	Must be centroided HMSn spectra
@@ -1309,23 +1308,16 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 83	DIA-HMS-HCD-HMSn	
 83	HMS-CID/ETD-HMSn	
 83	HMS-CID/ETD-MSn	
+83	HMS-ETD-HMSn	
+83	HMS-ETD-MSn	
 83	HMS-ETciD-EThcD-HMSn	
 83	HMS-ETciD-EThcD-MSn	
 83	HMS-ETciD-HMSn	
 83	HMS-ETciD-MSn	
-83	HMS-ETD-HMSn	
-83	HMS-ETD-MSn	
 83	HMS-EThcD-HMSn	
 83	HMS-EThcD-MSn	
 83	HMS-HCD-CID-HMSn	
 83	HMS-HCD-CID-MSn	
-83	HMS-PQD-ETD-MSn	
-83	MS-CID/ETD-MSn	
-83	MS-MSn	
-85	HMS	
-85	HMS-HMSn	
-86	DIA-HMS-HCD-HMSn	
-86	HMS-CID/ETD-HMSn	MzML creation step should centroid the spectra (MSGF+ requirement)
 83	HMS-HCD-CID/ETD-HMSn	
 83	HMS-HCD-CID/ETD-MSn	
 83	HMS-HCD-ETD-HMSn	
@@ -1335,6 +1327,14 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 83	HMS-HMSn	
 83	HMS-MSn	
 83	HMS-PQD-CID/ETD-MSn	
+83	HMS-PQD-ETD-MSn	
+83	MS-CID/ETD-MSn	
+83	MS-ETD-MSn	
+83	MS-MSn	
+85	HMS	
+85	HMS-HMSn	
+86	DIA-HMS-HCD-HMSn	
+86	HMS-CID/ETD-HMSn	MzML creation step should centroid the spectra (MSGF+ requirement)
 86	HMS-CID/ETD-MSn	
 86	HMS-ETD-HMSn	MzML creation step should centroid the spectra (MSGF+ requirement)
 86	HMS-ETD-MSn	
@@ -1361,12 +1361,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 88	DIA-HMS-HCD-HMSn	
 88	HMS-CID/ETD-HMSn	
 88	HMS-CID/ETD-MSn	
+88	HMS-ETD-HMSn	
+88	HMS-ETD-MSn	
 88	HMS-ETciD-EThcD-HMSn	
 88	HMS-ETciD-EThcD-MSn	
 88	HMS-ETciD-HMSn	
 88	HMS-ETciD-MSn	
-88	HMS-ETD-HMSn	
-88	HMS-ETD-MSn	
 88	HMS-EThcD-HMSn	
 88	HMS-EThcD-MSn	
 88	HMS-HCD-CID-HMSn	
@@ -1388,12 +1388,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 90	DIA-HMS-HCD-HMSn	
 90	HMS-CID/ETD-HMSn	Must be centroided HMSn spectra
 90	HMS-CID/ETD-MSn	
+90	HMS-ETD-HMSn	Must be centroided HMSn spectra
+90	HMS-ETD-MSn	
 90	HMS-ETciD-EThcD-HMSn	
 90	HMS-ETciD-EThcD-MSn	
 90	HMS-ETciD-HMSn	
 90	HMS-ETciD-MSn	
-90	HMS-ETD-HMSn	Must be centroided HMSn spectra
-90	HMS-ETD-MSn	
 90	HMS-EThcD-HMSn	
 90	HMS-EThcD-MSn	
 90	HMS-HCD-CID-HMSn	Must be centroided HMSn spectra
@@ -1418,12 +1418,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 91	DIA-HMS-HCD-HMSn	
 91	HMS-CID/ETD-HMSn	
 91	HMS-CID/ETD-MSn	
+91	HMS-ETD-HMSn	
+91	HMS-ETD-MSn	
 91	HMS-ETciD-EThcD-HMSn	
 91	HMS-ETciD-EThcD-MSn	
 91	HMS-ETciD-HMSn	
 91	HMS-ETciD-MSn	
-91	HMS-ETD-HMSn	
-91	HMS-ETD-MSn	
 91	HMS-EThcD-HMSn	
 91	HMS-EThcD-MSn	
 91	HMS-HCD-CID-HMSn	
@@ -1444,12 +1444,12 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 92	DIA-HMS-HCD-HMSn	
 92	HMS-CID/ETD-HMSn	
 92	HMS-CID/ETD-MSn	
+92	HMS-ETD-HMSn	
+92	HMS-ETD-MSn	
 92	HMS-ETciD-EThcD-HMSn	
 92	HMS-ETciD-EThcD-MSn	
 92	HMS-ETciD-HMSn	
 92	HMS-ETciD-MSn	
-92	HMS-ETD-HMSn	
-92	HMS-ETD-MSn	
 92	HMS-EThcD-HMSn	
 92	HMS-EThcD-MSn	
 92	HMS-HCD-CID-HMSn	

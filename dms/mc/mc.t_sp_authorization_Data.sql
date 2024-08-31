@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.3
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -23,16 +23,16 @@ SET row_security = off;
 COPY mc.t_sp_authorization (entry_id, procedure_name, login_name, host_name, host_ip) FROM stdin;
 1	*	DMSWebUser	gigasax	130.20.225.2
 2	*	DMSWebUser	prismweb2	130.20.224.55
+9	*	DMSWebUser	prismweb2_IPv6	2620:0:50f1:118::5fd
+12	*	DMSWebUser	prismweb2_IPv6_alt	2620:0:50f1:118::11fd
 3	*	DMSWebUser	prismweb3	130.20.225.91
+10	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::1199
 4	*	DMSWebUser	prismwebdev2	130.20.227.157
 5	*	PNL\\D3L243	*	*
-6	*	PNL\\svc-dms	*	*
 7	*	PNL\\gibb713	*	*
 8	*	PNL\\memadmin	*	*
-9	*	DMSWebUser	prismweb2_IPv6	2620:0:50f1:118::5fd
+6	*	PNL\\svc-dms	*	*
 11	*	pgdms	localhost	127.0.0.1
-12	*	DMSWebUser	prismweb2_IPv6_alt	2620:0:50f1:118::11fd
-10	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::1199
 \.
 
 

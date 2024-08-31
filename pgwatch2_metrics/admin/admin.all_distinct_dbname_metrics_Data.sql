@@ -27,14 +27,7 @@ DMSDev	sproc_stats	2024-08-06 22:31:24.397446-07
 DMSDev	privilege_changes	2024-08-11 00:15:25.269504-07
 DMS	index_changes	2024-04-29 23:41:58.638075-07
 DMSDev	index_changes	2024-08-14 20:48:19.251299-07
-DMSDev	change_events	2024-08-21 14:41:26.998403-07
-DMSDev	replication	2024-08-21 14:41:27.006451-07
-DMSDev	replication_slots	2024-08-21 14:41:27.007557-07
-DMSDev	logical_subscriptions	2024-08-21 14:41:27.011081-07
 DMSDev	stat_activity_realtime	2024-08-21 14:41:27.037555-07
-DMSDev	wal_receiver	2024-08-21 14:41:27.091953-07
-DMS	wal_receiver	2024-08-21 14:41:30.134128-07
-DMS	replication_slots	2024-08-21 14:41:30.149065-07
 DMS	db_stats	2024-04-17 15:08:40.760511-07
 DMS	locks	2024-04-17 15:08:40.761212-07
 DMS	instance_up	2024-04-17 15:08:40.762727-07
@@ -104,9 +97,6 @@ DMS	sproc_stats	2024-04-21 19:37:31.19979-07
 DMS	stat_activity_realtime	2024-04-21 19:53:52.040306-07
 DMS	sproc_changes	2024-04-25 21:32:57.876433-07
 DMS	table_changes	2024-04-30 00:05:58.793318-07
-DMS	replication	2024-08-21 14:41:30.138463-07
-DMS	change_events	2024-08-21 14:41:30.140487-07
-DMS	logical_subscriptions	2024-08-21 14:41:30.14925-07
 \.
 
 

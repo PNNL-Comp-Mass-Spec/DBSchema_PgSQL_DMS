@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.3
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,9 +21,24 @@ SET row_security = off;
 --
 
 COPY ont.t_unimod_bricks (name, full_name, mono_mass, avg_mass, composition) FROM stdin;
+-		0	0	
+13C	Carbon 13	13.00336	13.00336	13C
+15N	Nitrogen 15	15.00011	15.00011	15N
+18O	Oxygen 18	17.99916	17.99916	18O
+2H	Deuterium	2.014102	2.014102	2H
+Ac	Acetate	42.01056	42.03668	C(2) H(2) O
+Ag	Silver	106.9051	107.8682	Ag
+As	Arsenic	74.92159	74.92159	As
+Au	Gold	196.9665	196.9666	Au
+B	Boron	11.00931	10.811	B
+Br	Bromine	78.91833	79.904	Br
+C	Carbon	12	12.0107	C
+Ca	Calcium	39.96259	40.078	Ca
+Cd	Cadmium	113.9034	112.411	Cd
+Cl	Chlorine	34.96885	35.453	Cl
+Co	Cobalt	58.9332	58.93319	Co
 Cr	Chromium	51.94051	51.9961	Cr
 Cu	Copper	62.9296	63.546	Cu
-dHex	Deoxy-hexose	146.0579	146.1412	C(6) H(10) O(4)
 F	Fluorine	18.9984	18.9984	F
 Fe	Iron	55.93494	55.845	Fe
 H	Hydrogen	1.007825	1.00794	H
@@ -57,22 +72,7 @@ Se	Selenium	79.91652	78.96	Se
 Sulf	Sulfate	79.95682	80.0632	S O(3)
 Water	Water	18.01056	18.01528	H(2) O
 Zn	Zinc	63.92915	65.409	Zn
--		0	0	
-13C	Carbon 13	13.00336	13.00336	13C
-15N	Nitrogen 15	15.00011	15.00011	15N
-18O	Oxygen 18	17.99916	17.99916	18O
-2H	Deuterium	2.014102	2.014102	2H
-Ac	Acetate	42.01056	42.03668	C(2) H(2) O
-Ag	Silver	106.9051	107.8682	Ag
-As	Arsenic	74.92159	74.92159	As
-Au	Gold	196.9665	196.9666	Au
-B	Boron	11.00931	10.811	B
-Br	Bromine	78.91833	79.904	Br
-C	Carbon	12	12.0107	C
-Ca	Calcium	39.96259	40.078	Ca
-Cd	Cadmium	113.9034	112.411	Cd
-Cl	Chlorine	34.96885	35.453	Cl
-Co	Cobalt	58.9332	58.93319	Co
+dHex	Deoxy-hexose	146.0579	146.1412	C(6) H(10) O(4)
 \.
 
 

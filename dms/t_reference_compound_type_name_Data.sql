@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -22,8 +22,8 @@ SET row_security = off;
 
 COPY public.t_reference_compound_type_name (compound_type_id, compound_type_name) FROM stdin;
 100	Compound
-102	Metabolite standards
 101	Protein/peptide standards
+102	Metabolite standards
 \.
 
 

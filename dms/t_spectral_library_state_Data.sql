@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,11 +21,11 @@ SET row_security = off;
 --
 
 COPY public.t_spectral_library_state (library_state_id, library_state) FROM stdin;
+1	New
+2	In Progress
 3	Complete
 4	Failed
-2	In Progress
 5	Inactive
-1	New
 \.
 
 

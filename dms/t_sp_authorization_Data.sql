@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.3
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,24 +21,24 @@ SET row_security = off;
 --
 
 COPY public.t_sp_authorization (entry_id, procedure_name, login_name, host_name, host_ip) FROM stdin;
+20	*	DMSWebUser	WE43320	130.20.228.1
 1	*	DMSWebUser	gigasax	130.20.225.2
 2	*	DMSWebUser	prismweb2	130.20.224.55
+23	*	DMSWebUser	prismweb2_IPv6	2620:0:50f1:118::5fd
+26	*	DMSWebUser	prismweb2_IPv6_alt	2620:0:50f1:118::11fd
 3	*	DMSWebUser	prismweb3	130.20.225.91
+24	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::1199
 4	*	DMSWebUser	prismwebdev2	130.20.227.157
-5	*	gigasax\\msdadmin	seqcluster5	0.0.0.0
+27	*	DMSWebUser	proto-2	130.20.230.113
+28	*	DMSWebUser	proto-2_IPv6	2620:0:50f1:118::193b
+21	add_requested_run_batch_location_scan	LCMSNetUser	*	*
 6	*	PNL\\D3L243	*	*
 16	*	PNL\\gibb713	*	*
 17	*	PNL\\memadmin	*	*
 18	*	PNL\\msdadmin	*	*
 19	*	PNL\\svc-dms	*	*
-20	*	DMSWebUser	WE43320	130.20.228.1
-21	add_requested_run_batch_location_scan	LCMSNetUser	*	*
-23	*	DMSWebUser	prismweb2_IPv6	2620:0:50f1:118::5fd
+5	*	gigasax\\msdadmin	seqcluster5	0.0.0.0
 25	*	pgdms	localhost	127.0.0.1
-26	*	DMSWebUser	prismweb2_IPv6_alt	2620:0:50f1:118::11fd
-27	*	DMSWebUser	proto-2	130.20.230.113
-28	*	DMSWebUser	proto-2_IPv6	2620:0:50f1:118::193b
-24	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::1199
 \.
 
 

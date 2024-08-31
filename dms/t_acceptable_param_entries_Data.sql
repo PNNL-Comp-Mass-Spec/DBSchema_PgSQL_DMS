@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.3
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -43,12 +43,6 @@ COPY public.t_acceptable_param_entries (entry_id, parameter_name, description, p
 22	MaximumProteinMassToSearch	\N	SearchTolerances	0	Maximum Protein Mass to Search	protein_mass_filter	1	2.0	\N	2	\N	235
 23	NumberOfDetectedPeaksToMatch	\N	MiscellaneousOptions	0	Number of Detected Peaks to Match	match_peak_count	1	2.0	\N	1	\N	240
 25	NumberOfAllowedDetectedPeakErrors	\N	MiscellaneousOptions	1	Number of Allowed Errors in Matching Auto-detected Peaks	match_peak_allowed_error	1	2.0	\N	1	\N	250
-43	SelectedEnzymeIndex	\N	SearchSettings	0	Selected Enzyme ID	enzyme_id	1	3.2	\N	1	\N	990
-44	MaximumNumDifferentialPerPeptide	\N	MiscellaneousOptions	3	Maximum Number of Differential Mods Per Peptide	max_num_differential_per_peptide	1	3.2	\N	1	\N	130
-45	StaticModifications	\N	StaticMods	\N	Static Modifications	static_mods	1	2.0	\N	6	\N	350
-46	FragmentMassUnits	\N	SearchTolerances	0	Fragment Ion Mass Units	fragment_ion_units	1	3.2	\N	4	[{"value": 0,"display":"amu"},{"value": 1,"display":"mmu"},{"value": 2,"display":"ppm"}]	45
-47	UsePhosphoFragmentation	\N	SearchSettings	false	Use Phospho Fragmentation Rules	use_phospho_fragmentation	1	3.2	\N	8	\N	155
-49	TerminalStaticMods	\N	StaticMods	\N	Terminal Static Modifications	term_static_mods	1	3.2	\N	6	\N	290
 26	MatchedPeakMassTolerance	\N	SearchTolerances	1.0000	Mass Tolerance for Matching Auto-detected Peaks	match_peak_tolerance	1	2.0	\N	7	\N	260
 27	AminoAcidsAllUpperCase	\N	SearchOptions	True	FASTA File has Residues in Upper Case	residues_in_upper_case	1	2.0	3.1	8	\N	265
 28	SequenceHeaderInfoToFilter	\N	MiscellaneousOptions	\N	Sequence Header Information to Filter	sequence_header_filter	1	2.0	\N	3	\N	280
@@ -61,6 +55,12 @@ COPY public.t_acceptable_param_entries (entry_id, parameter_name, description, p
 40	DynamicMods	\N	DynamicMods	\N	Dynamic Modifications	diff_search_options	1	2.0	\N	6	\N	140
 41	TerminalDynamicMods	\N	DynamicMods	\N	Terminal Dynamic Modifications	term_diff_search_options	1	3.2	\N	9	\N	150
 42	EnzymeInfo	\N	SearchSettings	No_Enzyme(-) 1 0 - -	Enzyme Info	enzyme_info	1	3.2	\N	3	\N	120
+43	SelectedEnzymeIndex	\N	SearchSettings	0	Selected Enzyme ID	enzyme_id	1	3.2	\N	1	\N	990
+44	MaximumNumDifferentialPerPeptide	\N	MiscellaneousOptions	3	Maximum Number of Differential Mods Per Peptide	max_num_differential_per_peptide	1	3.2	\N	1	\N	130
+45	StaticModifications	\N	StaticMods	\N	Static Modifications	static_mods	1	2.0	\N	6	\N	350
+46	FragmentMassUnits	\N	SearchTolerances	0	Fragment Ion Mass Units	fragment_ion_units	1	3.2	\N	4	[{"value": 0,"display":"amu"},{"value": 1,"display":"mmu"},{"value": 2,"display":"ppm"}]	45
+47	UsePhosphoFragmentation	\N	SearchSettings	false	Use Phospho Fragmentation Rules	use_phospho_fragmentation	1	3.2	\N	8	\N	155
+49	TerminalStaticMods	\N	StaticMods	\N	Terminal Static Modifications	term_static_mods	1	3.2	\N	6	\N	290
 \.
 
 

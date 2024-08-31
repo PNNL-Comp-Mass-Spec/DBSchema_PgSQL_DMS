@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.3
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,9 +21,6 @@ SET row_security = off;
 --
 
 COPY public.t_aux_info_description (aux_description_id, aux_description, aux_subcategory_id, sequence, data_size, helper_append, active) FROM stdin;
-104	Time	257	3	64	N	Y
-105	Reagent Type	258	1	64	Y	Y
-106	Concentration	258	2	64	N	Y
 45	Genotype of Bacterium	244	1	64	N	Y
 46	General Description of Experimental Test	244	2	64	N	Y
 47	Date Started	245	1	64	N	Y
@@ -82,12 +79,15 @@ COPY public.t_aux_info_description (aux_description_id, aux_description, aux_sub
 101	Time	256	5	64	N	Y
 102	Reagent Type	257	1	64	A	Y
 103	Concentration	257	2	64	N	Y
-110	Time	259	3	64	N	Y
-111	Type	260	1	64	Y	Y
-112	Concentration	260	2	64	N	Y
+104	Time	257	3	64	N	Y
+105	Reagent Type	258	1	64	Y	Y
+106	Concentration	258	2	64	N	Y
 107	Time	258	3	64	N	Y
 108	Reagent Type	259	1	64	Y	Y
 109	Concentration	259	2	64	N	Y
+110	Time	259	3	64	N	Y
+111	Type	260	1	64	Y	Y
+112	Concentration	260	2	64	N	Y
 113	Alkylation Agent	261	1	64	N	Y
 114	Temperature	261	2	64	N	Y
 115	Time	261	3	64	N	Y

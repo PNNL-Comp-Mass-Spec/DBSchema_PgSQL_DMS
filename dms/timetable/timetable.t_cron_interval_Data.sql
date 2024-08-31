@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,10 +21,8 @@ SET row_security = off;
 --
 
 COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description) FROM stdin;
-11	37 1/4 * * *	Every 4 hours, starting at 1:37 AM
-69	2/5 * * * *	Every 5 minutes, starting at 12:02 AM
-19	3/5 * * * *	Every 5 minutes, starting at 12:03 AM
-1	23 */2 * * *	Every 2 hours, starting at 12:23 AM
+79	0 18 10 5 *	At 6:00 PM on May 10th
+78	0 9 10 5 *	At 9:00 AM on May 10th
 59	14 22 * * *	Daily at 10:14 PM
 39	27 22 * * *	Daily at 10:27 PM
 6	30 22 * * *	Daily at 10:30 PM
@@ -46,10 +44,13 @@ COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description
 18	48 6 * * *	Daily at 6:48 AM
 62	25 19 * * *	Daily at 7:25 PM
 21	38 7 * * *	Daily at 7:38 AM
+80	10 20 * * *	Daily at 8:10pm
 61	0 21 * * *	Daily at 9:00 PM
 42	43 21 * * *	Daily at 9:43 PM
 35	* * * * *	Every 1 minute, starting at 12:00 AM
+72	0/10 * * * *	Every 10 minutes, starting at 12:00 AM
 12	7/15 3-23 * * *	Every 15 minutes, starting at 3:07 AM
+1	23 */2 * * *	Every 2 hours, starting at 12:23 AM
 36	0/20 * * * *	Every 20 minutes, starting at 12:00 AM
 66	0 0/3 * * *	Every 3 hours, starting at 12:00 AM
 64	1 0/3 * * *	Every 3 hours, starting at 12:01 AM
@@ -58,24 +59,32 @@ COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description
 68	3 5/3 * * *	Every 3 hours, starting at 5:03 AM
 25	7/30 * * * *	Every 30 minutes, starting at 12:07 AM
 7	20/30 * * * *	Every 30 minutes, starting at 12:20 AM
-60	18 1/6 * * *	Every 6 hours, starting at 1:18 AM
+11	37 1/4 * * *	Every 4 hours, starting at 1:37 AM
+75	1/5 * * * *	Every 5 minutes, starting at 12:01 AM
+69	2/5 * * * *	Every 5 minutes, starting at 12:02 AM
+19	3/5 * * * *	Every 5 minutes, starting at 12:03 AM
 65	0 0/6 * * *	Every 6 hours, starting at 12:00 AM
 70	22 0/6 * * *	Every 6 hours, starting at 12:22 AM
 49	24 0/6 * * *	Every 6 hours, starting at 12:24 AM
+71	36 0/6 * * *	Every 6 hours, starting at 12:36 AM
 33	42 0/6 * * *	Every 6 hours, starting at 12:42 AM
+60	18 1/6 * * *	Every 6 hours, starting at 1:18 AM
+73	37 1/6 * * *	Every 6 hours, starting at 1:37 AM
+76	43 2/6 * * *	Every 6 hours, starting at 2:43 AM
 67	43 6/6 * * *	Every 6 hours, starting at 6:43 AM
 53	25 5/8 * * *	Every 8 hours, starting at 5:25 AM
-27	17 1-23 * * *	Hourly, starting at 1:17 AM
 37	17 * * * *	Hourly, starting at 12:17 AM
 8	24 * * * *	Hourly, starting at 12:24 AM
 45	36 * * * *	Hourly, starting at 12:36 AM
 10	53 * * * *	Hourly, starting at 12:53 AM
+27	17 1-23 * * *	Hourly, starting at 1:17 AM
 26	23 3-23 * * *	Hourly, starting at 3:23 AM
 34	3 22 * * 1,3,5	Monday, Wednesday, and Friday at 10:03 PM
 4	45 23 15 * *	Monthly, on day 15 at 11:45 PM
 9	23 8 3 * *	Monthly, on day 3 at 8:23 AM
 20	19 19 6 * *	Monthly, on day 6 at 7:19 PM
 5	0 22 1-5 * *	Monthly, on days 1-5 at 10:00 PM
+81	10 21 * * 7	On Sunday, at 9:10pm
 47	25 17 * * 2,5	Tuesday and Friday at 5:25 PM
 46	14 23 * * 2,4,6	Tuesday, Thursday, Saturday at 11:14 PM
 50	00 15 * * 3,7	Wednesday and Sunday at 3:00 PM
@@ -85,23 +94,14 @@ COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description
 41	12 10 * * 6	Weekly, on Saturday at 10:12 AM
 43	15 16 * * 6	Weekly, on Saturday at 4:15 PM
 38	38 16 * * 6	Weekly, on Saturday at 4:38 PM
+74	17 17 * * 6	Weekly, on Saturday at 5:17 PM
+77	28 18 * * 6	Weekly, on Saturday at 6:28 PM
 63	38 15 * * 7	Weekly, on Sunday at 3:38 PM
 16	9 4 * * 7	Weekly, on Sunday at 4:09 AM
 17	15 5 * * 7	Weekly, on Sunday at 5:15 AM
 29	15 15 * * 4	Weekly, on Thursday at 3:15 PM
 28	16 15 * * 4	Weekly, on Thursday at 3:16 PM
 2	@reboot	When the PostgreSQL instance starts
-71	36 0/6 * * *	Every 6 hours, starting at 12:36 AM
-72	0/10 * * * *	Every 10 minutes, starting at 12:00 AM
-73	37 1/6 * * *	Every 6 hours, starting at 1:37 AM
-74	17 17 * * 6	Weekly, on Saturday at 5:17 PM
-75	1/5 * * * *	Every 5 minutes, starting at 12:01 AM
-76	43 2/6 * * *	Every 6 hours, starting at 2:43 AM
-77	28 18 * * 6	Weekly, on Saturday at 6:28 PM
-81	10 21 * * 7	On Sunday, at 9:10pm
-80	10 20 * * *	Daily at 8:10pm
-78	0 9 10 5 *	At 9:00 AM on May 10th
-79	0 18 10 5 *	At 6:00 PM on May 10th
 \.
 
 

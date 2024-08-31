@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.3
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,15 +21,16 @@ SET row_security = off;
 --
 
 COPY public.t_emsl_instruments (eus_instrument_id, eus_display_name, eus_instrument_name, eus_available_hours, local_category_name, local_instrument_name, last_affected, eus_active_sw, eus_primary_instrument) FROM stdin;
-1015	Mass Spectrometer: Fourier-Transform	Mass Spectrometer: 11.5-Tesla, Wide Bore FTICR	10	\N	\N	2024-08-06 06:15:53	0	0
-1020	Mass Spectrometer: Time of Flight Secondary Ion (ToF SIMS) - 1997	Mass Spectrometer: Time of Flight Secondary Ion (ToF SIMS) - 1997	10	\N	\N	2024-08-06 06:15:53	0	0
-1033	Mass Spectrometer: Laser Desorption - Ion Trap	Mass Spectrometer: Laser Desorption - Ion Trap	10	\N	\N	2024-08-06 06:15:53	0	0
 1009	Mass Spectrometer: Fourier-Transform	Mass Spectrometer: 7-Tesla, Electrospray Ionization FTICR	10	\N	\N	2024-08-06 06:15:53	0	0
 1010	Mass Spectrometer: Finnigan LCQ Classic #1	Mass Spectrometer: Finnigan LCQ Classic #1	24	\N	\N	2024-08-06 06:15:53	0	0
 1011	Mass Spectrometer: MALDI TOF	Mass Spectrometer: MALDI TOF	10	\N	\N	2024-08-06 06:15:53	0	0
 1012	Mass Spectrometer: Micromass ZabSpec oaTOF	Mass Spectrometer: Micromass ZabSpec oaTOF	10	\N	\N	2024-08-06 06:15:53	0	0
 1013	Mass Spectrometer: Finnigan TSQ 7000 Triple Quadrupole	Mass Spectrometer: Finnigan TSQ 7000 Triple Quadrupole	10	\N	\N	2024-08-06 06:15:53	0	0
 1014	Mass Spectrometer: 3.5-tesla, Wide Bore FTICR	Mass Spectrometer: 3.5-tesla, Wide Bore FTICR	10	\N	\N	2024-08-06 06:15:53	0	0
+1015	Mass Spectrometer: Fourier-Transform	Mass Spectrometer: 11.5-Tesla, Wide Bore FTICR	10	\N	\N	2024-08-06 06:15:53	0	0
+1020	Mass Spectrometer: Time of Flight Secondary Ion (ToF SIMS) - 1997	Mass Spectrometer: Time of Flight Secondary Ion (ToF SIMS) - 1997	10	\N	\N	2024-08-06 06:15:53	0	0
+1033	Mass Spectrometer: Laser Desorption - Ion Trap	Mass Spectrometer: Laser Desorption - Ion Trap	10	\N	\N	2024-08-06 06:15:53	0	0
+1062	Mass Spectrometer: General Analytical	Mass Spectrometer: General Analytical	24	\N	\N	2024-08-06 06:15:53	0	0
 1080	Mass Spectrometer: FT-ICR, 6T (Ion Surface Collisions)	Mass Spectrometer: 6T FTICR (for Ion Surface Collisions)	10	\N	\N	2024-08-06 06:15:53	0	0
 1099	Inductively Coupled Plasma (ICP-MS)	Mass Spectrometer: ICP-MS (2008)	10	\N	\N	2024-08-06 06:15:53	0	0
 1153	Mass Spectrometer: Time-of-Flight (ToF)	Mass Spectrometer: Quadrupole TOF Micromass Q-TOF Ultima	10	\N	\N	2024-08-06 06:15:53	0	0
@@ -44,7 +45,6 @@ COPY public.t_emsl_instruments (eus_instrument_id, eus_display_name, eus_instrum
 34011	Fourier-Transform Ion Cyclotron Resonance (FTICR)	Mass Spectrometer: 12T FTICR-MALDI (2004)	10	Mass Spectrometer:  Fourier-Transform Ion Cyclotron Resonance	\N	2024-08-06 06:15:53	1	1
 34012	Mass Spectrometer: Linear Ion trap (LTQ)	Mass Spectrometer: LTQ2	24	\N	\N	2024-08-06 06:15:53	0	0
 34013	Mass Spectrometer: Linear Ion trap (LTQ)	Mass Spectrometer: LTQ3	24	\N	\N	2024-08-06 06:15:53	0	0
-1062	Mass Spectrometer: General Analytical	Mass Spectrometer: General Analytical	24	\N	\N	2024-08-06 06:15:53	0	0
 34014	Mass Spectrometer: Fourier-Transform Ion Cyclotron Resonance	Mass Spectrometer: LTQFT1	24	\N	\N	2024-08-06 06:15:53	0	0
 34015	Mass Spectrometer: Linear Ion trap (LTQ)	Mass Spectrometer: LTQ1	10	\N	\N	2024-08-06 06:15:53	0	0
 34016	Mass Spectrometer: Q-STARR	Mass Spectrometer: Q-STARR	10	\N	\N	2024-08-06 06:15:53	0	0
@@ -77,6 +77,8 @@ COPY public.t_emsl_instruments (eus_instrument_id, eus_display_name, eus_instrum
 34116	Mass Spectrometer: Orbitrap	Mass Spectrometer: LTQ_Orb_Velos 3	24	Mass Spectrometer: ORB-LTQ	\N	2024-08-06 06:15:53	0	0
 34127	Mass Spectrometer: Orbitrap	Mass Spectrometer: LTQ_Orb_Velos 4	24	Mass Spectrometer: ORB-LTQ	\N	2024-08-06 06:15:53	0	0
 34139	Fourier-Transform Ion Cyclotron Resonance (FTICR)	Mass Spectrometer: 15T FTICR (2010)	10	Mass Spectrometer:  Fourier-Transform Ion Cyclotron Resonance	\N	2024-08-06 06:15:53	0	1
+34145	Mass Spectrometer: MALDI-TOF	Mass Spectrometer: Maxis_01	10	Mass Spectrometer: Imaging-MS	\N	2024-08-06 06:15:53	0	0
+34146	Mass Spectrometer: MALDI FTICR 	Mass Spectrometer: MALDI FTICR	10	Mass Spectrometer: Imaging-MS	Mass Spectrometer: MALDI 9.4T FTICR	2024-08-07 06:16:00.891027	0	0
 34149	Bottom-up (Fragmented) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Quad TSQ LC-MS 3 (2009)	10	Mass Spectrometer:  LC-QQQ	\N	2024-08-06 06:15:53	1	0
 34150	Gas Chromatography-Mass Spectrometry (GC-MS)	Mass Spectrometer: Agilent GC-MS 1 (2009)	10	Mass Spectrometry:  GC-MS	\N	2024-08-06 06:15:53	1	0
 34152	Mass Spectrometer: GC-MS (metabolomics)	Mass Spectrometer: Thermo_GC_MS_01	10	Mass Spectrometry:  GC-MS	\N	2024-08-06 06:15:53	0	0
@@ -85,13 +87,11 @@ COPY public.t_emsl_instruments (eus_instrument_id, eus_display_name, eus_instrum
 34155	Lipidomics Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q-ToF LC-MS 2 (2010)	10	Mass Spectrometer:  Ion Mobility Time of Flight	Mass Spectrometry: Ion Mobility Spectrometry, TOF (IMS_TOF6)	2024-08-06 06:15:53	1	0
 34156	Lipidomics Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q-ToF LC-MS 1 (2010)	10	Mass Spectrometer:  Ion Mobility Time of Flight	Mass Spectrometry: Ion Mobility Spectrometry, TOF (IMS_TOF5)	2024-08-06 06:15:53	1	0
 34157	Metabolomic Liquid State Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: ToF LC-MS 5 (2009)	10	Mass Spectrometer:  Ion Mobility Time of Flight	Mass Spectrometry: Ion Mobility Spectrometry, TOF (IMS_TOF7)	2024-08-06 06:15:53	1	0
+34158	Inductively Coupled Plasma (ICP-MS)	Mass Spectrometer: ICP-MS (2011)	10	\N	\N	2024-08-06 06:15:53	0	0
 34159	LTQ for nanoPOTS prep	Mass Spectrometer: nanoPOTS preparation	10	\N	\N	2023-12-18 06:15:32	1	0
 34160	Inductively Coupled Plasma (ICP-MS)	Mass Spectrometer: ICP-MS Multi-Collector (2011)	10	\N	\N	2024-08-06 06:15:53	0	0
 34161	Inductively Coupled Plasma (ICP-MS)	Mass Spectrometer: ICP-MS Metallomics (2010)	10	\N	\N	2024-08-06 06:15:53	0	0
 34172	Lipidomics Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q-ToF LC-MS 4 (2010)	10	\N	\N	2024-08-06 06:15:53	1	0
-34146	Mass Spectrometer: MALDI FTICR 	Mass Spectrometer: MALDI FTICR	10	Mass Spectrometer: Imaging-MS	Mass Spectrometer: MALDI 9.4T FTICR	2024-08-07 06:16:00.891027	0	0
-34145	Mass Spectrometer: MALDI-TOF	Mass Spectrometer: Maxis_01	10	Mass Spectrometer: Imaging-MS	\N	2024-08-06 06:15:53	0	0
-34158	Inductively Coupled Plasma (ICP-MS)	Mass Spectrometer: ICP-MS (2011)	10	\N	\N	2024-08-06 06:15:53	0	0
 34173	Metabolomic Liquid State Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: ToF LC-MS 6 (2009)	10	\N	\N	2024-08-06 06:15:53	1	0
 34174	Metabolomic Liquid State Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: ToF LC-MS 7 (2010)	10	\N	\N	2024-08-06 06:15:53	1	0
 34175	Aerosol Mass Spectrometry (MS) Nanospray Desorption Electrospray Ionization (nano-DESI)	Mass Spectrometer: nano-DESI Velos Orbitrap LC-MS 5 (2011)	24	\N	\N	2024-08-06 06:15:53	1	0
@@ -126,19 +126,6 @@ COPY public.t_emsl_instruments (eus_instrument_id, eus_display_name, eus_instrum
 34255	Targeted (SRM) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Altis Triple Quad LC-MS 1 (2017)	24	\N	\N	2024-08-06 06:15:53	1	0
 34256	Top-down (Intact) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q Exactive HF UHMR 5 (2015)	10	\N	\N	2024-08-06 06:15:53	1	0
 34258	Lipidomics Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q-ToF LC-MS 8 (2013)	24	\N	\N	2024-08-06 06:15:53	1	0
-34297	Bottom-up (Fragmented) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q Exactive LC-MS HFX 1 (2019)	24	\N	\N	2024-08-06 06:15:53	1	1
-34298	Bottom-up (Fragmented) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q Exactive LC-MS HFX 2 (2020)	24	\N	\N	2024-08-06 06:15:53	1	1
-34307	Targeted (SRM) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Altis Triple Quad LC-MS 3 (2019)	24	\N	\N	2024-08-06 06:15:53	1	0
-34308	Bottom-up (Fragmented) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q Exactive LC-MS HFX 3 (2019)	24	\N	\N	2024-08-06 06:15:53	1	0
-34313	Untargeted (TMT) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Eclipse Orbitrap LC-MS 1 (2020)	24	\N	\N	2024-08-06 06:15:53	1	1
-34321	Untargeted (TMT) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Eclipse Orbitrap LC-MS 2 (2020)	24	\N	\N	2024-08-06 06:15:53	1	0
-34322	Untargeted (TMT) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Exploris Orbitrap LC-MS (2020)	10	\N	\N	2024-08-06 06:15:53	1	0
-35024	Lipidomics Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q-ToF LC-MS 9 (2023)	10	\N	\N	2024-08-06 06:15:53	1	0
-35025	Lipidomics Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q-ToF LC-MS 3 (2010) - DUPLICATE	\N	\N	\N	2024-08-06 06:15:53	0	0
-35026	Lipidomics Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q-ToF LC-MS 2 (2010) - DUPLICATE	\N	\N	\N	2024-08-06 06:15:53	0	0
-35028	Untargeted (TMT) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Exploris Orbitrap LC-MS 2 (2022)	10	\N	\N	2024-08-06 06:15:53	1	0
-35029	Untargeted (TMT) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Exploris Orbitrap LC-MS 3 (2023)	10	\N	\N	2024-08-06 06:15:53	1	0
-35022	Inductively Coupled Plasma (ICP-MS) 	Mass Spectrometer: ICP-MS (2023)	10	\N	\N	2024-08-07 06:16:00.891027	1	0
 34259	Lipidomics Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q-ToF LC-MS 6 (2015)	24	\N	\N	2024-08-06 06:15:53	1	0
 34260	Gas Chromatography-Mass Spectrometry (GC-MS)	Mass Spectrometer: Agilent GC-MS 4 (2012)	10	\N	\N	2024-08-06 06:15:53	0	0
 34264	Metabolomic Liquid State Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: ToF LC-MS 8 (2017)	10	\N	\N	2024-08-06 06:15:53	1	0
@@ -148,13 +135,26 @@ COPY public.t_emsl_instruments (eus_instrument_id, eus_display_name, eus_instrum
 34286	Mass Spectrometer: Gas Chromatograph Isotope Ratio	Isotope Ratio Mass Spectrometry (IRMS 2)	10	\N	\N	2021-05-11 06:15:03	Y	N
 34287	Mass Spectrometer: Elemental Analyzer Isotope Ratio	Isotope Ratio Mass Spectrometry (IRMS 1)	10	\N	\N	2021-05-11 06:15:03	Y	N
 34289	Lipidomics Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q-ToF LC-MS 7 (2018)	24	\N	\N	2024-08-06 06:15:53	1	0
+34297	Bottom-up (Fragmented) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q Exactive LC-MS HFX 1 (2019)	24	\N	\N	2024-08-06 06:15:53	1	1
+34298	Bottom-up (Fragmented) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q Exactive LC-MS HFX 2 (2020)	24	\N	\N	2024-08-06 06:15:53	1	1
+34307	Targeted (SRM) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Altis Triple Quad LC-MS 3 (2019)	24	\N	\N	2024-08-06 06:15:53	1	0
+34308	Bottom-up (Fragmented) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q Exactive LC-MS HFX 3 (2019)	24	\N	\N	2024-08-06 06:15:53	1	0
+34313	Untargeted (TMT) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Eclipse Orbitrap LC-MS 1 (2020)	24	\N	\N	2024-08-06 06:15:53	1	1
 34314	Mass Spectrometer: AgQToF	Mass Spectrometer: AgQToF	24	\N	\N	2024-08-06 06:15:53	0	1
+34321	Untargeted (TMT) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Eclipse Orbitrap LC-MS 2 (2020)	24	\N	\N	2024-08-06 06:15:53	1	0
+34322	Untargeted (TMT) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Exploris Orbitrap LC-MS (2020)	10	\N	\N	2024-08-06 06:15:53	1	0
 34331	Pyrolysis Gas Chromatography-Mass Spectrometry (GC-MS)	Mass Spectrometer: Pyrolysis GC-MS (2019)	10	\N	\N	2024-08-06 06:15:53	1	0
 34332	Fourier-Transform Ion Cyclotron Resonance (FTICR)	Mass Spectrometer: 7T FTICR-SciMax (2021)	10	\N	\N	2024-08-06 06:15:53	1	0
 35000	Mass Spectrometer: SciMax	Mass Spectrometer: SciMax01	10	\N	\N	2021-11-30 06:15:04	0	0
 35007	Gas Chromatography-Mass Spectrometry (GC-MS)	Mass Spectrometer: Agilent GC-MS 3 (2021)	24	\N	\N	2024-08-06 06:15:53	1	0
 35015	Nanoscale Proteomics Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: TIMS ToF (2023)	24	\N	\N	2024-08-06 06:15:53	0	0
+35022	Inductively Coupled Plasma (ICP-MS) 	Mass Spectrometer: ICP-MS (2023)	10	\N	\N	2024-08-07 06:16:00.891027	1	0
+35024	Lipidomics Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q-ToF LC-MS 9 (2023)	10	\N	\N	2024-08-06 06:15:53	1	0
+35025	Lipidomics Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q-ToF LC-MS 3 (2010) - DUPLICATE	\N	\N	\N	2024-08-06 06:15:53	0	0
+35026	Lipidomics Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q-ToF LC-MS 2 (2010) - DUPLICATE	\N	\N	\N	2024-08-06 06:15:53	0	0
 35027	Mass Spectrometer: Orbitrap Ascend	Mass Spectrometer: Ascend Orbitrap LC-MS 1 (2023)	10	\N	\N	2024-08-06 06:15:53	1	0
+35028	Untargeted (TMT) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Exploris Orbitrap LC-MS 2 (2022)	10	\N	\N	2024-08-06 06:15:53	1	0
+35029	Untargeted (TMT) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Exploris Orbitrap LC-MS 3 (2023)	10	\N	\N	2024-08-06 06:15:53	1	0
 35030	Untargeted (TMT) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Exploris Orbitrap LC-MS 4 (2023)	10	\N	\N	2024-08-06 06:15:53	1	0
 35031	Untargeted (TMT) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Fusion Lumos Orbitrap LC-MS 3 (2018)	10	\N	\N	2024-08-06 06:15:53	1	0
 35032	Top-down (Intact) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q Exactive HF UHMR 5 (2015) - DUPLICATE	\N	\N	\N	2024-08-06 06:15:53	0	0

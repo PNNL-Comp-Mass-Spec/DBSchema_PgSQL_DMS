@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.3
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -36,11 +36,11 @@ COPY public.t_filter_set_criteria_names (criterion_id, criterion_name, criterion
 13	Terminus_State	Non-zero if peptide is at terminus of protein; 1=N-terminus, 2=C-terminus, 3=N and C-terminus
 14	XTandem_Hyperscore	XTandem Hyperscore
 15	XTandem_LogEValue	XTandem E-Value (base-10 log)
-18	Inspect_MQScore	Inspect MQScore
-20	Inspect_FScore	Inspect FScore
 16	Peptide_Prophet_Probability	Sequest-based probability developed by Andrew Keller; for Inspect, use 1-PValue; in both cases, closer to 1 is higher confidence
 17	RankScore	The rank of the given peptides score within the given scan; for Sequest, this is RankXc; for Inspect this is RankFScore
+18	Inspect_MQScore	Inspect MQScore
 19	Inspect_TotalPRMScore	Inspect TotalPRMScore
+20	Inspect_FScore	Inspect FScore
 21	Inspect_PValue	Inspect PValue
 22	MSGF_SpecProb	MSGF Spectrum Probability value; closer to 0 is higher confidence
 23	MSGFDB_SpecProb	MSGFDB Spectrum Probability; closer to 0 is higher confidence

@@ -23,23 +23,16 @@ SET row_security = off;
 COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live, self_destruct, exclusive_execution, client_name, on_error) FROM stdin;
 3	run-vacuum	23 */2 * * *	\N	0	f	f	f	\N	\N
 4	clear-log	@reboot	\N	0	t	f	f	\N	\N
-59	Update cached NCBI taxonomy	19 21 * * 5	\N	0	t	f	f	\N	\N
-60	Update cached requested run batch stats	36 * * * *	\N	0	t	f	f	\N	\N
-61	Update cached requested run batch stats (full refresh)	14 23 * * 2,4,6	\N	0	t	f	f	\N	\N
-62	Update cached requested run users (for active requests)	25 17 * * 2,5	\N	0	t	f	f	\N	\N
 6	Add missing predefined jobs	0 2 * * *	\N	0	t	f	f	\N	\N
-63	Update cached sample prep request items	37 2 * * *	\N	0	t	f	f	\N	\N
-64	Update cached separation usage by dataset	24 0/6 * * *	\N	0	t	f	f	\N	\N
-65	Update cached tissue names	00 15 * * 3,7	\N	0	t	f	f	\N	\N
 8	Auto add BOM tracking datasets	45 23 15 * *	\N	0	t	f	f	\N	\N
 10	Auto annotate broken instrument long intervals	0 22 1-5 * *	\N	0	t	f	f	\N	\N
-66	Update capture task states	* * * * *	\N	0	t	f	f	\N	\N
 11	Auto define WPS for EUS requested runs	30 22 * * *	\N	0	t	f	f	\N	\N
 13	Auto reset failed jobs	20/30 * * * *	\N	0	t	f	f	\N	\N
 14	Auto skip failed UIMF calibration	24 * * * *	\N	0	t	f	f	\N	\N
 15	Auto supersede EUS proposals	23 8 3 * *	\N	0	t	f	f	\N	\N
 16	Auto update job priorities	53 * * * *	\N	0	t	f	f	\N	\N
 17	Auto update QC_Shew dataset rating	37 1/4 * * *	\N	0	t	f	f	\N	\N
+21	Backfill pipeline jobs	7/15 3-23 * * *	\N	0	t	f	f	\N	\N
 22	Cache dataset QC instruments	37 1/4 * * *	\N	0	t	f	f	\N	\N
 23	Check data integrity	19 17 * * *	\N	0	t	f	f	\N	\N
 24	Check for MyEMSL upload errors	27 0 * * *	\N	0	t	f	f	\N	\N
@@ -47,14 +40,20 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 26	Cleanup capture tasks	9 4 * * 7	\N	0	t	f	f	\N	\N
 27	Cleanup pipeline jobs	15 5 * * 7	\N	0	t	f	f	\N	\N
 28	Clear data package manager errors	48 6 * * *	\N	0	t	f	f	\N	\N
-21	Backfill pipeline jobs	7/15 3-23 * * *	\N	0	t	f	f	\N	\N
+29	Create pending predefined jobs	3/5 * * * *	\N	0	t	f	f	\N	\N
 30	Delete old historic logs	19 19 6 * *	\N	0	t	f	f	\N	\N
 31	Delete orphaned capture tasks	38 7 * * *	\N	0	t	f	f	\N	\N
+32	Disable archive-dependent step tools once	14 20 * * *	\N	0	f	f	f	\N	\N
+33	Disable MSGFPlus once	31 20 * * *	\N	0	f	f	f	\N	\N
 34	DMS notification event update	0 12 * * *	\N	0	t	f	f	\N	\N
-29	Create pending predefined jobs	3/5 * * * *	\N	0	t	f	f	\N	\N
+35	Enable archive update step tool once	49 20 * * *	\N	0	f	f	f	\N	\N
+36	Enable archive-dependent step tools once	27 20 * * *	\N	0	f	f	f	\N	\N
+37	Enable MS-GF+ once	33 20 * * *	\N	0	f	f	f	\N	\N
 38	Find stale MyEMSL uploads	38 7 * * *	\N	0	t	f	f	\N	\N
-42	Reset failed MyEMSL uploads	17 1-23 * * *	\N	0	t	f	f	\N	\N
 39	Reset failed dataset capture tasks	7/30 * * * *	\N	0	t	f	f	\N	\N
+40	Reset failed dataset purge tasks	23 3-23 * * *	\N	0	f	f	f	\N	\N
+41	Reset failed analysis job managers	0 6 * * *	\N	0	f	f	f	\N	\N
+42	Reset failed MyEMSL uploads	17 1-23 * * *	\N	0	t	f	f	\N	\N
 43	Retire stale campaigns	16 15 * * 4	\N	0	t	f	f	\N	\N
 44	Retire stale LC columns	15 15 * * 4	\N	0	t	f	f	\N	\N
 45	Set external dataset purge priority	15 18 * * 5	\N	0	t	f	f	\N	\N
@@ -71,6 +70,14 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 56	Update cached experiment component names	12 10 * * 6	\N	0	t	f	f	\N	\N
 57	Update cached instrument usage by proposal	43 21 * * *	\N	0	t	f	f	\N	\N
 58	Update cached job request existing jobs	15 16 * * 6	\N	0	t	f	f	\N	\N
+59	Update cached NCBI taxonomy	19 21 * * 5	\N	0	t	f	f	\N	\N
+60	Update cached requested run batch stats	36 * * * *	\N	0	t	f	f	\N	\N
+61	Update cached requested run batch stats (full refresh)	14 23 * * 2,4,6	\N	0	t	f	f	\N	\N
+62	Update cached requested run users (for active requests)	25 17 * * 2,5	\N	0	t	f	f	\N	\N
+63	Update cached sample prep request items	37 2 * * *	\N	0	t	f	f	\N	\N
+64	Update cached separation usage by dataset	24 0/6 * * *	\N	0	t	f	f	\N	\N
+65	Update cached tissue names	00 15 * * 3,7	\N	0	t	f	f	\N	\N
+66	Update capture task states	* * * * *	\N	0	t	f	f	\N	\N
 67	Update charge code usage	32 0/3 * * *	\N	0	t	f	f	\N	\N
 68	Update charge codes from warehouse	42 5 * * *	\N	0	t	f	f	\N	\N
 69	Update data package EUS info	25 5/8 * * *	\N	0	t	f	f	\N	\N
@@ -96,25 +103,18 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 89	Delete timetable logs	36 0/6 * * *	\N	0	t	f	f	\N	\N
 90	Update cached experiment stats, mode 0	0/10 * * * *	\N	0	t	f	f	\N	\N
 91	Update cached experiment stats, mode 1	37 1/6 * * *	\N	0	t	f	f	\N	\N
-37	Enable MS-GF+ once	33 20 * * *	\N	0	f	f	f	\N	\N
-41	Reset failed analysis job managers	0 6 * * *	\N	0	f	f	f	\N	\N
-33	Disable MSGFPlus once	31 20 * * *	\N	0	f	f	f	\N	\N
-40	Reset failed dataset purge tasks	23 3-23 * * *	\N	0	f	f	f	\N	\N
 92	Update cached experiment stats, mode 2	17 17 * * 6	\N	0	t	f	f	\N	\N
 93	Update cached dataset stats, mode 0	1/5 * * * *	\N	0	t	f	f	\N	\N
 95	Update cached dataset stats, mode 1	43 2/6 * * *	\N	0	t	f	f	\N	\N
 96	Update cached dataset stats, mode 2	28 18 * * 6	\N	0	t	f	f	\N	\N
 97	Promote protein collection states	10 20 * * *	\N	0	t	f	f	\N	\N
 98	Promote protein collection states, 100 years	10 21 * * 7	\N	0	t	f	f	\N	\N
+99	Disable all managers once	00 10 * * *	\N	0	f	f	f	\N	\N
 100	Disable analysis managers once	05 16 * * *	\N	0	f	f	f	\N	\N
 101	Disable archive-dependent managers once	22 16 * * *	\N	0	f	f	f	\N	\N
 102	Disable capture task managers once	25 16 * * *	\N	0	f	f	f	\N	\N
 103	Enable all managers once	26 16 * * *	\N	0	f	f	f	\N	\N
 104	Enable archive-dependent managers once	23 16 * * *	\N	0	f	f	f	\N	\N
-32	Disable archive-dependent step tools once	14 20 * * *	\N	0	f	f	f	\N	\N
-99	Disable all managers once	00 10 * * *	\N	0	f	f	f	\N	\N
-36	Enable archive-dependent step tools once	27 20 * * *	\N	0	f	f	f	\N	\N
-35	Enable archive update step tool once	49 20 * * *	\N	0	f	f	f	\N	\N
 \.
 
 

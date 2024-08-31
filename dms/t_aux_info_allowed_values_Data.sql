@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -37,15 +37,15 @@ COPY public.t_aux_info_allowed_values (aux_description_id, value) FROM stdin;
 97	SAX
 97	SCX
 97	SEC
-102	carbonate
 102	Guanidine HCL
+102	carbonate
 102	sodium
 102	thiourea
 102	urea
-105	ethanol
 105	Methanol
-105	n-propanol
 105	TFE
+105	ethanol
+105	n-propanol
 108	Chaps
 108	Rapigest
 108	SDS
@@ -63,10 +63,10 @@ COPY public.t_aux_info_allowed_values (aux_description_id, value) FROM stdin;
 120	10X dilution w/Buffer
 120	G-25
 120	PD-10
-121	arg-N
 121	Imm. Trypsin
-121	lys-C
 121	Trypsin
+121	arg-N
+121	lys-C
 124	No
 124	Yes
 125	C-18

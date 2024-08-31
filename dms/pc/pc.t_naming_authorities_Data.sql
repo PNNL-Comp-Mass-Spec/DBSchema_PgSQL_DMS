@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,27 +21,27 @@ SET row_security = off;
 --
 
 COPY pc.t_naming_authorities (authority_id, name, description, web_address) FROM stdin;
-1	TIGR	The Institute for Genomic Research	http://www.tigr.org/
-2	NCBI	National Center for Biotechnology Information	http://www.ncbi.nlm.nih.gov/
-3	Sanger	Wellcome Trust Sanger Institute	http://www.sanger.ac.uk/
-4	IPI	International Protein Index	http://www.ebi.ac.uk/IPI/
-5	Stanford	Stanford Saccharomyces Genome Database	http://www.yeastgenome.org/
-6	None	No Naming Authority Specified	\N
-7	Other	\N	\N
-8	UniProt	UniProt	http://www.uniprot.org/
+22	BROAD	BROAD Institute	http://www.broadinstitute.org/
+13	Contigs	Proteins generated from contiguous genomic sequences	
+18	CyanoBase	Genome Database for Cyanobacteria	http://www.kazusa.or.jp/cyano/
 9	Ensembl	Joint Project between the EBI and Sanger Centre	http://www.ensembl.org/
 10	H-INV	H-Invitational Database	http://www.jbirc.aist.go.jp/hinv/index.jsp
-12	Stop-To-Stop	Locally generated Stop-to-Stop database	\N
-13	Contigs	Proteins generated from contiguous genomic sequences	
-14	Poxvirus_Bioinf_Res_Center	Poxvirus Bioinformatics Reseach Center	http://www.poxvirus.org/
-15	ORNL	Oak Ridge National Laboratory	http://www.ornl.gov/
-16	JGI	Joint Genomics Institute	http://www.jgi.doe.gov/
+4	IPI	International Protein Index	http://www.ebi.ac.uk/IPI/
 17	Interpro	EMBL Interpro Database	http://www.ebi.ac.uk/interpro/
-18	CyanoBase	Genome Database for Cyanobacteria	http://www.kazusa.or.jp/cyano/
-19	SGD	Saccharomyces Genome Database	http://www.yeastgenome.org/
-20	TAIR	The Arabidopsis Information Resource	http://www.arabidopsis.org/
+16	JGI	Joint Genomics Institute	http://www.jgi.doe.gov/
 21	MScDB	Mass Spectrometry Centric Protein Sequence Database for Proteomics	http://www.wzw.tum.de/proteomics/content/research/software/mscdb/
-22	BROAD	BROAD Institute	http://www.broadinstitute.org/
+2	NCBI	National Center for Biotechnology Information	http://www.ncbi.nlm.nih.gov/
+6	None	No Naming Authority Specified	\N
+15	ORNL	Oak Ridge National Laboratory	http://www.ornl.gov/
+7	Other	\N	\N
+14	Poxvirus_Bioinf_Res_Center	Poxvirus Bioinformatics Reseach Center	http://www.poxvirus.org/
+19	SGD	Saccharomyces Genome Database	http://www.yeastgenome.org/
+3	Sanger	Wellcome Trust Sanger Institute	http://www.sanger.ac.uk/
+5	Stanford	Stanford Saccharomyces Genome Database	http://www.yeastgenome.org/
+12	Stop-To-Stop	Locally generated Stop-to-Stop database	\N
+20	TAIR	The Arabidopsis Information Resource	http://www.arabidopsis.org/
+1	TIGR	The Institute for Genomic Research	http://www.tigr.org/
+8	UniProt	UniProt	http://www.uniprot.org/
 \.
 
 

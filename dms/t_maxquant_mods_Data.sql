@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.3
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -21,34 +21,6 @@ SET row_security = off;
 --
 
 COPY public.t_maxquant_mods (mod_id, mod_title, mod_position, mass_correction_id, composition, isobaric_mod_ion_number) FROM stdin;
-40	Lys8	anywhere	1164	Cx(6) Nx(2) C(-6) N(-2)	0
-44	DimethNter4	anyNterm	\N	Hx(4) C(2)	0
-348	Met->Lys	anywhere	\N	S(-1) H(3) C N	0
-45	DimethLys8	anywhere	\N	Hx(6) H(-2) Cx(2)	0
-46	DimethNter8	anyNterm	\N	Hx(6) H(-2) Cx(2)	0
-47	18O	anyCterm	\N	Ox(2) O(-2)	0
-48	ICAT-0	anywhere	1041	H(17) C(10) N(3) O(3)	0
-49	ICAT-9	anywhere	\N	H(17) Cx(9) N(3) O(3) C	0
-50	ICPL-Lys0	anywhere	\N	H(3) C(6) N O	0
-51	ICPL-Nter0	anyNterm	\N	H(3) C(6) N O	0
-52	ICPL-Lys4	anywhere	\N	H(-1) Hx(4) C(6) N O	0
-53	ICPL-Nter4	anyNterm	\N	H(-1) Hx(4) C(6) N O	0
-54	ICPL-Lys6	anywhere	\N	H(3) Cx(6) N O	0
-55	ICPL-Nter6	anyNterm	\N	H(3) Cx(6) N O	0
-56	ICPL-Lys10	anywhere	\N	H(-1) Hx(4) Cx(6) N O	0
-57	ICPL-Nter10	anyNterm	\N	H(-1) Hx(4) Cx(6) N O	0
-58	mTRAQ-Lys0	anywhere	\N	H(12) C(7) N(2) O	0
-59	mTRAQ-Nter0	anyNterm	\N	H(12) C(7) N(2) O	0
-60	mTRAQ-Lys4	anywhere	\N	H(12) C(4) Cx(3) N Nx O	0
-61	mTRAQ-Nter4	anyNterm	\N	H(12) C(4) Cx(3) N Nx O	0
-62	mTRAQ-Lys8	anywhere	\N	H(12) C Cx(6) Nx(2) O	0
-63	mTRAQ-Nter8	anyNterm	\N	H(12) C Cx(6) Nx(2) O	0
-64	DimethLys2	anywhere	\N	H(2) Hx(2) C(2)	0
-65	DimethNter2	anyNterm	\N	H(2) Hx(2) C(2)	0
-66	DimethLys6	anywhere	\N	Hx(6) C(2) H(-2)	0
-67	DimethNter6	anyNterm	\N	Hx(6) C(2) H(-2)	0
-68	Leu7	anywhere	\N	C(-6) Cx(6) N(-1) Nx	0
-475	Val->Met	anywhere	1220	S	0
 1	Acetyl (K)	notCterm	1120	C(2) H(2) O	0
 2	Acetyl (Protein N-term)	proteinNterm	1120	C(2) H(2) O	0
 3	Carbamidomethyl (C)	anywhere	1014	H(3) C(2) N O	0
@@ -88,9 +60,35 @@ COPY public.t_maxquant_mods (mod_id, mod_title, mod_position, mass_correction_id
 37	Arg10	anywhere	1165	Cx(6) Nx(4) C(-6) N(-4)	0
 38	Lys4	anywhere	\N	Hx(4) H(-4)	0
 39	Lys6	anywhere	\N	Cx(6) C(-6)	0
+40	Lys8	anywhere	1164	Cx(6) Nx(2) C(-6) N(-2)	0
 41	DimethLys0	anywhere	1208	H(4) C(2)	0
 42	DimethNter0	anyNterm	1208	H(4) C(2)	0
 43	DimethLys4	anywhere	\N	Hx(4) C(2)	0
+44	DimethNter4	anyNterm	\N	Hx(4) C(2)	0
+45	DimethLys8	anywhere	\N	Hx(6) H(-2) Cx(2)	0
+46	DimethNter8	anyNterm	\N	Hx(6) H(-2) Cx(2)	0
+47	18O	anyCterm	\N	Ox(2) O(-2)	0
+48	ICAT-0	anywhere	1041	H(17) C(10) N(3) O(3)	0
+49	ICAT-9	anywhere	\N	H(17) Cx(9) N(3) O(3) C	0
+50	ICPL-Lys0	anywhere	\N	H(3) C(6) N O	0
+51	ICPL-Nter0	anyNterm	\N	H(3) C(6) N O	0
+52	ICPL-Lys4	anywhere	\N	H(-1) Hx(4) C(6) N O	0
+53	ICPL-Nter4	anyNterm	\N	H(-1) Hx(4) C(6) N O	0
+54	ICPL-Lys6	anywhere	\N	H(3) Cx(6) N O	0
+55	ICPL-Nter6	anyNterm	\N	H(3) Cx(6) N O	0
+56	ICPL-Lys10	anywhere	\N	H(-1) Hx(4) Cx(6) N O	0
+57	ICPL-Nter10	anyNterm	\N	H(-1) Hx(4) Cx(6) N O	0
+58	mTRAQ-Lys0	anywhere	\N	H(12) C(7) N(2) O	0
+59	mTRAQ-Nter0	anyNterm	\N	H(12) C(7) N(2) O	0
+60	mTRAQ-Lys4	anywhere	\N	H(12) C(4) Cx(3) N Nx O	0
+61	mTRAQ-Nter4	anyNterm	\N	H(12) C(4) Cx(3) N Nx O	0
+62	mTRAQ-Lys8	anywhere	\N	H(12) C Cx(6) Nx(2) O	0
+63	mTRAQ-Nter8	anyNterm	\N	H(12) C Cx(6) Nx(2) O	0
+64	DimethLys2	anywhere	\N	H(2) Hx(2) C(2)	0
+65	DimethNter2	anyNterm	\N	H(2) Hx(2) C(2)	0
+66	DimethLys6	anywhere	\N	Hx(6) C(2) H(-2)	0
+67	DimethNter6	anyNterm	\N	Hx(6) C(2) H(-2)	0
+68	Leu7	anywhere	\N	C(-6) Cx(6) N(-1) Nx	0
 69	Ile7	anywhere	\N	C(-6) Cx(6) N(-1) Nx	0
 70	iTRAQ4plex-Nter114	anyNterm	1179	H(12) C(5) Cx(2) N(2) Ox	1
 71	iTRAQ4plex-Nter115	anyNterm	1179	H(12) C(6) Cx N Ox Nx	2
@@ -184,6 +182,7 @@ COPY public.t_maxquant_mods (mod_id, mod_title, mod_position, mass_correction_id
 159	Ala->Arg	anywhere	\N	H(7) C(3) N(3)	0
 160	Ala->Asn	anywhere	1037	H C N O	0
 161	Ala->Asp	anywhere	1417	C O(2)	0
+162	Ala->Cys	anywhere	1220	S	0
 163	Ala->Gln	anywhere	1014	H(3) C(2) N O	0
 164	Ala->Glu	anywhere	\N	H(2) C(2) O(2)	0
 165	Ala->Gly	anywhere	1270	H(-2) C(-1)	0
@@ -194,7 +193,6 @@ COPY public.t_maxquant_mods (mod_id, mod_title, mod_position, mass_correction_id
 170	Ala->Phe	anywhere	\N	H(4) C(6)	0
 171	Ala->Pro	anywhere	\N	H(2) C(2)	0
 172	Ala->Ser	anywhere	1115	O	0
-162	Ala->Cys	anywhere	1220	S	0
 173	Ala->Thr	anywhere	\N	H(2) C O	0
 174	Ala->Trp	anywhere	\N	H(5) C(8) N	0
 175	Ala->Tyr	anywhere	\N	H(4) C(6) O	0
@@ -370,6 +368,7 @@ COPY public.t_maxquant_mods (mod_id, mod_title, mod_position, mass_correction_id
 345	Met->Glu	anywhere	\N	H(-2) S(-1) O(2)	0
 346	Met->Gly	anywhere	\N	H(-6) C(-3) S(-1)	0
 347	Met->His	anywhere	\N	H(-2) S(-1) C N(2)	0
+348	Met->Lys	anywhere	\N	S(-1) H(3) C N	0
 349	Met->Phe	anywhere	\N	S(-1) C(4)	0
 350	Met->Pro	anywhere	1340	H(-2) S(-1)	0
 351	Met->Ser	anywhere	\N	H(-4) C(-2) S(-1) O	0
@@ -496,6 +495,7 @@ COPY public.t_maxquant_mods (mod_id, mod_title, mod_position, mass_correction_id
 472	Val->Gly	anywhere	\N	C(-3) H(-6)	0
 473	Val->His	anywhere	\N	H(-2) C N(2)	0
 474	Val->Lys	anywhere	\N	H(3) C N	0
+475	Val->Met	anywhere	1220	S	0
 476	Val->Phe	anywhere	\N	C(4)	0
 477	Val->Pro	anywhere	1173	H(-2)	0
 478	Val->Ser	anywhere	\N	C(-2) H(-4) O	0
@@ -511,6 +511,30 @@ COPY public.t_maxquant_mods (mod_id, mod_title, mod_position, mass_correction_id
 488	Xle->Gln	anywhere	\N	C(-1) H(-3) N O	0
 489	Xle->Glu	anywhere	\N	C(-1) H(-4) O(2)	0
 490	Xle->Gly	anywhere	\N	C(-4) H(-8)	0
+491	Xle->His	anywhere	\N	H(-4) N(2)	0
+492	Xle->Lys	anywhere	1170	H N	0
+493	Xle->Met	anywhere	\N	C(-1) H(-2) S	0
+494	Xle->Phe	anywhere	\N	H(-2) C(3)	0
+495	Xle->Pro	anywhere	\N	C(-1) H(-4)	0
+496	Xle->Ser	anywhere	\N	C(-3) H(-6) O	0
+497	Xle->Thr	anywhere	\N	C(-2) H(-4) O	0
+498	Xle->Trp	anywhere	\N	H(-1) C(5) N	0
+499	Xle->Tyr	anywhere	\N	H(-2) C(3) O	0
+500	Xle->Val	anywhere	\N	C(-1) H(-2)	0
+501	CamCys->Ala	anywhere	\N	S(-1) H(-3) C(-2) N(-1) O(-1)	0
+502	CamCys->Arg	anywhere	\N	S(-1) H(4) C N(2) O(-1)	0
+503	CamCys->Asn	anywhere	\N	S(-1) H(-2) C(-1)	0
+504	CamCys->Asp	anywhere	\N	S(-1) O H(-3) C(-1) N(-1)	0
+505	CamCys->Gln	anywhere	\N	S(-1)	0
+506	CamCys->Glu	anywhere	\N	S(-1) O H(-1) N(-1)	0
+507	CamCys->Gly	anywhere	\N	S(-1) H(-5) C(-3) N(-1) O(-1)	0
+508	CamCys->His	anywhere	\N	S(-1) C N H(-1) O(-1)	0
+509	CamCys->Lys	anywhere	\N	S(-1) H(4) C O(-1)	0
+510	CamCys->Met	anywhere	\N	H N(-1) O(-1)	0
+511	CamCys->Phe	anywhere	\N	S(-1) H C(4) N(-1) O(-1)	0
+512	CamCys->Pro	anywhere	\N	S(-1) H(-1) N(-1) O(-1)	0
+513	CamCys->Ser	anywhere	\N	S(-1) H(-3) C(-2) N(-1)	0
+514	CamCys->Thr	anywhere	\N	S(-1) H(-1) C(-1) N(-1)	0
 515	CamCys->Trp	anywhere	\N	S(-1) H(3) C(6) O(-1)	0
 516	CamCys->Tyr	anywhere	\N	S(-1) H C(4) N(-1)	0
 517	CamCys->Val	anywhere	\N	S(-1) H N(-1) O(-1)	0
@@ -536,30 +560,6 @@ COPY public.t_maxquant_mods (mod_id, mod_title, mod_position, mass_correction_id
 537	Thioacyl (DSP)	anywhere	\N	C(3) H(4) O S	0
 538	K2020	anywhere	\N	Cx(2) C(-2) Nx(2) N(-2)	0
 539	K0400	anywhere	\N	Hx(4) H(-4)	0
-491	Xle->His	anywhere	\N	H(-4) N(2)	0
-492	Xle->Lys	anywhere	1170	H N	0
-493	Xle->Met	anywhere	\N	C(-1) H(-2) S	0
-494	Xle->Phe	anywhere	\N	H(-2) C(3)	0
-495	Xle->Pro	anywhere	\N	C(-1) H(-4)	0
-496	Xle->Ser	anywhere	\N	C(-3) H(-6) O	0
-497	Xle->Thr	anywhere	\N	C(-2) H(-4) O	0
-498	Xle->Trp	anywhere	\N	H(-1) C(5) N	0
-499	Xle->Tyr	anywhere	\N	H(-2) C(3) O	0
-500	Xle->Val	anywhere	\N	C(-1) H(-2)	0
-501	CamCys->Ala	anywhere	\N	S(-1) H(-3) C(-2) N(-1) O(-1)	0
-502	CamCys->Arg	anywhere	\N	S(-1) H(4) C N(2) O(-1)	0
-503	CamCys->Asn	anywhere	\N	S(-1) H(-2) C(-1)	0
-504	CamCys->Asp	anywhere	\N	S(-1) O H(-3) C(-1) N(-1)	0
-505	CamCys->Gln	anywhere	\N	S(-1)	0
-506	CamCys->Glu	anywhere	\N	S(-1) O H(-1) N(-1)	0
-507	CamCys->Gly	anywhere	\N	S(-1) H(-5) C(-3) N(-1) O(-1)	0
-508	CamCys->His	anywhere	\N	S(-1) C N H(-1) O(-1)	0
-509	CamCys->Lys	anywhere	\N	S(-1) H(4) C O(-1)	0
-510	CamCys->Met	anywhere	\N	H N(-1) O(-1)	0
-511	CamCys->Phe	anywhere	\N	S(-1) H C(4) N(-1) O(-1)	0
-512	CamCys->Pro	anywhere	\N	S(-1) H(-1) N(-1) O(-1)	0
-513	CamCys->Ser	anywhere	\N	S(-1) H(-3) C(-2) N(-1)	0
-514	CamCys->Thr	anywhere	\N	S(-1) H(-1) C(-1) N(-1)	0
 540	K6020	anywhere	\N	Cx(6) C(-6) Nx(2) N(-2)	0
 541	K5210	anywhere	\N	Cx(5) C(-5) Hx(2) H(-2) Nx(1) N(-1)	0
 542	K3410	anywhere	\N	Cx(3) C(-3) Hx(4) H(-4) Nx N(-1)	0

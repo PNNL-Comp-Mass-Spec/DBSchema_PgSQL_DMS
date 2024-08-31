@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -24,13 +24,13 @@ COPY cap.t_processor_instrument (processor_name, instrument_name, enabled, comme
 Monroe_CTM	12T_FTICR_B	0	Bruker
 Monroe_CTM	15T_FTICR	0	Bruker
 Monroe_CTM	QExactP02	0	
-Proto-2_CTM	IMS_TOF_1	0	IMS Instrument
 Proto-2_CTM	IMS02_AgTOF06	0	IMS Instrument
 Proto-2_CTM	IMS03_AgQTOF01	0	IMS Instrument
 Proto-2_CTM	IMS04_AgTOF05	0	IMS Instrument
 Proto-2_CTM	IMS05_AgQTOF04	0	IMS Instrument
 Proto-2_CTM	IMS06_AgTOF07	0	IMS Instrument
 Proto-2_CTM	IMS07_AgQTOF02	0	IMS Instrument
+Proto-2_CTM	IMS_TOF_1	0	IMS Instrument
 Proto-4_CTM	9T_FTICR_Imaging	0	Bruker Imaging; old instrument
 Proto-7_CTM_2	Maxis_01	0	Maxis
 Proto-8_CTM_2	12T_FTICR_B	1	Bruker

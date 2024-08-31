@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -23,9 +23,9 @@ SET row_security = off;
 COPY public.t_requested_run_state_name (state_id, state_name) FROM stdin;
 1	Active
 2	Completed
-5	Fractionated
-4	Holding
 3	Inactive
+4	Holding
+5	Fractionated
 \.
 
 

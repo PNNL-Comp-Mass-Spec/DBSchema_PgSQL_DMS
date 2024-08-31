@@ -21,20 +21,20 @@ SET row_security = off;
 --
 
 COPY cap.t_sp_authorization (entry_id, procedure_name, login_name, host_name, host_ip) FROM stdin;
-11	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::1199
-14	*	PNL\\gibb166	*	*
 1	*	DMSWebUser	gigasax	130.20.225.2
 2	*	DMSWebUser	prismweb2	130.20.224.55
+10	*	DMSWebUser	prismweb2_IPv6	2620:0:50f1:118::5fd
+13	*	DMSWebUser	prismweb2_IPv6_alt	2620:0:50f1:118::11fd
 3	*	DMSWebUser	prismweb3	130.20.225.91
+11	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::1199
 4	*	DMSWebUser	prismwebdev2	130.20.227.157
 5	*	PNL\\D3L243	*	*
+14	*	PNL\\gibb166	*	*
 6	*	PNL\\gibb713	*	*
 7	*	PNL\\memadmin	*	*
 8	*	PNL\\msdadmin	*	*
 9	*	PNL\\svc-dms	*	*
-10	*	DMSWebUser	prismweb2_IPv6	2620:0:50f1:118::5fd
 12	*	pgdms	localhost	127.0.0.1
-13	*	DMSWebUser	prismweb2_IPv6_alt	2620:0:50f1:118::11fd
 \.
 
 
