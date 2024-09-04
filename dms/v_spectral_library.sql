@@ -42,6 +42,12 @@ CREATE VIEW public.v_spectral_library AS
 ALTER VIEW public.v_spectral_library OWNER TO d3l243;
 
 --
+-- Name: v_spectral_library trig_v_spectral_library_instead_of_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_v_spectral_library_instead_of_update INSTEAD OF UPDATE ON public.v_spectral_library FOR EACH ROW EXECUTE FUNCTION public.trigfn_v_spectral_library_instead_of_update();
+
+--
 -- Name: TABLE v_spectral_library; Type: ACL; Schema: public; Owner: d3l243
 --
 
