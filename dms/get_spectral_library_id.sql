@@ -1,8 +1,8 @@
 --
--- Name: get_spectral_library_id(boolean, integer, text, text, real, real, boolean, text, integer, integer, integer, real, real, integer, integer, boolean, text, text, integer, boolean, integer, integer, text, text, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: get_spectral_library_id(boolean, integer, text, text, real, real, boolean, text, integer, integer, integer, real, real, integer, integer, boolean, text, text, integer, text, boolean, integer, integer, text, text, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boolean, IN _dmssourcejob integer DEFAULT 0, IN _proteincollectionlist text DEFAULT ''::text, IN _organismdbfile text DEFAULT ''::text, IN _fragmentionmzmin real DEFAULT 0, IN _fragmentionmzmax real DEFAULT 0, IN _trimnterminalmet boolean DEFAULT false, IN _cleavagespecificity text DEFAULT ''::text, IN _missedcleavages integer DEFAULT 0, IN _peptidelengthmin integer DEFAULT 0, IN _peptidelengthmax integer DEFAULT 0, IN _precursormzmin real DEFAULT 0, IN _precursormzmax real DEFAULT 0, IN _precursorchargemin integer DEFAULT 0, IN _precursorchargemax integer DEFAULT 0, IN _staticcyscarbamidomethyl boolean DEFAULT false, IN _staticmods text DEFAULT ''::text, IN _dynamicmods text DEFAULT ''::text, IN _maxdynamicmods integer DEFAULT 0, IN _infoonly boolean DEFAULT false, INOUT _libraryid integer DEFAULT 0, INOUT _librarystateid integer DEFAULT 0, INOUT _libraryname text DEFAULT ''::text, INOUT _storagepath text DEFAULT ''::text, INOUT _sourcejobshouldmakelibrary boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boolean, IN _dmssourcejob integer DEFAULT 0, IN _proteincollectionlist text DEFAULT ''::text, IN _organismdbfile text DEFAULT ''::text, IN _fragmentionmzmin real DEFAULT 0, IN _fragmentionmzmax real DEFAULT 0, IN _trimnterminalmet boolean DEFAULT false, IN _cleavagespecificity text DEFAULT ''::text, IN _missedcleavages integer DEFAULT 0, IN _peptidelengthmin integer DEFAULT 0, IN _peptidelengthmax integer DEFAULT 0, IN _precursormzmin real DEFAULT 0, IN _precursormzmax real DEFAULT 0, IN _precursorchargemin integer DEFAULT 0, IN _precursorchargemax integer DEFAULT 0, IN _staticcyscarbamidomethyl boolean DEFAULT false, IN _staticmods text DEFAULT ''::text, IN _dynamicmods text DEFAULT ''::text, IN _maxdynamicmods integer DEFAULT 0, IN _programversion text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, INOUT _libraryid integer DEFAULT 0, INOUT _librarystateid integer DEFAULT 0, INOUT _libraryname text DEFAULT ''::text, INOUT _storagepath text DEFAULT ''::text, INOUT _sourcejobshouldmakelibrary boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **    _staticMods                   Semicolon-separated list of static (fixed) mods that DIA-NN will consider
 **    _dynamicMods                  Semicolon-separated list of dynamic (variable) mods that DIA-NN will consider
 **    _maxDynamicMods               DIA-NN setting for maximum number of dynamic mods (per peptide)
+**    _programVersion               DIA-NN executable name and major.minor version, e.g. 'DIA-NN_1.9'
 **    _infoOnly                     True to look for the spectral library and update _message, but not update T_Spectral_Library if the library is missing (or in state 1)
 **    _libraryId                    Output: spectral library ID if found an existing library, or assigned ID if a new row was added to T_Spectral_Library
 **    _libraryStateId               Output: library state ID
@@ -70,6 +71,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          09/01/2024 mem - Ignore spectrum libaries with state 5 (Inactive)
+**          09/03/2024 mem - Add argument _programVersion
 **
 *****************************************************/
 DECLARE
@@ -156,6 +158,7 @@ BEGIN
         _staticMods               := Trim(Coalesce(_staticMods, ''));
         _dynamicMods              := Trim(Coalesce(_dynamicMods, ''));
         _maxDynamicMods           := Coalesce(_maxDynamicMods, 0);
+        _programVersion           := Trim(Coalesce(_programVersion, ''));
         _infoOnly                 := Coalesce(_infoOnly, false);
 
         _libraryId := 0;
@@ -365,7 +368,8 @@ BEGIN
               Static_Cys_Carbamidomethyl = _staticCysCarbamidomethyl AND
               Static_Mods                = _staticMods::citext AND
               Dynamic_Mods               = _dynamicMods::citext AND
-              Max_Dynamic_Mods           = _maxDynamicMods;
+              Max_Dynamic_Mods           = _maxDynamicMods AND
+              Program_Version            = _programVersion;
 
         If FOUND Then
             -- Match Found
@@ -374,7 +378,7 @@ BEGIN
                 If _allowAddNew And _dmsSourceJob > 0 Then
                     If _infoOnly Then
                         _message := format('Found existing spectral library ID %s with state 1; would associate source job %s with the creation of spectra library %s',
-                                            _libraryId, _dmsSourceJob, _libraryName);
+                                           _libraryId, _dmsSourceJob, _libraryName);
                         RETURN;
                     End If;
 
@@ -392,12 +396,12 @@ BEGIN
 
                     If _actualSourceJob = _dmsSourceJob Then
                         _message := format('Found existing spectral library ID %s with state 1; associated source job %s with the creation of spectra library %s',
-                                            _libraryId, _dmsSourceJob, _libraryName);
+                                           _libraryId, _dmsSourceJob, _libraryName);
 
                         _sourceJobShouldMakeLibrary := true;
                     Else
                         _message := format('Found existing spectral library ID %s with state 1; tried to associate with source job %s but library is actually associated with job %s: %s',
-                                            _libraryId, _dmsSourceJob, _actualSourceJob, _libraryName);
+                                           _libraryId, _dmsSourceJob, _actualSourceJob, _libraryName);
                     End If;
 
                     RETURN;
@@ -414,12 +418,12 @@ BEGIN
             Else
                 If _libraryStateID = 2 And _dmsSourceJob > 0 And _existingSourceJob = _dmsSourceJob Then
                     _message := format('Found existing spectral library ID %s with state 2, already associated with job %s: %s',
-                                    _libraryId, _dmsSourceJob, _libraryName);
+                                       _libraryId, _dmsSourceJob, _libraryName);
 
                     _sourceJobShouldMakeLibrary := true;
                 Else
                     _message := format('Found existing spectral library ID %s with state %s: %s',
-                                        _libraryId, _libraryStateID, _libraryName);
+                                       _libraryId, _libraryStateID, _libraryName);
                 End If;
 
                 RETURN;
@@ -490,6 +494,7 @@ BEGIN
                     _staticMods               => _staticMods,
                     _dynamicMods              => _dynamicMods,
                     _maxDynamicMods           => _maxDynamicMods,
+                    _programVersion           => _programVersion,
                     _showDebug                => false);
 
 
@@ -550,10 +555,9 @@ BEGIN
             Precursor_Mz_Min, Precursor_Mz_Max,
             Precursor_Charge_Min, Precursor_Charge_Max,
             Static_Cys_Carbamidomethyl, Static_Mods, Dynamic_Mods,
-            Max_Dynamic_Mods, Settings_Hash
+            Max_Dynamic_Mods, Program_Version, Settings_Hash
         )
-        VALUES (
-                _libraryName,
+        VALUES (_libraryName,
                 _libraryStateId,
                 1,              -- In-silico digest of a FASTA file via a DIA-NN analysis job
                 CURRENT_TIMESTAMP,
@@ -577,8 +581,9 @@ BEGIN
                 _staticMods,
                 _dynamicMods,
                 _maxDynamicMods,
+                _programVersion,
                 _hash
-                )
+               )
         RETURNING library_id
         INTO _libraryId;
 
@@ -609,5 +614,5 @@ END
 $$;
 
 
-ALTER PROCEDURE public.get_spectral_library_id(IN _allowaddnew boolean, IN _dmssourcejob integer, IN _proteincollectionlist text, IN _organismdbfile text, IN _fragmentionmzmin real, IN _fragmentionmzmax real, IN _trimnterminalmet boolean, IN _cleavagespecificity text, IN _missedcleavages integer, IN _peptidelengthmin integer, IN _peptidelengthmax integer, IN _precursormzmin real, IN _precursormzmax real, IN _precursorchargemin integer, IN _precursorchargemax integer, IN _staticcyscarbamidomethyl boolean, IN _staticmods text, IN _dynamicmods text, IN _maxdynamicmods integer, IN _infoonly boolean, INOUT _libraryid integer, INOUT _librarystateid integer, INOUT _libraryname text, INOUT _storagepath text, INOUT _sourcejobshouldmakelibrary boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.get_spectral_library_id(IN _allowaddnew boolean, IN _dmssourcejob integer, IN _proteincollectionlist text, IN _organismdbfile text, IN _fragmentionmzmin real, IN _fragmentionmzmax real, IN _trimnterminalmet boolean, IN _cleavagespecificity text, IN _missedcleavages integer, IN _peptidelengthmin integer, IN _peptidelengthmax integer, IN _precursormzmin real, IN _precursormzmax real, IN _precursorchargemin integer, IN _precursorchargemax integer, IN _staticcyscarbamidomethyl boolean, IN _staticmods text, IN _dynamicmods text, IN _maxdynamicmods integer, IN _programversion text, IN _infoonly boolean, INOUT _libraryid integer, INOUT _librarystateid integer, INOUT _libraryname text, INOUT _storagepath text, INOUT _sourcejobshouldmakelibrary boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
