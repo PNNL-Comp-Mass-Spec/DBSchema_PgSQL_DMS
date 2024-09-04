@@ -69,6 +69,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **          01/20/2024 mem - Ignore case when determining the organism for a protein collection
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          09/01/2024 mem - Ignore spectrum libaries with state 5 (Inactive)
 **
 *****************************************************/
 DECLARE
@@ -324,6 +325,10 @@ BEGIN
     BEGIN
         ---------------------------------------------------
         -- Look for an existing spectral library file
+        -- Ignore spectrum libraries with state 5 (Inactive)
+        --
+        -- Do not ignore spectrum libraries with state 4 (Failed);
+        -- a database admin either needs to delete failed spectral library entries, or change their state to 5
         ---------------------------------------------------
 
         SELECT Library_ID,
@@ -334,16 +339,17 @@ BEGIN
                Source_Job,
                Storage_Path,
                Settings_Hash
-        INTO  _libraryId,
-              _libraryName,
-              _libraryStateId,
-              _libraryTypeId,
-              _libraryCreated,
-              _existingSourceJob,
-              _storagePath,
-              _existingHash
+        INTO _libraryId,
+             _libraryName,
+             _libraryStateId,
+             _libraryTypeId,
+             _libraryCreated,
+             _existingSourceJob,
+             _storagePath,
+             _existingHash
         FROM T_Spectral_Library
-        WHERE Protein_Collection_List    = _proteinCollectionList::citext AND
+        WHERE Library_State_ID <> 5 AND
+              Protein_Collection_List    = _proteinCollectionList::citext AND
               Organism_DB_File           = _organismDbFile::citext AND
               Fragment_Ion_Mz_Min        = _fragmentIonMzMin AND
               Fragment_Ion_Mz_Max        = _fragmentIonMzMax AND
