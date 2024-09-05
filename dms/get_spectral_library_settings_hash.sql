@@ -14,7 +14,7 @@ CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_libraryid 
 **      Otherwise, uses the values provided to the other parameters
 **
 **  Arguments:
-**    _libraryID    Spectral library ID; when zero, read settings from t_spectral_library and ignore the other parameters
+**    _libraryID                    Spectral library ID; when non-zero, read settings from t_spectral_library and ignore the other parameters
 **    _proteinCollectionList        Comma-separated list of protein collection names, or 'na' if using a legacy FASTA file
 **    _organismDbFile               Legacy FASTA file name, or 'na' if using protein collections
 **    _fragmentIonMzMin             DIA-NN setting for minimum fragment ion m/z
