@@ -21,6 +21,12 @@ SET row_security = off;
 --
 
 COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description) FROM stdin;
+88	00 10 * * *	At 10:00 AM
+87	05 16 * * *	At 4:05 PM
+86	22 16 * * *	At 4:22 PM
+83	23 16 * * *	At 4:23 PM
+85	25 16 * * *	At 4:25 PM
+84	26 16 * * *	At 4:26 PM
 79	0 18 10 5 *	At 6:00 PM on May 10th
 78	0 9 10 5 *	At 9:00 AM on May 10th
 59	14 22 * * *	Daily at 10:14 PM
@@ -59,6 +65,7 @@ COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description
 68	3 5/3 * * *	Every 3 hours, starting at 5:03 AM
 25	7/30 * * * *	Every 30 minutes, starting at 12:07 AM
 7	20/30 * * * *	Every 30 minutes, starting at 12:20 AM
+82	21/30 * * * *	Every 30 minutes, starting at 12:21 AM
 11	37 1/4 * * *	Every 4 hours, starting at 1:37 AM
 75	1/5 * * * *	Every 5 minutes, starting at 12:01 AM
 69	2/5 * * * *	Every 5 minutes, starting at 12:02 AM
@@ -109,7 +116,7 @@ COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description
 -- Name: t_cron_interval_interval_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.t_cron_interval_interval_id_seq', 81, true);
+SELECT pg_catalog.setval('timetable.t_cron_interval_interval_id_seq', 88, true);
 
 
 --

@@ -115,6 +115,7 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 102	Disable capture task managers once	25 16 * * *	\N	0	f	f	f	\N	\N
 103	Enable all managers once	26 16 * * *	\N	0	f	f	f	\N	\N
 104	Enable archive-dependent managers once	23 16 * * *	\N	0	f	f	f	\N	\N
+105	Update cached analysis job state name for recent jobs	21/30 * * * *	\N	0	t	f	f	\N	\N
 \.
 
 
@@ -122,7 +123,7 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 -- Name: chain_chain_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.chain_chain_id_seq', 104, true);
+SELECT pg_catalog.setval('timetable.chain_chain_id_seq', 105, true);
 
 
 --

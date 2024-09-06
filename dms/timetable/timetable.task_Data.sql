@@ -205,6 +205,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 194	104	10	Enable Space Managers	SQL	CALL mc.enable_space_managers (_infoOnly => false);	\N	\N	f	t	0
 195	104	20	Enable CTM step tools	SQL	SELECT * FROM cap.enable_disable_archive_step_tools (_enable => true, _disableComment => 'Disabled for scheduled archive maintenance');	\N	\N	f	t	0
 196	104	30	Disable chain 104	SQL	CALL disable_timetable_chain (_chainID => 104);	\N	\N	f	t	0
+198	105	10	Update cached analysis job state name for recent and active jobs	SQL	CALL update_cached_analysis_job_state_name_recent_and_active (_mostRecentDays => 7);	\N	\N	f	t	0
 \.
 
 
@@ -212,7 +213,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 -- Name: task_task_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.task_task_id_seq', 197, true);
+SELECT pg_catalog.setval('timetable.task_task_id_seq', 198, true);
 
 
 --
