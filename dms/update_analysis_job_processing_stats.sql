@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_job_processing_stats(IN _job 
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          08/12/2024 mem - Ignore return code 'U5250' from set_archive_update_required
 **          08/14/2024 mem - Do not call set_archive_update_required() for data package based datasets
+**          09/05/2024 mem - Assure that the cached job state name is correct
 **
 *****************************************************/
 DECLARE
@@ -49,6 +50,9 @@ DECLARE
     _datasetType citext;
     _toolName citext;
     _updateCodeExpected int;
+    _jobStateName text;
+    _cachedJobStateName text;
+    _msg text;
 
     _formatSpecifier text;
     _infoHead text;
@@ -91,10 +95,10 @@ BEGIN
     End If;
 
     -- Uncomment to debug
-    -- _debugMsg := format('Updating job state for %s, NewDMSJobState = %s, NewBrokerJobState = %s, JobCommentAddnl = %s',
-    --                     _job, _newDMSJobState, _newBrokerJobState, _jobCommentAddnl);
+    -- _msg := format('Updating job state for %s, NewDMSJobState = %s, NewBrokerJobState = %s, JobCommentAddnl = %s',
+    --                _job, _newDMSJobState, _newBrokerJobState, _jobCommentAddnl);
     --
-    -- CALL post_log_entry ('Debug', _debugMsg, 'Update_Analysis_Job_Processing_Stats');
+    -- CALL post_log_entry ('Debug', _msg, 'Update_Analysis_Job_Processing_Stats');
 
     ---------------------------------------------------
     -- Perform (or preview) the update
@@ -210,34 +214,63 @@ BEGIN
         RETURN;
     End If;
 
-    -- Update the values
+    ---------------------------------------------------
+    -- Update values in t_analysis_job
+    ---------------------------------------------------
+
     UPDATE t_analysis_job
     SET job_state_id = _newDMSJobState,
         start = CASE WHEN _newBrokerJobState >= 2
                      THEN Coalesce(_jobStart, CURRENT_TIMESTAMP)
                      ELSE Start
                 END,
-        Finish = CASE WHEN _newBrokerJobState IN (4, 5)
+        finish = CASE WHEN _newBrokerJobState IN (4, 5)
                       THEN _jobFinish
                       ELSE Finish
                  END,
-        Results_Folder_Name = _resultsDirectoryName,
-        Assigned_Processor_Name = 'Job_Broker',
-        Comment = CASE WHEN _newBrokerJobState = 2
+        results_folder_name = _resultsDirectoryName,
+        assigned_processor_name = 'Job_Broker',
+        comment = CASE WHEN _newBrokerJobState = 2
                        THEN Comment
                        ELSE public.append_to_text(comment, _jobCommentAddnl)
                   END,
-        Organism_DB_Name = Coalesce(_organismDBName, Organism_DB_Name),
-        Processing_Time_Minutes = CASE WHEN _newBrokerJobState <> 2
+        organism_db_name = Coalesce(_organismDBName, Organism_DB_Name),
+        processing_time_minutes = CASE WHEN _newBrokerJobState <> 2
                                        THEN _processingTimeMinutes
                                        ELSE Processing_Time_Minutes
                                   END,
         -- Note: setting Purged to 0 even if job failed since admin might later manually set job to complete and we want Purged to be 0 in that case
-        Purged = CASE WHEN _newBrokerJobState IN (4, 5, 14)
+        purged = CASE WHEN _newBrokerJobState IN (4, 5, 14)
                       THEN 0
-                      ELSE Purged
+                      ELSE purged
                  END
     WHERE job = _job;
+
+    -- Assure that state_name_cached is up-to-date
+
+    SELECT job_state
+    INTO _jobStateName
+    FROM t_analysis_job_state
+    WHERE job_state_id = _newDMSJobState;
+
+    If FOUND Then
+        SELECT state_name_cached
+        INTO _cachedJobStateName
+        FROM t_analysis_job
+        WHERE job = _job;
+
+        If FOUND And _cachedJobStateName <> _jobStateName Then
+            UPDATE t_analysis_job
+            SET state_name_cached = _jobStateName
+            WHERE job = _job;
+
+            _msg := format('Changed cached job state name from %s to %s after setting job state to %s for job %s',
+                           _cachedJobStateName, _jobStateName, _newDMSJobState, _job);
+
+            CALL post_log_entry ('Error', _msg, 'Update_Analysis_Job_Processing_Stats');
+
+        End If;
+    End If;
 
     --------------------------------------------------------------
     -- If Job is Complete or No Export, do some additional tasks
