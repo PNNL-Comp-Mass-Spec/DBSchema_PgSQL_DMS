@@ -23,17 +23,12 @@ CREATE OR REPLACE PROCEDURE public.update_analysis_job_state_name_cached(IN _job
 **          04/03/2014 mem - Now showing _message when _infoOnly is true
 **          05/27/2014 mem - Now using a temporary table to track the jobs that need to be updated (due to deadlock issues)
 **          02/26/2024 mem - Ported to PostgreSQL
+**          09/05/2024 mem - Refactor code into procedure update_analysis_job_state_name_cached_work()
 **
 *****************************************************/
 DECLARE
-    _jobCount int := 0;
+    _jobCountUpdated int := 0;
     _usageMessage text;
-
-    _formatSpecifier text;
-    _infoHead text;
-    _infoHeadSeparator text;
-    _previewData record;
-    _infoData text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -67,96 +62,21 @@ BEGIN
           AJ.job <= _jobFinish AND
           AJ.state_name_cached IS DISTINCT FROM AJDAS.Job_State;
 
-    If _infoOnly Then
+    ---------------------------------------------------
+    -- Update cached state names
+    ---------------------------------------------------
 
-        ---------------------------------------------------
-        -- Preview the jobs
-        ---------------------------------------------------
-
-        RAISE INFO '';
-
-        _formatSpecifier := '%-9s %-32s %-32s';
-
-        _infoHead := format(_formatSpecifier,
-                            'Job',
-                            'State_Name_Cached',
-                            'New_State_Name_Cached'
-                           );
-
-        _infoHeadSeparator := format(_formatSpecifier,
-                                     '---------',
-                                     '--------------------------------',
-                                     '--------------------------------'
-                                    );
-
-        _jobCount := 0;
-
-        If Exists (SELECT Job FROM Tmp_JobsToUpdate) Then
-            RAISE INFO '%', _infoHead;
-            RAISE INFO '%', _infoHeadSeparator;
-
-            FOR _previewData IN
-                SELECT AJ.Job,
-                       AJ.State_Name_Cached,
-                       AJDAS.Job_State AS New_State_Name_Cached
-                FROM t_analysis_job AJ INNER JOIN
-                     V_Analysis_Job_and_Dataset_Archive_State AJDAS
-                       ON AJ.job = AJDAS.job
-                     INNER JOIN Tmp_JobsToUpdate U
-                       ON AJ.job = U.job
-            LOOP
-                _infoData := format(_formatSpecifier,
-                                    _previewData.Job,
-                                    _previewData.State_Name_Cached,
-                                    _previewData.New_State_Name_Cached
-                                   );
-
-                RAISE INFO '%', _infoData;
-
-                _jobCount := _jobCount + 1;
-            END LOOP;
-
-            RAISE INFO '';
-        End If;
-
-        If _jobCount = 0 Then
-            _message := 'All jobs have up-to-date cached job state names';
-        Else
-            _message := format('Found %s %s to update',
-                               _jobCount, public.check_plural(_jobCount, 'job', 'jobs'));
-        End If;
-
-        RAISE INFO '%', _message;
-
-    ElsIf Exists (SELECT job FROM Tmp_JobsToUpdate) Then
-        ---------------------------------------------------
-        -- Update the jobs
-        ---------------------------------------------------
-
-        UPDATE t_analysis_job Target
-        SET state_name_cached = Coalesce(AJDAS.Job_State, '')
-        FROM V_Analysis_Job_and_Dataset_Archive_State AJDAS
-        WHERE Target.job = AJDAS.Job AND
-              EXISTS (SELECT 1
-                      FROM Tmp_JobsToUpdate Source
-                      WHERE Target.job = Source.job);
-        --
-        GET DIAGNOSTICS _jobCount = ROW_COUNT;
-
-        If _jobCount = 0 Then
-            _message := '';
-        Else
-            _message := format('Updated the cached job state name for %s %s',
-                               _jobCount, public.check_plural(_jobCount, 'job', 'jobs'));
-        End If;
-
-    End If;
+    CALL update_analysis_job_state_name_cached_work (
+            _infoonly        => _infoonly,
+            _jobCountUpdated => _jobCountUpdated,   -- Output
+            _message         => _message,           -- Output
+            _returncode      => _returncode);       -- Output
 
     ---------------------------------------------------
     -- Log SP usage
     ---------------------------------------------------
 
-    _usageMessage := format('%s %s updated', _jobCount, public.check_plural(_jobCount, 'job', 'jobs'));
+    _usageMessage := format('%s %s updated', _jobCountUpdated, public.check_plural(_jobCountUpdated, 'job', 'jobs'));
 
     If Not _infoOnly Then
         CALL post_usage_log_entry ('update_analysis_job_state_name_cached', _usageMessage);
