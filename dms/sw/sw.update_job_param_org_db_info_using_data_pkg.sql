@@ -27,7 +27,7 @@ CREATE OR REPLACE PROCEDURE sw.update_job_param_org_db_info_using_data_pkg(IN _j
 **
 **  Auth:   mem
 **  Date:   03/20/2012 mem - Initial version
-**          09/11/2012 mem - Updated warning message used when data package does not have any jobs with a protein collection or legacy fasta file
+**          09/11/2012 mem - Updated warning message used when data package does not have any jobs with a protein collection or standalone (legacy) fasta file
 **          08/14/2013 mem - Now using the job script name which is used to decide whether or not to report a warning via _message
 **          03/09/2021 mem - Add support for MaxQuant
 **          01/31/2022 mem - Add support for MSFragger
@@ -176,7 +176,7 @@ BEGIN
 
         If _insertCount = 0 Then
             If Not _scriptName In ('Global_Label-Free_AMT_Tag', 'MultiAlign', 'MultiAlign_Aggregator') Then
-                _message := format('Note: Data package %s either has no jobs or has no jobs with a protein collection or legacy fasta file; pipeline job parameters will not contain organism, fasta file, or protein collection', _dataPackageID);
+                _message := format('Note: Data package %s either has no jobs or has no jobs with a protein collection or standalone fasta file; pipeline job parameters will not contain organism, fasta file, or protein collection', _dataPackageID);
             End If;
 
             _dataPackageID := -1;
@@ -230,7 +230,7 @@ BEGIN
         ---------------------------------------------------
         -- One of the following is true:
         --   Data package ID was invalid
-        --   For MAC jobs, the data package does not have any jobs with a protein collection or legacy FASTA file
+        --   For MAC jobs, the data package does not have any jobs with a protein collection or standalone (legacy) FASTA file
         ---------------------------------------------------
 
         If _deleteIfInvalid Then
