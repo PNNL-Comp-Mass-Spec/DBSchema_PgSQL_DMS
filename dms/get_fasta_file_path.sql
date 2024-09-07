@@ -9,9 +9,9 @@ CREATE OR REPLACE FUNCTION public.get_fasta_file_path(_fastafilename text, _orga
 **
 **  Desc:
 **      Return the appropriate path to the FASTA file based on file Name and organism Name
-**      If the FASTA file name is blank or 'na', return the legacy path for the given organism
+**      If the FASTA file name is blank or 'na', return the standalone FASTA path for the given organism
 **      Otherwise, look for the file in pc.T_Archived_Output_Files
-**      or V_Legacy_FASTA_File_Paths
+**      or V_FASTA_File_Paths
 **
 **  Arguments:
 **     _fastaFileName   FASTA file name
@@ -28,6 +28,7 @@ CREATE OR REPLACE FUNCTION public.get_fasta_file_path(_fastafilename text, _orga
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          01/20/2024 mem - Ignore case when filtering by file name or organism name
 **          01/21/2024 mem - Change data type of function arguments to text
+**          09/06/2024 mem - Use new view name, v_fasta_file_paths
 **
 *****************************************************/
 DECLARE
@@ -47,17 +48,17 @@ BEGIN
             _fastaFileName := _fastaFileName || '.fasta';
         End If;
 
-        SELECT Archived_File_Path
+        SELECT archived_file_path
         INTO _filePath
-        FROM pc.T_Archived_Output_Files
-        WHERE Archived_File_Path ILIKE '%' || _fastaFileName || '%'
+        FROM pc.t_archived_output_files
+        WHERE archived_file_path ILIKE '%' || _fastaFileName || '%'
         LIMIT 1;
 
         If Coalesce(_filePath, '') = '' Then
-            SELECT File_Path
+            SELECT file_path
             INTO _filePath
-            FROM v_legacy_fasta_file_paths
-            WHERE File_Name = _fastaFileName::citext
+            FROM v_fasta_file_paths
+            WHERE file_name = _fastaFileName::citext
             LIMIT 1;
         End If;
 
@@ -80,7 +81,6 @@ BEGIN
     End If;
 
     RETURN _filePath;
-
 END
 $$;
 
