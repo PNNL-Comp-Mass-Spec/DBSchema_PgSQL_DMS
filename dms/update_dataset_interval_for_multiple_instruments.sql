@@ -57,6 +57,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_interval_for_multiple_instrume
 **          05/01/2024 mem - Ignore case when filtering on instrument name
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          07/13/2024 mem - Fix variable name typo
+**          09/09/2024 mem - Coalesce EUS_Primary_Instrument to '0' to avoid adding rows to T_EMSL_Instrument_Usage_Report for non EMSL instruments (in particular, LC carts)
 **
 *****************************************************/
 DECLARE
@@ -218,7 +219,7 @@ BEGIN
                 Use_EUS_ID
             )
             SELECT InstList.Name,
-                   InstList.EUS_Primary_Instrument AS EMSL_Primary_Instrument,
+                   Coalesce(InstList.EUS_Primary_Instrument, '0') AS EMSL_Primary_Instrument,
                    InstList.Tracked,
                    InstList.EUS_Instrument_ID,
                    false
@@ -241,7 +242,7 @@ BEGIN
                 Use_EUS_ID
             )
             SELECT Name,
-                   EUS_Primary_Instrument AS EMSL_Primary_Instrument,
+                   Coalesce(EUS_Primary_Instrument, '0') AS EMSL_Primary_Instrument,
                    Tracked,
                    EUS_Instrument_ID,
                    false
