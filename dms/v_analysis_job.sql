@@ -48,6 +48,12 @@ CREATE VIEW public.v_analysis_job AS
 ALTER VIEW public.v_analysis_job OWNER TO d3l243;
 
 --
+-- Name: v_analysis_job trig_v_analysis_job_instead_of_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_v_analysis_job_instead_of_update INSTEAD OF UPDATE ON public.v_analysis_job FOR EACH ROW EXECUTE FUNCTION public.trigfn_v_analysis_job_instead_of_update();
+
+--
 -- Name: TABLE v_analysis_job; Type: ACL; Schema: public; Owner: d3l243
 --
 
