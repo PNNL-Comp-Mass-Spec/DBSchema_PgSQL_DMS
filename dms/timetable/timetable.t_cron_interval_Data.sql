@@ -53,6 +53,7 @@ COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description
 80	10 20 * * *	Daily at 8:10pm
 61	0 21 * * *	Daily at 9:00 PM
 42	43 21 * * *	Daily at 9:43 PM
+89	28 18 * * *	Daily, at 6:28 PM
 35	* * * * *	Every 1 minute, starting at 12:00 AM
 72	0/10 * * * *	Every 10 minutes, starting at 12:00 AM
 12	7/15 3-23 * * *	Every 15 minutes, starting at 3:07 AM
@@ -116,7 +117,7 @@ COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description
 -- Name: t_cron_interval_interval_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.t_cron_interval_interval_id_seq', 88, true);
+SELECT pg_catalog.setval('timetable.t_cron_interval_interval_id_seq', 89, true);
 
 
 --
