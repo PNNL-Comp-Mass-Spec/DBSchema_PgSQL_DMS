@@ -11,7 +11,7 @@ CREATE VIEW public.v_get_pipeline_processors AS
     ajp.machine
    FROM (public.t_analysis_job_processors ajp
      LEFT JOIN public.t_analysis_job_processor_group_membership pgm ON ((ajp.processor_id = pgm.processor_id)))
-  WHERE (pgm.membership_enabled OPERATOR(public.=) 'Y'::public.citext)
+  WHERE (((COALESCE(pgm.membership_enabled, 'N'::public.citext) OPERATOR(public.=) 'Y'::public.citext) AND (ajp.state OPERATOR(public.=) 'E'::public.citext)) OR ((pgm.membership_enabled IS NULL) AND (ajp.state OPERATOR(public.=) 'E'::public.citext)))
   GROUP BY ajp.processor_name, ajp.state, ajp.processor_id, ajp.machine;
 
 
