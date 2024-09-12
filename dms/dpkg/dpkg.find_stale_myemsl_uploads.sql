@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE dpkg.find_stale_myemsl_uploads(IN _staleuploaddays i
 **  Date:   05/20/2019 mem - Initial version
 **          08/15/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          09/10/2024 mem - Set _logErrorsToPublicLogTable to false when calling post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -174,7 +175,7 @@ BEGIN
 
     _message := format('%s unverified for over %s days; ErrorCode set to 101', _message, _staleUploadDays);
 
-    CALL public.post_log_entry ('Error', _message, 'Find_Stale_MyEMSL_Uploads', 'dpkg');
+    CALL public.post_log_entry ('Error', _message, 'Find_Stale_MyEMSL_Uploads', 'dpkg', _logErrorsToPublicLogTable => false);
 
     RAISE INFO '';
     RAISE INFO '%', _message;

@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE cap.find_stale_myemsl_uploads(IN _staleuploaddays in
 **          05/31/2023 mem - Use implicit string concatenation
 **          06/07/2023 mem - Add Order By to string_agg()
 **          09/07/2023 mem - Align assignment statements
+**          09/10/2024 mem - Set _logErrorsToPublicLogTable to false when calling post_log_entry
 **
 *****************************************************/
 DECLARE
@@ -258,7 +259,7 @@ BEGIN
                                          _uploadInfo.ErrorCode,
                                          timestamp_text(_uploadInfo.Entered));
 
-                CALL public.post_log_entry ('Error', _logMessage, 'Find_Stale_MyEMSL_Uploads', 'cap');
+                CALL public.post_log_entry ('Error', _logMessage, 'Find_Stale_MyEMSL_Uploads', 'cap', _logErrorsToPublicLogTable => false);
 
                 _iteration := _iteration + 1;
 
@@ -299,7 +300,7 @@ BEGIN
 
         If _updateCount > 0 Then
             _message := format('%s unverified for over %s days; error_code set to 101', _message, _staleUploadDays);
-            CALL public.post_log_entry ('Error', _message, 'Find_Stale_MyEMSL_Uploads', 'cap');
+            CALL public.post_log_entry ('Error', _message, 'Find_Stale_MyEMSL_Uploads', 'cap', _logErrorsToPublicLogTable => false);
 
             RAISE INFO '%', _message;
         End If;
