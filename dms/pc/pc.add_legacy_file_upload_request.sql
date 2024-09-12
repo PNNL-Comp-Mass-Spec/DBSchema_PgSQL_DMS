@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE pc.add_legacy_file_upload_request(IN _legacyfilename
 **          08/18/2023 mem - Ported to PostgreSQL
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          06/16/2024 mem - Ignore case when querying v_legacy_static_file_locations
+**          09/12/2024 mem - Fix format type specifier typo
 **
 *****************************************************/
 DECLARE
@@ -107,7 +108,7 @@ BEGIN
     RETURNING upload_request_id
     INTO _requestID;
 
-    _message := format('Added %s to t_legacy_file_upload_requests; assigned Upload Request ID: %', _legacyFileName, _requestID);
+    _message := format('Added %s to t_legacy_file_upload_requests; assigned Upload Request ID: %s', _legacyFileName, _requestID);
 
     RAISE INFO '%', _message;
 
