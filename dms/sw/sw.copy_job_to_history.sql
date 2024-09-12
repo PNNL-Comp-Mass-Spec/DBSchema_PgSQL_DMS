@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE sw.copy_job_to_history(IN _job integer, IN _jobstate
 **          08/17/2021 mem - Fix typo in argument _saveTimeOverride
 **          08/01/2023 mem - Ported to PostgreSQL
 **          08/02/2023 mem - Move the _message and _returnCode arguments to the end of the argument list
+**          09/10/2024 mem - Allow copying a job with state 13=Inactive
 **
 *****************************************************/
 DECLARE
@@ -59,8 +60,8 @@ BEGIN
     -- Bail if not a state we save for
     ---------------------------------------------------
 
-    If Not Coalesce(_jobState, 0) In (4, 5) Then
-        _message := 'Job state must be 4 or 5 to be copied to t_jobs_history (this is not an error)';
+    If Not Coalesce(_jobState, 0) In (4, 5, 13) Then
+        _message := 'Job state must be 4, 5, or 13 to be copied to t_jobs_history (this is not an error)';
         RETURN;
     End If;
 
