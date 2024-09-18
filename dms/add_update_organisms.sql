@@ -80,6 +80,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_organisms(IN _orgname text, IN _or
 **          01/15/2024 mem - Ported to PostgreSQL
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          09/17/2024 mem - Use view pc.v_protein_collections_by_organism instead of pc.v_collection_picker
 **
 *****************************************************/
 DECLARE
@@ -102,6 +103,7 @@ DECLARE
     _existingOrganismID int := 0;
     _existingOrgName citext;
     _orgActiveID int;
+    _collectionStateId int;
     _alterEnteredByMessage text;
 
     _sqlState text;
@@ -443,17 +445,23 @@ BEGIN
         ---------------------------------------------------
 
         If _orgDBName <> '' Then
-            -- Protein collections in pc.v_collection_picker are those with state 1, 2, or 3
-            -- In contrast, pc.v_protein_collections_by_organism has all protein collections
+            SELECT collection_state_id
+            INTO _collectionStateId
+            FROM pc.v_protein_collections_by_organism
+            WHERE collection_name = _orgDBName::citext;
 
-            If Not Exists (SELECT name FROM pc.v_collection_picker WHERE name = _orgDBName::citext) Then
+            If Not FOUND Then
+                RAISE EXCEPTION 'Protein collection not found: %', _orgDBName;
+            End If;
 
-                If Exists (SELECT collection_name FROM pc.v_protein_collections_by_organism WHERE collection_name = _orgDBName::citext AND collection_state_id = 4) Then
-                    RAISE EXCEPTION 'Default protein collection is invalid because it is inactive: %', _orgDBName;
+            If Not _collectionStateId In (1,2,3) Then
+                If _collectionStateId = 4 Then
+                    RAISE EXCEPTION 'Default protein collection is invalid because it is retired: %', _orgDBName;
+                ElsIf _collectionStateId = 6 Then
+                    RAISE EXCEPTION 'Default protein collection is invalid because it is offline: %', _orgDBName;
                 Else
-                    RAISE EXCEPTION 'Protein collection not found: %', _orgDBName;
+                    RAISE EXCEPTION 'Default protein collection is invalid because it is inactive: %', _orgDBName;
                 End If;
-
             End If;
         End If;
 
