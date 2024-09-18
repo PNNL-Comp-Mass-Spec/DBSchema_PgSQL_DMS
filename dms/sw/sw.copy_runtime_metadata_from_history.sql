@@ -1,6 +1,100 @@
 --
+-- Name: copy_runtime_metadata_from_history(integer, boolean); Type: FUNCTION; Schema: sw; Owner: d3l243
+--
+-- Overload 1
+
+CREATE OR REPLACE FUNCTION sw.copy_runtime_metadata_from_history(_job integer, _infoonly boolean DEFAULT false) RETURNS TABLE(job integer, update_required boolean, invalid boolean, mismatch_results_transfer boolean, comment public.citext, dataset public.citext, step integer, tool public.citext, state_name public.citext, state smallint, new_state smallint, start timestamp without time zone, finish timestamp without time zone, new_start timestamp without time zone, new_finish timestamp without time zone, input_folder public.citext, output_folder public.citext, processor public.citext, new_processor public.citext, tool_version_id integer, tool_version public.citext, completion_code integer, completion_message public.citext, evaluation_code integer, evaluation_message public.citext)
+    LANGUAGE plpgsql
+    AS $$
+/****************************************************
+**
+**  Desc:
+**      Copy selected pieces of metadata from the history tables to sw.T_Jobs and sw.T_Job_Steps
+*
+**      Specifically:
+**        Start, Finish, Processor,
+**        Completion_Code, Completion_Message,
+**        Evaluation_Code, Evaluation_Message,
+**        Tool_Version_ID, Remote_Info_ID,
+**        Remote_Timestamp, Remote_Start, Remote_Finish
+**
+**      This function is intended to be used in situations where
+**      a job step was manually re-run for debugging purposes,
+**      and the files created by the job step were only used
+**      for comparison purposes back to the original results
+**
+**      It will only copy the runtime metadata if the Results_Transfer (or Results_Cleanup) steps
+**      in sw.T_Job_Steps match exactly the Results_Transfer (or Results_Cleanup) steps in sw.T_Job_Steps_History
+**
+**      Additionally, data is only copied if the job step with a newer start time
+**      has a state of 4 or 5 (Running or Complete) and a null Finish date
+**
+**  Arguments:
+**    _job          Analysis job number
+**    _infoOnly     When true, show job steps that would be updated, or that cannot be updated
+**
+**  Example usage:
+**      SELECT * FROM sw.copy_runtime_metadata_from_history(2360508, true);
+**      SELECT * FROM sw.copy_runtime_metadata_from_history(2360508, false);
+**
+**  Auth:   mem
+**  Date:   09/18/2024 mem - Initial release
+**
+*****************************************************/
+DECLARE
+    _jobList text;
+BEGIN
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _job      := Coalesce(_job, 0);
+    _infoOnly := Coalesce(_infoOnly, false);
+
+    _jobList  := _job::text;
+
+    ---------------------------------------------------
+    -- Query the version of this function that accepts a comma-separated list of job numbers
+    ---------------------------------------------------
+
+    RETURN QUERY
+    SELECT CM.job,
+           CM.update_required,
+           CM.invalid,
+           CM.mismatch_results_transfer,
+           CM.comment,
+           CM.dataset,
+           CM.step,
+           CM.tool,
+           CM.state_name,
+           CM.state,
+           CM.new_state,
+           CM.start,
+           CM.finish,
+           CM.new_start,
+           CM.new_finish,
+           CM.input_folder,
+           CM.output_folder,
+           CM.processor,
+           CM.new_processor,
+           CM.tool_version_id,
+           CM.tool_version,
+           CM.completion_code,
+           CM.completion_message,
+           CM.evaluation_code,
+           CM.evaluation_message
+    FROM sw.copy_runtime_metadata_from_history(_jobList, _infoOnly) CM;
+
+END
+$$;
+
+
+ALTER FUNCTION sw.copy_runtime_metadata_from_history(_job integer, _infoonly boolean) OWNER TO d3l243;
+
+--
 -- Name: copy_runtime_metadata_from_history(text, boolean); Type: FUNCTION; Schema: sw; Owner: d3l243
 --
+-- Overload 2
 
 CREATE OR REPLACE FUNCTION sw.copy_runtime_metadata_from_history(_joblist text, _infoonly boolean DEFAULT false) RETURNS TABLE(job integer, update_required boolean, invalid boolean, mismatch_results_transfer boolean, comment public.citext, dataset public.citext, step integer, tool public.citext, state_name public.citext, state smallint, new_state smallint, start timestamp without time zone, finish timestamp without time zone, new_start timestamp without time zone, new_finish timestamp without time zone, input_folder public.citext, output_folder public.citext, processor public.citext, new_processor public.citext, tool_version_id integer, tool_version public.citext, completion_code integer, completion_message public.citext, evaluation_code integer, evaluation_message public.citext)
     LANGUAGE plpgsql
