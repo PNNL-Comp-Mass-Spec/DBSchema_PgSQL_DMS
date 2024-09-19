@@ -4,7 +4,8 @@
 
 CREATE TABLE public.t_spectral_library_type (
     library_type_id integer NOT NULL,
-    library_type public.citext NOT NULL
+    library_type public.citext NOT NULL,
+    description public.citext DEFAULT ''::public.citext
 );
 
 
