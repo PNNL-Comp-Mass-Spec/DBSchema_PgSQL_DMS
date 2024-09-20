@@ -53,6 +53,7 @@ CREATE OR REPLACE PROCEDURE mc.update_single_mgr_control_param(IN _paramname tex
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **          10/11/2023 mem - Ignore case when resolving parameter name to ID
 **          12/08/2023 mem - Select a single column when using If Not Exists()
+**          09/19/2024 mem - Fix bug calling check_plural()
 **
 *****************************************************/
 DECLARE
@@ -313,18 +314,18 @@ BEGIN
             -- Manager 1277 does not have parameter param_name
 
             _message := format('%s %s %s not have parameter %s',
-                                public.check_plural(_managerCount, 'Manager', 'Managers'),
-                                _managerIDList,
-                                public.check_plural(_managerCount, 'does', 'do'),
-                                _paramName);
+                               public.check_plural(_managerCount, 'Manager', 'Managers'),
+                               _managerIDList,
+                               public.check_plural(_managerCount, 'does', 'do'),
+                               _paramName);
 
             RAISE WARNING '%', _message;
         END If;
 
         _message := format('%s %s for %s',
-                            public.check_plural(_managerCount, 'Manager', format('Manager %s already has', _managerIDList), 'All managers already have'),
-                            _newValue,
-                            _paramName);
+                           public.check_plural(_managerCount, format('Manager %s already has', _managerIDList), 'The specified managers already have'),
+                           _newValue,
+                           _paramName);
 
         RAISE INFO '%', _message;
 
