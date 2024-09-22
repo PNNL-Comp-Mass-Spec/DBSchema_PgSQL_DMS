@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -47,6 +47,8 @@ COPY public.t_sample_labelling (label_id, label, reporter_mz_min, reporter_mz_ma
 23	TMT16	126.1277	134.1483
 24	PCGalNAz	204.0872	503.21017
 25	TMT18	126.1277	135.152
+26	TMT32	126.1277	135.161
+27	TMT35	126.1277	135.161
 \.
 
 

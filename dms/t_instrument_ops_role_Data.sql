@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -22,6 +22,7 @@ SET row_security = off;
 
 COPY public.t_instrument_ops_role (role, description) FROM stdin;
 InSilico	In-silico instrument for tracking DMS_Pipeline_Data
+LC	Liquid Chromatography Pump
 Offsite	Non-PNNL instrument (Broad, MIT, etc.)
 Production	Production, routine usage
 QC	QC (tag no longer used)
