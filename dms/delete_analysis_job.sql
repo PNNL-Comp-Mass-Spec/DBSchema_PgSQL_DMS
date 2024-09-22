@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE public.delete_analysis_job(IN _job text, IN _infoonl
 **          02/02/2024 mem - Ported to PostgreSQL
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          08/22/2024 mem - Delete jobs from T_Reporter_Ion_Observation_Rates_Addnl
 **
 *****************************************************/
 DECLARE
@@ -149,10 +150,13 @@ BEGIN
 
     Else
         -------------------------------------------------
-        -- Delete job from t_reporter_ion_observation_rates (if it exists)
+        -- Delete the job from t_reporter_ion_observation_rates and t_reporter_ion_observation_rates_addnl
         -------------------------------------------------
 
         DELETE FROM t_reporter_ion_observation_rates
+        WHERE job = _jobID;
+
+        DELETE FROM t_reporter_ion_observation_rates_addnl
         WHERE job = _jobID;
 
         -------------------------------------------------
