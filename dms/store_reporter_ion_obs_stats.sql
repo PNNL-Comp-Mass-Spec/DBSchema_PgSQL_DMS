@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.store_reporter_ion_obs_stats(IN _job integer,
 /****************************************************
 **
 **  Desc:
-**      Update the reporter ion observation stats in T_Reporter_Ion_Observation_Rates for the specified analysis job
+**      Update the reporter ion observation stats in T_Reporter_Ion_Observation_Rates and T_Reporter_Ion_Observation_Rates_Addnl for the specified analysis job
 **
 **  Arguments:
 **    _job                          Analysis job number
@@ -30,15 +30,20 @@ CREATE OR REPLACE PROCEDURE public.store_reporter_ion_obs_stats(IN _job integer,
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list_ordered for a comma-separated list
+**          09/21/2024 mem - Add support for 32-plex and 35-plex TMT, which store data for channels 19 through 35 in table t_reporter_ion_observation_rates_addnl
 **
 *****************************************************/
 DECLARE
     _datasetID int := 0;
+    _targetTable text;
     _sqlInsert text := '';
     _sqlValues text := '';
+    _channelMin int;
+    _channelMax int;
     _channelStart int;
     _channelEnd int;
-    _channel int := 1;
+    _iteration int;
+    _channel int;
     _channelName text;
     _observationRateTopNPctText text;
     _medianIntensityText text;
@@ -113,153 +118,202 @@ BEGIN
     FROM public.parse_delimited_list_ordered(_medianIntensitiesTopNPct);
 
     -----------------------------------------------
-    -- Construct the SQL insert statements
-    -----------------------------------------------
-
-    _sqlInsert := 'INSERT INTO t_reporter_ion_observation_rates (job, dataset_id, reporter_ion, top_n_pct';
-
-    _sqlValues := format('VALUES (%s, %s, ''%s'', %s', _job, _datasetID, _reporterIon, _topNPct);
-
-    -----------------------------------------------
-    -- Process the values for each channel
+    -- Determine channel range
     -----------------------------------------------
 
     SELECT MIN(Channel), MAX(Channel)
-    INTO _channelStart, _channelEnd
+    INTO _channelMin, _channelMax
     FROM Tmp_RepIonObsStatsTopNPct;
 
-    FOR _channel IN _channelStart .. _channelEnd
+    -----------------------------------------------
+    -- Construct the SQL insert statements
+    --
+    -- Values for channels 1 through 18 are stored in table t_reporter_ion_observation_rates
+    -- Values for channels 19 and higher are stored in table t_reporter_ion_observation_rates_addnl
+    --
+    -- Thus, 32-plex TMT will have values for the first two deuterated labels (127D and 128ND)
+    -- stored in columns channel17 and channel18 in t_reporter_ion_observation_rates,
+    -- while the remaining channels will be in t_reporter_ion_observation_rates_addnl
+    --
+    -- In contrast, 35-plex TMT will have all of its deuterated labels stored in t_reporter_ion_observation_rates_addnl,
+    -- since the first 18 channels of 35-plex TMT match 18-plex TMT
+    -----------------------------------------------
+
+    _channelStart := _channelMin;
+    _channelEnd   := LEAST(_channelMax, 18);
+    _iteration    := 0;
+
+    WHILE _channelEnd <= _channelMax
     LOOP
-        SELECT Observation_Rate
-        INTO _observationRateTopNPctText
-        FROM Tmp_RepIonObsStatsTopNPct
-        WHERE Channel = _channel
-        LIMIT 1;
+        _iteration := _iteration + 1;
 
-        SELECT Median_Intensity
-        INTO _medianIntensityText
-        FROM Tmp_RepIonIntensities
-        WHERE Channel = _channel
-        LIMIT 1;
-
-        If _observationRateTopNPctText Is Null And _medianIntensityText Is Null Then
-            RAISE WARNING 'Channel % not found in Tmp_RepIonObsStatsTopNPct or Tmp_RepIonIntensities; this is unexected', _channel;
-            CONTINUE;
+        If _iteration = 1 Then
+            _targetTable := 't_reporter_ion_observation_rates';
+        Else
+            _targetTable := 't_reporter_ion_observation_rates_addnl';
         End If;
 
-        If _observationRateTopNPctText Is Null Then
-            RAISE WARNING 'Channel % not found in Tmp_RepIonObsStatsTopNPct; this is unexected', _channel;
-           _observationRateTopNPctText = '0';
-        End If;
+        _sqlInsert := format('INSERT INTO %s (job, dataset_id, reporter_ion, top_n_pct', _targetTable);
 
-        If _medianIntensityText Is Null Then
-            RAISE WARNING 'Channel % not found in Tmp_RepIonIntensities; this is unexected', _channel;
-           _medianIntensityText = '0';
-        End If;
+        _sqlValues := format('VALUES (%s, %s, ''%s'', %s', _job, _datasetID, _reporterIon, _topNPct);
 
-        -- Verify that observation rates are numeric
-        _observationRateTopNPct := public.try_cast(_observationRateTopNPctText, null::real);
-        _medianIntensity        := public.try_cast(_medianIntensityText,        null::int);
-
-        If _observationRateTopNPct Is Null Then
-            _message := format('Observation rate %s is not numeric (Tmp_RepIonObsStatsTopNPct); aborting', _observationRateTopNPctText);
-            RAISE WARNING '%', _message;
-
-            DROP TABLE Tmp_RepIonObsStatsTopNPct;
-            DROP TABLE Tmp_RepIonIntensities;
-
-            _returnCode := 'U5205';
-            RETURN;
-        End If;
-
-        If _medianIntensity Is Null Then
-            _message := format('Intensity value %s is not an integer (Tmp_RepIonIntensities); aborting', _medianIntensityText);
-            RAISE WARNING '%', _message;
-
-            DROP TABLE Tmp_RepIonObsStatsTopNPct;
-            DROP TABLE Tmp_RepIonIntensities;
-
-            _returnCode := 'U5206';
-            RETURN;
-        End If;
-
-        -- Append the channel column names to _sqlInsert, for example:
-        -- , Channel3, Channel3_Median_Intensity
-
-        _channelName := format('Channel%s', _channel);
-        _sqlInsert := format('%s, %s, %s_Median_Intensity', _sqlInsert, _channelName, _channelName);
-
-        -- Append the observation rate and median intensity values
-
-        _sqlValues := format('%s, %s, %s', _sqlValues, _observationRateTopNPctText, _medianIntensityText);
-
-        -- Store the values (only required if _infoOnly is nonzero)
-        If _infoOnly Then
-            UPDATE Tmp_RepIonObsStatsTopNPct
-            SET Observation_Rate_Value = _observationRateTopNPct
-            WHERE Channel = _channel;
-
-            UPDATE Tmp_RepIonIntensities
-            SET Median_Intensity_Value = _medianIntensity
-            WHERE Channel = _channel;
-        End If;
-
-    END LOOP;
-
-    _sqlInsert := format('%s)', _sqlInsert);
-    _sqlValues := format('%s)', _sqlValues);
-
-    If _infoOnly Then
         -----------------------------------------------
-        -- Preview the data, then exit
+        -- Process the values for each channel
         -----------------------------------------------
-
-        _formatString := '%-10s %-12s %-10s %-31s %-16s';
-
-        RAISE INFO '';
-
-        RAISE INFO '%', format(_formatString,
-                                'Job',
-                                'Reporter_Ion',
-                                'Channel',
-                                'Observation_Rate_Value_TopNPct',
-                                'Median_Intensity');
 
         FOR _channel IN _channelStart .. _channelEnd
         LOOP
-            SELECT ObsStats.Observation_Rate_Value,
-                   Intensities.Median_Intensity_Value
-            INTO _observationRateTopNPct, _medianIntensity
-            FROM Tmp_RepIonObsStatsTopNPct ObsStats
-                 INNER JOIN Tmp_RepIonIntensities Intensities
-                   ON ObsStats.Channel = Intensities.Channel
-            WHERE ObsStats.Channel = _channel;
+            SELECT Observation_Rate
+            INTO _observationRateTopNPctText
+            FROM Tmp_RepIonObsStatsTopNPct
+            WHERE Channel = _channel
+            LIMIT 1;
 
-            RAISE INFO '%', format(_formatString, _job, _reporterIon, _channel, _observationRateTopNPct, _medianIntensity);
+            SELECT Median_Intensity
+            INTO _medianIntensityText
+            FROM Tmp_RepIonIntensities
+            WHERE Channel = _channel
+            LIMIT 1;
+
+            If _observationRateTopNPctText Is Null And _medianIntensityText Is Null Then
+                RAISE WARNING 'Channel % not found in Tmp_RepIonObsStatsTopNPct or Tmp_RepIonIntensities; this is unexpected', _channel;
+                CONTINUE;
+            End If;
+
+            If _observationRateTopNPctText Is Null Then
+                RAISE WARNING 'Channel % not found in Tmp_RepIonObsStatsTopNPct; this is unexpected', _channel;
+               _observationRateTopNPctText = '0';
+            End If;
+
+            If _medianIntensityText Is Null Then
+                RAISE WARNING 'Channel % not found in Tmp_RepIonIntensities; this is unexpected', _channel;
+               _medianIntensityText = '0';
+            End If;
+
+            -- Verify that observation rates are numeric
+            _observationRateTopNPct := public.try_cast(_observationRateTopNPctText, null::real);
+            _medianIntensity        := public.try_cast(_medianIntensityText,        null::int);
+
+            If _observationRateTopNPct Is Null Then
+                _message := format('Observation rate %s is not numeric (Tmp_RepIonObsStatsTopNPct); aborting', _observationRateTopNPctText);
+                RAISE WARNING '%', _message;
+
+                DROP TABLE Tmp_RepIonObsStatsTopNPct;
+                DROP TABLE Tmp_RepIonIntensities;
+
+                _returnCode := 'U5205';
+                RETURN;
+            End If;
+
+            If _medianIntensity Is Null Then
+                _message := format('Intensity value %s is not an integer (Tmp_RepIonIntensities); aborting', _medianIntensityText);
+                RAISE WARNING '%', _message;
+
+                DROP TABLE Tmp_RepIonObsStatsTopNPct;
+                DROP TABLE Tmp_RepIonIntensities;
+
+                _returnCode := 'U5206';
+                RETURN;
+            End If;
+
+            -- Append the channel column names to _sqlInsert, for example:
+            -- , Channel3, Channel3_Median_Intensity
+
+            _channelName := format('Channel%s', _channel);
+            _sqlInsert := format('%s, %s, %s_Median_Intensity', _sqlInsert, _channelName, _channelName);
+
+            -- Append the observation rate and median intensity values
+
+            _sqlValues := format('%s, %s, %s', _sqlValues, _observationRateTopNPctText, _medianIntensityText);
+
+            -- Store the values (only required if _infoOnly is true)
+            If _infoOnly Then
+                UPDATE Tmp_RepIonObsStatsTopNPct
+                SET Observation_Rate_Value = _observationRateTopNPct
+                WHERE Channel = _channel;
+
+                UPDATE Tmp_RepIonIntensities
+                SET Median_Intensity_Value = _medianIntensity
+                WHERE Channel = _channel;
+            End If;
+
         END LOOP;
 
-        RAISE INFO '';
-        RAISE INFO '%', _sqlInsert;
-        RAISE INFO '%', _sqlValues;
+        _sqlInsert := format('%s)', _sqlInsert);
+        _sqlValues := format('%s)', _sqlValues);
 
-        DROP TABLE Tmp_RepIonObsStatsTopNPct;
-        DROP TABLE Tmp_RepIonIntensities;
+        If _infoOnly Then
+            -----------------------------------------------
+            -- Preview the data, then possibly exit
+            -----------------------------------------------
 
-        RETURN;
-    End If;
+            _formatString := '%-10s %-12s %-10s %-31s %-16s';
 
-    -----------------------------------------------
-    -- Add/update t_reporter_ion_observation_rates using dynamic SQL
-    -----------------------------------------------
+            RAISE INFO '';
 
-    If Exists (SELECT job FROM t_reporter_ion_observation_rates WHERE job = _job) Then
-        DELETE FROM t_reporter_ion_observation_rates WHERE job = _job;
-    End If;
+            RAISE INFO '%', format(_formatString,
+                                    'Job',
+                                    'Reporter_Ion',
+                                    'Channel',
+                                    'Observation_Rate_Value_TopNPct',
+                                    'Median_Intensity');
 
-    _sql := format('%s %s', _sqlInsert, _sqlValues);
-    EXECUTE _sql;
+            FOR _channel IN _channelStart .. _channelEnd
+            LOOP
+                SELECT ObsStats.Observation_Rate_Value,
+                       Intensities.Median_Intensity_Value
+                INTO _observationRateTopNPct, _medianIntensity
+                FROM Tmp_RepIonObsStatsTopNPct ObsStats
+                     INNER JOIN Tmp_RepIonIntensities Intensities
+                       ON ObsStats.Channel = Intensities.Channel
+                WHERE ObsStats.Channel = _channel;
 
-    _message := 'Reporter Ion Observation Rates stored';
+                RAISE INFO '%', format(_formatString, _job, _reporterIon, _channel, _observationRateTopNPct, _medianIntensity);
+            END LOOP;
+
+            RAISE INFO '';
+            RAISE INFO '%', _sqlInsert;
+            RAISE INFO '%', _sqlValues;
+
+            If _channelMax <= 18 Then
+                DROP TABLE Tmp_RepIonObsStatsTopNPct;
+                DROP TABLE Tmp_RepIonIntensities;
+
+                RETURN;
+            End If;
+        End If;
+
+        If Not _infoOnly Then
+            -----------------------------------------------
+            -- Add/update t_reporter_ion_observation_rates using dynamic SQL
+            -----------------------------------------------
+
+            If _iteration = 1 Then
+                If Exists (SELECT job FROM t_reporter_ion_observation_rates WHERE job = _job) Then
+                    DELETE FROM t_reporter_ion_observation_rates WHERE job = _job;
+                End If;
+
+                If Exists (SELECT job FROM t_reporter_ion_observation_rates_addnl WHERE job = _job) Then
+                    DELETE FROM t_reporter_ion_observation_rates_addnl WHERE job = _job;
+                End If;
+            End If;
+
+            _sql := format('%s %s', _sqlInsert, _sqlValues);
+            EXECUTE _sql;
+
+            _message := format('Reporter ion observation rates stored in %s', _targetTable);
+            RAISE INFO '%', _message;
+        End If;
+
+        If _channelEnd <= 18 Then
+            _channelStart := 19;
+            _channelEnd   := GREATEST(_channelMax, 19);
+        Else
+            _channelStart := _channelMax + 1;
+            _channelEnd   := _channelMax + 1;
+        End If;
+
+    END LOOP;
 
     DROP TABLE Tmp_RepIonObsStatsTopNPct;
     DROP TABLE Tmp_RepIonIntensities;
