@@ -88,12 +88,13 @@ CREATE VIEW public.v_reporter_ion_observation_rate_tmtpro_list_report AS
     obsrate2.channel35_median_intensity AS channel35_intensity,
     obsrate.entered
    FROM ((((((public.t_reporter_ion_observation_rates obsrate
-     JOIN public.t_reporter_ion_observation_rates_addnl obsrate2 ON ((obsrate.job = obsrate2.job)))
      JOIN public.t_analysis_job aj ON ((obsrate.job = aj.job)))
      JOIN public.t_cached_dataset_folder_paths dfp ON ((aj.dataset_id = dfp.dataset_id)))
      JOIN public.t_dataset ds ON ((aj.dataset_id = ds.dataset_id)))
      JOIN public.t_instrument_name inst ON ((ds.instrument_id = inst.instrument_id)))
-     LEFT JOIN public.t_requested_run rr ON ((ds.dataset_id = rr.dataset_id)));
+     LEFT JOIN public.t_reporter_ion_observation_rates_addnl obsrate2 ON ((obsrate.job = obsrate2.job)))
+     LEFT JOIN public.t_requested_run rr ON ((ds.dataset_id = rr.dataset_id)))
+  WHERE (obsrate.reporter_ion OPERATOR(public.=) ANY (ARRAY['TMT16'::public.citext, 'TMT18'::public.citext, 'TMT32'::public.citext, 'TMT35'::public.citext]));
 
 
 ALTER VIEW public.v_reporter_ion_observation_rate_tmtpro_list_report OWNER TO d3l243;
