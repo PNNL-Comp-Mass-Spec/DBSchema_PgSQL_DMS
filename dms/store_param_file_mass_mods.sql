@@ -11,7 +11,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **      Store (or validate) the dynamic and static mods to associate with a given parameter file
 **
 **  Format for MS-GF+, MSPathFinder, and mzRefinery:
-**     The mod names listed in the 5th comma-separated column must be UniMod names
+**     The mod names listed in the 5th comma-separated column are typically UniMod names
 **     and must match the Original_Source_Name values in T_Mass_Correction_Factors
 **
 **     StaticMod=144.102063,  *,  fix, N-term,    iTRAQ4plex           # 4-plex iTraq
@@ -56,8 +56,22 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **     variable_mod_01 = 15.994900 M 3        # Oxidized methionine
 **     variable_mod_02 = 42.010600 [^ 1       # Acetylation protein N-term
 **     variable_mod_06 = 304.207146 n^ 1      # 16-plex TMT
-**     add_C_cysteine = 57.021464
+**     add_C_cysteine = 57.021464             # Alkylated cysteine
 **     add_K_lysine = 304.207146              # 16-plex TMT
+**
+**  Format for FragPipe:
+**     Specified as a semicolon-delimited list of mod definitions
+**     The format is Mod Mass, Affected Residue, Enabled (true/false), Max Mods Per Peptide
+**
+**     msfragger.table.var-mods=15.9949,M,true,3; 42.0106,[^,true,1; 79.96633,STY,false,3; ...
+**     msfragger.table.fix-mods=0.0,C-Term Peptide,true,-1; ...; 0.0,T (threonine),true,-1; 57.02146,C (cysteine),true,-1; ...
+**
+**  FragPipe mod definition examples
+**     15.9949,M,true,3                      # Oxidized methionine
+**     42.0106,[^,true,1                     # Acetylation protein N-term
+**     304.20715,N-Term Peptide,true,-1      # 16-plex TMT
+**     57.02146,C (cysteine),true,-1         # Alkylated cysteine
+**     304.20715,K (lysine),true,-1          # 16-plex TMT
 **
 **  Format for MaxQuant when the run type is "Standard":
 **     <fixedModifications>
@@ -91,7 +105,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **    _infoOnly             True to preview adding the modifications
 **    _showResidueTable     When _infoOnly is true, if this is true will show Tmp_Residues for each modification
 **    _replaceExisting      When true, replace existing mass mods; if false, report an error if mass mods are already defined
-**    _validateUnimod       When true, require that the mod names are known Unimod names
+**    _validateUnimod       When true, require that the mod names are known Unimod names (only applicable to 'MSGFPlus', 'DiaNN', and 'TopPIC')
 **    _paramFileType        MSGFPlus, DiaNN, TopPIC, MSFragger, or MaxQuant; if empty, will lookup using _paramFileID; if no match (or if _paramFileID is null or 0) assumes MSGFPlus
 **    _message              Status message
 **    _returnCode           Return code
@@ -145,6 +159,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **                         - Remove unreachable code that previously showed the contents of temp table Tmp_ModDef
 **          01/08/2024 mem - Use the default value for _maxRows when calling parse_delimited_list_ordered()
+**          09/26/2024 mem - Add support for FragPipe mod defs
 **
 *****************************************************/
 DECLARE
@@ -158,6 +173,8 @@ DECLARE
     _xmlMods xml;
     _charPos int;
     _rowCount int;
+    _dynamicModList text;
+    _staticModList text;
     _row citext;
     _rowKey citext;
     _rowValue citext;
@@ -253,13 +270,21 @@ BEGIN
         End If;
     End If;
 
-    If Not _paramFileType::citext In ('MSGFPlus', 'DiaNN', 'TopPIC', 'MSFragger', 'MaxQuant') Then
+    If Not _paramFileType::citext In ('DiaNN', 'FragPipe', 'MaxQuant', 'MSFragger', 'MSGFPlus', 'TopPIC') Then
         _paramFileType := 'MSGFPlus';
     End If;
 
     -----------------------------------------
     -- Create some temporary tables
     -----------------------------------------
+
+    CREATE TEMP TABLE Tmp_FragPipe_Mods (
+        EntryID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+        ModType text NOT NULL,
+        ModDef text NOT NULL
+    );
+
+    CREATE UNIQUE INDEX IX_Tmp_FragPipe_Mods ON Tmp_FragPipe_Mods (EntryID);
 
     CREATE TEMP TABLE Tmp_MaxQuant_Mods (
         EntryID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -275,6 +300,47 @@ BEGIN
     );
 
     CREATE UNIQUE INDEX IX_Tmp_Mods ON Tmp_Mods (EntryID);
+
+    -- Table Tmp_ModDef holds the details for a single modification definition
+    --
+    -- The first row (with EntryID=1) will start with "StaticMod=" or "DynamicMod="
+    -- Data in the subsequent rows
+    --   MS-GF+:
+    --     1: Modification empirical formula or mod mass
+    --     2: Residues (or peptide/protein terminus)
+    --     3: Mod Type (opt or fix)
+    --     4: Position (any, N-term, Prot-N-term, etc.)
+    --     5: Modification name (preferably UniMod, but not required)
+    --
+    --   DIA-NN:
+    --     1: Mod Name
+    --     2: Mod Mass
+    --     3: Affected Residues
+    --
+    --   TopPIC:
+    --     1: UniMod Name
+    --     2: Mod Mass
+    --     3: Residues
+    --     4: Position
+    --     5: UnimodID
+    --
+    --   MSFragger (for variable mods):
+    --     1: Mod Mass
+    --     2: Residues
+    --     3: Max Mods Per Peptide
+    --
+    --   MSFragger (for static mods):
+    --     1: Mod Mass
+    --     2: Residue
+    --
+    --   FragPipe:
+    --     1: Mod Mass
+    --     2: Residues
+    --     3: Enabled (true/false)
+    --     4: Max Mods Per Peptide
+    --
+    --   MaxQuant:
+    --     1: Mod Name
 
     CREATE TEMP TABLE Tmp_ModDef (
         EntryID int NOT NULL,
@@ -331,6 +397,7 @@ BEGIN
             DROP TABLE Tmp_ModDef;
             DROP TABLE Tmp_Residues;
             DROP TABLE Tmp_ModsToStore;
+            DROP TABLE Tmp_FragPipe_Mods;
             DROP TABLE Tmp_MaxQuant_Mods;
 
             RETURN;
@@ -374,6 +441,7 @@ BEGIN
             DROP TABLE Tmp_ModDef;
             DROP TABLE Tmp_Residues;
             DROP TABLE Tmp_ModsToStore;
+            DROP TABLE Tmp_FragPipe_Mods;
             DROP TABLE Tmp_MaxQuant_Mods;
 
             RETURN;
@@ -387,6 +455,73 @@ BEGIN
         SELECT EntryID, format('%s=%s', ModType, ModName)
         FROM Tmp_MaxQuant_Mods
         ORDER BY EntryID;
+
+    ElsIf _paramFileType::citext = 'FragPipe' Then
+
+        ---------------------------------------------------
+        -- Look for the semicolon-delimited lists of modifications
+        -- Populate Tmp_Mods with the modification definitions
+        ---------------------------------------------------
+
+        If Position(chr(10) In _mods) > 0 Then
+            _delimiter := chr(10);
+        Else
+            _delimiter := chr(13);
+        End If;
+
+        -- Populate the Tmp_Mods table with entries of the form:
+        -- variable=15.9949,M,true,3
+        -- fixed=57.02146,C (cysteine),true,-1
+
+        SELECT Value
+        INTO _dynamicModList
+        FROM public.parse_delimited_list_ordered(_mods, _delimiter)
+        WHERE Value Like 'msfragger.table.var-mods%';
+
+        If FOUND Then
+            -- Remove 'msfragger.table.var-mods=' from the start of _dynamicModList
+            -- There should not be a space before or after the equals sign, but use a RegEx replace in case there is
+            _dynamicModList := regexp_replace(_dynamicModList, 'msfragger.table.var-mods *= *', '');
+
+            INSERT INTO Tmp_FragPipe_Mods (ModType, ModDef)
+            SELECT 'variable', Value
+            FROM public.parse_delimited_list_ordered(_dynamicModList, ';');
+        End If;
+
+        SELECT Value
+        INTO _staticModList
+        FROM public.parse_delimited_list_ordered(_mods, _delimiter)
+        WHERE Value Like 'msfragger.table.fix-mods%';
+
+        If FOUND Then
+            -- Remove 'msfragger.table.fix-mods=' from the start of _staticModList
+            -- There should not be a space before or after the equals sign, but use a RegEx replace in case there is
+            _staticModList := regexp_replace(_staticModList, 'msfragger.table.fix-mods *= *', '');
+
+            INSERT INTO Tmp_FragPipe_Mods (ModType, ModDef)
+            SELECT 'fixed', Value
+            FROM public.parse_delimited_list_ordered(_staticModList, ';');
+        End If;
+
+        If Not Exists (SELECT EntryID FROM Tmp_FragPipe_Mods) Then
+            _message := 'Did not find any rows that start with "msfragger.table.var-mods" or "msfragger.table.fix-mods"';
+            _returnCode := 'U5307';
+
+            DROP TABLE Tmp_Mods;
+            DROP TABLE Tmp_ModDef;
+            DROP TABLE Tmp_Residues;
+            DROP TABLE Tmp_ModsToStore;
+            DROP TABLE Tmp_FragPipe_Mods;
+            DROP TABLE Tmp_MaxQuant_Mods;
+
+            RETURN;
+        End If;
+
+        INSERT INTO Tmp_Mods (EntryID, Value)
+        SELECT EntryID, format('%s=%s', ModType, ModDef)
+        FROM Tmp_FragPipe_Mods
+        ORDER BY EntryID;
+
     Else
         If Position(chr(10) In _mods) > 0 Then
             _delimiter := chr(10);
@@ -400,12 +535,13 @@ BEGIN
 
         If Not Exists (SELECT * FROM Tmp_Mods) Then
             _message := 'Nothing returned when splitting the Mods on CR or LF';
-            _returnCode := 'U5307';
+            _returnCode := 'U5310';
 
             DROP TABLE Tmp_Mods;
             DROP TABLE Tmp_ModDef;
             DROP TABLE Tmp_Residues;
             DROP TABLE Tmp_ModsToStore;
+            DROP TABLE Tmp_FragPipe_Mods;
             DROP TABLE Tmp_MaxQuant_Mods;
 
             RETURN;
@@ -460,6 +596,11 @@ BEGIN
         -- variable_mod_01 = 15.9949 M
         --   or
         -- add_C_cysteine = 57.021464             # added to C - avg. 103.1429, mono. 103.00918
+
+        -- For FragPipe:
+        -- variable=15.9949,M,true,3
+        --   or
+        -- fixed=57.02146,C (cysteine),true,-1
 
         -- For MaxQuant:
         -- variable=Oxidation (M)
@@ -524,11 +665,11 @@ BEGIN
                     SET Value = format('StaticMod=%s', Value)
                     WHERE EntryID = 1;
 
-                    -- _rowKey is Similar To add_C_cysteine or add_Cterm_peptide
+                    -- _rowKey is similar to add_C_cysteine or add_Cterm_peptide
                     -- Remove "add_"
                     _rowKey := Substring(_rowKey, 5, 100);
 
-                    -- Add the affected mod symbol as the second column
+                    -- Add the affected mod symbol as the second row in Tmp_ModDef
                     If _rowKey SIMILAR TO 'Nterm[_]peptide%' Then
                         _residueSymbol := '<';
                     ElsIf _rowKey SIMILAR TO 'Cterm[_]peptide%' Then
@@ -538,7 +679,7 @@ BEGIN
                     ElsIf _rowKey SIMILAR TO 'Cterm[_]protein%' Then
                         _residueSymbol := ']';
                     Else
-                        -- _rowKey is Similar To C_cysteine
+                        -- _rowKey is similar to C_cysteine
                         _residueSymbol := Substring(_rowKey, 1, 1);
                     End If;
 
@@ -552,7 +693,86 @@ BEGIN
                     End If;
                 End If;
             End If;
+        End If;
 
+        If _paramFileType::citext = 'FragPipe' Then
+            _rowParsed := true;
+
+            If _row SIMILAR TO 'variable%' Then
+                _charPos := Position('=' In _row);
+
+                If _charPos > 0 Then
+                    _rowValue := Trim(Substring(_row, _charPos + 1, char_length(_row)));
+
+                    INSERT INTO Tmp_ModDef (EntryID, Value)
+                    SELECT Entry_ID, Value
+                    FROM public.parse_delimited_list_ordered(_rowValue, ',');
+
+                    UPDATE Tmp_ModDef
+                    SET Value = format('DynamicMod=%s', Value)
+                    WHERE EntryID = 1;
+                End If;
+            End If;
+
+            If _row SIMILAR TO 'fixed%' Then
+                _charPos := Position('=' In _row);
+
+                If _charPos > 0 Then
+                    _rowValue := Trim(Substring(_row, _charPos + 1, char_length(_row)));
+
+                    INSERT INTO Tmp_ModDef (EntryID, Value)
+                    SELECT Entry_ID, Value
+                    FROM public.parse_delimited_list_ordered(_rowValue, ',');
+
+                    UPDATE Tmp_ModDef
+                    SET Value = format('StaticMod=%s', Value)
+                    WHERE EntryID = 1;
+
+                    -- Update the residue symbol to either be a 1-letter amino acid symbol or the N- or C- terminal symbols used by this procedure
+
+                    SELECT Value
+                    INTO _residueSymbol
+                    FROM Tmp_ModDef
+                    WHERE EntryID = 2;
+
+                    If Not FOUND Then
+                        _message := format('Affected residue not found for fixed mod; see row: %s', _row);
+                        _returnCode := 'U5320';
+
+                        -- Break out of the for loop
+                        _exitProcedure := true;
+                        EXIT;
+                    End If;
+
+                    If _residueSymbol = 'N-Term Peptide' Then
+                        _residueSymbol := '<';
+                    ElsIf _residueSymbol = 'C-Term Peptide' Then
+                        _residueSymbol := '>';
+                    ElsIf _residueSymbol = 'N-Term Protein' Then
+                        _residueSymbol := '[';
+                    ElsIf _residueSymbol = 'C-Term Protein' Then
+                        _residueSymbol := ']';
+                    ElsIf _residueSymbol SIMILAR TO '[A-Z] \(%' Then
+                        -- _rowKey is similar to 'G (glycine)'
+                        _residueSymbol := Substring(_rowKey, 1, 1);
+                    ElsIf _residueSymbol SIMILAR TO '[A-Z] *' Then
+                        -- _rowKey is likely 'B ', 'J', 'O', 'U', 'X', or 'Z'
+                        _residueSymbol := Substring(_rowKey, 1, 1);
+                    Else
+                        _message := format('Affected residue is not of the expected form for a fixed mod; see row: %s', _row);
+                        _returnCode := 'U5321';
+
+                        -- Break out of the for loop
+                        _exitProcedure := true;
+                        EXIT;
+                    End If;
+
+                    UPDATE Tmp_ModDef
+                    SET Value = _residueSymbol
+                    WHERE EntryID = 2;
+
+                End If;
+            End If;
         End If;
 
         If _paramFileType::citext = 'MaxQuant' Then
@@ -590,6 +810,7 @@ BEGIN
 
         If Not _rowParsed Then
             -- MS-GF+ style mod (also used by DIA-NN and TOPIC)
+            -- Split on commas
             INSERT INTO Tmp_ModDef (EntryID, Value)
             SELECT Entry_ID, Value
             FROM public.parse_delimited_list_ordered(_row);
@@ -618,6 +839,7 @@ BEGIN
         -- DynamicMod=O1
         -- DynamicMod=15.9949
         -- DynamicMod=Oxidation (M)
+        -- DynamicMod=UniMod:35
 
         -- Look for an equals sign in _field
 
@@ -625,7 +847,7 @@ BEGIN
 
         If _charPos <= 1 Then
             RAISE INFO '';
-            RAISE INFO 'Skipping row since first column does not contain an equals sign: %', _row;
+            RAISE INFO 'Skipping row since first column of the mod definition does not contain an equals sign: %', _row;
             CONTINUE;
         End If;
 
@@ -641,7 +863,7 @@ BEGIN
             CONTINUE;
         End If;
 
-        -- Now that the _modType is known, remove that text from the first field in Tmp_ModDef
+        -- Now that the _modType is known, remove that text from the first row in Tmp_ModDef
 
         UPDATE Tmp_ModDef
         SET Value = Substring(Value, _charPos + 1, 2048)
@@ -649,7 +871,7 @@ BEGIN
 
         -- Assure that Tmp_ModDef has at least 5 rows for MS-GF+ or TopPIC
         -- For DIA-NN, require at least 3 rows
-        -- For MSFragger, require at least 2 rows
+        -- For MSFragger and FragPipe, require at least 2 rows
         -- For MaxQuant, there will just be 1 row, which has the MaxQuant-tracked mod name
 
         SELECT COUNT(*)
@@ -698,7 +920,7 @@ BEGIN
             CONTINUE;
         End If;
 
-        If _paramFileType::citext In ('MSFragger') And _rowCount < 2 Then
+        If _paramFileType::citext In ('MSFragger', 'FragPipe') And _rowCount < 2 Then
             RAISE INFO '';
             RAISE INFO 'Skipping row since not enough rows in Tmp_ModDef: %', _row;
             CONTINUE;
@@ -706,7 +928,7 @@ BEGIN
 
         _field := '';
 
-        If _paramFileType::citext In ('DiaNN', 'TopPIC', 'MSFragger', 'MaxQuant') Then
+        If _paramFileType::citext In ('DiaNN', 'TopPIC', 'MSFragger', 'FragPipe', 'MaxQuant') Then
             -- Mod defs for these tools don't include 'opt' or 'fix, so we update _field based on _modType
             If _modType = 'DynamicMod' Then
                 _field := 'opt';
@@ -727,7 +949,7 @@ BEGIN
             _modTypeSymbol := 'D';
 
             If _field <> 'opt' Then
-                _message := format('DynamicMod entries must have "opt" in the 3rd column; aborting; see row: %s', _row);
+                _message := format('DynamicMod entries must have "opt" in the 3rd column of the mod definition; aborting; see row: %s', _row);
                 _returnCode := 'U5312';
 
                 -- Break out of the for loop
@@ -741,7 +963,7 @@ BEGIN
             _modTypeSymbol := 'S';
 
             If _field <> 'fix' Then
-                _message := format('StaticMod entries must have "fix" in the 3rd column; aborting; see row: %s', _row);
+                _message := format('StaticMod entries must have "fix" in the 3rd column of the mod definition; aborting; see row: %s', _row);
                 _returnCode := 'U5313';
 
                 -- Break out of the for loop
@@ -813,7 +1035,6 @@ BEGIN
 
                 If Not _lookupUniModID Then
                     _modName := _field;
-
                 Else
                     _uniModIDText := Substring(_field, 8, 100);
                     _uniModID := public.try_cast(_uniModIDText, null::int);
@@ -878,10 +1099,10 @@ BEGIN
             If _matchCount = 0 Or Coalesce(_massCorrectionID, 0) = 0 Then
                 If _validateUnimod Then
                     _message := format('UniMod modification not found in t_mass_correction_factors.original_source_name for mod "%s"; see row: %s',
-                                        _modName, _row);
+                                       _modName, _row);
                 Else
                     _message := format('Modification name not found in t_mass_correction_factors.original_source_name or t_mass_correction_factors.mass_correction_tag for mod "%s"; see row: %s',
-                                        _modName, _row);
+                                       _modName, _row);
                 End If;
 
                 _returnCode := 'U5318';
@@ -903,7 +1124,7 @@ BEGIN
 
             If _paramFileType::citext = 'MSGFPlus' And Not _location In ('any', 'N-term', 'C-term', 'Prot-N-term', 'Prot-C-term') Then
                 _message := format('Invalid location "%s"; should be "any", "N-term", "C-term", "Prot-N-term", or "Prot-C-term"; see row: %s',
-                                    _location, _row);
+                                   _location, _row);
 
                 _returnCode := 'U5319';
 
@@ -914,9 +1135,9 @@ BEGIN
 
             If _paramFileType::citext = 'TopPIC' And Not _location In ('any', 'N-term', 'C-term') Then
                 _message := format('Invalid location "%s"; should be "any", "N-term", or "C-term"; see row: %s',
-                                    _location, _row);
+                                   _location, _row);
 
-                _returnCode := 'U5320';
+                _returnCode := 'U5322';
 
                 -- Break out of the for loop
                 _exitProcedure := true;
@@ -969,7 +1190,7 @@ BEGIN
 
             If _field = 'any' Then
                 _message := format('Use * to match all residues, not the word "any"; see row: %s', _row);
-                _returnCode := 'U5321';
+                _returnCode := 'U5323';
 
                 -- Break out of the for loop
                 _exitProcedure := true;
@@ -979,7 +1200,33 @@ BEGIN
             _affectedResidues := _field;
         End If; -- MS-GF+, DIA-NN, and TopPIC
 
-        If _paramFileType::citext In ('MSFragger') Then
+        If _paramFileType::citext In ('MSFragger', 'FragPipe') Then
+            -----------------------------------------
+            -- Only process FragPipe modification definition if they are enabled
+            -----------------------------------------
+
+            If _paramFileType::citext = 'FragPipe' Then
+                SELECT Trim(Value)
+                INTO _field
+                FROM Tmp_ModDef
+                WHERE EntryID = 3;
+
+                If Not _field In ('true', 'false') Then
+                    _message := format('Mod enabled value "%s" is not true or false; see row: %s', _field, _row);
+                    _returnCode := 'U5324';
+
+                    -- Break out of the for loop
+                    _exitProcedure := true;
+                    EXIT;
+                End If;
+
+                If Not public.try_cast(_field, false) Then
+                    -- The modification is not enabled
+                    -- Skip it
+                    CONTINUE;
+                End If;
+            End If;
+
             -----------------------------------------
             -- Determine the Mass_Correction_ID based on the mod mass
             -----------------------------------------
@@ -993,7 +1240,7 @@ BEGIN
 
             If _modMassToFind Is Null Then
                 _message := format('Mod mass "%s" is not a number; see row: %s', _field, _row);
-                _returnCode := 'U5322';
+                _returnCode := 'U5325';
 
                 -- Break out of the for loop
                 _exitProcedure := true;
@@ -1001,7 +1248,7 @@ BEGIN
             End If;
 
             If Abs(_modMassToFind) < 0.01 Then
-                -- Likely an undefined static mod, e.g. add_T_threonine = 0.0000
+                -- Likely an undefined static mod, e.g. 'add_T_threonine = 0.0000' or '0.0,T (threonine),true,-1'
                 -- Skip it
                 CONTINUE;
             End If;
@@ -1015,8 +1262,7 @@ BEGIN
 
             If Not FOUND Then
                 _message := format('Matching modification not found for mass %s in t_mass_correction_factors; see row: %s', _modMassToFind, _row);
-
-                _returnCode := 'U5323';
+                _returnCode := 'U5326';
 
                 -- Break out of the for loop
                 _exitProcedure := true;
@@ -1030,8 +1276,7 @@ BEGIN
 
             If _affectedResidues In ('<','>','[',']') Then
                 -- N or C terminal static mod
-                -- (specified with add_Cterm_peptide or similar,
-                -- but we replaced that with a symbol earlier in this procedure)
+                -- (specified with add_Cterm_peptide or 'C-Term Peptide', but we replaced that with a symbol earlier in this procedure)
                 _terminalMod := true;
 
                 INSERT INTO Tmp_Residues (Residue_Symbol, Terminal_AnyAA)
@@ -1055,7 +1300,7 @@ BEGIN
 
             End If;
 
-        End If; -- MSFragger
+        End If; -- MSFragger and FragPipe
 
         If _paramFileType::citext In ('MaxQuant') Then
             -----------------------------------------
@@ -1077,7 +1322,7 @@ BEGIN
 
             If Not FOUND Then
                 _message := format('MaxQuant modification not found in t_maxquant_mods: %s', _field);
-                _returnCode := 'U5324';
+                _returnCode := 'U5327';
 
                 -- Break out of the for loop
                 _exitProcedure := true;
@@ -1086,7 +1331,7 @@ BEGIN
 
             If Coalesce(_massCorrectionID, 0) = 0 Then
                 _message := format('Mass Correction ID not defined for MaxQuant modification "%s"; either update table t_maxquant_mods or delete this mod from the XML', _field);
-                _returnCode := 'U5325';
+                _returnCode := 'U5328';
 
                 -- Break out of the for loop
                 _exitProcedure := true;
@@ -1170,7 +1415,7 @@ BEGIN
                         -- Lowercase n or c indicates peptide N- or C-terminus
                         If _charPos = char_length(_affectedResidues) Then
                             _message := format('Lowercase n or c should be followed by a residue or *; see row: %s', _row);
-                            _returnCode := 'U5326';
+                            _returnCode := 'U5329';
 
                             _exitProcedure := true;
                             EXIT;
@@ -1238,12 +1483,12 @@ BEGIN
             _matchCount := array_length(string_to_array(_msgAddon, ','), 1);
 
             _message := format('Unrecognized residue %s "%s"; %s not found in t_residues; see row: %s',
-                                public.check_plural(_msgAddon, 'symbol', 'symbols'),
-                                _msgAddon,
-                                public.check_plural(_msgAddon, 'symbol', 'symbols'),
-                                _row);
+                               public.check_plural(_msgAddon, 'symbol', 'symbols'),
+                               _msgAddon,
+                               public.check_plural(_msgAddon, 'symbol', 'symbols'),
+                               _row);
 
-            _returnCode := 'U5327';
+            _returnCode := 'U5330';
 
             -- Break out of the for loop
             _exitProcedure := true;
@@ -1347,6 +1592,7 @@ BEGIN
         DROP TABLE Tmp_ModDef;
         DROP TABLE Tmp_Residues;
         DROP TABLE Tmp_ModsToStore;
+        DROP TABLE Tmp_FragPipe_Mods;
         DROP TABLE Tmp_MaxQuant_Mods;
         RETURN;
     End If;
@@ -1508,6 +1754,7 @@ BEGIN
     DROP TABLE Tmp_ModDef;
     DROP TABLE Tmp_Residues;
     DROP TABLE Tmp_ModsToStore;
+    DROP TABLE Tmp_FragPipe_Mods;
     DROP TABLE Tmp_MaxQuant_Mods;
 END
 $$;
