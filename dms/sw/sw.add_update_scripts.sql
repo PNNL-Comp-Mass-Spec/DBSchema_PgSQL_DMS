@@ -91,6 +91,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_scripts(IN _script text, IN _descripti
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - Remove CR and LF from _contents
 **                         - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          09/26/2024 mem - Remove CR and LF from _parameters
 **
 *****************************************************/
 DECLARE
@@ -196,7 +197,7 @@ BEGIN
         RETURN;
     Else
         -- The website adds CR and LF to the end of each line; remove those (and any adjacent spaces)
-        _contents := regexp_replace(_contents, ' *(' || chr(10) || '|' || chr(13) || ') *', '', 'g');
+        _contents := regexp_replace(_contents, ' *[' || chr(10) || chr(13) || '] *', '', 'g');
 
         _scriptXML := public.try_cast(_contents, null::xml);
 
@@ -210,6 +211,9 @@ BEGIN
     End If;
 
     If Trim(Coalesce(_parameters, '')) <> '' Then
+        -- The website adds CR and LF to the end of each line; remove those (and any adjacent spaces)
+        _parameters := regexp_replace(_parameters, ' *[' || chr(10) || chr(13) || '] *', '', 'g');
+
         _parametersXML := public.try_cast(_parameters, null::xml);
 
         If _parametersXML Is Null Then
@@ -340,7 +344,6 @@ BEGIN
         End If;
 
     End If;
-
 END
 $$;
 
