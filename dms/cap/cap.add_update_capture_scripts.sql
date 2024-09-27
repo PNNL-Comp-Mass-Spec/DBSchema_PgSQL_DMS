@@ -8,14 +8,14 @@ CREATE OR REPLACE PROCEDURE cap.add_update_capture_scripts(IN _script text, IN _
 /****************************************************
 **
 **  Desc:
-**      Add new or edit existing T_Scripts
+**      Add new or edit existing scripts in cap.t_scripts
 **
 **  Arguments:
 **    _script           Capture task script name
 **    _description      Script description
 **    _enabled          Script enabled flag: 'Y' or 'N'
 **    _resultsTag       Three letter abbreviation for the script
-**    _contents         Script contents (XML)
+**    _contents         Script contents (XML as text)
 **    _mode             'add' or 'update'
 **    _message          Status message
 **    _returnCode       Return code
