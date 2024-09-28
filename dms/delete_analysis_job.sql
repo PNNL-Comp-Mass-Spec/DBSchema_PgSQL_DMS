@@ -1,6 +1,51 @@
 --
+-- Name: delete_analysis_job(integer, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+--
+-- Overload 1
+
+CREATE OR REPLACE PROCEDURE public.delete_analysis_job(IN _job integer, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
+/****************************************************
+**
+**  Desc:
+**      Delete the given analysis job from t_analysis_job and all related tables
+**
+**      This procedure is an overload of the procedure that accepts job number as text
+**
+**  Arguments:
+**    _job              Analysis job to delete
+**    _infoOnly         When true, preview the deletes
+**    _message          Status message
+**    _returnCode       Return code
+**    _callingUser      Username of the calling user
+**
+**  Auth:   mem
+**  Date:   09/27/2024 mem - Initial version
+**
+*****************************************************/
+DECLARE
+BEGIN
+    _message := '';
+    _returnCode := '';
+
+    CALL public.delete_analysis_job (
+        _job         => _job::text,
+        _infoOnly    => _infoOnly,
+        _message     => _message,       -- Output
+        _returnCode  => _returnCode,    -- Output
+        _callingUser => _callingUser
+    );
+END
+$$;
+
+
+ALTER PROCEDURE public.delete_analysis_job(IN _job integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+
+--
 -- Name: delete_analysis_job(text, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
+-- Overload 2
 
 CREATE OR REPLACE PROCEDURE public.delete_analysis_job(IN _job text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
     LANGUAGE plpgsql
