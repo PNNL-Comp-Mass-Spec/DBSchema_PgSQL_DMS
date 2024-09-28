@@ -180,8 +180,13 @@ DECLARE
     _rowValue citext;
     _rowParsed boolean;
     _field citext;
+    _modMassText citext;
+    _modEnabled citext;
+    _modNameDiann citext;
+    _modTitle citext;
     _affectedResidues citext;
     _modType citext;
+    _modTypeMSGFPlus citext;
     _modTypeSymbol citext;
     _massCorrectionID int;
     _modTypeSymbolToStore citext;
@@ -569,6 +574,14 @@ BEGIN
 
     _exitProcedure := false;
 
+    If _infoOnly Then
+        SELECT COUNT(*)
+        INTO _rowCount
+        FROM Tmp_Mods;
+
+        RAISE INFO 'Processing % % in Tmp_Mods', _rowCount, public.check_plural(_rowCount, 'row', 'rows');
+    End If;
+
     FOR _row IN
         SELECT Value
         FROM Tmp_Mods
@@ -834,6 +847,7 @@ BEGIN
 
         -- _field should now look something like the following:
         -- StaticMod=None
+        -- StaticMod=57.02146
         -- DynamicMod=None
         -- DynamicMod=O1
         -- DynamicMod=15.9949
@@ -925,21 +939,21 @@ BEGIN
             CONTINUE;
         End If;
 
-        _field := '';
+        _modTypeMSGFPlus := '';
 
         If _paramFileType::citext In ('DiaNN', 'TopPIC', 'MSFragger', 'FragPipe', 'MaxQuant') Then
-            -- Mod defs for these tools don't include 'opt' or 'fix, so we update _field based on _modType
+            -- Mod defs for these tools don't include 'opt' or 'fix, so we update _modTypeMSGFPlus based on _modType
             If _modType = 'DynamicMod' Then
-                _field := 'opt';
+                _modTypeMSGFPlus := 'opt';
             End If;
 
             If _modType = 'StaticMod' Then
-                _field := 'fix';
+                _modTypeMSGFPlus := 'fix';
             End If;
         Else
             -- MS-GF+
             SELECT Trim(Value)
-            INTO _field
+            INTO _modTypeMSGFPlus
             FROM Tmp_ModDef
             WHERE EntryID = 3;
         End If;
@@ -947,7 +961,7 @@ BEGIN
         If _modType = 'DynamicMod' Then
             _modTypeSymbol := 'D';
 
-            If _field <> 'opt' Then
+            If _modTypeMSGFPlus <> 'opt' Then
                 _message := format('DynamicMod entries must have "opt" in the 3rd column of the mod definition; aborting; see row: %s', _row);
                 _returnCode := 'U5312';
 
@@ -961,7 +975,7 @@ BEGIN
         If _modType = 'StaticMod' Then
             _modTypeSymbol := 'S';
 
-            If _field <> 'fix' Then
+            If _modTypeMSGFPlus <> 'fix' Then
                 _message := format('StaticMod entries must have "fix" in the 3rd column of the mod definition; aborting; see row: %s', _row);
                 _returnCode := 'U5313';
 
@@ -1007,21 +1021,21 @@ BEGIN
                 -- DIA-NN parameter file
 
                 SELECT Trim(Value)
-                INTO _field
+                INTO _modNameDiann
                 FROM Tmp_ModDef
                 WHERE EntryID = 1;
 
                 _lookupUniModID := true;
                 _staticCysCarbamidomethyl := false;
 
-                If Not _field SIMILAR TO 'UniMod:[0-9]%' Then
-                    If _field = 'StaticCysCarbamidomethyl' Then
-                        _field := 'UniMod:4';
+                If Not _modNameDiann SIMILAR TO 'UniMod:[0-9]%' Then
+                    If _modNameDiann = 'StaticCysCarbamidomethyl' Then
+                        _modNameDiann := 'UniMod:4';
                         _staticCysCarbamidomethyl := true;
 
                     ElsIf _validateUnimod Then
 
-                        _message := format('Mod name "%s" is not in the expected form (e.g. UniMod:35); see row: %s', _field, _row);
+                        _message := format('Mod name "%s" is not in the expected form (e.g. UniMod:35); see row: %s', _modNameDiann, _row);
                         _returnCode := 'U5314';
 
                         -- Break out of the for loop
@@ -1033,9 +1047,9 @@ BEGIN
                 End If;
 
                 If Not _lookupUniModID Then
-                    _modName := _field;
+                    _modName := _modNameDiann;
                 Else
-                    _uniModIDText := Substring(_field, 8, 100);
+                    _uniModIDText := Substring(_modNameDiann, 8, 100);
                     _uniModID := public.try_cast(_uniModIDText, null::int);
 
                     If _uniModID Is Null Then
@@ -1062,7 +1076,7 @@ BEGIN
                     WHERE Unimod_ID = _uniModID;
 
                     If Not FOUND Then
-                        _message := format('UniMod ID "%s" not found in T_Unimod_Mods; see row: %s', _field, _row);
+                        _message := format('UniMod ID "%s" not found in T_Unimod_Mods; see row: %s', _modNameDiann, _row);
                         _returnCode := 'U5317';
 
                         -- Break out of the for loop
@@ -1200,18 +1214,17 @@ BEGIN
         End If; -- MS-GF+, DIA-NN, and TopPIC
 
         If _paramFileType::citext In ('MSFragger', 'FragPipe') Then
-            -----------------------------------------
-            -- Only process FragPipe modification definition if they are enabled
-            -----------------------------------------
 
             If _paramFileType::citext = 'FragPipe' Then
+                -- Only process FragPipe modification definitions if they are enabled
+
                 SELECT Trim(Value)
-                INTO _field
+                INTO _modEnabled
                 FROM Tmp_ModDef
                 WHERE EntryID = 3;
 
-                If Not _field In ('true', 'false') Then
-                    _message := format('Mod enabled value "%s" is not true or false; see row: %s', _field, _row);
+                If Not _modEnabled In ('true', 'false') Then
+                    _message := format('Mod enabled value "%s" is not true or false; see row: %s', _modEnabled, _row);
                     _returnCode := 'U5324';
 
                     -- Break out of the for loop
@@ -1219,7 +1232,7 @@ BEGIN
                     EXIT;
                 End If;
 
-                If Not public.try_cast(_field, false) Then
+                If Not public.try_cast(_modEnabled, false) Then
                     -- The modification is not enabled
                     -- Skip it
                     CONTINUE;
@@ -1230,15 +1243,17 @@ BEGIN
             -- Determine the Mass_Correction_ID based on the mod mass
             -----------------------------------------
 
+            _modMassText := '';
+
             SELECT Trim(Value)
-            INTO _field
+            INTO _modMassText
             FROM Tmp_ModDef
             WHERE EntryID = 1;
 
-            _modMassToFind := public.try_cast(_field, null::real);
+            _modMassToFind := public.try_cast(_modMassText, null::real);
 
             If _modMassToFind Is Null Then
-                _message := format('Mod mass "%s" is not a number; see row: %s', _field, _row);
+                _message := format('Mod mass "%s" is not a number; see row: %s', _modMassText, _row);
                 _returnCode := 'U5325';
 
                 -- Break out of the for loop
@@ -1250,6 +1265,10 @@ BEGIN
                 -- Likely an undefined static mod, e.g. 'add_T_threonine = 0.0000' or '0.0,T (threonine),true,-1'
                 -- Skip it
                 CONTINUE;
+            End If;
+
+            If _infoOnly Then
+                RAISE INFO '  Look for mod mass %', _modMassToFind;
             End If;
 
             SELECT mass_correction_id, mass_correction_tag, monoisotopic_mass
@@ -1298,7 +1317,6 @@ BEGIN
                 _affectedResidues := '*';
 
             End If;
-
         End If; -- MSFragger and FragPipe
 
         If _paramFileType::citext In ('MaxQuant') Then
@@ -1307,7 +1325,7 @@ BEGIN
             -----------------------------------------
 
             SELECT Trim(Value)
-            INTO _field
+            INTO _modTitle
             FROM Tmp_ModDef
             WHERE EntryID = 1;
 
@@ -1317,10 +1335,10 @@ BEGIN
                    isobaric_mod_ion_number
             INTO _maxQuantModID, _location, _massCorrectionID, _isobaricModIonNumber
             FROM t_maxquant_mods
-            WHERE mod_title = _field;
+            WHERE mod_title = _modTitle;
 
             If Not FOUND Then
-                _message := format('MaxQuant modification not found in t_maxquant_mods: %s', _field);
+                _message := format('MaxQuant modification not found in t_maxquant_mods: %s', _modTitle);
                 _returnCode := 'U5327';
 
                 -- Break out of the for loop
@@ -1329,7 +1347,7 @@ BEGIN
             End If;
 
             If Coalesce(_massCorrectionID, 0) = 0 Then
-                _message := format('Mass Correction ID not defined for MaxQuant modification "%s"; either update table t_maxquant_mods or delete this mod from the XML', _field);
+                _message := format('Mass Correction ID not defined for MaxQuant modification "%s"; either update table t_maxquant_mods or delete this mod from the XML', _modTitle);
                 _returnCode := 'U5328';
 
                 -- Break out of the for loop
