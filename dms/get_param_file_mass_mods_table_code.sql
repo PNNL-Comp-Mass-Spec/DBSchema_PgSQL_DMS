@@ -21,6 +21,7 @@ CREATE OR REPLACE FUNCTION public.get_param_file_mass_mods_table_code(_paramfile
 **  Date:   12/05/2016 mem - Initial version
 **          06/22/2022 mem - Ported to PostgreSQL
 **          05/22/2023 mem - Use format() for string concatenation
+**          09/27/2024 mem - Use view v_param_file_mass_mods_padded
 **
 *****************************************************/
 DECLARE
@@ -29,10 +30,10 @@ DECLARE
     _result text;
 BEGIN
 
-    SELECT table_code_header,
-           string_agg(table_code_row, '<br>' ORDER BY table_code_row)
+    SELECT Replace(table_code_header, ' ', '&nbsp;'),
+           string_agg(Replace(table_code_row, ' ', '&nbsp;'), '<br>' ORDER BY table_code_row)
     INTO _header, _list
-    FROM v_param_file_mass_mods
+    FROM v_param_file_mass_mods_padded
     WHERE param_file_id = _paramFileId
     GROUP BY table_code_header;
 
