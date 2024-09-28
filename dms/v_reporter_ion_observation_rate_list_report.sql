@@ -32,6 +32,8 @@ CREATE VIEW public.v_reporter_ion_observation_rate_list_report AS
     obsrate.channel14,
     obsrate.channel15,
     obsrate.channel16,
+    obsrate.channel17,
+    obsrate.channel18,
     obsrate.channel1_median_intensity AS channel1_intensity,
     obsrate.channel2_median_intensity AS channel2_intensity,
     obsrate.channel3_median_intensity AS channel3_intensity,
@@ -48,6 +50,8 @@ CREATE VIEW public.v_reporter_ion_observation_rate_list_report AS
     obsrate.channel14_median_intensity AS channel14_intensity,
     obsrate.channel15_median_intensity AS channel15_intensity,
     obsrate.channel16_median_intensity AS channel16_intensity,
+    obsrate.channel17_median_intensity AS channel17_intensity,
+    obsrate.channel18_median_intensity AS channel18_intensity,
     obsrate.entered
    FROM (((((public.t_reporter_ion_observation_rates obsrate
      JOIN public.t_analysis_job aj ON ((obsrate.job = aj.job)))
