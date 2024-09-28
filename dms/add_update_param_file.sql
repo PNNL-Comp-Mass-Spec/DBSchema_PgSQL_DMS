@@ -58,6 +58,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_param_file(INOUT _paramfileid inte
 **                         - Use the default value for _maxRows when calling parse_delimited_list_ordered()
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          09/27/2024 mem - Ignore case when resolving the parameter file type name to ID
 **
 *****************************************************/
 DECLARE
@@ -168,9 +169,9 @@ BEGIN
         SELECT param_file_type_id
         INTO _paramFileTypeID
         FROM t_param_file_types
-        WHERE param_file_type = _paramFileType;
+        WHERE param_file_type = _paramFileType::citext;
 
-        If _paramFileTypeID = 0 Then
+        If Not FOUND Then
             _returnCode := 'U5204';
             RAISE EXCEPTION 'ParamFileType is not valid: %', _paramFileType;
         End If;
