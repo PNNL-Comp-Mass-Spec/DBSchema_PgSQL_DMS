@@ -48,16 +48,20 @@ BEGIN
     ---------------------------------------------------
     -- Update archive busy flag for active jobs according to state in public.t_dataset_archive
     --
-    -- Use public.v_get_analysis_jobs_for_archive_busy
-    -- to look for jobs that have dataset archive state:
-    --  1=New, 2=Archive In Progress, 6=Operation Failed, 7=Purge In Progress, or 12=Verification In Progress
+    -- Use public.v_get_analysis_jobs_for_archive_busy to look for jobs that have dataset archive state:
+    -- 1=New, 2=Archive In Progress, 6=Operation Failed, 7=Purge In Progress, or 12=Verification In Progress
+    --
     -- Jobs matching this criterion are deemed 'busy' and thus will get archive_busy set to 1 in sw.t_jobs
     --
-    -- However, if the dataset has been in state 'Archive In Progress' for over 90 minutes, we do not set archive_busy to true
+    -- However, if the dataset has been in state 'Archive In Progress' for an extended period of time, we do not set archive_busy to 1
     -- This is required because MyEMSL can be quite slow at verifying that the uploaded data has been copied to tape
-    -- This logic is defined in view V_GetAnalysisJobsForArchiveBusy
     --
-    -- For QC_Shew datasets, we only exclude jobs if the dataset archive state is 7=Purge In Progress
+    -- Rules for how long a job is delayed from starting based on the dataset archive state:
+    --   If archive_state_id is 1 (archive state "New"), the delay is 1.5 hours since the timestamp in archive_state_last_affected
+    --   If archive_state_id is 2 or 6 ("Archive In Progress" or "Operation Failed"), the delay is 1 hour
+    --   If archive_state_id is 7 or 8 ("Purge In Progress" or "Purge Failed"), the delay is 2 hours
+    --
+    -- For QC_Shew datasets, we only delay jobs if the dataset archive state is 7=Purge In Progress
     --
     -- Prior to May 2012 we also excluded datasets with archive update state: 3=Update In Progress
     -- However, we now allow jobs to run if a dataset has an archive update job running
