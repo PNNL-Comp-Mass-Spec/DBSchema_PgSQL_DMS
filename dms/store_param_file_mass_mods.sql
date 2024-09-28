@@ -159,7 +159,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **                         - Remove unreachable code that previously showed the contents of temp table Tmp_ModDef
 **          01/08/2024 mem - Use the default value for _maxRows when calling parse_delimited_list_ordered()
-**          09/26/2024 mem - Add support for FragPipe mod defs
+**          09/27/2024 mem - Add support for FragPipe mod defs
 **
 *****************************************************/
 DECLARE
@@ -753,11 +753,11 @@ BEGIN
                     ElsIf _residueSymbol = 'C-Term Protein' Then
                         _residueSymbol := ']';
                     ElsIf _residueSymbol SIMILAR TO '[A-Z] \(%' Then
-                        -- _rowKey is similar to 'G (glycine)'
-                        _residueSymbol := Substring(_rowKey, 1, 1);
+                        -- _residueSymbol is similar to 'G (glycine)'
+                        _residueSymbol := Substring(_residueSymbol, 1, 1);
                     ElsIf _residueSymbol SIMILAR TO '[A-Z] *' Then
-                        -- _rowKey is likely 'B ', 'J', 'O', 'U', 'X', or 'Z'
-                        _residueSymbol := Substring(_rowKey, 1, 1);
+                        -- _residueSymbol is likely 'B ', 'J', 'O', 'U', 'X', or 'Z'
+                        _residueSymbol := Substring(_residueSymbol, 1, 1);
                     Else
                         _message := format('Affected residue is not of the expected form for a fixed mod; see row: %s', _row);
                         _returnCode := 'U5321';
@@ -770,7 +770,6 @@ BEGIN
                     UPDATE Tmp_ModDef
                     SET Value = _residueSymbol
                     WHERE EntryID = 2;
-
                 End If;
             End If;
         End If;
