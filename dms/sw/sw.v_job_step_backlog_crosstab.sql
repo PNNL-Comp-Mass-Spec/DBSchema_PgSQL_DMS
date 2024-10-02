@@ -13,6 +13,7 @@ CREATE VIEW sw.v_job_step_backlog_crosstab AS
     COALESCE("DTA_Gen", 0) AS dta_gen,
     COALESCE("DTA_Refinery", 0) AS dta_refinery,
     COALESCE("Formularity", 0) AS formularity,
+    COALESCE("FragPipe", 0) AS fragpipe,
     COALESCE("ICR2LS", 0) AS icr2ls,
     COALESCE("IDM", 0) AS idm,
     COALESCE("IDPicker", 0) AS idpicker,
@@ -53,11 +54,11 @@ CREATE VIEW sw.v_job_step_backlog_crosstab AS
            backlog_count
     FROM sw.v_job_step_backlog_history
     ORDER BY 1,2'::text, 'SELECT unnest(''{Bruker_DA_Export, Cyclops, DataExtractor, DataExtractorSplitFasta, Decon2LS, Decon2LS_V2,
-                     DTA_Gen, DTA_Refinery, Formularity, ICR2LS, IDM, IDPicker, Inspect, LCMSFeatureFinder, LTQ_FTPek,
+                     DTA_Gen, DTA_Refinery, Formularity, FragPipe, ICR2LS, IDM, IDPicker, Inspect, LCMSFeatureFinder, LTQ_FTPek,
                      MASIC_Finnigan, MaxqPeak, MaxqS1, MaxqS2, MaxqS3, MODa, MSAlign, MSAlign_Quant, MSFragger, MSGF,
                      MSGFDB, MSGFPlus, MSPathFinder, MSXML_Gen, Mz_Refinery, NOMSI, PBF_Gen, PepProtProphet,
                      Phospho_FDR_Aggregator, PRIDE_Converter, ProMex, Results_Cleanup, Results_Transfer,
-                     Sequest, SMAQC, ThermoPeakDataExporter, TopFD, TopPIC, XTandem}''::text[])'::text) ct(posting_time timestamp without time zone, "Bruker_DA_Export" integer, "Cyclops" integer, "DataExtractor" integer, "DataExtractorSplitFasta" integer, "Decon2LS" integer, "Decon2LS_V2" integer, "DTA_Gen" integer, "DTA_Refinery" integer, "Formularity" integer, "ICR2LS" integer, "IDM" integer, "IDPicker" integer, "Inspect" integer, "LCMSFeatureFinder" integer, "LTQ_FTPek" integer, "MASIC_Finnigan" integer, "MaxqPeak" integer, "MaxqS1" integer, "MaxqS2" integer, "MaxqS3" integer, "MODa" integer, "MSAlign" integer, "MSAlign_Quant" integer, "MSFragger" integer, "MSGF" integer, "MSGFDB" integer, "MSGFPlus" integer, "MSPathFinder" integer, "MSXML_Gen" integer, "Mz_Refinery" integer, "NOMSI" integer, "PBF_Gen" integer, "PepProtProphet" integer, "Phospho_FDR_Aggregator" integer, "PRIDE_Converter" integer, "ProMex" integer, "Results_Cleanup" integer, "Results_Transfer" integer, "Sequest" integer, "SMAQC" integer, "ThermoPeakDataExporter" integer, "TopFD" integer, "TopPIC" integer, "XTandem" integer);
+                     Sequest, SMAQC, ThermoPeakDataExporter, TopFD, TopPIC, XTandem}''::text[])'::text) ct(posting_time timestamp without time zone, "Bruker_DA_Export" integer, "Cyclops" integer, "DataExtractor" integer, "DataExtractorSplitFasta" integer, "Decon2LS" integer, "Decon2LS_V2" integer, "DTA_Gen" integer, "DTA_Refinery" integer, "Formularity" integer, "FragPipe" integer, "ICR2LS" integer, "IDM" integer, "IDPicker" integer, "Inspect" integer, "LCMSFeatureFinder" integer, "LTQ_FTPek" integer, "MASIC_Finnigan" integer, "MaxqPeak" integer, "MaxqS1" integer, "MaxqS2" integer, "MaxqS3" integer, "MODa" integer, "MSAlign" integer, "MSAlign_Quant" integer, "MSFragger" integer, "MSGF" integer, "MSGFDB" integer, "MSGFPlus" integer, "MSPathFinder" integer, "MSXML_Gen" integer, "Mz_Refinery" integer, "NOMSI" integer, "PBF_Gen" integer, "PepProtProphet" integer, "Phospho_FDR_Aggregator" integer, "PRIDE_Converter" integer, "ProMex" integer, "Results_Cleanup" integer, "Results_Transfer" integer, "Sequest" integer, "SMAQC" integer, "ThermoPeakDataExporter" integer, "TopFD" integer, "TopPIC" integer, "XTandem" integer);
 
 
 ALTER VIEW sw.v_job_step_backlog_crosstab OWNER TO d3l243;

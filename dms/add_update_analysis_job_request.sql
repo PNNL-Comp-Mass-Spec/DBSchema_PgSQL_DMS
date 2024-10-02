@@ -123,6 +123,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_request(IN _datasets 
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          08/12/2024 mem - Do not allow _requesterPRN to be 'pgdms'
+**          09/30/2024 mem - Auto-change _protCollOptionsList to 'seq_direction=decoy,filetype=fasta' when running FragPipe
+**                         - Require that _dataPackageID be defined when using a match between runs workflow file for FragPipe
 **
 *****************************************************/
 DECLARE
@@ -499,11 +501,17 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Assure that we are running a decoy search if using MODa or MSFragger
+        -- Assure that we are running a decoy search if using MODa, FragPipe, or MSFragger
         -- However, if the parameter file contains _NoDecoy in the name, we'll allow @protCollOptionsList to contain Decoy
         ---------------------------------------------------
 
-        If (_toolName ILike 'MODa%' Or _toolName ILike 'MSFragger%') And _protCollOptionsList ILike '%forward%' And Not _paramFileName ILike '%_NoDecoy%' Then
+        If (_toolName ILike 'MODa%' Or
+            _toolName ILike 'FragPipe%' Or
+            _toolName ILike 'MSFragger%'
+           ) And
+           _protCollOptionsList ILike '%forward%' And
+           Not _paramFileName ILike '%_NoDecoy%'
+        Then
             _protCollOptionsList := 'seq_direction=decoy,filetype=fasta';
 
             If Coalesce(_message, '') = '' Then
@@ -612,12 +620,16 @@ BEGIN
         -- If adding/updating a match-between-runs job, require that a data package is defined
         ---------------------------------------------------
 
-        If _toolName ILike 'MSFragger%' And _dataPackageID = 0 And (_settingsFileName ILike '%MatchBetweenRun%' Or _settingsFileName ILike '%MBR%') Then
-            RAISE EXCEPTION 'Use a data package to define datasets when performing a match-between-runs search with MSFragger';
-        End If;
-
         If _toolName ILike 'MaxQuant%'  And _dataPackageID = 0 And (_paramFileName ILike '%MatchBetweenRun%' Or _paramFileName ILike '%MBR%') Then
             RAISE EXCEPTION 'Use a data package to define datasets when performing a match-between-runs search with MaxQuant';
+        End If;
+
+        If _toolName ILike 'FragPipe%' And _dataPackageID = 0 And (_settingsFileName ILike '%MatchBetweenRun%' Or _settingsFileName ILike '%MBR%') Then
+            RAISE EXCEPTION 'Use a data package to define datasets when performing a match-between-runs search with FragPipe';
+        End If;
+
+        If _toolName ILike 'MSFragger%' And _dataPackageID = 0 And (_settingsFileName ILike '%MatchBetweenRun%' Or _settingsFileName ILike '%MBR%') Then
+            RAISE EXCEPTION 'Use a data package to define datasets when performing a match-between-runs search with MSFragger';
         End If;
 
         ---------------------------------------------------

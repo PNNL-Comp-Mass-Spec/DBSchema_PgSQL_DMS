@@ -120,6 +120,7 @@ CREATE OR REPLACE PROCEDURE public.add_analysis_job_group(IN _datasetlist text, 
 **          03/03/2024 mem - Trim whitespace when extracting values from XML
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          09/30/2024 mem - Add support for data package based FragPipe jobs
 **
 *****************************************************/
 DECLARE
@@ -129,7 +130,6 @@ DECLARE
     _authorized boolean;
 
     _deleteCount int;
-    _list text;
     _jobID int;
     _jobIDStart int;
     _jobIDEnd int;
@@ -138,7 +138,6 @@ DECLARE
     _jobCountToBeCreated int := 0;
     _msgForLog text;
     _logErrors boolean := false;
-    _gid int;
     _newUsername citext;
     _slashPos int;
     _datasetCountToRemove int := 0;
@@ -156,29 +155,6 @@ DECLARE
     _centroidMSXML text := '';
     _centroidPeakCountToRetain text := '';
     _cacheFolderRootPath text := '';
-    _msFraggerJavaMemorySize text := '';
-    _databaseSplitCount text := '';
-    _matchBetweenRuns text := '';
-    _autoDefineExperimentGroupWithDatasetName text := '';
-    _autoDefineExperimentGroupWithExperimentName text := '';
-    _runPeptideProphet text := '';
-    _runProteinProphet text := '';
-    _runPercolator text := '';
-    _generatePeptideLevelSummary text := '';
-    _generateProteinLevelSummary text := '';
-    _ms1QuantDisabled text := '';
-    _runFreeQuant text := '';
-    _runIonQuant text := '';
-    _reporterIonMode text := '';
-    _featureDetectionMZTolerance text := '';
-    _featureDetectionRTTolerance text := '';
-    _mbrMinimumCorrelation text := '';
-    _mbrRTTolerance text := '';
-    _mbrIonFdr text := '';
-    _mbrPeptideFdr text := '';
-    _mbrProteinFdr text := '';
-    _normalizeIonIntensities text := '';
-    _minIonsForProteinQuant text := '';
     _pipelineJob int;
     _resultsDirectoryName text;
     _sectionName text;
@@ -306,8 +282,8 @@ BEGIN
         CREATE INDEX IX_Tmp_DatasetInfo_Dataset_Name ON Tmp_DatasetInfo (Dataset_Name);
 
         If _dataPackageID > 0 Then
-            If Not _toolName::citext In ('MaxQuant', 'MSFragger', 'DiaNN') Then
-                _message := format('%s is not a compatible tool for job requests with a data package; the only supported tools are MaxQuant, MSFragger, and DiaNN', _toolName);
+            If Not _toolName::citext In ('MaxQuant', 'FragPipe', 'MSFragger', 'DiaNN') Then
+                _message := format('%s is not a compatible tool for job requests with a data package; the only supported tools are MaxQuant, FragPipe, MSFragger, and DiaNN', _toolName);
                 RAISE EXCEPTION '%', _message;
             End If;
 
@@ -386,11 +362,17 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Assure that we are running a decoy search if using MODa or MSFragger
+        -- Assure that we are running a decoy search if using MODa, FragPipe, or MSFragger
         -- However, if the parameter file contains _NoDecoy in the name, we'll allow @protCollOptionsList to contain Decoy
         ---------------------------------------------------
 
-        If (_toolName ILike 'MODa%' Or _toolName ILike 'MSFragger%') And _protCollOptionsList ILike '%forward%' And Not _paramFileName ILike '%_NoDecoy%' Then
+        If (_toolName ILike 'MODa%' Or
+            _toolName ILike 'FragPipe%' Or
+            _toolName ILike 'MSFragger%'
+           ) And
+           _protCollOptionsList ILike '%forward%' And
+           Not _paramFileName ILike '%_NoDecoy%'
+        Then
             _protCollOptionsList := 'seq_direction=decoy,filetype=fasta';
 
             If Coalesce(_message, '') = '' Then
@@ -592,7 +574,7 @@ BEGIN
 
             _logErrors := true;
 
-            If _toolName::citext In ('MaxQuant', 'MSFragger', 'DiaNN') Then
+            If _toolName::citext In ('MaxQuant', 'FragPipe', 'MSFragger', 'DiaNN') Then
 
                 SELECT param_file_storage_path
                 INTO _paramFileStoragePath
@@ -712,6 +694,10 @@ BEGIN
                     _scriptName := 'MaxQuant_DataPkg';
                 End If;
 
+                If _toolName::citext = 'FragPipe' Then
+                    _scriptName := 'FragPipe_DataPkg';
+                End If;
+
                 If _toolName::citext = 'MSFragger' Then
                     _scriptName := 'MSFragger_DataPkg';
                 End If;
@@ -829,13 +815,11 @@ BEGIN
             End If;
 
             If _numDatasets > 1 Then
-
                 -- Create a new batch
                 INSERT INTO t_analysis_job_batches (batch_description)
                 VALUES ('Auto')
                 RETURNING batch_id
                 INTO _batchID;
-
             End If;
 
             ---------------------------------------------------

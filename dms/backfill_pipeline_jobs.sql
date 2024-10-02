@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE public.backfill_pipeline_jobs(IN _infoonly boolean D
 **          12/01/2023 mem - Ported to PostgreSQL
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          08/23/2024 mem - Query tables directly
+**          09/30/2024 mem - Auto change script FragPipe_DataPkg to FragPipe
 **
 *****************************************************/
 DECLARE
@@ -263,6 +264,10 @@ BEGIN
 
             If _jobInfo.Script SIMILAR TO 'MaxQuant[_]%'::citext Then
                 _jobInfo.Script := 'MaxQuant';
+            End If;
+
+            If _jobInfo.Script SIMILAR TO 'FragPipe[_]%'::citext Then
+                _jobInfo.Script := 'FragPipe';
             End If;
 
             If _jobInfo.Script SIMILAR TO 'MSFragger[_]%'::citext Then

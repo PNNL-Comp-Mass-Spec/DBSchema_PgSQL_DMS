@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION public.get_job_backlog_on_date_by_tool(_targetdate ti
 **
 **  Arguments:
 **    _targetDate       Target date and time,       '2022-04-01 12:00 pm'
-**    _analysisToolID   Tool ID, e.g. 13 = MASIC_Finnigan, 68 = MSGFPlus_MzML, 69 = MSGFPlus_MzML_NoRefine, 83 = TopPIC, 88 = MSFragger, 91 = MaxQuant
+**    _analysisToolID   Tool ID, e.g. 13 = MASIC_Finnigan, 68 = MSGFPlus_MzML, 69 = MSGFPlus_MzML_NoRefine, 83 = TopPIC, 88 = MSFragger, 91 = MaxQuant, 93 = FragPipe
 **
 **  Usage examples:
 **    SELECT get_job_backlog_on_date_by_tool('2022-04-11 12:00 pm', 68);

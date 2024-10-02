@@ -60,6 +60,7 @@ CREATE OR REPLACE PROCEDURE sw.make_local_job_in_broker(IN _scriptname text, IN 
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/11/2023 mem - Only call alter_entered_by_user if _callingUser is not an empty string
+**          09/30/2024 mem - Add support for FragPipe_DataPkg
 **
 *****************************************************/
 DECLARE
@@ -179,7 +180,7 @@ BEGIN
             RAISE EXCEPTION 'Script XML not defined in the contents field of sw.t_scripts for script %', Coalesce(_scriptName, '??');
         End If;
 
-        If _scriptName::citext In ('MultiAlign_Aggregator', 'MaxQuant_DataPkg', 'MSFragger_DataPkg', 'DiaNN_DataPkg') And _dataPackageID = 0 Then
+        If _scriptName::citext In ('MultiAlign_Aggregator', 'MaxQuant_DataPkg', 'FragPipe_DataPkg', 'MSFragger_DataPkg', 'DiaNN_DataPkg') And _dataPackageID = 0 Then
             _returnCode := 'U5215';
             RAISE EXCEPTION '"Data Package ID" must be positive when using script %', _scriptName;
         End If;

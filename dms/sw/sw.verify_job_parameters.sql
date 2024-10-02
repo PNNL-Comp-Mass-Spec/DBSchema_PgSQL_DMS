@@ -52,6 +52,7 @@ CREATE OR REPLACE PROCEDURE sw.verify_job_parameters(INOUT _jobparam text, IN _s
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          02/19/2024 mem - Query tables directly instead of using a view
 **          03/03/2024 mem - Trim whitespace when extracting values from XML
+**          09/30/2024 mem - Add support for FragPipe
 **
 *****************************************************/
 DECLARE
@@ -170,14 +171,18 @@ BEGIN
     -- Cross check to make sure required parameters are defined in Tmp_JobParameters (populated using _paramInput)
     ---------------------------------------------------
 
-    If _scriptName ILike 'MaxQuant%' Or _scriptName ILike 'MSFragger%' Or _scriptName ILike 'DiaNN%' Then
-        -- Verify the MaxQuant, MSFragger, or DiaNN parameter file name
+    If _scriptName ILike 'MaxQuant%' Or _scriptName ILike 'FragPipe%' Or _scriptName ILike 'MSFragger%' Or _scriptName ILike 'DiaNN%' Then
+        -- Verify the MaxQuant, FragPipe, MSFragger, or DiaNN parameter file name
 
         -- Also verify the protein collection (or legacy FASTA file)
         -- For protein collections, will auto-add contaminants if needed
 
         If _scriptName ILike 'MaxQuant%' Then
             _scriptBaseName := 'MaxQuant';
+        End If;
+
+        If _scriptName ILike 'FragPipe%' Then
+            _scriptBaseName := 'FragPipe';
         End If;
 
         If _scriptName ILike 'MSFragger%' Then
@@ -252,8 +257,8 @@ BEGIN
             RETURN;
         End If;
 
-        If _scriptBaseName = 'MSFragger' And _protCollOptionsList <> 'seq_direction=decoy,filetype=fasta' And Not _usingLegacyFASTA Then
-            _message := 'The ProteinOptions parameter must be "seq_direction=decoy,filetype=fasta" for MSFragger jobs';
+        If _scriptBaseName In ('FragPipe', 'MSFragger') And _protCollOptionsList <> 'seq_direction=decoy,filetype=fasta' And Not _usingLegacyFASTA Then
+            _message := format('The ProteinOptions parameter must be "seq_direction=decoy,filetype=fasta" for %s jobs', _scriptBaseName);
             RAISE INFO '%', _message;
 
             _returnCode := 'U5205';

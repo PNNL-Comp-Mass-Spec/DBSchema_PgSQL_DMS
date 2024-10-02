@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE sw.validate_data_package_for_mac_job(IN _datapackage
 **
 **  Arguments:
 **    _dataPackageID    Data package id
-**    _scriptName       Pipeline script name, e.g., MaxQuant, MSFragger, DiaNN, PRIDE_Converter, Phospho_FDR_Aggregator, MAC_iTRAQ, MAC_TMT10Plex
+**    _scriptName       Pipeline script name, e.g., MaxQuant_DataPkg, FragPipe_DataPkg, MSFragger_DataPkg, DiaNN_DataPkg, PRIDE_Converter, Phospho_FDR_Aggregator, MAC_iTRAQ, MAC_TMT10Plex
 **    _tool             Output: tool
 **    _message          Status message
 **    _returnCode       Return code
@@ -35,17 +35,18 @@ CREATE OR REPLACE PROCEDURE sw.validate_data_package_for_mac_job(IN _datapackage
 **          04/06/2018 mem - Allow Phospho_FDR_Aggregator jobs to have multiple MSGF+ jobs for each dataset
 **          06/12/2018 mem - Send _maxLength to Append_To_Text
 **          05/01/2019 mem - Fix typo counting SEQUEST jobs
-**          03/09/2021 mem - Add support for MaxQuant
-**          08/26/2021 mem - Add support for MSFragger
+**          03/09/2021 mem - Add support for MaxQuant_DataPkg
+**          08/26/2021 mem - Add support for MSFragger_DataPkg
 **          10/02/2021 mem - No longer require that DeconTools jobs exist for MAC_iTRAQ jobs (similarly, MAC_TMT10Plex jobs don't need DeconTools)
 **          06/30/2022 mem - Use new parameter file column name
 **          12/07/2022 mem - Include script name in the error message
-**          03/27/2023 mem - Add support for DiaNN
+**          03/27/2023 mem - Add support for DiaNN_DataPkg
 **          07/27/2023 mem - Ported to PostgreSQL
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          10/03/2023 mem - Obtain dataset name from public.t_dataset since it is no longer in dpkg.t_data_package_analysis_jobs
 **                         - Obtain dataset name from public.t_dataset since the name in dpkg.t_data_package_datasets is a cached name and could be an old dataset name
+**          09/30/2024 mem - Add support for FragPipe_DataPkg
 **
 *****************************************************/
 DECLARE
@@ -175,13 +176,18 @@ BEGIN
         FROM Tmp_DataPackageItems
         WHERE SEQUEST >= 1;
 
-        If _scriptName ILike 'MaxQuant%' Or _scriptName ILike 'MSFragger%' Or _scriptName ILike 'DiaNN%' Then
+        If _scriptName ILike 'MaxQuant%' Or _scriptName ILike 'FragPipe%' Or _scriptName ILike 'MSFragger%' Or _scriptName ILike 'DiaNN%' Then
             If _datasetCount = 0 Then
                 _errMsg := format('Data package currently does not have any datasets (script %s)', _scriptName);
             End If;
         End If;
 
-        If Not _scriptName::citext In ('Global_Label-Free_AMT_Tag') And Not _scriptName ILike 'MaxQuant%' And Not _scriptName ILike 'MSFragger%' And Not _scriptName ILike 'DiaNN%' Then
+        If Not _scriptName::citext In ('Global_Label-Free_AMT_Tag') And
+           Not _scriptName ILike 'MaxQuant%' And
+           Not _scriptName ILike 'FragPipe%' And
+           Not _scriptName ILike 'MSFragger%' And
+           Not _scriptName ILike 'DiaNN%'
+        Then
             If _scriptName::citext = 'PRIDE_Converter' Then
                 If _msgfPlusCountOneOrMore > 0 Then
                     _tool := 'msgfplus';

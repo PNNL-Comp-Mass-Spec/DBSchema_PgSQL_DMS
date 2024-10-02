@@ -55,6 +55,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_request_datasets(IN _au
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/13/2023 mem - Update return codes to be 'U6251' through 'U6255'
 **          01/03/2024 mem - Update warning message
+**          09/30/2024 mem - Add support for FragPipe
 **
 *****************************************************/
 DECLARE
@@ -281,7 +282,7 @@ BEGIN
 
     ---------------------------------------------------
     -- Do not allow high res datasets to be mixed with low res datasets
-    -- (though this is OK if the tool is MSXML_Gen, MaxQuant, MSFragger, or DiaNN)
+    -- (though this is OK if the tool is MSXML_Gen, MaxQuant, FragPipe, MSFragger, or DiaNN)
     ---------------------------------------------------
 
     SELECT COUNT(Dataset_Name)
@@ -296,7 +297,10 @@ BEGIN
     WHERE Dataset_Type LIKE 'MS%' OR
           Dataset_Type LIKE 'IMS-MS%';
 
-    If _hmsCount > 0 And _msCount > 0 And Not _toolName::citext In ('MSXML_Gen', 'MaxQuant', 'MSFragger', 'DiaNN') Then
+    If _hmsCount > 0 And
+       _msCount > 0 And
+       Not _toolName::citext In ('MSXML_Gen', 'MaxQuant', 'FragPipe', 'MSFragger', 'DiaNN')
+    Then
         _message := format('You cannot mix high-res MS datasets with low-res datasets; create separate analysis job requests. '
                            'You currently have %s high res (HMS) and %s low res (MS) datasets', _hmsCount, _msCount);
 

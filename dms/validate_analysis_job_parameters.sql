@@ -114,6 +114,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_parameters(IN _toolname
 **          12/11/2023 mem - Remove unnecessary _trimWhitespace argument when calling validate_na_parameter
 **          01/03/2024 mem - Update warning messages
 **          03/03/2024 mem - Trim whitespace when extracting values from XML
+**          09/30/2024 mem - Add support for FragPipe
 **
 *****************************************************/
 DECLARE
@@ -306,6 +307,7 @@ BEGIN
 
             ElsIf _mode = 'reset' And (_toolName::citext SIMILAR TO 'MAC[_]%' Or
                                        _toolName::citext = 'MaxQuant_DataPkg' Or
+                                       _toolName::citext = 'FragPipe_DataPkg' Or
                                        _toolName::citext = 'MSFragger_DataPkg' Or
                                        _toolName::citext = 'DiaNN_DataPkg'
                                       ) Then

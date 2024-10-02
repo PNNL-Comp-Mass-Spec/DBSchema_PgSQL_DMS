@@ -252,15 +252,16 @@ BEGIN
         If _mode::citext In ('add', 'previewAdd') Then
             ---------------------------------------------------
             -- Is data package set up correctly for the job?
+            --
+            -- Validate scripts that reference a data package, including MaxQuant_DataPkg, FragPipe_DataPkg, MSFragger_DataPkg,
+            -- DiaNN_DataPkg, PRIDE_Converter, Phospho_FDR_Aggregator, MAC_iTRAQ, MAC_TMT10Plex, and Isobaric_Labeling
             ---------------------------------------------------
-
-            -- Validate scripts that reference a data package, including MaxQuant, MSFragger, DiaNN, PRIDE_Converter, Phospho_FDR_Aggregator, MAC_iTRAQ, MAC_TMT10Plex, and Isobaric_Labeling
 
             CALL sw.validate_data_package_for_mac_job (
                         _dataPackageID,
                         _scriptName,
                         _tool,                          -- Output
-                        _message   => _msg,             -- Output
+                        _message    => _msg,            -- Output
                         _returnCode => _returnCode);    -- Output
 
 

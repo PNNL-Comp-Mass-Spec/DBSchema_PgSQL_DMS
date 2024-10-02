@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION public.find_duplicate_param_files(_paramfilenamefilte
 **
 **  Arguments:
 **    _paramFileNameFilter              One or more parameter file name specifiers, separated by commas (names can contain % as a wildcard)
-**    _paramFileTypeList                Parameter file type: 'MSGFPlus', 'MaxQuant', 'MSFragger', 'XTandem', etc.
+**    _paramFileTypeList                Parameter file type: 'MSGFPlus', 'MaxQuant', 'FragPipe', 'MSFragger', 'DiaNN', etc.
 **    _ignoreParentMassType             When true, ignore 'ParentMassType' differences in t_param_entries (only applies to SEQUEST parameter files, which were retired in 2019)
 **    _considerInsignificantParameters  When true, also compare 'ShowFragmentIons', 'NumberOfDescriptionLines', 'NumberOfOutputLines', and 'NumberOfResultsToProcess' (only applies to SEQUEST parameter files, which were retired in 2019)
 **    _checkValidOnly                   When true, ignore parameter files with Valid = 0

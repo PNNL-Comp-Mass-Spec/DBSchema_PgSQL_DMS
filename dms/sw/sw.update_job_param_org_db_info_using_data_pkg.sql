@@ -29,14 +29,15 @@ CREATE OR REPLACE PROCEDURE sw.update_job_param_org_db_info_using_data_pkg(IN _j
 **  Date:   03/20/2012 mem - Initial version
 **          09/11/2012 mem - Updated warning message used when data package does not have any jobs with a protein collection or standalone (legacy) fasta file
 **          08/14/2013 mem - Now using the job script name which is used to decide whether or not to report a warning via _message
-**          03/09/2021 mem - Add support for MaxQuant
-**          01/31/2022 mem - Add support for MSFragger
+**          03/09/2021 mem - Add support for MaxQuant_DataPkg
+**          01/31/2022 mem - Add support for MSFragger_DataPkg
 **                         - Add parameters _debugMode and _scriptNameForDebug
-**          03/27/2023 mem - Add support for DiaNN
+**          03/27/2023 mem - Add support for DiaNN_DataPkg
 **          07/26/2023 mem - Ported to PostgreSQL
 **          07/27/2023 mem - Switch from using view V_Get_Pipeline_Job_Parameters to directly querying tables
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          09/30/2024 mem - Add support for FragPipe_DataPkg
 **
 *****************************************************/
 DECLARE
@@ -113,7 +114,12 @@ BEGIN
         End If;
     End If;
 
-    If _dataPackageID > 0 And Not _scriptName ILike 'MaxQuant%' And Not _scriptName ILike 'MSFragger%' And Not _scriptName ILike 'DiaNN%' Then
+    If _dataPackageID > 0 And
+        Not _scriptName ILike 'MaxQuant%' And
+        Not _scriptName ILike 'FragPipe%' And
+        Not _scriptName ILike 'MSFragger%' And
+        Not _scriptName ILike 'DiaNN%'
+    Then
         -- The script is one of the following:
         --   MAC_iTRAQ
         --   MAC_TMT10Plex

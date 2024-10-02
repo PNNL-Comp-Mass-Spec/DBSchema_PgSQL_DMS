@@ -7,8 +7,10 @@ CREATE VIEW public.v_analysis_job_backlog_crosstab AS
     sum("MSGFPlus") AS "MSGFPlus",
     sum("MSGFPlus_SplitFASTA") AS "MSGFPlus_SplitFASTA",
     sum("Decon2LS_V2") AS "Decon2LS_V2",
+    sum("DiaNN") AS "DiaNN",
     sum("MASIC_Finnigan") AS "MASIC_Finnigan",
     sum("MaxQuant") AS "MaxQuant",
+    sum("FragPipe") AS "FragPipe",
     sum("MSFragger") AS "MSFragger",
     sum("MSAlign") AS "MSAlign",
     sum("MSPathFinder") AS "MSPathFinder",
@@ -29,6 +31,10 @@ CREATE VIEW public.v_analysis_job_backlog_crosstab AS
                     ELSE (0)::bigint
                 END AS "Decon2LS_V2",
                 CASE
+                    WHEN (v_analysis_job_backlog_history.analysis_tool OPERATOR(public.=) 'DiaNN'::public.citext) THEN v_analysis_job_backlog_history.backlog_count
+                    ELSE (0)::bigint
+                END AS "DiaNN",
+                CASE
                     WHEN (v_analysis_job_backlog_history.analysis_tool OPERATOR(public.=) 'MASIC_Finnigan'::public.citext) THEN v_analysis_job_backlog_history.backlog_count
                     ELSE (0)::bigint
                 END AS "MASIC_Finnigan",
@@ -36,6 +42,10 @@ CREATE VIEW public.v_analysis_job_backlog_crosstab AS
                     WHEN (v_analysis_job_backlog_history.analysis_tool OPERATOR(public.=) 'MaxQuant'::public.citext) THEN v_analysis_job_backlog_history.backlog_count
                     ELSE (0)::bigint
                 END AS "MaxQuant",
+                CASE
+                    WHEN (v_analysis_job_backlog_history.analysis_tool OPERATOR(public.=) 'FragPipe'::public.citext) THEN v_analysis_job_backlog_history.backlog_count
+                    ELSE (0)::bigint
+                END AS "FragPipe",
                 CASE
                     WHEN (v_analysis_job_backlog_history.analysis_tool OPERATOR(public.=) 'MSFragger'::public.citext) THEN v_analysis_job_backlog_history.backlog_count
                     ELSE (0)::bigint
