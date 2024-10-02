@@ -28,6 +28,7 @@ COPY public.t_param_file_types (param_file_type_id, param_file_type, primary_too
 1010	Decon2LS	16
 1035	DiaNN	92
 1030	Formularity	81
+1036	FragPipe	93
 1024	GlyQ-IQ	66
 1012	Inspect	20
 1006	LTQ_FTPek	12

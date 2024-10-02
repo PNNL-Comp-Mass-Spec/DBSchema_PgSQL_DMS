@@ -35,6 +35,7 @@ COPY public.t_analysis_tool (analysis_tool_id, analysis_tool, tool_base_name, pa
 81	Formularity_Bruker	Formularity	1030	\\\\gigasax\\DMS_Parameter_Files\\Formularity	G:\\DMS_Parameter_Files\\Formularity	Formularity_DefSettings.xml	FRM_Search	no	0	(na)	0	N	\N	0	1	1
 87	Formularity_Bruker_Decon	Formularity	1030	\\\\gigasax\\DMS_Parameter_Files\\Formularity	G:\\DMS_Parameter_Files\\Formularity	Formularity_DefSettings.xml	FRM_Search	no	1	\N	0	N	\N	0	1	1
 85	Formularity_Thermo	Formularity	1030	\\\\gigasax\\DMS_Parameter_Files\\Formularity	G:\\DMS_Parameter_Files\\Formularity	Formularity_DefSettings.xml	FRM_Search	no	1	(na)	0	N	\N	0	1	1
+93	FragPipe	FragPipe	1036	\\\\gigasax\\DMS_Parameter_Files\\FragPipe	G:\\DMS_Parameter_Files\\FragPipe	??	MSF_Peptide_Hit	no	1	mzML	1	N	\N	0	1	1
 57	Global_Label-Free_AMT_Tag	Broker_Job	1	(na)	(na)	(na)	\N	no	0	(na)	0	N	\N	0	0	0
 66	GlyQ-IQ	GlyQ-IQ	1024	\\\\gigasax\\DMS_Parameter_Files\\GlyQ-IQ	G:\\DMS_Parameter_Files\\GlyQ-IQ	GlyQIQ_HPC.xml	Gly_ID	no	0	(na)	0	N	\N	0	1	1
 2	ICR2LS	ICR2LS	1003	\\\\gigasax\\DMS_Parameter_Files\\ICR2LS	G:\\DMS_Parameter_Files\\ICR2LS	FTICRDefSettings.txt	HMMA_Peak	yes	0	(na)	0	N	\N	0	1	1

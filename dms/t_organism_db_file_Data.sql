@@ -3967,6 +3967,21 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 2857	Hopland_soil_SIPderep_part_TrypPigBov_2018-01-19_25x_24.fasta	31	Auto-created	0	8667	2473487	1	5945	2018-01-19 14:56:00
 2858	Hopland_soil_SIPderep_part_TrypPigBov_2018-01-19_25x_25.fasta	31	Auto-created	0	8618	2473710	1	5934	2018-01-19 14:56:00
 3671	Hopland_soil_metagenome_LBL_Karoz_07_2018_TryPigBov_2018-07-25.fasta	31	files provide by Ulas Karaoz <ukaraoz@lbl.gov>	1	4121122	1246515321	1	2.178828e+06	2018-07-25 16:42:00
+8693	Hopland_soil_metagenome_LBL_Karoz_07_2018_TryPigBov_2018-07-25_15x_01.fasta	31	Auto-created	0	274388	83100103	1	141822	2024-09-25 17:33:47.801504
+8694	Hopland_soil_metagenome_LBL_Karoz_07_2018_TryPigBov_2018-07-25_15x_02.fasta	31	Auto-created	0	275229	83100627	1	141840	2024-09-25 17:33:47.822759
+8695	Hopland_soil_metagenome_LBL_Karoz_07_2018_TryPigBov_2018-07-25_15x_03.fasta	31	Auto-created	0	275324	83101441	1	141971	2024-09-25 17:33:47.830417
+8696	Hopland_soil_metagenome_LBL_Karoz_07_2018_TryPigBov_2018-07-25_15x_04.fasta	31	Auto-created	0	274755	83100823	1	141809	2024-09-25 17:33:47.835409
+8697	Hopland_soil_metagenome_LBL_Karoz_07_2018_TryPigBov_2018-07-25_15x_05.fasta	31	Auto-created	0	274969	83101131	1	141890	2024-09-25 17:33:48.04596
+8698	Hopland_soil_metagenome_LBL_Karoz_07_2018_TryPigBov_2018-07-25_15x_06.fasta	31	Auto-created	0	274832	83101056	1	141887	2024-09-25 17:33:48.169915
+8699	Hopland_soil_metagenome_LBL_Karoz_07_2018_TryPigBov_2018-07-25_15x_07.fasta	31	Auto-created	0	275427	83101290	1	141931	2024-09-25 17:33:48.177977
+8700	Hopland_soil_metagenome_LBL_Karoz_07_2018_TryPigBov_2018-07-25_15x_08.fasta	31	Auto-created	0	274813	83100725	1	141870	2024-09-25 17:33:48.182981
+8701	Hopland_soil_metagenome_LBL_Karoz_07_2018_TryPigBov_2018-07-25_15x_09.fasta	31	Auto-created	0	274528	83101551	1	141785	2024-09-25 17:33:48.187875
+8702	Hopland_soil_metagenome_LBL_Karoz_07_2018_TryPigBov_2018-07-25_15x_10.fasta	31	Auto-created	0	274286	83100320	1	141750	2024-09-25 17:33:48.19286
+8703	Hopland_soil_metagenome_LBL_Karoz_07_2018_TryPigBov_2018-07-25_15x_11.fasta	31	Auto-created	0	274373	83101407	1	141841	2024-09-25 17:33:48.197614
+8704	Hopland_soil_metagenome_LBL_Karoz_07_2018_TryPigBov_2018-07-25_15x_12.fasta	31	Auto-created	0	274972	83101328	1	141871	2024-09-25 17:33:48.202385
+8705	Hopland_soil_metagenome_LBL_Karoz_07_2018_TryPigBov_2018-07-25_15x_13.fasta	31	Auto-created	0	274310	83100813	1	141791	2024-09-25 17:33:48.207199
+8706	Hopland_soil_metagenome_LBL_Karoz_07_2018_TryPigBov_2018-07-25_15x_14.fasta	31	Auto-created	0	274685	83101543	1	141887	2024-09-25 17:33:48.212022
+8707	Hopland_soil_metagenome_LBL_Karoz_07_2018_TryPigBov_2018-07-25_15x_15.fasta	31	Auto-created	0	274231	83101163	1	141815	2024-09-25 17:33:48.216999
 3725	Hopland_soil_metagenome_LBL_Karoz_07_2018_TryPigBov_2018-07-25_25x_01.fasta	31	Auto-created	0	164614	49860058	1	85070	2018-08-14 10:04:00
 3726	Hopland_soil_metagenome_LBL_Karoz_07_2018_TryPigBov_2018-07-25_25x_02.fasta	31	Auto-created	0	165625	49859858	1	85195	2018-08-14 10:04:00
 3727	Hopland_soil_metagenome_LBL_Karoz_07_2018_TryPigBov_2018-07-25_25x_03.fasta	31	Auto-created	0	165170	49860217	1	85184	2018-08-14 10:04:00
@@ -4869,6 +4884,48 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 4921	Kellogg_SoilMetagenome_annotated_TrypPigBov_2018-09-28_15x_13.fasta	31	Auto-created	0	276191	55610491	1	87157	2018-10-18 19:00:00
 4922	Kellogg_SoilMetagenome_annotated_TrypPigBov_2018-09-28_15x_14.fasta	31	Auto-created	0	276647	55611202	1	87117	2018-10-18 19:00:00
 4923	Kellogg_SoilMetagenome_annotated_TrypPigBov_2018-09-28_15x_15.fasta	31	Auto-created	0	276543	55610775	1	87116	2018-10-18 19:00:00
+8657	Kostka_JGI_PIE_Sediment_Combined_TrypPigBov_2024-09-17.fasta	1846	Combined metaproteome for sediment samples from salt marsh ecosystem Rowley,MA,USA sequenced and annotated at JGI (https://genome.jgi.doe.gov/portal/Metexcmicrobiome/Metexcmicrobiome.info.html)	1	5010135	894123630	1	1.859584e+06	2024-09-17 21:16:29.412359
+8658	Kostka_JGI_PIE_Sediment_Combined_TrypPigBov_2024-09-17_5x_1.fasta	1846	Auto-created	0	1001651	178824621	1	371958	2024-09-18 10:28:21.799725
+8659	Kostka_JGI_PIE_Sediment_Combined_TrypPigBov_2024-09-17_5x_2.fasta	1846	Auto-created	0	1001361	178825108	1	371915	2024-09-18 10:28:21.820658
+8660	Kostka_JGI_PIE_Sediment_Combined_TrypPigBov_2024-09-17_5x_3.fasta	1846	Auto-created	0	1001682	178824698	1	372027	2024-09-18 10:28:21.828578
+8661	Kostka_JGI_PIE_Sediment_Combined_TrypPigBov_2024-09-17_5x_4.fasta	1846	Auto-created	0	1002495	178824546	1	371955	2024-09-18 10:28:21.83571
+8662	Kostka_JGI_PIE_Sediment_Combined_TrypPigBov_2024-09-17_5x_5.fasta	1846	Auto-created	0	1002946	178824657	1	372218	2024-09-18 10:28:21.840605
+8651	Kostka_JGI_PIE_T1P1_sed_Ga0665414_TrypPigBov_2024-09-17.fasta	1846	Metaproteome for sediment sample PIE_T1P1_sed from salt marsh ecosystem Rowley,MA,USA sequenced and annotated at JGI (https://genome.jgi.doe.gov/portal/Metexcmicrobiome/Metexcmicrobiome.info.html)	1	1021170	181178528	1	377856	2024-09-17 21:16:29.396391
+8663	Kostka_JGI_PIE_T1P1_sed_Ga0665414_TrypPigBov_2024-09-17_5x_1.fasta	1846	Auto-created	0	204109	36235721	1	75669	2024-09-18 10:33:21.738163
+8664	Kostka_JGI_PIE_T1P1_sed_Ga0665414_TrypPigBov_2024-09-17_5x_2.fasta	1846	Auto-created	0	203809	36235488	1	75588	2024-09-18 10:33:21.749781
+8665	Kostka_JGI_PIE_T1P1_sed_Ga0665414_TrypPigBov_2024-09-17_5x_3.fasta	1846	Auto-created	0	204512	36235611	1	75701	2024-09-18 10:33:21.754831
+8666	Kostka_JGI_PIE_T1P1_sed_Ga0665414_TrypPigBov_2024-09-17_5x_4.fasta	1846	Auto-created	0	204263	36235544	1	75561	2024-09-18 10:33:21.759435
+8667	Kostka_JGI_PIE_T1P1_sed_Ga0665414_TrypPigBov_2024-09-17_5x_5.fasta	1846	Auto-created	0	204477	36236164	1	75758	2024-09-18 10:33:21.763797
+8652	Kostka_JGI_PIE_T1P3_sed_Ga0665415_TrypPigBov_2024-09-17.fasta	1846	Metaproteome for sediment sample PIE_T1P3_sed from salt marsh ecosystem Rowley,MA,USA sequenced and annotated at JGI (https://genome.jgi.doe.gov/portal/Metexcmicrobiome/Metexcmicrobiome.info.html)	1	846183	153871013	1	316416	2024-09-17 21:16:29.402451
+8668	Kostka_JGI_PIE_T1P3_sed_Ga0665415_TrypPigBov_2024-09-17_5x_1.fasta	1846	Auto-created	0	169679	30774054	1	63498	2024-09-18 10:34:30.534884
+8669	Kostka_JGI_PIE_T1P3_sed_Ga0665415_TrypPigBov_2024-09-17_5x_2.fasta	1846	Auto-created	0	168762	30774065	1	63411	2024-09-18 10:34:30.545866
+8670	Kostka_JGI_PIE_T1P3_sed_Ga0665415_TrypPigBov_2024-09-17_5x_3.fasta	1846	Auto-created	0	169534	30774161	1	63478	2024-09-18 10:34:30.551411
+8671	Kostka_JGI_PIE_T1P3_sed_Ga0665415_TrypPigBov_2024-09-17_5x_4.fasta	1846	Auto-created	0	169098	30774125	1	63473	2024-09-18 10:34:30.556256
+8672	Kostka_JGI_PIE_T1P3_sed_Ga0665415_TrypPigBov_2024-09-17_5x_5.fasta	1846	Auto-created	0	169110	30774608	1	63460	2024-09-18 10:34:30.561166
+8653	Kostka_JGI_PIE_T2P1_sed_Ga0665416_TrypPigBov_2024-09-17.fasta	1846	Metaproteome for sediment sample PIE_T2P1_sed from salt marsh ecosystem Rowley,MA,USA sequenced and annotated at JGI (https://genome.jgi.doe.gov/portal/Metexcmicrobiome/Metexcmicrobiome.info.html)	1	627889	114424024	1	236544	2024-09-17 21:16:29.405245
+8673	Kostka_JGI_PIE_T2P1_sed_Ga0665416_TrypPigBov_2024-09-17_5x_1.fasta	1846	Auto-created	0	125650	22884569	1	47379	2024-09-18 10:36:17.637536
+8674	Kostka_JGI_PIE_T2P1_sed_Ga0665416_TrypPigBov_2024-09-17_5x_2.fasta	1846	Auto-created	0	125616	22884844	1	47428	2024-09-18 10:36:17.648819
+8675	Kostka_JGI_PIE_T2P1_sed_Ga0665416_TrypPigBov_2024-09-17_5x_3.fasta	1846	Auto-created	0	125457	22885046	1	47406	2024-09-18 10:36:17.656418
+8676	Kostka_JGI_PIE_T2P1_sed_Ga0665416_TrypPigBov_2024-09-17_5x_4.fasta	1846	Auto-created	0	125533	22884894	1	47360	2024-09-18 10:36:17.660352
+8677	Kostka_JGI_PIE_T2P1_sed_Ga0665416_TrypPigBov_2024-09-17_5x_5.fasta	1846	Auto-created	0	125633	22884671	1	47412	2024-09-18 10:36:17.664394
+8654	Kostka_JGI_PIE_T2P3_sed_Ga0665417_TrypPigBov_2024-09-17.fasta	1846	Metaproteome for sediment sample PIE_T2P3_sed from salt marsh ecosystem Rowley,MA,USA sequenced and annotated at JGI (https://genome.jgi.doe.gov/portal/Metexcmicrobiome/Metexcmicrobiome.info.html)	1	769621	133763370	1	277504	2024-09-17 21:16:29.407253
+8678	Kostka_JGI_PIE_T2P3_sed_Ga0665417_TrypPigBov_2024-09-17_5x_1.fasta	1846	Auto-created	0	153887	26752711	1	55726	2024-09-18 10:38:20.856952
+8679	Kostka_JGI_PIE_T2P3_sed_Ga0665417_TrypPigBov_2024-09-17_5x_2.fasta	1846	Auto-created	0	153688	26752444	1	55679	2024-09-18 10:38:20.869967
+8680	Kostka_JGI_PIE_T2P3_sed_Ga0665417_TrypPigBov_2024-09-17_5x_3.fasta	1846	Auto-created	0	154221	26752527	1	55722	2024-09-18 10:38:20.875068
+8681	Kostka_JGI_PIE_T2P3_sed_Ga0665417_TrypPigBov_2024-09-17_5x_4.fasta	1846	Auto-created	0	153792	26753106	1	55603	2024-09-18 10:38:20.879549
+8682	Kostka_JGI_PIE_T2P3_sed_Ga0665417_TrypPigBov_2024-09-17_5x_5.fasta	1846	Auto-created	0	154033	26752582	1	55770	2024-09-18 10:38:20.884212
+8655	Kostka_JGI_PIE_T3P1_sed_Ga0665418_TrypPigBov_2024-09-17.fasta	1846	Metaproteome for sediment sample PIE_T3P1_sed from salt marsh ecosystem Rowley,MA,USA sequenced and annotated at JGI (https://genome.jgi.doe.gov/portal/Metexcmicrobiome/Metexcmicrobiome.info.html)	1	835198	145478968	1	305152	2024-09-17 21:16:29.408594
+8683	Kostka_JGI_PIE_T3P1_sed_Ga0665418_TrypPigBov_2024-09-17_5x_1.fasta	1846	Auto-created	0	166869	29095801	1	61156	2024-09-18 10:44:05.295727
+8684	Kostka_JGI_PIE_T3P1_sed_Ga0665418_TrypPigBov_2024-09-17_5x_2.fasta	1846	Auto-created	0	167353	29095485	1	61227	2024-09-18 10:44:05.304681
+8685	Kostka_JGI_PIE_T3P1_sed_Ga0665418_TrypPigBov_2024-09-17_5x_3.fasta	1846	Auto-created	0	166915	29095764	1	61158	2024-09-18 10:44:05.307442
+8686	Kostka_JGI_PIE_T3P1_sed_Ga0665418_TrypPigBov_2024-09-17_5x_4.fasta	1846	Auto-created	0	166931	29096233	1	61209	2024-09-18 10:44:05.309622
+8687	Kostka_JGI_PIE_T3P1_sed_Ga0665418_TrypPigBov_2024-09-17_5x_5.fasta	1846	Auto-created	0	167130	29095685	1	61214	2024-09-18 10:44:05.311674
+8656	Kostka_JGI_PIE_T3P3_sed_Ga0665419_TrypPigBov_2024-09-17.fasta	1846	Metaproteome for sediment sample PIE_T3P3_sed from salt marsh ecosystem Rowley,MA,USA sequenced and annotated at JGI (https://genome.jgi.doe.gov/portal/Metexcmicrobiome/Metexcmicrobiome.info.html)	1	1083165	200114972	1	405504	2024-09-17 21:16:29.410266
+8688	Kostka_JGI_PIE_T3P3_sed_Ga0665419_TrypPigBov_2024-09-17_5x_1.fasta	1846	Auto-created	0	216188	40023333	1	81154	2024-09-18 10:47:57.712259
+8689	Kostka_JGI_PIE_T3P3_sed_Ga0665419_TrypPigBov_2024-09-17_5x_2.fasta	1846	Auto-created	0	216784	40022871	1	81242	2024-09-18 10:47:57.720761
+8690	Kostka_JGI_PIE_T3P3_sed_Ga0665419_TrypPigBov_2024-09-17_5x_3.fasta	1846	Auto-created	0	216673	40023001	1	81164	2024-09-18 10:47:57.723771
+8691	Kostka_JGI_PIE_T3P3_sed_Ga0665419_TrypPigBov_2024-09-17_5x_4.fasta	1846	Auto-created	0	216777	40022800	1	81173	2024-09-18 10:47:57.726396
+8692	Kostka_JGI_PIE_T3P3_sed_Ga0665419_TrypPigBov_2024-09-17_5x_5.fasta	1846	Auto-created	0	216743	40022967	1	81217	2024-09-18 10:47:57.728843
 7006	LCA_ACODB_2040502000_JGI.fasta	1135	Leafcutter ant proteins from JGI	1	1275863	132388602	1	151793	2021-05-28 15:04:00
 7007	LCA_ACODT_2038011000_JGI.fasta	1135	Leafcutter ant proteins from JGI	1	1285907	119879259	1	139453	2021-05-28 15:04:00
 7008	LCA_ATEDB_2032320007_JGI.fasta	1135	Leafcutter ant proteins from JGI	1	524534	55351914	1	63010	2021-05-28 15:04:00
@@ -5781,6 +5838,12 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 5841	Molecular_VC_2500_RNA_viruses_NCBI_Tryp_Pig_Bov_2020-05-01_25x_23.fasta	1517	Auto-created	0	79858	34456504	1	43811	2020-05-01 11:32:00
 5842	Molecular_VC_2500_RNA_viruses_NCBI_Tryp_Pig_Bov_2020-05-01_25x_24.fasta	1517	Auto-created	0	79803	34453559	1	43801	2020-05-01 11:32:00
 5843	Molecular_VC_2500_RNA_viruses_NCBI_Tryp_Pig_Bov_2020-05-01_25x_25.fasta	1517	Auto-created	0	79530	34453173	1	43771	2020-05-01 11:32:00
+8543	Molecular_contigs_combined_oneline_prot_2024-09-06.fasta	31	Hybrid metaG-metaP curated by Ruonan (via Yuqian Gao)	1	2026654	557650818	1	808399	2024-09-06 17:03:46.110009
+8546	Molecular_contigs_combined_oneline_prot_2024-09-06_5x_1.fasta	31	Auto-created	0	405068	111530060	1	164054	2024-09-10 11:59:57.160251
+8547	Molecular_contigs_combined_oneline_prot_2024-09-06_5x_2.fasta	31	Auto-created	0	405505	111530145	1	164106	2024-09-10 11:59:57.17092
+8548	Molecular_contigs_combined_oneline_prot_2024-09-06_5x_3.fasta	31	Auto-created	0	406622	111529930	1	164253	2024-09-10 11:59:57.178812
+8549	Molecular_contigs_combined_oneline_prot_2024-09-06_5x_4.fasta	31	Auto-created	0	404783	111530455	1	164015	2024-09-10 11:59:57.182977
+8550	Molecular_contigs_combined_oneline_prot_2024-09-06_5x_5.fasta	31	Auto-created	0	404676	111530228	1	164003	2024-09-10 11:59:57.195111
 418	MonkeyPox_StoS_2005-03-30.fasta	1013		0	10937	306326	0	1123	2005-03-30 00:00:00
 419	MonkeyPox_StoS_Human_IPI_2005-03-30.fasta	1013		0	60098	22814898	0	29777	2005-03-30 00:00:00
 417	MonkeyPox_StoS_Human_IPI_2005-03-30_reversed.fasta	1013		0	60098	22814898	0	30278	2005-03-30 00:00:00
@@ -5945,6 +6008,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 664	NA2B2_Ds_Polle_EST.fasta	16		1	22234	11295774	1	34800	2013-01-15 11:04:00
 665	NA2B2_Ds_Polle_Scaf.fasta	16		1	48694	85245191	1	254224	2013-01-15 11:02:00
 651	NA2B2_Ds_screen_untrim.fasta	16		1	11520	10225800	1	12125	2012-12-13 16:19:00
+8544	NCBI_RVMT_RvirChina_genome_DB_prot_oneline_rdrp_prot_2024-09-06.fasta	31	Virus protein database (RNA viral marker, rdrp) curated by Ruonan (via Yuqian Gao)	1	133953	112766295	1	125427	2024-09-06 17:03:48.209905
 866	NCBI_Rhizosphere_Plant_Prok_2014-07-10.fasta	1346	A thaliana rhizosphere sequences	1	745696	261730873	1	285107	2014-07-10 17:22:00
 1686	NCBI_Rhizosphere_Plant_Prok_2014-07-10_15x_01.fasta	1346	Auto-created	0	49696	17448647	1	18987	2014-07-10 17:22:00
 1687	NCBI_Rhizosphere_Plant_Prok_2014-07-10_15x_02.fasta	1346	Auto-created	0	49658	17448791	1	18986	2014-07-10 17:22:00
@@ -7577,6 +7641,107 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 551	UniProt_SPROT_bacterial+fungal_2008-10-05.fasta	16	Combination of SWISS-PROT entries for bacterial and fungal sequences	0	207487	71196833	1	100486	2008-09-05 16:45:00
 566	UniProt_SPROT_bacterial_ALLEntries_fungal_decoy_2009-05-28.fasta	16	Comined protein collection of Uniprot SPROT bacterial and Uniprot SPROT and TrEMBL Fungal entries with a decoy twist	0	1313506	263322964	1	699339	2009-05-28 17:47:00
 1485	UniProt_plants_SPROTTrmbl_2016_01_2016-02-01.fasta	16	Pulled from Uniprot Feb 1, 2016	1	3905701	1385535650	1	2.078047e+06	2016-02-01 15:50:00
+8545	UniRef50_NoEukaryotes_2024-09-04.fasta	31	Uniprot bacteria proteins at 50% identity curated by Ruonan (via Yuqian Gao)	1	40744608	10547670224	1	1.5201357e+07	2024-09-06 17:04:26.789566
+8626	UniRef50_NoEukaryotes_2024-09-04_25x_01.fasta	31	Auto-created	0	1630011	421906897	1	617341	2024-09-16 14:39:57.963459
+8627	UniRef50_NoEukaryotes_2024-09-04_25x_02.fasta	31	Auto-created	0	1627183	421906892	1	616994	2024-09-16 14:39:57.984185
+8628	UniRef50_NoEukaryotes_2024-09-04_25x_03.fasta	31	Auto-created	0	1629781	421906988	1	617266	2024-09-16 14:39:57.990051
+8629	UniRef50_NoEukaryotes_2024-09-04_25x_04.fasta	31	Auto-created	0	1630840	421906387	1	617427	2024-09-16 14:39:57.997213
+8630	UniRef50_NoEukaryotes_2024-09-04_25x_05.fasta	31	Auto-created	0	1631768	421906718	1	617557	2024-09-16 14:39:58.003529
+8631	UniRef50_NoEukaryotes_2024-09-04_25x_06.fasta	31	Auto-created	0	1630971	421906775	1	617435	2024-09-16 14:39:58.008021
+8632	UniRef50_NoEukaryotes_2024-09-04_25x_07.fasta	31	Auto-created	0	1625927	421906764	1	616881	2024-09-16 14:39:58.0127
+8633	UniRef50_NoEukaryotes_2024-09-04_25x_08.fasta	31	Auto-created	0	1628238	421906766	1	617123	2024-09-16 14:39:58.017358
+8634	UniRef50_NoEukaryotes_2024-09-04_25x_09.fasta	31	Auto-created	0	1631028	421906867	1	617453	2024-09-16 14:39:58.022049
+8635	UniRef50_NoEukaryotes_2024-09-04_25x_10.fasta	31	Auto-created	0	1630511	421906968	1	617363	2024-09-16 14:39:58.026701
+8636	UniRef50_NoEukaryotes_2024-09-04_25x_11.fasta	31	Auto-created	0	1632007	421906830	1	617575	2024-09-16 14:39:58.031327
+8637	UniRef50_NoEukaryotes_2024-09-04_25x_12.fasta	31	Auto-created	0	1631436	421906617	1	617506	2024-09-16 14:39:58.035954
+8638	UniRef50_NoEukaryotes_2024-09-04_25x_13.fasta	31	Auto-created	0	1628993	421906852	1	617214	2024-09-16 14:39:58.040677
+8639	UniRef50_NoEukaryotes_2024-09-04_25x_14.fasta	31	Auto-created	0	1629351	421906863	1	617246	2024-09-16 14:39:58.045293
+8640	UniRef50_NoEukaryotes_2024-09-04_25x_15.fasta	31	Auto-created	0	1631686	421906623	1	617521	2024-09-16 14:39:58.049891
+8641	UniRef50_NoEukaryotes_2024-09-04_25x_16.fasta	31	Auto-created	0	1628385	421906677	1	617159	2024-09-16 14:39:58.05466
+8642	UniRef50_NoEukaryotes_2024-09-04_25x_17.fasta	31	Auto-created	0	1628200	421906690	1	617121	2024-09-16 14:39:58.059323
+8643	UniRef50_NoEukaryotes_2024-09-04_25x_18.fasta	31	Auto-created	0	1631502	421906747	1	617518	2024-09-16 14:39:58.063992
+8644	UniRef50_NoEukaryotes_2024-09-04_25x_19.fasta	31	Auto-created	0	1629509	421906908	1	617261	2024-09-16 14:39:58.06859
+8645	UniRef50_NoEukaryotes_2024-09-04_25x_20.fasta	31	Auto-created	0	1630461	421907659	1	617342	2024-09-16 14:39:58.073292
+8646	UniRef50_NoEukaryotes_2024-09-04_25x_21.fasta	31	Auto-created	0	1629499	421906803	1	617285	2024-09-16 14:39:58.078061
+8647	UniRef50_NoEukaryotes_2024-09-04_25x_22.fasta	31	Auto-created	0	1629823	421906391	1	617328	2024-09-16 14:39:58.082762
+8648	UniRef50_NoEukaryotes_2024-09-04_25x_23.fasta	31	Auto-created	0	1629428	421906863	1	617281	2024-09-16 14:39:58.087453
+8649	UniRef50_NoEukaryotes_2024-09-04_25x_24.fasta	31	Auto-created	0	1629279	421906881	1	617244	2024-09-16 14:39:58.091988
+8650	UniRef50_NoEukaryotes_2024-09-04_25x_25.fasta	31	Auto-created	0	1628791	421906798	1	617170	2024-09-16 14:39:58.096578
+8551	UniRef50_NoEukaryotes_2024-09-04_75x_01.fasta	31	Auto-created	0	543407	140635889	1	205778	2024-09-10 12:25:33.231001
+8552	UniRef50_NoEukaryotes_2024-09-04_75x_02.fasta	31	Auto-created	0	544239	140635595	1	205876	2024-09-10 12:25:33.248458
+8553	UniRef50_NoEukaryotes_2024-09-04_75x_03.fasta	31	Auto-created	0	542169	140635689	1	205646	2024-09-10 12:25:33.255623
+8554	UniRef50_NoEukaryotes_2024-09-04_75x_04.fasta	31	Auto-created	0	542203	140635684	1	205636	2024-09-10 12:25:33.259547
+8555	UniRef50_NoEukaryotes_2024-09-04_75x_05.fasta	31	Auto-created	0	543315	140635687	1	205785	2024-09-10 12:25:33.263471
+8556	UniRef50_NoEukaryotes_2024-09-04_75x_06.fasta	31	Auto-created	0	542021	140635769	1	205645	2024-09-10 12:25:33.267103
+8557	UniRef50_NoEukaryotes_2024-09-04_75x_07.fasta	31	Auto-created	0	543071	140635363	1	205725	2024-09-10 12:25:33.270667
+8558	UniRef50_NoEukaryotes_2024-09-04_75x_08.fasta	31	Auto-created	0	543293	140635469	1	205769	2024-09-10 12:25:33.274249
+8559	UniRef50_NoEukaryotes_2024-09-04_75x_09.fasta	31	Auto-created	0	543138	140635696	1	205754	2024-09-10 12:25:33.277856
+8560	UniRef50_NoEukaryotes_2024-09-04_75x_10.fasta	31	Auto-created	0	544595	140635589	1	205910	2024-09-10 12:25:33.28283
+8561	UniRef50_NoEukaryotes_2024-09-04_75x_11.fasta	31	Auto-created	0	543260	140635393	1	205752	2024-09-10 12:25:33.287719
+8562	UniRef50_NoEukaryotes_2024-09-04_75x_12.fasta	31	Auto-created	0	542952	140635555	1	205733	2024-09-10 12:25:33.293059
+8563	UniRef50_NoEukaryotes_2024-09-04_75x_13.fasta	31	Auto-created	0	543749	140635592	1	205813	2024-09-10 12:25:33.298079
+8564	UniRef50_NoEukaryotes_2024-09-04_75x_14.fasta	31	Auto-created	0	542771	140635391	1	205711	2024-09-10 12:25:33.303282
+8565	UniRef50_NoEukaryotes_2024-09-04_75x_15.fasta	31	Auto-created	0	543185	140635737	1	205772	2024-09-10 12:25:33.308284
+8566	UniRef50_NoEukaryotes_2024-09-04_75x_16.fasta	31	Auto-created	0	542462	140635016	1	205666	2024-09-10 12:25:33.313135
+8567	UniRef50_NoEukaryotes_2024-09-04_75x_17.fasta	31	Auto-created	0	544042	140635912	1	205861	2024-09-10 12:25:33.317987
+8568	UniRef50_NoEukaryotes_2024-09-04_75x_18.fasta	31	Auto-created	0	543237	140635900	1	205790	2024-09-10 12:25:33.321564
+8569	UniRef50_NoEukaryotes_2024-09-04_75x_19.fasta	31	Auto-created	0	542685	140635529	1	205708	2024-09-10 12:25:33.325147
+8570	UniRef50_NoEukaryotes_2024-09-04_75x_20.fasta	31	Auto-created	0	542958	140635375	1	205720	2024-09-10 12:25:33.3286
+8571	UniRef50_NoEukaryotes_2024-09-04_75x_21.fasta	31	Auto-created	0	542954	140635626	1	205739	2024-09-10 12:25:33.332042
+8572	UniRef50_NoEukaryotes_2024-09-04_75x_22.fasta	31	Auto-created	0	543738	140635659	1	205829	2024-09-10 12:25:33.335475
+8573	UniRef50_NoEukaryotes_2024-09-04_75x_23.fasta	31	Auto-created	0	543933	140635330	1	205833	2024-09-10 12:25:33.338822
+8574	UniRef50_NoEukaryotes_2024-09-04_75x_24.fasta	31	Auto-created	0	543020	140635603	1	205730	2024-09-10 12:25:33.342209
+8575	UniRef50_NoEukaryotes_2024-09-04_75x_25.fasta	31	Auto-created	0	540984	140635793	1	205513	2024-09-10 12:25:33.345601
+8576	UniRef50_NoEukaryotes_2024-09-04_75x_26.fasta	31	Auto-created	0	544380	140635184	1	205892	2024-09-10 12:25:33.348946
+8577	UniRef50_NoEukaryotes_2024-09-04_75x_27.fasta	31	Auto-created	0	545013	140635693	1	205959	2024-09-10 12:25:33.352356
+8578	UniRef50_NoEukaryotes_2024-09-04_75x_28.fasta	31	Auto-created	0	543997	140635671	1	205872	2024-09-10 12:25:33.355732
+8579	UniRef50_NoEukaryotes_2024-09-04_75x_29.fasta	31	Auto-created	0	543885	140635621	1	205846	2024-09-10 12:25:33.359099
+8580	UniRef50_NoEukaryotes_2024-09-04_75x_30.fasta	31	Auto-created	0	543902	140635611	1	205842	2024-09-10 12:25:33.362423
+8581	UniRef50_NoEukaryotes_2024-09-04_75x_31.fasta	31	Auto-created	0	543861	140635702	1	205843	2024-09-10 12:25:33.365835
+8582	UniRef50_NoEukaryotes_2024-09-04_75x_32.fasta	31	Auto-created	0	543759	140635506	1	205820	2024-09-10 12:25:33.369233
+8583	UniRef50_NoEukaryotes_2024-09-04_75x_33.fasta	31	Auto-created	0	542749	140635519	1	205725	2024-09-10 12:25:33.372625
+8584	UniRef50_NoEukaryotes_2024-09-04_75x_34.fasta	31	Auto-created	0	544395	140635568	1	205883	2024-09-10 12:25:33.376041
+8585	UniRef50_NoEukaryotes_2024-09-04_75x_35.fasta	31	Auto-created	0	543597	140635556	1	205811	2024-09-10 12:25:33.379396
+8586	UniRef50_NoEukaryotes_2024-09-04_75x_36.fasta	31	Auto-created	0	542656	140635257	1	205711	2024-09-10 12:25:33.382759
+8587	UniRef50_NoEukaryotes_2024-09-04_75x_37.fasta	31	Auto-created	0	542662	140635224	1	205724	2024-09-10 12:25:33.389179
+8588	UniRef50_NoEukaryotes_2024-09-04_75x_38.fasta	31	Auto-created	0	544151	140635677	1	205854	2024-09-10 12:25:33.392538
+8589	UniRef50_NoEukaryotes_2024-09-04_75x_39.fasta	31	Auto-created	0	543502	140635465	1	205805	2024-09-10 12:25:33.395873
+8590	UniRef50_NoEukaryotes_2024-09-04_75x_40.fasta	31	Auto-created	0	541898	140635686	1	205618	2024-09-10 12:25:33.399201
+8591	UniRef50_NoEukaryotes_2024-09-04_75x_41.fasta	31	Auto-created	0	543409	140636599	1	205762	2024-09-10 12:25:33.402618
+8592	UniRef50_NoEukaryotes_2024-09-04_75x_42.fasta	31	Auto-created	0	542693	140635529	1	205692	2024-09-10 12:25:33.406763
+8593	UniRef50_NoEukaryotes_2024-09-04_75x_43.fasta	31	Auto-created	0	543731	140635438	1	205831	2024-09-10 12:25:33.410373
+8594	UniRef50_NoEukaryotes_2024-09-04_75x_44.fasta	31	Auto-created	0	544126	140635589	1	205863	2024-09-10 12:25:33.413755
+8595	UniRef50_NoEukaryotes_2024-09-04_75x_45.fasta	31	Auto-created	0	543351	140635324	1	205791	2024-09-10 12:25:33.417121
+8596	UniRef50_NoEukaryotes_2024-09-04_75x_46.fasta	31	Auto-created	0	542783	140635609	1	205694	2024-09-10 12:25:33.420505
+8597	UniRef50_NoEukaryotes_2024-09-04_75x_47.fasta	31	Auto-created	0	542392	140635477	1	205655	2024-09-10 12:25:33.42383
+8598	UniRef50_NoEukaryotes_2024-09-04_75x_48.fasta	31	Auto-created	0	542826	140634858	1	205708	2024-09-10 12:25:33.427222
+8599	UniRef50_NoEukaryotes_2024-09-04_75x_49.fasta	31	Auto-created	0	542065	140635907	1	205657	2024-09-10 12:25:33.430633
+8600	UniRef50_NoEukaryotes_2024-09-04_75x_50.fasta	31	Auto-created	0	543293	140635719	1	205761	2024-09-10 12:25:33.434012
+8601	UniRef50_NoEukaryotes_2024-09-04_75x_51.fasta	31	Auto-created	0	544593	140635226	1	205926	2024-09-10 12:25:33.437364
+8602	UniRef50_NoEukaryotes_2024-09-04_75x_52.fasta	31	Auto-created	0	543951	140635515	1	205861	2024-09-10 12:25:33.440739
+8603	UniRef50_NoEukaryotes_2024-09-04_75x_53.fasta	31	Auto-created	0	543157	140635528	1	205751	2024-09-10 12:25:33.444107
+8604	UniRef50_NoEukaryotes_2024-09-04_75x_54.fasta	31	Auto-created	0	542749	140635447	1	205704	2024-09-10 12:25:33.447513
+8605	UniRef50_NoEukaryotes_2024-09-04_75x_55.fasta	31	Auto-created	0	542026	140636181	1	205619	2024-09-10 12:25:33.450926
+8606	UniRef50_NoEukaryotes_2024-09-04_75x_56.fasta	31	Auto-created	0	542582	140635726	1	205690	2024-09-10 12:25:33.454308
+8607	UniRef50_NoEukaryotes_2024-09-04_75x_57.fasta	31	Auto-created	0	544543	140635544	1	205918	2024-09-10 12:25:33.457718
+8608	UniRef50_NoEukaryotes_2024-09-04_75x_58.fasta	31	Auto-created	0	543268	140635760	1	205768	2024-09-10 12:25:33.46112
+8609	UniRef50_NoEukaryotes_2024-09-04_75x_59.fasta	31	Auto-created	0	544372	140635572	1	205912	2024-09-10 12:25:33.464495
+8610	UniRef50_NoEukaryotes_2024-09-04_75x_60.fasta	31	Auto-created	0	542986	140636650	1	205737	2024-09-10 12:25:33.467912
+8611	UniRef50_NoEukaryotes_2024-09-04_75x_61.fasta	31	Auto-created	0	544019	140635491	1	205848	2024-09-10 12:25:33.471412
+8612	UniRef50_NoEukaryotes_2024-09-04_75x_62.fasta	31	Auto-created	0	542238	140635647	1	205679	2024-09-10 12:25:33.474856
+8613	UniRef50_NoEukaryotes_2024-09-04_75x_63.fasta	31	Auto-created	0	543057	140635894	1	205731	2024-09-10 12:25:33.478262
+8614	UniRef50_NoEukaryotes_2024-09-04_75x_64.fasta	31	Auto-created	0	541944	140635189	1	205603	2024-09-10 12:25:33.481622
+8615	UniRef50_NoEukaryotes_2024-09-04_75x_65.fasta	31	Auto-created	0	544034	140635440	1	205832	2024-09-10 12:25:33.48496
+8616	UniRef50_NoEukaryotes_2024-09-04_75x_66.fasta	31	Auto-created	0	543728	140635837	1	205814	2024-09-10 12:25:33.488322
+8617	UniRef50_NoEukaryotes_2024-09-04_75x_67.fasta	31	Auto-created	0	543318	140635617	1	205795	2024-09-10 12:25:33.491711
+8618	UniRef50_NoEukaryotes_2024-09-04_75x_68.fasta	31	Auto-created	0	542813	140635613	1	205727	2024-09-10 12:25:33.495132
+8619	UniRef50_NoEukaryotes_2024-09-04_75x_69.fasta	31	Auto-created	0	542844	140635412	1	205735	2024-09-10 12:25:33.498491
+8620	UniRef50_NoEukaryotes_2024-09-04_75x_70.fasta	31	Auto-created	0	542239	140635896	1	205639	2024-09-10 12:25:33.501855
+8621	UniRef50_NoEukaryotes_2024-09-04_75x_71.fasta	31	Auto-created	0	543909	140635858	1	205830	2024-09-10 12:25:33.505174
+8622	UniRef50_NoEukaryotes_2024-09-04_75x_72.fasta	31	Auto-created	0	544198	140635531	1	205876	2024-09-10 12:25:33.508526
+8623	UniRef50_NoEukaryotes_2024-09-04_75x_73.fasta	31	Auto-created	0	544132	140635729	1	205883	2024-09-10 12:25:33.511868
+8624	UniRef50_NoEukaryotes_2024-09-04_75x_74.fasta	31	Auto-created	0	542748	140635651	1	205721	2024-09-10 12:25:33.515235
+8625	UniRef50_NoEukaryotes_2024-09-04_75x_75.fasta	31	Auto-created	0	542703	140635440	1	205698	2024-09-10 12:25:33.519558
 851	Uniprot_ArchaeaBacteriaFungi_SprotTrembl_2014-4-16_15x_01.fasta	1377	Auto-created	0	1448619	475885863	1	688782	2014-04-21 09:24:00
 852	Uniprot_ArchaeaBacteriaFungi_SprotTrembl_2014-4-16_15x_02.fasta	1377	Auto-created	0	1449041	475886033	1	688665	2014-04-21 09:24:00
 853	Uniprot_ArchaeaBacteriaFungi_SprotTrembl_2014-4-16_15x_03.fasta	1377	Auto-created	0	1449388	475885882	1	688732	2014-04-21 09:24:00
@@ -8220,7 +8385,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 -- Name: t_organism_db_file_org_db_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 8542, true);
+SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 8707, true);
 
 
 --

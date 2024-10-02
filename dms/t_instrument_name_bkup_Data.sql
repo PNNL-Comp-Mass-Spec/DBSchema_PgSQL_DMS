@@ -112,7 +112,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 239	Exploris04	LTQ_FT	Exploris	4631	4849	secfso	Active	BSF 1229	Orbitrap Exploris 480, MS:1003028	2023-11-28 15:37:15
 242	Exploris05	LTQ_FT	Exploris	4657	4857	secfso	Active	BSF 1229	Katrina's PPI (Predictive Phenomics Initiative) instrument; Orbitrap Exploris 480, MS:1003028	2024-01-09 14:29:09
 246	Exploris06	LTQ_FT	Exploris	4733	4846	secfso	Active	EMSL 1526	Orbitrap Exploris 480 purchased by EMSL; MS:1003028,	2024-03-01 11:00:40
-259	Exploris07	LTQ_FT	Exploris	4948	2	secfso	Active	BSF 1215	Vlad's Alzheimer projects instrument; Orbitrap Exploris 480, MS:1003028	2024-08-15 11:09:11.441472
+259	Exploris07	LTQ_FT	Exploris	4948	4949	secfso	Active	BSF 1215	Vlad's Alzheimer projects instrument; Orbitrap Exploris 480, MS:1003028	2024-08-15 11:09:11.441472
 258	ExplorisMX01	LTQ_FT	Exploris	4865	4946	secfso	Active	EMSL 1130	Orbitrap Exploris MX, owned by EMSL	2024-07-03 15:00:57
 175	External_Agilent_QQQ	Agilent_TOF_V2	Agilent_QQQ	3709	3714	fso	Active	Offsite	Agilent triple-quad data acquired offsite	2021-01-19 20:47:37
 185	External_Agilent_QTOF	Agilent_TOF_V2	Agilent_TOF_V2	4073	4079	fso	Active	Offsite	Agilent Q-TOF data acquired offsite	2022-02-25 08:31:43
@@ -267,17 +267,17 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 235	Trillium	LCMSNet_LC	LCMSNet_LC	4586	4929	secfso	Active	EMSL 1142	LCMSNet LC with a VICI M60 infusion pump. Used for LCDatasetCapture tasks.  The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets.	2023-11-06 11:13:36
 115	UNC_VOrbiETD01	LTQ_FT	VelosOrbi	1444	1445	fso	Inactive	UNC (Chapel Hill, NC)	University of North Carolina LTQ-Velos Orbitrap	2014-03-07 15:39:51
 85	VOrbi05	LTQ_FT	VelosOrbi	1009	4872	secfso	Active	EMSL 1429	LTQ Velos with an LTQ Orbitrap Velos (no ETD), MS:1000855	2011-06-02 11:20:25
-58	VOrbiETD01	LTQ_FT	VelosOrbi	257	3857	secfso	Inactive	EMSL 1444	LTQ Velos Pro with an LTQ Orbitrap Velos Pro (supports ETD); for MassIVE, use LTQ Orbitrap Velos (MS:1001742)	2009-08-10 00:00:00
-60	VOrbiETD02	LTQ_FT	VelosOrbi	261	4871	secfso	Inactive	EMSL 1444	LTQ Velos with Orbitrap Elite (upgraded from an Orbitrap in October 2013); for MassIVE, use LTQ Orbitrap Velos (MS:1001742)	2009-12-10 00:00:00
-61	VOrbiETD03	LTQ_FT	VelosOrbi	263	4133	secfso	Inactive	EMSL 1526	LTQ Velos with an LTQ Orbitrap Velos (supports ETD); for MassIVE, use LTQ Orbitrap Velos (MS:1001742)	2010-01-06 00:00:00
-62	VOrbiETD04	LTQ_FT	VelosOrbi	265	3859	secfso	Inactive	EMSL 1526	Velos Pro with an LTQ Orbitrap Velos (supports ETD); for MassIVE, use LTQ Orbitrap Velos (MS:1001742)	2010-01-16 00:00:00
+58	VOrbiETD01	LTQ_FT	VelosOrbi	257	3857	secfso	Inactive	EMSL 1444	LTQ Velos Pro with an LTQ Orbitrap Velos Pro (supports ETD); for MassIVE, use LTQ Orbitrap Velos, MS:1001742	2009-08-10 00:00:00
+60	VOrbiETD02	LTQ_FT	VelosOrbi	261	4871	secfso	Inactive	EMSL 1444	LTQ Velos with Orbitrap Elite (upgraded from an Orbitrap in October 2013); for MassIVE, use LTQ Orbitrap Velos, MS:1001742	2009-12-10 00:00:00
+61	VOrbiETD03	LTQ_FT	VelosOrbi	263	4133	secfso	Inactive	EMSL 1526	LTQ Velos with an LTQ Orbitrap Velos (supports ETD); for MassIVE, use LTQ Orbitrap Velos, MS:1001742	2010-01-06 00:00:00
+62	VOrbiETD04	LTQ_FT	VelosOrbi	265	3859	secfso	Inactive	EMSL 1526	Velos Pro with an LTQ Orbitrap Velos (supports ETD); for MassIVE, use LTQ Orbitrap Velos, MS:1001742	2010-01-16 00:00:00
 93	VPro01	Finnigan_Ion_Trap	VelosPro	1162	1345	secfso	Inactive	EMSL 1621	Velos Pro Ion Trap	2012-07-13 14:11:46
 89	Vanderbilt_VOrbiETD01	LTQ_FT	VelosOrbi	1098	1446	fso	Inactive	VU (Tennessee)	Vanderbilt Institute LTQ-Velos Orbitrap	2012-03-21 13:19:23
 90	WashU_TripleTOF5600	Sciex_TripleTOF	Sciex_TripleTOF	1133	1134	fso	Inactive	WUSL (Washington University in St. Louis)	Data acquired under the CPTAC project	2012-05-14 20:28:39
 174	XevoG2_01	Waters_TOF	Waters_TOF	3536	4888	secfso	Active	BSF 1215	Transfer/Moved from BSEL in September 2020	2020-09-23 12:48:22
 255	timsTOFFlex02	BrukerTOF_TDF	timsTOF_Flex	4863	4943	secfso	Active	EMSL 1444	Bruker timsTOF Flex with ESI source. Also has MALDI imaging capability	2024-07-03 13:46:33
 256	timsTOFFlex02_Imaging	timsTOF_MALDI_Imaging	MALDI_timsTOF_Imaging	4863	4944	secfso	Active	EMSL 1444	Bruker timsTOF Flex with MALDI imaging capability	2024-07-03 13:47:58
-194	timsTOFScp01	BrukerTOF_TDF	timsTOF_SCP	4442	4853	secfso	Active	EMSL 1314	Bruker timsTOF for single cell proteomics	2023-04-19 16:36:27
+194	timsTOFScp01	BrukerTOF_TDF	timsTOF_SCP	4442	4853	secfso	Active	EMSL 1314	Bruker timsTOF for single cell proteomics; for MassIVE, use timsTOF SCP, MS:1003231	2023-04-19 16:36:27
 \.
 
 

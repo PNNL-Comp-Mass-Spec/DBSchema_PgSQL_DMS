@@ -184,10 +184,10 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 1184	Human_Mars_14_50mm_12	Multi Affinity Removal Column	5188-6557	101312277E	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Retired	D3M765	Moonshot Project. See Tao Liu before using., Exp 8/30/23, Resin 0006583844	2021-08-27 13:11:11
 1185	Human_Mars_14_50mm_13	Multi Affinity Removal Column	5188-6557	101312277F	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Retired	D3M765	Moonshot Project. See Tao Liu before using., Exp 8/30/23, Resin 0006583844	2021-08-27 13:11:56
 1186	Human_Mars_14_50mm_14	Multi Affinity Removal Column	5188-6557	101312277G	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Retired	D3M765	Moonshot Project. See Tao Liu before using., Exp 8/30/23, Resin 0006583844	2021-08-27 13:12:44
-1187	Human_Mars_14_50mm_15	Multi Affinity Removal Column	5188-6557	101312277H	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Active	D3M765	Moonshot Project. See Tao Liu before using., Exp 8/30/23, Resin 0006583844	2021-08-27 13:13:39
+1187	Human_Mars_14_50mm_15	Multi Affinity Removal Column	5188-6557	101312277H	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Retired	D3M765	Moonshot Project. See Tao Liu before using., Exp 8/30/23, Resin 0006583844	2021-08-27 13:13:39
 1188	Human_Mars_14_50mm_16	Multi Affinity Removal Column	5188-6557	101312277J	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Active	D3M765	Moonshot Project. See Tao Liu before using., Exp 8/30/23, Resin 0006583844	2021-08-27 13:14:19
-1189	Human_Mars_14_50mm_17	Multi Affinity Removal Column	5188-6557	101312277K	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Active	D3M765	Moonshot Project. See Tao Liu before using., Exp 8/30/23, Resin 0006583844	2021-08-27 13:15:21
-1190	Human_Mars_14_50mm_18	Multi Affinity Removal Column	5188-6557	101312277L	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Active	D3M765	Moonshot Project. See Tao Liu before using., Exp 8/30/23, Resin 0006583844	2021-08-27 13:16:02
+1189	Human_Mars_14_50mm_17	Multi Affinity Removal Column	5188-6557	101312277K	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Retired	D3M765	Moonshot Project. See Tao Liu before using., Exp 8/30/23, Resin 0006583844	2021-08-27 13:15:21
+1190	Human_Mars_14_50mm_18	Multi Affinity Removal Column	5188-6557	101312277L	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Retired	D3M765	Moonshot Project. See Tao Liu before using., Exp 8/30/23, Resin 0006583844	2021-08-27 13:16:02
 1191	Human_Mars_14_50mm_19	Multi Affinity Removal Column	5188-6557	101312277M	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Active	D3M765	Moonshot Project. See Tao Liu before using., Exp 8/30/23, Resin 0006583844	2021-08-27 13:17:01
 1192	Human_Mars_14_50mm_20	Multi Affinity Removal Column	5188-6557	101312277N	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Active	D3M765	Moonshot Project. See Tao Liu before using., Exp 8/30/23, Resin 0006583844	2021-08-27 13:18:02
 1193	Human_Mars_14_50mm_21	Multi Affinity Removal Column	5188-6557	101312277R	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Active	D3M765	Moonshot Project. See Tao Liu before using., Exp 8/30/23, Resin 0006583844	2021-08-27 13:18:42
@@ -213,6 +213,7 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 1213	ZORBAX_013	ZORBAX	custom	USDHP01254	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	Exclusively for MoTrPAC. POC- M. Gritsenko	2024-08-07 11:57:02.601112
 1214	ZORBAX_014	ZORBAX	custom	USDHP01255	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	Exclusively for CPTAC4. POC- M. Gritsenko	2024-08-07 11:57:44.862537
 1215	XBridge_022	Waters XBridge	186003117	02493418613896	Waters	Silica	5 um	C18	4.6 mm	10 mm	250 mm	Active	D3H534	Heather's column. Please ask before using.	2024-08-20 14:25:20.413553
+1216	XBridge_023	Waters XBridge	186003117	02493405212488	Waters	Silica	5 um	C18	4.6 mm	10 mm	250 mm	Active	D3M765	Athena's new column. Please ask before using.	2024-09-03 12:45:18.569008
 \.
 
 
@@ -220,7 +221,7 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 -- Name: t_prep_lc_column_prep_column_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_prep_lc_column_prep_column_id_seq', 1215, true);
+SELECT pg_catalog.setval('public.t_prep_lc_column_prep_column_id_seq', 1216, true);
 
 
 --
