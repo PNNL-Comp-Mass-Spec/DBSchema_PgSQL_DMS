@@ -27,7 +27,7 @@ CREATE VIEW public.v_protein_collection_detail_report AS
     lookupq.type,
     lookupq.source,
     lookupq.annotation_type
-   FROM (( SELECT pc.protein_collection_id,
+   FROM (( SELECT DISTINCT pc.protein_collection_id,
             pc.collection_name,
             pc.description,
             orglist.organism,
@@ -50,7 +50,7 @@ CREATE VIEW public.v_protein_collection_detail_report AS
              JOIN pc.t_protein_collection_types pctypes ON ((pc.collection_type_id = pctypes.collection_type_id)))
              JOIN pc.t_annotation_types antypes ON ((pc.primary_annotation_type_id = antypes.annotation_type_id)))
              JOIN pc.t_naming_authorities auth ON ((auth.authority_id = antypes.authority_id)))
-             LEFT JOIN pc.t_archived_output_files aof ON ((pc.authentication_hash OPERATOR(public.=) aof.authentication_hash)))) lookupq
+             LEFT JOIN pc.t_archived_output_files aof ON (((pc.authentication_hash OPERATOR(public.=) aof.authentication_hash) AND (aof.archived_file_state_id <> 3))))) lookupq
      LEFT JOIN public.t_protein_collection_usage pcu ON ((lookupq.protein_collection_id = pcu.protein_collection_id)))
   GROUP BY lookupq.protein_collection_id, lookupq.collection_name, lookupq.description, lookupq.state, lookupq.entries, lookupq.residues, lookupq.includes_contaminants, lookupq.file_size_mb, lookupq.internal_standard_or_contaminant, lookupq.type, lookupq.source, lookupq.annotation_type, pcu.job_usage_count_last12months, pcu.job_usage_count, pcu.most_recently_used;
 
