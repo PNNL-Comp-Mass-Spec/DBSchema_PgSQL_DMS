@@ -11,6 +11,7 @@ CREATE VIEW sw.v_dms_data_package_datasets AS
     instrument_name,
     instrument_group,
     instrument_class,
+    dataset_type,
     raw_data_type,
     acq_time_start,
     dataset_created,

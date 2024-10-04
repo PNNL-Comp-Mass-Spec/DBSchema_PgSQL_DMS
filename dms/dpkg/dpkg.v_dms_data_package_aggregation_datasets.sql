@@ -11,6 +11,7 @@ CREATE VIEW dpkg.v_dms_data_package_aggregation_datasets AS
     instname.instrument AS instrument_name,
     instname.instrument_group,
     instname.instrument_class,
+    dtn.dataset_type,
     instclass.raw_data_type,
     ds.acq_time_start,
     ds.created AS dataset_created,
@@ -24,8 +25,9 @@ CREATE VIEW dpkg.v_dms_data_package_aggregation_datasets AS
     e.tissue_id AS experiment_tissue_id,
     bto.term_name AS experiment_tissue_name,
     tpd.data_pkg_id AS data_package_id
-   FROM ((((((((((dpkg.t_data_package_datasets tpd
+   FROM (((((((((((dpkg.t_data_package_datasets tpd
      JOIN public.t_dataset ds ON ((tpd.dataset_id = ds.dataset_id)))
+     JOIN public.t_dataset_type_name dtn ON ((ds.dataset_type_id = dtn.dataset_type_id)))
      JOIN public.v_dataset_folder_paths dfp ON ((dfp.dataset_id = ds.dataset_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
      JOIN public.t_instrument_class instclass ON ((instname.instrument_class OPERATOR(public.=) instclass.instrument_class)))
@@ -43,7 +45,7 @@ ALTER VIEW dpkg.v_dms_data_package_aggregation_datasets OWNER TO d3l243;
 -- Name: VIEW v_dms_data_package_aggregation_datasets; Type: COMMENT; Schema: dpkg; Owner: d3l243
 --
 
-COMMENT ON VIEW dpkg.v_dms_data_package_aggregation_datasets IS 'Note that this view is used by sw.V_DMS_Data_Package_Datasets, and the PRIDE converter plugin uses that view to retrieve metadata for data package datasets';
+COMMENT ON VIEW dpkg.v_dms_data_package_aggregation_datasets IS 'Note that this view is used by sw.V_DMS_Data_Package_Datasets, and the DMS Analysis Manager uses that view to retrieve metadata for data package datasets';
 
 --
 -- Name: TABLE v_dms_data_package_aggregation_datasets; Type: ACL; Schema: dpkg; Owner: d3l243
