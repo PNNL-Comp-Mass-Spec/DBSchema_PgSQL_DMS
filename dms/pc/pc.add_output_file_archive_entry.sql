@@ -24,7 +24,7 @@ CREATE OR REPLACE PROCEDURE pc.add_output_file_archive_entry(IN _proteincollecti
 **    _showDebug                    When true, show debug messages
 **    _archivedFilePath             Input/Output: archived file path
 **    _message                      Status message
-**    _returnCode                   Return code
+**    _returnCode                   Return code: archive file ID (as text) if success, '0' if an error
 **
 **  This procedure updates the filename to replace 00000 with the file ID in t_archived_output_files (padded using '000000')
 **  For example,  '\\gigasax\DMS_FASTA_File_Archive\Dynamic\Forward\ID_00000_C1CEE570.fasta'
@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE pc.add_output_file_archive_entry(IN _proteincollecti
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_list for a comma-separated list
 **          11/20/2023 mem - Add missing semicolon before Return statement
+**          10/07/2024 mem - Update archived_file_state_id for existing archive output files
 **
 *****************************************************/
 DECLARE
@@ -51,6 +52,7 @@ DECLARE
     _archivedFileTypeID int;
     _archivedFileState citext;
     _archivedFileStateID int;
+    _currentArchivedFileState int;
 
     _optionItem text;
     _equalsPosition int;
@@ -95,8 +97,8 @@ BEGIN
 
     -- Does this hash code already exist?
 
-    SELECT Archived_File_ID
-    INTO _archiveFileID
+    SELECT archived_file_id, archived_file_state_id
+    INTO _archiveFileID, _currentArchivedFileState
     FROM pc.t_archived_output_files
     WHERE authentication_hash = _crc32Authentication::citext AND
           collection_list_hex_hash = _collectionStringHash::citext
@@ -105,6 +107,7 @@ BEGIN
 
     If Not FOUND Then
         _archiveFileID := 0;
+        _currentArchivedFileState := 0;
     End If;
 
     -- Does the protein collection exist?
@@ -162,10 +165,29 @@ BEGIN
     FROM pc.t_archived_file_states
     WHERE archived_file_state = _archivedFileState;
 
+    If Not FOUND Then
+        _message := format('Invalid archived file state; %s not found in t_archived_file_states', _archivedFileState);
+        RAISE WARNING '%', _message;
+
+        _returnCode := '0';
+        RETURN;
+    End If;
+
     If _archiveFileID > 0 Then
         If _showDebug Then
             RAISE INFO 'Matched archive_file_id % for CRC32 hash % and collection name hash %',
                         _archiveFileID, _crc32Authentication, _collectionStringHash;
+        End If;
+
+        If _currentArchivedFileState <> _archivedFileStateID Then
+            If _showDebug Then
+                RAISE INFO 'Changing archive file state from % to % for archive file ID %',
+                            _currentArchivedFileState, _archivedFileStateID, _archiveFileID;
+            End If;
+
+            UPDATE pc.t_archived_output_files
+            SET archived_file_state_id = _archivedFileStateID
+            WHERE archived_file_id = _archiveFileID;
         End If;
 
         _archivedFilePath := Replace(_archivedFilePath, '00000', Right(format('000000%s', _archiveFileID), 6));
@@ -176,7 +198,7 @@ BEGIN
 
         If _showDebug Then
             RAISE INFO 'Adding new row to pc.t_archived_output_files for CRC32 hash % and collection name hash %',
-                            _crc32Authentication, _collectionStringHash;
+                        _crc32Authentication, _collectionStringHash;
         End If;
 
         INSERT INTO pc.t_archived_output_files (
@@ -271,7 +293,7 @@ BEGIN
             Else
                 If _showDebug Then
                     RAISE INFO 'Adding creation option %=% to pc.t_archived_file_creation_options for %=%',
-                                    _optionKeywordID, _optionValueID, _optionKeyword, _optionValue;
+                                _optionKeywordID, _optionValueID, _optionKeyword, _optionValue;
                 End If;
 
                 INSERT INTO pc.t_archived_file_creation_options (
