@@ -29,6 +29,8 @@ CREATE OR REPLACE FUNCTION public.get_nearest_preceding_log_entry(_seq integer, 
 **          05/22/2023 mem - Capitalize reserved word
 **          05/30/2023 mem - Use format() for string concatenation
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          10/09/2024 mem - Prevent returning a message with an undefined operation history or config history ID
+**                         - Trim trailing whitespace
 **
 *****************************************************/
 DECLARE
@@ -36,9 +38,11 @@ DECLARE
     _opNote text;
     _opNoteTime timestamp;
     _opNoteID int;
+    _opNoteFound boolean;
     _confNote text;
     _confNoteTime timestamp;
     _confNoteID int;
+    _confNoteFound boolean;
     _message text;
 BEGIN
 
@@ -46,7 +50,7 @@ BEGIN
 
     SELECT InstName.instrument,
            InstUsage.start,
-           Coalesce(InstUsageType.usage_type, '') as usage_type,
+           Coalesce(InstUsageType.usage_type, '') AS usage_type,
            InstUsage.comment
     INTO _usageInfo
     FROM t_emsl_instrument_usage_report InstUsage
@@ -70,6 +74,8 @@ BEGIN
         ORDER BY entered DESC
         LIMIT 1;
 
+        _opNoteFound := FOUND;
+
         SELECT entry_id,
                date_of_change ,
                CASE WHEN _includeText
@@ -82,13 +88,23 @@ BEGIN
         ORDER BY date_of_change DESC
         LIMIT 1;
 
-       _message := CASE WHEN _opNoteTime > _confNoteTime
-                        THEN format('[Op Log:%s] %s',     _opNoteID,   _opNote)
-                        ELSE format('[Config Log:%s] %s', _confNoteID, _confNote)
-                   END;
+        _confNoteFound := FOUND;
+
+        If _opNoteFound And _confNoteFound Then
+            _message := CASE WHEN _opNoteTime > _confNoteTime
+                             THEN format('[Op Log:%s] %s',     _opNoteID,   _opNote)
+                             ELSE format('[Config Log:%s] %s', _confNoteID, _confNote)
+                        END;
+        ElsIf _opNoteFound Then
+            _message := format('[Op Log:%s] %s',     _opNoteID,   _opNote);
+        ElsIf _confNoteFound Then
+            _message := format('[Config Log:%s] %s', _confNoteID, _confNote);
+        Else
+            _message := '';
+        End If;
     End If;
 
-    RETURN Coalesce(_message, '');
+    RETURN Trim(Coalesce(_message, ''));
 END
 $$;
 
