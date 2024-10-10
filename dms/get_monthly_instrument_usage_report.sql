@@ -51,6 +51,7 @@ CREATE OR REPLACE FUNCTION public.get_monthly_instrument_usage_report(_instrumen
 **                         - Add missing columns to debug reports
 **          09/08/2023 mem - Adjust capitalization of keywords
 **                         - Include schema name when calling function verify_sp_authorized()
+**          10/09/2024 mem - When determining the instrument name for the Instrument ID specified by _eusInstrumentId, preferably choose the first active instrument, sorted alphabetically by name
 **
 *****************************************************/
 DECLARE
@@ -739,6 +740,7 @@ BEGIN
 
         Else
             -- Determine the DMS instrument name for this EUSInstrumentID
+            -- Preferably choose the first active instrument, sorted alphabetically by name (e.g., so that '12T_FTICR_P' is selected instead of '12T_FTICR_P_Imaging'
 
             SELECT InstName.instrument
             INTO _instrument
@@ -746,7 +748,11 @@ BEGIN
                  INNER JOIN t_emsl_dms_instrument_mapping AS InstMapping
                    ON InstName.instrument_id = InstMapping.dms_instrument_id
             WHERE InstMapping.eus_instrument_id = _eusInstrumentID
-            ORDER BY InstName.instrument
+            ORDER BY CASE WHEN InstName.status = 'Active' THEN 0
+                          WHEN InstName.status = 'Offline' THEN 1
+                          ELSE 2
+                     END,
+                 InstName.instrument
             LIMIT 1;
 
             If Not FOUND Then
