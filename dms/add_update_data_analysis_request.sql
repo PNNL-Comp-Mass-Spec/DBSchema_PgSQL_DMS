@@ -64,6 +64,7 @@ DECLARE
     _currentStateID int;
     _requestType text := 'Default';
     _logErrors boolean := false;
+    _invalidIDs text := '';
     _batchDescription text := '';
     _dataPackageDescription text := '';
     _allowUpdateEstimatedAnalysisTime boolean := false;
@@ -211,11 +212,13 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_BatchIDs (
-            Batch_ID int NOT NULL
+            Batch_ID int NOT NULL,
+            Valid boolean NOT NULL DEFAULT False
         );
 
         CREATE TEMP TABLE Tmp_DataPackageIDs (
-            Data_Pkg_ID int NOT NULL
+            Data_Pkg_ID int NOT NULL,
+            Valid boolean NOT NULL DEFAULT False
         );
 
         If _batchIDs <> '' Then
@@ -236,12 +239,21 @@ BEGIN
                 End If;
             End If;
 
-            -- ToDo: fix this to actually verify every batch ID in Tmp_BatchIDs
-            If Not Exists (SELECT batch_id FROM t_requested_run_batches WHERE batch_id IN (SELECT batch_id FROM Tmp_BatchIDs)) Then
-                If _insertCount = 1 Then
-                    _batchDescription := format('Invalid requested run batch ID: %s does not exist', _batchIDs);
+            UPDATE Tmp_BatchIDs
+            SET Valid = true
+            FROM t_requested_run_batches RRB
+            WHERE Tmp_BatchIDs.batch_id = RRB.batch_id;
+
+            If Exists (SELECT batch_id FROM Tmp_BatchIDs WHERE Not Valid) Then
+                SELECT string_agg(batch_id::text, ', ' ORDER BY batch_id)
+                INTO _invalidIDs
+                FROM Tmp_BatchIDs
+                WHERE Not Valid;
+
+                If _invalidIDs LIKE '%,%' Then
+                    _batchDescription := format('Invalid requested run batch IDs: %s', _invalidIDs);
                 Else
-                    _batchDescription := format('Batch ID list includes one or more invalid requested run batches: %s', _batchIDs);
+                    _batchDescription := format('Invalid requested run batch ID: %s does not exist', _invalidIDs);
                 End If;
 
                 RAISE EXCEPTION '%', _batchDescription;
@@ -274,12 +286,21 @@ BEGIN
                 End If;
             End If;
 
-            -- ToDo: fix this to actually verify every data package in Tmp_DataPackageIDs
-            If Not Exists (SELECT data_pkg_id FROM dpkg.t_data_package WHERE data_pkg_id IN (SELECT Data_Pkg_ID FROM Tmp_DataPackageIDs)) Then
-                If _insertCount = 1 Then
-                    _dataPackageDescription := format('Invalid data package ID: %s does not exist', _dataPackageIDs);
+            UPDATE Tmp_DataPackageIDs
+            SET Valid = true
+            FROM dpkg.t_data_package DP
+            WHERE Tmp_DataPackageIDs.data_pkg_id = DP.data_pkg_id;
+
+            If Exists (SELECT data_pkg_id FROM Tmp_DataPackageIDs WHERE Not Valid) Then
+                SELECT string_agg(data_pkg_id::text, ', ' ORDER BY data_pkg_id)
+                INTO _invalidIDs
+                FROM Tmp_DataPackageIDs
+                WHERE Not Valid;
+
+                If _invalidIDs LIKE '%,%' Then
+                    _dataPackageDescription := format('Invalid data package IDs: %s', _invalidIDs);
                 Else
-                    _dataPackageDescription := format('Data package list includes one or more invalid data package IDs: %s', _dataPackageIDs);
+                    _dataPackageDescription := format('Invalid data package ID: %s does not exist', _invalidIDs);
                 End If;
 
                 RAISE EXCEPTION '%', _dataPackageDescription;
