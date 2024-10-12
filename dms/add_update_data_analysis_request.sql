@@ -1,8 +1,8 @@
 --
--- Name: add_update_data_analysis_request(text, text, text, text, text, text, text, integer, integer, text, text, text, text, text, integer, text, text, integer, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: add_update_data_analysis_request(text, text, text, text, text, text, text, text, integer, text, text, text, text, text, integer, text, text, integer, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.add_update_data_analysis_request(IN _requestname text, IN _analysistype text, IN _requesterusername text, IN _description text, IN _analysisspecifications text, IN _comment text, IN _batchids text DEFAULT ''::text, IN _datapackageid integer DEFAULT NULL::integer, IN _experimentgroupid integer DEFAULT NULL::integer, IN _workpackage text DEFAULT ''::text, IN _requestedpersonnel text DEFAULT ''::text, IN _assignedpersonnel text DEFAULT ''::text, IN _priority text DEFAULT 'Normal'::text, IN _reasonforhighpriority text DEFAULT ''::text, IN _estimatedanalysistimedays integer DEFAULT 0, IN _state text DEFAULT 'New'::text, IN _statecomment text DEFAULT ''::text, INOUT _id integer DEFAULT 0, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.add_update_data_analysis_request(IN _requestname text, IN _analysistype text, IN _requesterusername text, IN _description text, IN _analysisspecifications text, IN _comment text, IN _batchids text DEFAULT ''::text, IN _datapackageids text DEFAULT ''::text, IN _experimentgroupid integer DEFAULT NULL::integer, IN _workpackage text DEFAULT ''::text, IN _requestedpersonnel text DEFAULT ''::text, IN _assignedpersonnel text DEFAULT ''::text, IN _priority text DEFAULT 'Normal'::text, IN _reasonforhighpriority text DEFAULT ''::text, IN _estimatedanalysistimedays integer DEFAULT 0, IN _state text DEFAULT 'New'::text, IN _statecomment text DEFAULT ''::text, INOUT _id integer DEFAULT 0, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_data_analysis_request(IN _requestn
 **
 **      The analysis request must be associated with at least one of the following data containers:
 **        - One or more requested run batches
-**        - Data package
+**        - One or more data packages
 **        - Experiment group
 **
 **  Arguments:
@@ -22,8 +22,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_data_analysis_request(IN _requestn
 **    _description                  Description
 **    _analysisSpecifications       Analysis specifications
 **    _comment                      Comment
-**    _batchIDs                     Comma-separated list of requested run batch IDs; null if not applicable
-**    _dataPackageID                Data Package ID;     null if not applicable
+**    _batchIDs                     Comma-separated list of Requested Run Batch IDs; null if not applicable
+**    _dataPackageIDs               Comma-separated list of Data Package ID; null if not applicable
 **    _experimentGroupID            Experiment Group ID; null if not applicable
 **    _workPackage                  Work package
 **    _requestedPersonnel           Requested personnel; names should be in the form 'Last Name, First Name (Username)', but usernames are also supported
@@ -50,6 +50,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_data_analysis_request(IN _requestn
 **          02/19/2024 mem - Query tables directly instead of using a view
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          10/11/2024 mem - Replace parameter _dataPackageID with parameter _dataPackageIDs
 **
 *****************************************************/
 DECLARE
@@ -64,6 +65,7 @@ DECLARE
     _requestType text := 'Default';
     _logErrors boolean := false;
     _batchDescription text := '';
+    _dataPackageDescription text := '';
     _allowUpdateEstimatedAnalysisTime boolean := false;
     _batchDefined boolean := false;
     _dataPackageDefined boolean := false;
@@ -76,6 +78,7 @@ DECLARE
     _containerID int;
     _preferredContainer text := '';
     _representativeBatchID int := null;
+    _representativeDataPackageID int := null;
     _currentAssignedPersonnel text;
     _activationState int := 10;
     _activationStateName text;
@@ -139,7 +142,7 @@ BEGIN
         _analysisSpecifications     := Trim(Coalesce(_analysisSpecifications, ''));
         _comment                    := Trim(Coalesce(_comment, ''));
         _batchIDs                   := Trim(Coalesce(_batchIDs, ''));
-        _dataPackageID              := Coalesce(_dataPackageID, 0);
+        _dataPackageIDs             := Trim(Coalesce(_dataPackageIDs, ''));
         _experimentGroupID          := Coalesce(_experimentGroupID, 0);
         _workPackage                := Trim(Coalesce(_workPackage, ''));
         _requestedPersonnel         := Trim(Coalesce(_requestedPersonnel, ''));
@@ -201,12 +204,16 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Resolve Batch IDs, Data Package ID, and Experiment Group ID
+        -- Resolve Batch IDs, Data Package IDs, and Experiment Group ID
         -- Require that at least one be valid
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_BatchIDs (
             Batch_ID int NOT NULL
+        );
+
+        CREATE TEMP TABLE Tmp_DataPackageIDs (
+            Data_Pkg_ID int NOT NULL
         );
 
         If _batchIDs <> '' Then
@@ -220,11 +227,14 @@ BEGIN
             If _insertCount = 0 Then
                 If _batchIDs = '0' Then
                     RAISE EXCEPTION 'Invalid requested run batch ID; must be a positive integer, not zero';
-                Else
+                ElsIf _batchIDs LIKE '%,%' Then
                     RAISE EXCEPTION 'Invalid list of requested run batch IDs; integer not found: "%"', _batchIDs;
+                Else
+                    RAISE EXCEPTION 'Invalid requested run batch ID; integer not found: "%"', _batchIDs;
                 End If;
             End If;
 
+            -- ToDo: fix this to actually verify every batch ID in Tmp_BatchIDs
             If Not Exists (SELECT batch_id FROM t_requested_run_batches WHERE batch_id IN (SELECT batch_id FROM Tmp_BatchIDs)) Then
                 If _insertCount = 1 Then
                     _batchDescription := format('Invalid requested run batch ID: %s does not exist', _batchIDs);
@@ -244,11 +254,41 @@ BEGIN
             End If;
         End If;
 
-        If _dataPackageID > 0 Then
-            If Not Exists (SELECT data_pkg_id FROM dpkg.t_data_package WHERE data_pkg_id = _dataPackageID) Then
-                RAISE EXCEPTION 'Invalid data package ID: "%" does not exist', _dataPackageID;
+        If _dataPackageIDs <> '' Then
+            INSERT INTO Tmp_DataPackageIDs (Data_Pkg_ID)
+            SELECT Value
+            FROM public.parse_delimited_integer_list(_dataPackageIDs)
+            WHERE Value <> 0;
+            --
+            GET DIAGNOSTICS _insertCount = ROW_COUNT;
+
+            If _insertCount = 0 Then
+                If _dataPackageIDs = '0' Then
+                    RAISE EXCEPTION 'Invalid data package ID; must be a positive integer, not zero';
+                ElsIf _dataPackageIDs LIKE '%,%' Then
+                    RAISE EXCEPTION 'Invalid list of data package IDs; integer not found: "%"', _dataPackageIDs;
+                Else
+                    RAISE EXCEPTION 'Invalid data package ID; integer not found: "%"', _dataPackageIDs;
+                End If;
+            End If;
+
+            -- ToDo: fix this to actually verify every data package in Tmp_DataPackageIDs
+            If Not Exists (SELECT data_pkg_id FROM dpkg.t_data_package WHERE data_pkg_id IN (SELECT Data_Pkg_ID FROM Tmp_DataPackageIDs)) Then
+                If _insertCount = 1 Then
+                    _dataPackageDescription := format('Invalid data package ID: %s does not exist', _dataPackageIDs);
+                Else
+                    _dataPackageDescription := format('Data package list includes one or more invalid data package IDs: %s', _dataPackageIDs);
+                End If;
+
+                RAISE EXCEPTION '%', _dataPackageDescription;
             Else
                 _dataPackageDefined := true;
+
+                If _insertCount = 1 Then
+                    _dataPackageDescription := format('data package %s', _dataPackageIDs);
+                Else
+                    _dataPackageDescription := format('data packages %s', _dataPackageIDs);
+                End If;
             End If;
         End If;
 
@@ -311,7 +351,7 @@ BEGIN
         ---------------------------------------------------
 
         If _batchDefined And _workPackage::citext In ('', 'na', 'none') Then
-            -- Auto-define using requests in the batch(s)
+            -- Auto-define using requested runs in the batch(s)
 
             SELECT work_package
             INTO _workPackage
@@ -355,7 +395,7 @@ BEGIN
         WHERE charge_code = _workPackage::citext;
 
         ---------------------------------------------------
-        -- Determine the number of datasets in the batch(s), data package,
+        -- Determine the number of datasets in the batch(s), data package(s),
         -- and/or experiment group for this data analysis request
         ---------------------------------------------------
 
@@ -373,7 +413,7 @@ BEGIN
                 SortWeight,
                 DatasetCount
             )
-            SELECT 'Batch', RR.batch_id, 2 AS SortWeight, COUNT(RR.request_id) AS DatasetCount
+            SELECT 'Batch', RR.batch_id, 2 AS SortWeight, COUNT(DISTINCT RR.request_id) AS DatasetCount
             FROM t_requested_run RR
                  INNER JOIN Tmp_BatchIDs
                    ON RR.batch_id = Tmp_BatchIDs.batch_id
@@ -387,11 +427,13 @@ BEGIN
                 SortWeight,
                 DatasetCount
             )
-            SELECT 'Data Package', _dataPackageID, 1 AS SortWeight, COUNT(DISTINCT DS.Dataset_ID) AS DatasetCount
+            SELECT 'Data Package', DPD.data_pkg_id, 1 AS SortWeight, COUNT(DISTINCT DS.Dataset_ID) AS DatasetCount
             FROM dpkg.t_data_package_datasets DPD
+                 INNER JOIN Tmp_DataPackageIDs
+                   ON DPD.data_pkg_id = Tmp_DataPackageIDs.Data_Pkg_ID
                  INNER JOIN t_dataset DS
                    ON DPD.dataset_id = DS.dataset_id
-            WHERE DPD.data_pkg_id = _dataPackageID;
+            GROUP BY DPD.data_pkg_id;
         End If;
 
         If _experimentGroupDefined Then
@@ -473,7 +515,7 @@ BEGIN
             _representativeBatchID := _containerID;
 
             -- Use all batches for the dataset count
-            SELECT COUNT(RR.dataset_id)
+            SELECT COUNT(DISTINCT RR.dataset_id)
             INTO _datasetCount
             FROM t_requested_run RR
                  INNER JOIN Tmp_BatchIDs
@@ -518,18 +560,28 @@ BEGIN
             LIMIT 1;
 
         ElsIf _preferredContainer = 'Data Package' Then
+            _representativeDataPackageID := _containerID;
+
+            -- Use all data packages for the dataset count
+            SELECT COUNT(DISTINCT RR.dataset_id)
+            INTO _datasetCount
+            FROM dpkg.t_data_package_datasets DPD
+                 INNER JOIN Tmp_DataPackageIDs
+                   ON DPD.data_pkg_id = Tmp_DataPackageIDs.Data_Pkg_ID;
+
             SELECT campaign
             INTO _campaign
             FROM (SELECT C.campaign AS Campaign,
                          COUNT(E.exp_id) AS Experiments
                   FROM dpkg.t_data_package_datasets DPD
+                       INNER JOIN Tmp_DataPackageIDs
+                         ON DPD.data_pkg_id = Tmp_DataPackageIDs.Data_Pkg_ID
                        INNER JOIN t_dataset DS
                          ON DPD.dataset_id = DS.dataset_id
                        INNER JOIN t_experiments E
                          ON DS.exp_id = E.exp_id
                        INNER JOIN t_campaign C
                          ON E.campaign_id = C.campaign_id
-                  WHERE DPD.data_pkg_id = _dataPackageID
                   GROUP BY C.campaign) StatsQ
             ORDER BY StatsQ.Experiments DESC
             LIMIT 1;
@@ -539,13 +591,14 @@ BEGIN
             FROM (SELECT Org.organism AS Organism,
                          COUNT(E.organism_id) AS Organisms
                   FROM dpkg.t_data_package_datasets DPD
+                       INNER JOIN Tmp_DataPackageIDs
+                         ON DPD.data_pkg_id = Tmp_DataPackageIDs.Data_Pkg_ID
                        INNER JOIN t_dataset DS
                          ON DPD.dataset_id = DS.dataset_id
                        INNER JOIN t_experiments E
                          ON DS.exp_id = E.exp_id
                        INNER JOIN t_organisms Org
                          ON E.organism_id = Org.organism_id
-                  WHERE DPD.data_pkg_id = _dataPackageID
                   GROUP BY Org.organism) StatsQ
             ORDER BY StatsQ.Organisms DESC
             LIMIT 1;
@@ -555,11 +608,12 @@ BEGIN
             FROM (SELECT RR.eus_proposal_id AS EUS_Proposal_ID,
                          COUNT(RR.request_id) AS Requests
                   FROM dpkg.t_data_package_datasets DPD
+                       INNER JOIN Tmp_DataPackageIDs
+                         ON DPD.data_pkg_id = Tmp_DataPackageIDs.Data_Pkg_ID
                        INNER JOIN t_dataset DS
                          ON DPD.dataset_id = DS.dataset_id
                        INNER JOIN t_requested_run RR
                          ON DS.dataset_id = RR.dataset_id
-                  WHERE DPD.data_pkg_id = _dataPackageID
                   GROUP BY RR.eus_proposal_id) StatsQ
             ORDER BY StatsQ.Requests DESC
             LIMIT 1;
@@ -617,7 +671,7 @@ BEGIN
                 RAISE EXCEPTION 'Unrecognized preferred container type: %', _preferredContainer;
             Else
                 -- There are no datasets associated with the batches, data packages, or experiment groups specified by the user
-                -- This unusual for a data analysis request, but is allowed
+                -- This is unusual for a data analysis request, but is allowed
             End If;
         End If;
 
@@ -644,6 +698,33 @@ BEGIN
                 INTO _representativeBatchID
                 FROM Tmp_BatchIDs
                 ORDER BY Batch_ID
+                LIMIT 1;
+            End If;
+        End If;
+
+        If _dataPackageDefined And _representativeDataPackageID Is Null Then
+            -- Either _preferredContainer is not 'Data Package' or none of the data packages has a dataset
+
+            SELECT data_pkg_id
+            INTO _representativeDataPackageID
+            FROM (SELECT DPD.data_pkg_id AS data_pkg_id,
+                         COUNT(DPD.dataset_id) AS Datasets
+                  FROM dpkg.t_data_package_datasets DPD
+                       INNER JOIN Tmp_DataPackageIDs
+                         ON DPD.data_pkg_id = Tmp_DataPackageIDs.Data_Pkg_ID
+                  GROUP BY DPD.data_pkg_id
+                 ) StatsQ
+            ORDER BY Datasets DESC
+            LIMIT 1;
+
+            If Not FOUND Then
+                -- None of the data packages has any datasets
+                -- This is unlikely, but possible
+
+                SELECT Data_Pkg_ID
+                INTO _representativeDataPackageID
+                FROM Tmp_DataPackageIDs
+                ORDER BY Data_Pkg_ID
                 LIMIT 1;
             End If;
         End If;
@@ -723,57 +804,53 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-            BEGIN
-
-                INSERT INTO t_data_analysis_request (
-                    request_name,
-                    analysis_type,
-                    requester_username,
-                    description,
-                    analysis_specifications,
-                    comment,
-                    representative_batch_id,
-                    data_pkg_id,
-                    exp_group_id,
-                    work_package,
-                    requested_personnel,
-                    assigned_personnel,
-                    priority,
-                    reason_for_high_priority,
-                    estimated_analysis_time_days,
-                    state,
-                    state_comment,
-                    campaign,
-                    organism,
-                    eus_proposal_id,
-                    dataset_count
-                ) VALUES (
-                    _requestName,
-                    _analysisType,
-                    _requesterUsername,
-                    _description,
-                    _analysisSpecifications,
-                    _comment,
-                    CASE WHEN _batchDefined           THEN _representativeBatchID ELSE Null END,
-                    CASE WHEN _dataPackageDefined     THEN _dataPackageID         ELSE Null END,
-                    CASE WHEN _experimentGroupDefined THEN _experimentGroupID     ELSE Null END,
-                    _workPackage,
-                    _requestedPersonnel,
-                    _assignedPersonnel,
-                    _priority,
-                    _reasonForHighPriority,
-                    CASE WHEN _allowUpdateEstimatedAnalysisTime THEN _estimatedAnalysisTimeDays ELSE 0 END,
-                    _stateID,
-                    _stateComment,
-                    _campaign,
-                    _organism,
-                    _eusProposalID,
-                    _datasetCount
-                )
-                RETURNING request_id
-                INTO _id;
-
-            END;
+            INSERT INTO t_data_analysis_request (
+                request_name,
+                analysis_type,
+                requester_username,
+                description,
+                analysis_specifications,
+                comment,
+                representative_batch_id,
+                representative_data_pkg_id,
+                exp_group_id,
+                work_package,
+                requested_personnel,
+                assigned_personnel,
+                priority,
+                reason_for_high_priority,
+                estimated_analysis_time_days,
+                state,
+                state_comment,
+                campaign,
+                organism,
+                eus_proposal_id,
+                dataset_count
+            ) VALUES (
+                _requestName,
+                _analysisType,
+                _requesterUsername,
+                _description,
+                _analysisSpecifications,
+                _comment,
+                CASE WHEN _batchDefined           THEN _representativeBatchID       ELSE Null END,
+                CASE WHEN _dataPackageDefined     THEN _representativeDataPackageID ELSE Null END,
+                CASE WHEN _experimentGroupDefined THEN _experimentGroupID           ELSE Null END,
+                _workPackage,
+                _requestedPersonnel,
+                _assignedPersonnel,
+                _priority,
+                _reasonForHighPriority,
+                CASE WHEN _allowUpdateEstimatedAnalysisTime THEN _estimatedAnalysisTimeDays ELSE 0 END,
+                _stateID,
+                _stateComment,
+                _campaign,
+                _organism,
+                _eusProposalID,
+                _datasetCount
+            )
+            RETURNING request_id
+            INTO _id;
 
             -- If _callingUser is defined, update entered_by in t_data_analysis_request_updates
             If _callingUser <> '' Then
@@ -785,6 +862,12 @@ BEGIN
                 INSERT INTO t_data_analysis_request_batch_ids (request_id, batch_id)
                 SELECT _id, batch_id
                 FROM Tmp_BatchIDs;
+            End If;
+
+            If _dataPackageDefined Then
+                INSERT INTO t_data_analysis_request_data_package_ids (request_id, data_pkg_id)
+                SELECT _id, Data_Pkg_ID
+                FROM Tmp_DataPackageIDs;
             End If;
         End If;
 
@@ -806,9 +889,9 @@ BEGIN
                 description                  = _description,
                 analysis_specifications      = _analysisSpecifications,
                 comment                      = _comment,
-                representative_batch_id      = CASE WHEN _batchDefined           THEN _representativeBatchID ELSE Null END,
-                data_pkg_id                  = CASE WHEN _dataPackageDefined     THEN _dataPackageID         ELSE Null END,
-                exp_group_id                 = CASE WHEN _experimentGroupDefined THEN _experimentGroupID     ELSE Null END,
+                representative_batch_id      = CASE WHEN _batchDefined           THEN _representativeBatchID       ELSE Null END,
+                representative_data_pkg_id   = CASE WHEN _dataPackageDefined     THEN _representativeDataPackageID ELSE Null END,
+                exp_group_id                 = CASE WHEN _experimentGroupDefined THEN _experimentGroupID           ELSE Null END,
                 work_package                 = _workPackage,
                 requested_personnel          = _requestedPersonnel,
                 assigned_personnel           = _assignedPersonnel,
@@ -860,9 +943,32 @@ BEGIN
                 WHERE request_id = _id;
             End If;
 
+            If _dataPackageDefined Then
+                MERGE INTO t_data_analysis_request_data_package_ids AS t
+                USING (SELECT _id AS Request_ID, Data_Pkg_ID
+                       FROM Tmp_DataPackageIDs
+                      ) AS s
+                ON (t.data_pkg_id = s.data_pkg_id AND t.request_id = s.request_id)
+                WHEN NOT MATCHED THEN
+                    INSERT (request_id, data_pkg_id)
+                    VALUES (s.request_id, s.data_pkg_id);
+
+                -- Delete rows in t_data_analysis_request_data_package_ids where t.Request_ID = _id
+                -- but the data_pkg_id is not in Tmp_DataPackageIDs
+
+                DELETE FROM t_data_analysis_request_data_package_ids t
+                WHERE t.request_id = _id AND
+                      NOT t.data_pkg_id IN (SELECT DP.Data_Pkg_ID FROM Tmp_DataPackageIDs DP);
+
+            Else
+                DELETE FROM t_data_analysis_request_data_package_ids
+                WHERE request_id = _id;
+            End If;
+
         End If;
 
         DROP TABLE Tmp_BatchIDs;
+        DROP TABLE Tmp_DataPackageIDs;
         DROP TABLE Tmp_DatasetCountsByContainerType;
         RETURN;
 
@@ -890,16 +996,17 @@ BEGIN
     END;
 
     DROP TABLE IF EXISTS Tmp_BatchIDs;
+    DROP TABLE IF EXISTS Tmp_DataPackageIDs;
     DROP TABLE IF EXISTS Tmp_DatasetCountsByContainerType;
 END
 $$;
 
 
-ALTER PROCEDURE public.add_update_data_analysis_request(IN _requestname text, IN _analysistype text, IN _requesterusername text, IN _description text, IN _analysisspecifications text, IN _comment text, IN _batchids text, IN _datapackageid integer, IN _experimentgroupid integer, IN _workpackage text, IN _requestedpersonnel text, IN _assignedpersonnel text, IN _priority text, IN _reasonforhighpriority text, IN _estimatedanalysistimedays integer, IN _state text, IN _statecomment text, INOUT _id integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+ALTER PROCEDURE public.add_update_data_analysis_request(IN _requestname text, IN _analysistype text, IN _requesterusername text, IN _description text, IN _analysisspecifications text, IN _comment text, IN _batchids text, IN _datapackageids text, IN _experimentgroupid integer, IN _workpackage text, IN _requestedpersonnel text, IN _assignedpersonnel text, IN _priority text, IN _reasonforhighpriority text, IN _estimatedanalysistimedays integer, IN _state text, IN _statecomment text, INOUT _id integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE add_update_data_analysis_request(IN _requestname text, IN _analysistype text, IN _requesterusername text, IN _description text, IN _analysisspecifications text, IN _comment text, IN _batchids text, IN _datapackageid integer, IN _experimentgroupid integer, IN _workpackage text, IN _requestedpersonnel text, IN _assignedpersonnel text, IN _priority text, IN _reasonforhighpriority text, IN _estimatedanalysistimedays integer, IN _state text, IN _statecomment text, INOUT _id integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE add_update_data_analysis_request(IN _requestname text, IN _analysistype text, IN _requesterusername text, IN _description text, IN _analysisspecifications text, IN _comment text, IN _batchids text, IN _datapackageids text, IN _experimentgroupid integer, IN _workpackage text, IN _requestedpersonnel text, IN _assignedpersonnel text, IN _priority text, IN _reasonforhighpriority text, IN _estimatedanalysistimedays integer, IN _state text, IN _statecomment text, INOUT _id integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.add_update_data_analysis_request(IN _requestname text, IN _analysistype text, IN _requesterusername text, IN _description text, IN _analysisspecifications text, IN _comment text, IN _batchids text, IN _datapackageid integer, IN _experimentgroupid integer, IN _workpackage text, IN _requestedpersonnel text, IN _assignedpersonnel text, IN _priority text, IN _reasonforhighpriority text, IN _estimatedanalysistimedays integer, IN _state text, IN _statecomment text, INOUT _id integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateDataAnalysisRequest';
+COMMENT ON PROCEDURE public.add_update_data_analysis_request(IN _requestname text, IN _analysistype text, IN _requesterusername text, IN _description text, IN _analysisspecifications text, IN _comment text, IN _batchids text, IN _datapackageids text, IN _experimentgroupid integer, IN _workpackage text, IN _requestedpersonnel text, IN _assignedpersonnel text, IN _priority text, IN _reasonforhighpriority text, IN _estimatedanalysistimedays integer, IN _state text, IN _statecomment text, INOUT _id integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateDataAnalysisRequest';
 
