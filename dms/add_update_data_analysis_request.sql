@@ -74,6 +74,8 @@ DECLARE
     _campaign text;
     _organism text;
     _datasetCount int := 0;
+    _datasetCountRequestedRuns int := 0;
+    _datasetCountDataPackages int := 0;
     _eusProposalID text;
     _containerID int;
     _preferredContainer text := '';
@@ -508,13 +510,6 @@ BEGIN
         If _preferredContainer = 'Batch' Then
             _representativeBatchID := _containerID;
 
-            -- Use all batches for the dataset count
-            SELECT COUNT(DISTINCT RR.dataset_id)
-            INTO _datasetCount
-            FROM t_requested_run RR
-                 INNER JOIN Tmp_BatchIDs
-                   ON RR.batch_id = Tmp_BatchIDs.batch_id;
-
             SELECT campaign
             INTO _campaign
             FROM (SELECT C.campaign AS Campaign,
@@ -555,13 +550,6 @@ BEGIN
 
         ElsIf _preferredContainer = 'Data Package' Then
             _representativeDataPackageID := _containerID;
-
-            -- Use all data packages for the dataset count
-            SELECT COUNT(DISTINCT DPD.dataset_id)
-            INTO _datasetCount
-            FROM dpkg.t_data_package_datasets DPD
-                 INNER JOIN Tmp_DataPackageIDs
-                   ON DPD.data_pkg_id = Tmp_DataPackageIDs.Data_Pkg_ID;
 
             SELECT campaign
             INTO _campaign
@@ -667,6 +655,31 @@ BEGIN
                 -- There are no datasets associated with the batches, data packages, or experiment groups specified by the user
                 -- This is unusual for a data analysis request, but is allowed
             End If;
+        End If;
+
+        If _preferredContainer IN ('Batch', 'Data Package') Then
+
+            -- Determine the number of datasets associated with the batch IDs
+            SELECT COUNT(DISTINCT RR.dataset_id)
+            INTO _datasetCountRequestedRuns
+            FROM t_requested_run RR
+                 INNER JOIN Tmp_BatchIDs
+                   ON RR.batch_id = Tmp_BatchIDs.batch_id;
+
+            -- Determine the number of datasets associated with the data package IDs
+            SELECT COUNT(DISTINCT DPD.dataset_id)
+            INTO _datasetCountDataPackages
+            FROM dpkg.t_data_package_datasets DPD
+                 INNER JOIN Tmp_DataPackageIDs
+                   ON DPD.data_pkg_id = Tmp_DataPackageIDs.Data_Pkg_ID;
+
+            -- Update _datasetCount if _datasetCountRequestedRuns or _datasetCountDataPackages is larger
+            If _datasetCountRequestedRuns > _datasetCount And _datasetCountRequestedRuns > _datasetCountDataPackages Then
+                _datasetCount := _datasetCountRequestedRuns;
+            ElsIf _datasetCountDataPackages > _datasetCount And _datasetCountDataPackages > _datasetCountRequestedRuns Then
+                _datasetCount := _datasetCountDataPackages;
+            End If;
+
         End If;
 
         If _batchDefined And _representativeBatchID Is Null Then
