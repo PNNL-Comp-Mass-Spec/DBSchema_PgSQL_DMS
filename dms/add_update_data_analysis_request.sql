@@ -283,12 +283,6 @@ BEGIN
                 RAISE EXCEPTION '%', _dataPackageDescription;
             Else
                 _dataPackageDefined := true;
-
-                If _insertCount = 1 Then
-                    _dataPackageDescription := format('data package %s', _dataPackageIDs);
-                Else
-                    _dataPackageDescription := format('data packages %s', _dataPackageIDs);
-                End If;
             End If;
         End If;
 
@@ -563,7 +557,7 @@ BEGIN
             _representativeDataPackageID := _containerID;
 
             -- Use all data packages for the dataset count
-            SELECT COUNT(DISTINCT RR.dataset_id)
+            SELECT COUNT(DISTINCT DPD.dataset_id)
             INTO _datasetCount
             FROM dpkg.t_data_package_datasets DPD
                  INNER JOIN Tmp_DataPackageIDs
