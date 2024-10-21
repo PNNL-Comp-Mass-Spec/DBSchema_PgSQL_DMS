@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_dataset_links(IN _processingmod
 **          10/06/2023 mem - Update SMAQC metric URLs
 **                         - Ported to PostgreSQL
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          10/21/2024 mem - Remove "index.html" from QC Link
 **
 *****************************************************/
 DECLARE
@@ -320,7 +321,7 @@ BEGIN
             myemsl_url = format('https://metadata.my.emsl.pnl.gov/fileinfo/files_for_keyvalue/omics.dms.dataset_id/%s', DS.Dataset_ID),
             qc_link = CASE
                 WHEN DA.QC_Data_Purged > 0 THEN ''
-                ELSE format('%sQC/index.html', DFP.Dataset_URL)
+                ELSE format('%sQC/', DFP.Dataset_URL)
                 END,
             qc_2d = CASE
                 WHEN DA.QC_Data_Purged > 0 THEN ''
@@ -406,7 +407,7 @@ BEGIN
                           format('https://metadata.my.emsl.pnl.gov/fileinfo/files_for_keyvalue/omics.dms.dataset_id/%s', DS.Dataset_ID) AS MyEMSL_URL,
                           CASE
                                WHEN DA.QC_Data_Purged > 0 THEN ''
-                               ELSE format('%sQC/index.html', DFP.Dataset_URL)
+                               ELSE format('%sQC/', DFP.Dataset_URL)
                           END AS QC_Link,
                           CASE
                                WHEN DA.QC_Data_Purged > 0 THEN ''
