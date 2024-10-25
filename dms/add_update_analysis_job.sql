@@ -77,7 +77,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job(IN _datasetname text,
 **          05/24/2011 mem - Now populating column dataset_unreviewed when adding new jobs
 **          05/03/2012 mem - Added parameter _specialProcessingWaitUntilReady
 **          06/12/2012 mem - Removed unused code related to Archive State in Tmp_DatasetInfo
-**          09/18/2012 mem - Now clearing _organismDBName if _mode='reset' and we're searching a protein collection
+**          09/18/2012 mem - Now clearing _organismDBName if _mode is 'reset' and we're searching a protein collection
 **          09/25/2012 mem - Expanded _organismDBName and _organismName to varchar(128)
 **          01/04/2013 mem - Now ignoring _organismName, _protCollNameList, _protCollOptionsList, and _organismDBName for analysis tools that do not use protein collections (AJT_orgDbReqd = 0)
 **          04/02/2013 mem - Now updating _msg if it is blank yet _result is non-zero
@@ -112,6 +112,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job(IN _datasetname text,
 **          01/11/2024 mem - Show a custom message when _mode is 'update' or 'reset' but _job is null
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          10/24/2024 mem - Prevent copying data package based jobs
 **
 *****************************************************/
 DECLARE
@@ -166,6 +167,7 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
+    _datasetName                      := Trim(Coalesce(_datasetName, ''));
     _paramFileName                    := Trim(Coalesce(_paramFileName, ''));
     _settingsFileName                 := Trim(Coalesce(_settingsFileName, ''));
     _comment                          := Trim(Coalesce(_comment, ''));
@@ -173,6 +175,7 @@ BEGIN
     _callingUser                      := Trim(Coalesce(_callingUser, ''));
     _preventDuplicateJobs             := Coalesce(_preventDuplicateJobs, false);
     _preventDuplicatesIgnoresNoExport := Coalesce(_preventDuplicatesIgnoresNoExport, true);
+    _mode                             := Trim(Lower(Coalesce(_mode, '')));
     _infoOnly                         := Coalesce(_infoOnly, false);
     _showDebug                        := Coalesce(_showDebug, false);
 
@@ -206,11 +209,18 @@ BEGIN
     End If;
 
     BEGIN
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
-
         If _showDebug Then
             RAISE INFO '';
+        End If;
+
+        If _mode IN ('add', 'preview', 'previewadd') And _datasetName SIMILAR TO 'DataPackage_[0-9]%' Then
+            _msg := 'Cannot copy data package based jobs using this mechanism; instead, copy the analysis job request';
+
+            If _infoOnly Then
+                RAISE WARNING '%', _msg;
+            End If;
+
+            RAISE EXCEPTION '%', _msg;
         End If;
 
         ---------------------------------------------------
@@ -548,7 +558,7 @@ BEGIN
                                     );
 
         ---------------------------------------------------
-        -- Lookup the Dataset ID
+        -- Lookup the Dataset ID (which was determined when validate_analysis_job_parameters called validate_analysis_job_request_datasets)
         ---------------------------------------------------
 
         SELECT Dataset_ID
