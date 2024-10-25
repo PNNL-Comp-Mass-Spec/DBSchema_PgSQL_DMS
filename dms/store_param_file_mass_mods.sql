@@ -55,9 +55,9 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **  Format for MSFragger:
 **     variable_mod_01 = 15.994900 M 3        # Oxidized methionine
 **     variable_mod_02 = 42.010600 [^ 1       # Acetylation protein N-term
-**     variable_mod_06 = 304.207146 n^ 1      # 16-plex TMT
+**     variable_mod_06 = 304.207146 n^ 1      # 16-plex TMT on peptide N-term
 **     add_C_cysteine = 57.021464             # Alkylated cysteine
-**     add_K_lysine = 304.207146              # 16-plex TMT
+**     add_K_lysine = 304.207146              # 16-plex TMT on lysiine
 **
 **  Format for FragPipe:
 **     Specified as a semicolon-delimited list of mod definitions
@@ -134,7 +134,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          05/18/2021 mem - Add support for reporter ions in MaxQuant mod defs
 **          06/15/2021 mem - Remove UNION statements to avoid sorting
 **                         - Collapse isobaric mods into a single entry
-**          09/07/2021 mem - Add support for dynamic N-terminal TMT mods in MSFragger (notated with n^)
+**          09/07/2021 mem - Add support for dynamic N-terminal peptide TMT mods in MSFragger (notated with n^)
 **          02/23/2023 mem - Ported to PostgreSQL
 **                         - Add support for DIA-NN
 **          02/28/2023 mem - Use renamed parameter file type, 'MSGFPlus'
@@ -160,6 +160,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **                         - Remove unreachable code that previously showed the contents of temp table Tmp_ModDef
 **          01/08/2024 mem - Use the default value for _maxRows when calling parse_delimited_list_ordered()
 **          09/27/2024 mem - Add support for FragPipe mod defs
+**          10/24/2024 mem - Fix bug that stored n^ as protein N-terminus instead of peptide N-terminus for MSFragger and FragPipe mod defs
 **
 *****************************************************/
 DECLARE
@@ -1306,9 +1307,9 @@ BEGIN
                 -- N or C terminal dynamic mod
                 _terminalMod := true;
 
-                -- Override 'n^' to instead use '[^'
+                -- Override 'n^' to instead use '<' (indicating N-terminal peptide)
                 If _affectedResidues = 'n^' Then
-                    _affectedResidues := '[^';
+                    _affectedResidues := '<';
                 End If;
 
                 INSERT INTO Tmp_Residues (Residue_Symbol, Terminal_AnyAA)
