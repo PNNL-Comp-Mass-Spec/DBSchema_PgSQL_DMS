@@ -22,7 +22,8 @@ CREATE TABLE public.t_analysis_job_request (
     special_processing public.citext,
     dataset_min public.citext,
     dataset_max public.citext,
-    data_pkg_id integer
+    data_pkg_id integer,
+    max_active_jobs integer DEFAULT 0 NOT NULL
 );
 
 
@@ -47,6 +48,12 @@ ALTER TABLE public.t_analysis_job_request ALTER COLUMN request_id ADD GENERATED 
 
 ALTER TABLE ONLY public.t_analysis_job_request
     ADD CONSTRAINT pk_t_analysis_job_request PRIMARY KEY (request_id);
+
+--
+-- Name: ix_t_analysis_job_request_max_active_jobs; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_request_max_active_jobs ON public.t_analysis_job_request USING btree (max_active_jobs);
 
 --
 -- Name: ix_t_analysis_job_request_name; Type: INDEX; Schema: public; Owner: d3l243

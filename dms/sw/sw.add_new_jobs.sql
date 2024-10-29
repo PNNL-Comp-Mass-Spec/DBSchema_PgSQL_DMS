@@ -8,10 +8,10 @@ CREATE OR REPLACE PROCEDURE sw.add_new_jobs(IN _bypassdms boolean DEFAULT false,
 /****************************************************
 **
 **  Desc:
-**      Add jobs from DMS that are in 'New' state in public.t_analysis_job, but aren't already in sw.t_jobs
-**      The DMS analysis tool tool determines the pipeline script to use
+**      Add DMS jobs that are in state 1=New in public.t_analysis_job, but aren't already in sw.t_jobs
+**      The DMS analysis tool name determines the pipeline script to use
 **
-**      Suspend running jobs that now have state 'Holding' in public.t_analysis_job
+**      Suspend running jobs that now have state 'Holding' or 'Pending' in public.t_analysis_job
 **
 **      Finally, reset failed or holding jobs that are now state 'New' in public.t_analysis_job
 **
@@ -24,21 +24,21 @@ CREATE OR REPLACE PROCEDURE sw.add_new_jobs(IN _bypassdms boolean DEFAULT false,
 **                             - Set local job state to freshly imported
 **                               (Create_Job_Steps will set local state to New)
 **
-**  New       failed           Resume job:
-**            holding          - Reset any failed/holding job steps to waiting
+**  New       Failed,          Resume job:
+**            Holding          - Reset any failed/holding job steps to waiting
 **                             - Reset Evaluated and Triggered to 0 in T_Job_Step_Dependencies for the affected steps
 **                             - Set local job state to 'resuming'
 **                               (UpdateJobState will handle final job state update)
 **                               (UpdateDependentSteps will handle final job step state updates)
 **
-**  New       complete         Reset job:
+**  New       Complete         Reset job:
 **                             - Delete entries from job, steps, parameters, and dependencies tables
 **                             - Set local job state to freshly imported (see import job above)
 **
-**  New       holding          Resume job: (see description above)
+**  New       Holding          Resume job: (see description above)
 **
-**  holding   (any state)      Suspend Job:
-**                            - Set local job state to holding
+**  Holding,  (any state)      Suspend Job:
+**  Pending                    - Set local job state to holding (but leave step states unchanged)
 **
 **
 **  Arguments:
@@ -94,6 +94,8 @@ CREATE OR REPLACE PROCEDURE sw.add_new_jobs(IN _bypassdms boolean DEFAULT false,
 **          10/18/2023 mem - Fix typo in format string
 **          08/12/2024 mem - Remove table alias from update query
 **          08/27/2024 mem - Change default value for _loopingUpdateInterval to 10 seconds (previously 5 seconds)
+**          10/28/2024 mem - Add support for DMS job state 20=Pending
+**                         - Use a Left Outer Join when looking for jobs to add to sw.t_jobs
 **
 *****************************************************/
 DECLARE
@@ -175,10 +177,10 @@ BEGIN
     CREATE INDEX IX_Tmp_DMSJobs_Job ON Tmp_DMSJobs (Job);
 
     ---------------------------------------------------
-    -- Get list of new or held jobs from public.t_analysis_job
+    -- Get list of new, held, or pending jobs from public.t_analysis_job
     --
     -- Data comes from view V_Get_Pipeline_Jobs,
-    -- which shows new jobs in state 1 or 8 but it
+    -- which shows new jobs in state 1, 8, or 20 but it
     -- excludes jobs that have recently been archived
     ---------------------------------------------------
 
@@ -257,7 +259,7 @@ BEGIN
             DMS_State,
             Pipeline_State
         )
-        SELECT 'New or Held Jobs', J.job, J.script, J.state, T.state
+        SELECT 'New, held, or pending jobs', J.job, J.script, J.state, T.state
         FROM Tmp_DMSJobs J
              LEFT OUTER JOIN sw.t_jobs T
                ON J.job = T.job
@@ -299,7 +301,7 @@ BEGIN
     End If;
 
     -- Also look for jobs where the DMS state is 'New', the broker state is 2, 5, or 8 (In Progress, Failed, or Holding),
-    -- and none of the jobs Steps have completed or are running
+    -- and none of the job's steps have completed or are running
 
     -- It is typically safer to perform a full reset on these jobs (rather than a resume) in case an admin changed the settings file for the job
     -- Exception: LTQ_FTPek and ICR2LS jobs because ICR-2LS runs as the first step and we create checkpoint copies of the .PEK files to allow for a resume
@@ -338,7 +340,7 @@ BEGIN
     If _jobCountToReset = 0 Then
         If _debugMode Then
             INSERT INTO Tmp_JobDebugMessages (Message, Job)
-            VALUES ('No Jobs to Reset', 0);
+            VALUES ('No jobs to reset', 0);
         End If;
     Else
         -- Reset jobs
@@ -359,7 +361,7 @@ BEGIN
                 Script,
                 DMS_State,
                 Pipeline_State)
-            SELECT 'Jobs to Reset', J.job, J.script, J.state, T.state
+            SELECT 'Jobs to reset', J.job, J.script, J.state, T.state
             FROM Tmp_ResetJobs R INNER JOIN Tmp_DMSJobs J ON R.job = J.job
                  INNER JOIN sw.t_jobs T ON J.job = T.job
             ORDER BY job;
@@ -417,9 +419,10 @@ BEGIN
         FROM Tmp_DMSJobs DJ
              INNER JOIN sw.t_scripts S
                ON DJ.script = S.script
-        WHERE state = 1 AND
-              NOT job IN (SELECT job
-                          FROM sw.t_jobs) AND
+             LEFT OUTER JOIN sw.t_jobs J
+               ON DJ.Job = J.Job
+        WHERE DJ.state = 1 AND
+              J.job IS NULL AND
               S.enabled = 'Y' AND
               S.backfill_to_dms = 0
         LIMIT _maxJobsToAddResetOrResume;
@@ -456,7 +459,7 @@ BEGIN
     If _jobCountToResume = 0 Then
         If _debugMode Then
             INSERT INTO Tmp_JobDebugMessages (Message, Job)
-            VALUES ('No Jobs to Resume', 0);
+            VALUES ('No jobs to resume', 0);
         End If;
     Else
         -- Resume or reset jobs
@@ -469,7 +472,7 @@ BEGIN
                 DMS_State,
                 Pipeline_State
             )
-            SELECT 'Jobs to Resume', J.job, J.script, J.state, T.state
+            SELECT 'Jobs to resume', J.job, J.script, J.state, T.state
             FROM Tmp_JobsToResumeOrReset R
                  INNER JOIN Tmp_DMSJobs J
                    ON R.job = J.job
@@ -489,17 +492,16 @@ BEGIN
             DMS_State,
             Pipeline_State
         )
-        SELECT 'Jobs to Suspend', J.job, J.script, J.state, T.state
+        SELECT 'Jobs to suspend', J.job, J.script, J.state, T.state
         FROM sw.t_jobs T
              INNER JOIN Tmp_DMSJobs J
                ON T.job = J.job
-        WHERE
-            (T.state <> 8) AND                    -- 8=Holding
-            (T.job IN (SELECT job FROM Tmp_DMSJobs WHERE state = 8));
+        WHERE T.state <> 8 AND                    -- 8=Holding, 20=Pending
+              T.job IN (SELECT job FROM Tmp_DMSJobs WHERE state IN (8, 20));
 
         If Not FOUND Then
             INSERT INTO Tmp_JobDebugMessages (Message, Job)
-            VALUES ('No Jobs to Suspend', 0);
+            VALUES ('No jobs to suspend', 0);
         End If;
     Else
 
@@ -514,14 +516,14 @@ BEGIN
         End If;
 
         -- Set local job state to holding for jobs
-        -- that are in holding state in public.t_analysis_job
+        -- that are in holding or pending state in public.t_analysis_job
 
         UPDATE sw.t_jobs
-        SET state = 8                            -- 8=Holding
+        SET state = 8                            -- 8=Holding, 20=Pending
         WHERE sw.t_jobs.state <> 8 AND
               sw.t_jobs.job IN (SELECT job
                                 FROM Tmp_DMSJobs
-                                WHERE state = 8);
+                                WHERE state IN (8, 20));
         --
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -636,7 +638,7 @@ BEGIN
 
         If _updateCount > 0 Then
             _statusMessage := format('... Updated the job comment or special_processing data in sw.t_jobs for %s resumed %s',
-                                        _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
+                                     _updateCount, public.check_plural(_updateCount, 'row', 'rows'));
 
             CALL public.post_log_entry ('Progress', _statusMessage, 'Add_New_Jobs', 'sw');
         End If;

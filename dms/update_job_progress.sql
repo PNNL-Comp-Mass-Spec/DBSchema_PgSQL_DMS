@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE public.update_job_progress(IN _mostrecentdays intege
 **      This procedure is intended to be called on an ad-hoc basis to updated progress values for one or more jobs
 **
 **      Note that a progress value of -1 is used for failed jobs
-**      Jobs in state 1=New or 8=Holding will have a progress of 0
+**      Jobs in state 1=New, 8=Holding, or 20=Pending will have a progress of 0
 **
 **      Set _mostRecentDays and _job to zero to update all jobs
 **
@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE public.update_job_progress(IN _mostrecentdays intege
 **          10/30/2017 mem - Consider long-running job steps when computing Runtime_Predicted_Minutes
 **                         - Set progress to 0 for inactive jobs (state 13)
 **          02/23/2024 mem - Ported to PostgreSQL
+**          10/28/2024 mem - Set progress to 0 for pending jobs (state 20)
 **
 *****************************************************/
 DECLARE
@@ -116,14 +117,14 @@ BEGIN
     WHERE State = 5;
 
     -----------------------------------------
-    -- Update progress and ETA for new, holding, inactive, or Special Proc. Waiting jobs
+    -- Update progress and ETA for new, holding, inactive, Special Proc. Waiting, or pending jobs
     -- This logic is also used by trigger trig_t_analysis_job_after_update
     -----------------------------------------
 
     UPDATE Tmp_JobsToUpdate
     SET Progress_New = 0,
         ETA_Minutes = null
-    WHERE State IN (1, 8, 13, 19);
+    WHERE State IN (1, 8, 13, 19, 20);
 
     -----------------------------------------
     -- Update progress and ETA for completed jobs
