@@ -6,7 +6,7 @@ CREATE VIEW public.v_material_containers_active_export_rfid AS
  SELECT mc.container,
     mc.comment,
         CASE
-            WHEN ((c.campaign IS NULL) OR (c.campaign OPERATOR(public.=) 'NOT SET'::public.citext)) THEN ''::public.citext
+            WHEN ((c.campaign IS NULL) OR (c.campaign OPERATOR(public.=) 'Not_Set'::public.citext)) THEN ''::public.citext
             ELSE c.campaign
         END AS campaign,
     mc.created,
