@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE sw.remove_dms_deleted_jobs(IN _infoonly boolean DEFA
 **          04/13/2010 grk - Don't delete jobs where dataset ID = 0
 **          05/26/2017 mem - Treat state 9 (Running_Remote) as an active job
 **          07/29/2023 mem - Ported to PostgreSQL
+**          10/28/2024 mem - Use a Left Outer Join when looking for jobs in sw.t_jobs that are not in v_dms_pipeline_existing_jobs
 **
 *****************************************************/
 DECLARE
@@ -49,10 +50,11 @@ BEGIN
     ---------------------------------------------------
 
     INSERT INTO Tmp_Selected_Jobs (job, state)
-    SELECT job, state
-    FROM sw.t_jobs
-    WHERE dataset_id <> 0 AND
-          NOT job IN (SELECT job FROM sw.v_dms_pipeline_existing_jobs);
+    SELECT J.job, J.state
+    FROM sw.t_jobs J
+         LEFT OUTER JOIN sw.v_dms_pipeline_existing_jobs AllJobs
+           ON J.job = AllJobs.job
+    WHERE J.dataset_id <> 0 AND AllJobs.job Is Null;
 
     If Not FOUND Then
         DROP TABLE Tmp_Selected_Jobs;
@@ -70,11 +72,11 @@ BEGIN
          FROM Tmp_Selected_Jobs INNER JOIN
               sw.t_job_steps JS
                 ON Tmp_Selected_Jobs.job = JS.job
-         WHERE JS.state IN (4,9) AND
+         WHERE JS.state IN (4, 9) AND
                JS.start >= CURRENT_TIMESTAMP - INTERVAL '48 hours'
         );
 
-    If Not Exists (SELECT * FROM Tmp_Selected_Jobs) Then
+    If Not Exists (SELECT job FROM Tmp_Selected_Jobs) Then
         DROP TABLE Tmp_Selected_Jobs;
         RETURN;
     End If;
