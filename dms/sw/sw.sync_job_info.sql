@@ -27,6 +27,7 @@ CREATE OR REPLACE PROCEDURE sw.sync_job_info(IN _bypassdms boolean DEFAULT false
 **          02/15/2016 mem - Re-enabled use of sw.t_local_job_processors
 **          07/31/2023 mem - Exclude jobs from sw.t_jobs that are in state 7 or 14 (in addition to state 4)
 **                         - Ported to PostgreSQL
+**          10/28/2024 mem - Update comment that lists the job state IDs that V_Get_Pipeline_Job_Priority filters on
 **
 *****************************************************/
 DECLARE
@@ -82,7 +83,7 @@ BEGIN
 
     ---------------------------------------------------
     -- Update priorities for jobs and job steps based on the priority defined in public.t_analysis_job
-    -- Uses view V_Get_Pipeline_Job_Priority, which only shows jobs with state 1, 2, or 8  (new, in progress, or holding)
+    -- Uses view V_Get_Pipeline_Job_Priority, which only shows jobs with state 1, 2, 8, or 20 (new, in progress, holding, or pending)
     ---------------------------------------------------
 
     UPDATE sw.t_jobs J
