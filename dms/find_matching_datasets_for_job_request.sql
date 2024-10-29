@@ -1,8 +1,8 @@
 --
--- Name: find_matching_datasets_for_job_request(integer); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: find_matching_datasets_for_job_request(integer, boolean); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.find_matching_datasets_for_job_request(_requestid integer) RETURNS TABLE(sel text, dataset public.citext, jobs integer, new integer, busy integer, complete integer, failed integer, holding integer)
+CREATE OR REPLACE FUNCTION public.find_matching_datasets_for_job_request(_requestid integer, _summarize boolean DEFAULT false) RETURNS TABLE(sel text, dataset public.citext, jobs integer, new integer, in_progress integer, complete integer, failed integer, holding integer)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -15,6 +15,7 @@ CREATE OR REPLACE FUNCTION public.find_matching_datasets_for_job_request(_reques
 **
 **  Arguments:
 **    _requestID    Analysis job request ID
+**    _summarize    When true, show job count summaries instead of showing individual datasets
 **
 **  Auth:   grk
 **  Date:   01/08/2008 grk - Initial release
@@ -27,23 +28,32 @@ CREATE OR REPLACE FUNCTION public.find_matching_datasets_for_job_request(_reques
 **          07/13/2023 mem - Ported to PostgreSQL
 **          05/29/2024 mem - Add "Sel" column, which the web page renders as a checkbox
 **          06/16/2024 mem - Ignore case when finding datasets that have jobs that match job parameters from the job request
+**          10/28/2024 mem - Obtain dataset names from t_analysis_job_request_datasets instead of from deprecated column datasets in t_analysis_job_request
+**                         - Treat job state 20=Pending as Holding
+**                         - Rename column Busy to In_Progress
+**                         - Add argument _summarize
 **
 *****************************************************/
 DECLARE
     _jobRequestInfo record;
 BEGIN
 
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
     If _requestID Is Null Then
         RAISE INFO 'Analysis job request ID is null';
         RETURN;
     End If;
 
+    _summarize := Coalesce(_summarize, false);
+
     ---------------------------------------------------
-    -- Get job parameters and list of datasets from request
+    -- Get job parameters for the given analysis job request
     ---------------------------------------------------
 
-    SELECT AJR.datasets AS DatasetList,
-           AJR.analysis_tool AS ToolName,
+    SELECT AJR.analysis_tool AS ToolName,
            AJR.param_file_name AS ParamFileName,
            AJR.settings_file_name AS SettingsFileName,
            Org.organism AS OrganismName,
@@ -73,15 +83,20 @@ BEGIN
         Dataset citext,
         Jobs int,
         New int,
-        Busy int,
+        In_Progress int,
         Complete int,
         Failed int,
         Holding int
     );
 
     INSERT INTO Tmp_RequestDatasets (dataset)
-    SELECT value
-    FROM public.parse_delimited_list(_jobRequestInfo.DatasetList);
+    SELECT DS.Dataset
+    FROM t_analysis_job_request AJR
+         INNER JOIN t_analysis_job_request_datasets AJRD
+           ON AJRD.request_id = AJR.request_id
+         INNER JOIN t_dataset DS
+           ON DS.dataset_id = AJRD.dataset_id
+    WHERE AJR.request_id = _requestID;
 
     ---------------------------------------------------
     -- Get list of datasets that have jobs that match job parameters from the job request
@@ -91,7 +106,7 @@ BEGIN
         Dataset,
         Jobs,
         New,
-        Busy,
+        In_Progress,
         Complete,
         Failed,
         Holding
@@ -99,10 +114,10 @@ BEGIN
     SELECT DS.dataset,
            COUNT(AJ.job) AS Jobs,
            SUM(CASE WHEN AJ.job_state_id IN (1)                           THEN 1 ELSE 0 END) AS New,
-           SUM(CASE WHEN AJ.job_state_id IN (2, 3, 9, 10, 11, 16, 17)     THEN 1 ELSE 0 END) AS Busy,
+           SUM(CASE WHEN AJ.job_state_id IN (2, 3, 9, 10, 11, 16, 17)     THEN 1 ELSE 0 END) AS In_Progress,
            SUM(CASE WHEN AJ.job_state_id IN (4, 14)                       THEN 1 ELSE 0 END) AS Complete,
            SUM(CASE WHEN AJ.job_state_id IN (5, 6, 7, 12, 13, 15, 18, 99) THEN 1 ELSE 0 END) AS Failed,
-           SUM(CASE WHEN AJ.job_state_id IN (8)                           THEN 1 ELSE 0 END) AS Holding
+           SUM(CASE WHEN AJ.job_state_id IN (8, 20)                       THEN 1 ELSE 0 END) AS Holding
     FROM t_dataset DS
          INNER JOIN t_analysis_job AJ
            ON AJ.dataset_id = DS.dataset_id
@@ -133,28 +148,43 @@ BEGIN
     -- Output
     ---------------------------------------------------
 
-    RETURN QUERY
-    SELECT '' AS Sel,
-           M.Dataset,
-           M.Jobs,
-           M.New,
-           M.Busy,
-           M.Complete,
-           M.Failed,
-           M.Holding
-    FROM Tmp_MatchingJobDatasets M
-    UNION
-    SELECT '' AS Sel,
-           RD.dataset,
-           0 AS Jobs,
-           0 AS New,
-           0 AS Busy,
-           0 AS Complete,
-           0 AS Failed,
-           0 AS Holding
-    FROM Tmp_RequestDatasets RD
-    WHERE NOT RD.Dataset IN (SELECT M.dataset
-                             FROM Tmp_MatchingJobDatasets M);
+    If _summarize Then
+        RETURN QUERY
+        SELECT '' AS Sel,
+               'Aggregate'::citext     AS dataset,
+               SUM(M.Jobs)::int        AS Jobs,
+               SUM(M.New)::int         AS New,
+               SUM(M.In_Progress)::int AS In_Progress,
+               SUM(M.Complete)::int    AS Complete,
+               SUM(M.Failed)::int      AS Failed,
+               SUM(M.Holding)::int     AS Holding
+        FROM Tmp_MatchingJobDatasets M;
+    Else
+        RETURN QUERY
+        SELECT '' AS Sel,
+               M.Dataset,
+               M.Jobs,
+               M.New,
+               M.In_Progress,
+               M.Complete,
+               M.Failed,
+               M.Holding
+        FROM Tmp_MatchingJobDatasets M
+        UNION
+        SELECT '' AS Sel,
+               RD.dataset,
+               0 AS Jobs,
+               0 AS New,
+               0 AS In_Progress,
+               0 AS Complete,
+               0 AS Failed,
+               0 AS Holding
+        FROM Tmp_RequestDatasets RD
+             LEFT OUTER JOIN Tmp_MatchingJobDatasets M
+               ON M.dataset = RD.dataset
+        WHERE M.dataset Is Null
+        ORDER BY dataset;
+    End If;
 
     DROP TABLE Tmp_RequestDatasets;
     DROP TABLE Tmp_MatchingJobDatasets;
@@ -162,11 +192,11 @@ END
 $$;
 
 
-ALTER FUNCTION public.find_matching_datasets_for_job_request(_requestid integer) OWNER TO d3l243;
+ALTER FUNCTION public.find_matching_datasets_for_job_request(_requestid integer, _summarize boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION find_matching_datasets_for_job_request(_requestid integer); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION find_matching_datasets_for_job_request(_requestid integer, _summarize boolean); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.find_matching_datasets_for_job_request(_requestid integer) IS 'FindMatchingDatasetsForJobRequest';
+COMMENT ON FUNCTION public.find_matching_datasets_for_job_request(_requestid integer, _summarize boolean) IS 'FindMatchingDatasetsForJobRequest';
 
