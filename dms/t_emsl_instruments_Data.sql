@@ -161,7 +161,7 @@ COPY public.t_emsl_instruments (eus_instrument_id, eus_display_name, eus_instrum
 35033	Metabolomic Liquid State Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q Exactive LC-MS 6 (2023) - DUPLICATE	\N	\N	\N	2024-08-06 06:15:53	0	0
 35034	Targeted (SRM) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Altis Triple Quad LC-MS 1 (2017) - DUPLICATE	10	\N	\N	2024-08-06 06:15:53	0	0
 35035	Targeted (SRM) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Altis Triple Quad LC-MS 2 (2018)	10	\N	\N	2024-08-06 06:15:53	1	0
-35036	Lipidomics Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: lsNMR HPLC (2019)	10	\N	\N	2024-08-06 06:15:53	1	0
+35036	Liquid State Nuclear Magnetic Resonance (lsNMR)	Mass Spectrometer: lsNMR HPLC (2019)	10	\N	\N	2024-10-29 06:16:37.644656	1	0
 35037	Lipidomics Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Agilent GC-MS 10 (2022)	10	\N	\N	2024-08-06 06:15:53	1	0
 35038	Fourier-Transform Ion Cyclotron Resonance (FTICR)	Mass Spectrometer: 12T FTICR-MALDI (2004) - DUPLICATE	\N	\N	\N	2024-08-06 06:15:53	0	0
 35046	Aerosol Mass Spectrometry (MS) Nanospray Desorption Electrospray Ionization (nano-DESI)	Mass Spectrometer: nano-DESI Orbitrap MX (2024)	10	\N	\N	2024-08-06 06:15:53	1	0

@@ -105,7 +105,8 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1530	CbNoTMT16	Carbamylation on TMT-labled samples; for use when using a static TMT 6-plex mod	-261.201332	\N	-	PNNL	CarbamylNoTMT16	\N	\N
 1181	Chloro	Chlorination	33.96103	34.4448	-	PNNL		Chloro	H(-1) Cl
 1261	ChloroAA	Chloroacetamidine	56.0374464	56.06664	-	PNNL		CAA	H4 C2 N2
-1557	CitrButanedione	Citrulline + 2,3-Butanedione	67.0183888	67.06602	-	PNNL		\N	C(4) H(3) O
+1572	CitrBD	Citrulline + 2,3-Butanedione	50.999666	51.0434	-	PNNL		\N	C(4) H(1) N(-1) O
+1557	CitrButanedione	Citrulline + 2,3-Butanedione (+67.0183 is the wrong mass; instead, use CitrBD with mass +50.999666)	67.0183888	67.06602	-	PNNL		\N	C(4) H(3) O
 1558	CitrCysteamine	Citrulline + 2,3-Butanedione + Cysteamine	142.0326578	142.19986	-	PNNL		\N	C(6) H(8) O N S
 1559	CitrMercapto	Citrulline + 2,3-Butanedione + Mercapto...	348.1527836	348.51004	-	PNNL		\N	C(13) H(26) O(2) N(5) S(2)
 1196	ClickBio	Click-Bio enrichment compound	539.252	\N	-	PNNL		ClickBio	\N
@@ -231,6 +232,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1235	HisOxyD	Rearrangement and addition of oxygen to obtain Aspartic Acid	-22.031969	-22.0519	-	UniMod	His->Asp	His2Asp	H(-2) C(-2) N(-2) O(2)
 1234	HisOxyN	Rearrangement and addition of oxygen to obtain Asparagine	-23.015984	-23.0366	-	UniMod	His->Asn	His2Asn	H(-1) C(-2) N(-1) O
 1389	HisToGlu	His to Glu substitution	-8.016319	\N	-	UniMod	His->Glu	Misacylation of the tRNA or editing of the charged tRNA	C(-1) N(-2) O(2)
+1573	HomocitrBD	Homocitrulline + 2,3-Butanedione	93.021464	93.08346	-	PNNL		\N	C(5) H(3) N(1) O
 1399	Hypusine	replacement of Lysine	87.068414	87.1204	-	UniMod	hypusine	\N	H(9) C(4) N O
 1434	IAAABP	NCS_IAABP probe addition to Cysteine	394.197801	\N	-	PNNL		\N	C(19) H(28) N(3) O(6)
 1436	IAAABP-H	NCS_IAABP probe addition to Cysteine, minus H	393.1899762	\N	-	PNNL		\N	C(19) H(27) N(3) O(6)
@@ -464,7 +466,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 -- Name: t_mass_correction_factors_mass_correction_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1571, true);
+SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1573, true);
 
 
 --

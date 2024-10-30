@@ -45,6 +45,7 @@ LC-Formic_150min		1	1	0
 LC-Formic_15min		1	1	0
 LC-Formic_1hr		1	1	0
 LC-Formic_20min		1	1	0
+LC-Formic_20min_70SPD	Trap and Elute	1	1	0
 LC-Formic_2hr		1	1	0
 LC-Formic_30min		1	1	0
 LC-Formic_3hr		1	1	0

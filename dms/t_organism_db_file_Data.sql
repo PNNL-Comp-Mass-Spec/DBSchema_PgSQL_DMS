@@ -3111,6 +3111,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 1428	Euplotes_Crassus_6ft_gt20_plus_frameshifts_Tryp_Pig_Bov_2015-12-15.fasta	1159	Proteins from 6 frame translation of contigs (from Vlad Petyuk)	1	2017910	98467616	1	151914	2015-12-16 15:13:00
 573	Euplotes_Crassus_6ft_gt6_contam_FwdRev.fasta	1159	Proteins from 6 frame translation of contigs (from Vlad Petyuk)	0	7520798	239355994	1	474778	2009-11-19 19:41:00
 575	Euplotes_Crassus_6ft_gt6_plus_frameshifts_contam_FwdRev.fasta	1159	Proteins from 6 frame translation of contigs, plus frameshifts (from Vlad Petyuk)	0	7808878	261992560	1	508710	2009-12-16 17:37:00
+8762	FICUS_60449_Soil_Microbiome_TrypPigBov_2024-10-28.fasta	1689	1.9 million sequence file	1	1910403	608626154	1	862149	2024-10-28 20:23:00
 7537	FICUS_Selbman_2_Ga0500038_metagenome_TrypPigBov_2022-05-09.fasta	1704	Associated with the Linnaeus Terrace samples for EMSL 51548; https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=FICUS_Selbmann_2_11_FD; no duplicates to collapse	1	1443532	195553670	1	420542	2022-05-09 15:52:00
 7587	FICUS_Selbman_2_Ga0500038_metagenome_TrypPigBov_2022-05-09_5x_1.fasta	1704	Auto-created	0	289218	39110561	1	82232	2022-08-15 17:20:00
 7588	FICUS_Selbman_2_Ga0500038_metagenome_TrypPigBov_2022-05-09_5x_2.fasta	1704	Auto-created	0	288493	39110650	1	82064	2022-08-15 17:20:00
@@ -4884,6 +4885,24 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 4921	Kellogg_SoilMetagenome_annotated_TrypPigBov_2018-09-28_15x_13.fasta	31	Auto-created	0	276191	55610491	1	87157	2018-10-18 19:00:00
 4922	Kellogg_SoilMetagenome_annotated_TrypPigBov_2018-09-28_15x_14.fasta	31	Auto-created	0	276647	55611202	1	87117	2018-10-18 19:00:00
 4923	Kellogg_SoilMetagenome_annotated_TrypPigBov_2018-09-28_15x_15.fasta	31	Auto-created	0	276543	55610775	1	87116	2018-10-18 19:00:00
+8709	Kostka_JGI_PIE_P1_sed_TrypPigBov_2024-09-19.fasta	1846	Metaproteome for smooth cordgrass sediment sample PIE_P1 (replicates combined) from salt marsh ecosystem Rowley,MA,USA sequenced and annotated at JGI (https://genome.jgi.doe.gov/portal/Metexcmicrobiome/Metexcmicrobiome.info.html)	1	2451275	434944097	1	909312	2024-10-15 21:26:14.951932
+8715	Kostka_JGI_PIE_P1_sed_TrypPigBov_2024-09-19_5x_1.fasta	1846	Auto-created	0	490352	86988834	1	182046	2024-10-16 11:49:16.624792
+8716	Kostka_JGI_PIE_P1_sed_TrypPigBov_2024-09-19_5x_2.fasta	1846	Auto-created	0	490071	86988829	1	181929	2024-10-16 11:49:16.635689
+8717	Kostka_JGI_PIE_P1_sed_TrypPigBov_2024-09-19_5x_3.fasta	1846	Auto-created	0	490337	86988759	1	182058	2024-10-16 11:49:16.640931
+8718	Kostka_JGI_PIE_P1_sed_TrypPigBov_2024-09-19_5x_4.fasta	1846	Auto-created	0	490261	86988728	1	181838	2024-10-16 11:49:16.64564
+8719	Kostka_JGI_PIE_P1_sed_TrypPigBov_2024-09-19_5x_5.fasta	1846	Auto-created	0	490254	86988947	1	182029	2024-10-16 11:49:16.650433
+8735	Kostka_JGI_PIE_P3_root_TrypPigBov_2024-09-19.fasta	1846	Metaproteome for smooth cordgrass root compartment sample PIE_P3 (replicates combined) from salt marsh ecosystem Rowley,MA,USA sequenced and annotated at JGI (https://genome.jgi.doe.gov/portal/Metexcmicrobiome/Metexcmicrobiome.info.html)	1	5599447	600216872	1	1.2032e+06	2024-10-16 20:38:55.314486
+8747	Kostka_JGI_PIE_P3_root_TrypPigBov_2024-09-19_5x_1.fasta	1846	Auto-created	0	1120054	120043315	1	240712	2024-10-17 14:33:56.729536
+8748	Kostka_JGI_PIE_P3_root_TrypPigBov_2024-09-19_5x_2.fasta	1846	Auto-created	0	1119976	120043411	1	240695	2024-10-17 14:33:56.739569
+8749	Kostka_JGI_PIE_P3_root_TrypPigBov_2024-09-19_5x_3.fasta	1846	Auto-created	0	1120914	120043738	1	240841	2024-10-17 14:33:56.743523
+8750	Kostka_JGI_PIE_P3_root_TrypPigBov_2024-09-19_5x_4.fasta	1846	Auto-created	0	1118441	120043742	1	240445	2024-10-17 14:33:56.747202
+8751	Kostka_JGI_PIE_P3_root_TrypPigBov_2024-09-19_5x_5.fasta	1846	Auto-created	0	1120062	120042666	1	240541	2024-10-17 14:33:56.751194
+8711	Kostka_JGI_PIE_P3_sed_TrypPigBov_2024-09-19.fasta	1846	Metaproteome for smooth cordgrass sediment sample PIE_P3 (replicates combined) from salt marsh ecosystem Rowley,MA,USA sequenced and annotated at JGI (https://genome.jgi.doe.gov/portal/Metexcmicrobiome/Metexcmicrobiome.info.html)	1	2632763	474718991	1	977920	2024-10-15 21:26:14.957922
+8720	Kostka_JGI_PIE_P3_sed_TrypPigBov_2024-09-19_5x_1.fasta	1846	Auto-created	0	526751	94943760	1	195654	2024-10-16 12:01:07.416409
+8721	Kostka_JGI_PIE_P3_sed_TrypPigBov_2024-09-19_5x_2.fasta	1846	Auto-created	0	526551	94943824	1	195715	2024-10-16 12:01:07.429346
+8722	Kostka_JGI_PIE_P3_sed_TrypPigBov_2024-09-19_5x_3.fasta	1846	Auto-created	0	526937	94944209	1	195697	2024-10-16 12:01:07.436707
+8723	Kostka_JGI_PIE_P3_sed_TrypPigBov_2024-09-19_5x_4.fasta	1846	Auto-created	0	526324	94943445	1	195601	2024-10-16 12:01:07.441005
+8724	Kostka_JGI_PIE_P3_sed_TrypPigBov_2024-09-19_5x_5.fasta	1846	Auto-created	0	526200	94943753	1	195572	2024-10-16 12:01:07.445162
 8657	Kostka_JGI_PIE_Sediment_Combined_TrypPigBov_2024-09-17.fasta	1846	Combined metaproteome for sediment samples from salt marsh ecosystem Rowley,MA,USA sequenced and annotated at JGI (https://genome.jgi.doe.gov/portal/Metexcmicrobiome/Metexcmicrobiome.info.html)	1	5010135	894123630	1	1.859584e+06	2024-09-17 21:16:29.412359
 8658	Kostka_JGI_PIE_Sediment_Combined_TrypPigBov_2024-09-17_5x_1.fasta	1846	Auto-created	0	1001651	178824621	1	371958	2024-09-18 10:28:21.799725
 8659	Kostka_JGI_PIE_Sediment_Combined_TrypPigBov_2024-09-17_5x_2.fasta	1846	Auto-created	0	1001361	178825108	1	371915	2024-09-18 10:28:21.820658
@@ -4926,6 +4945,42 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 8690	Kostka_JGI_PIE_T3P3_sed_Ga0665419_TrypPigBov_2024-09-17_5x_3.fasta	1846	Auto-created	0	216673	40023001	1	81164	2024-09-18 10:47:57.723771
 8691	Kostka_JGI_PIE_T3P3_sed_Ga0665419_TrypPigBov_2024-09-17_5x_4.fasta	1846	Auto-created	0	216777	40022800	1	81173	2024-09-18 10:47:57.726396
 8692	Kostka_JGI_PIE_T3P3_sed_Ga0665419_TrypPigBov_2024-09-17_5x_5.fasta	1846	Auto-created	0	216743	40022967	1	81217	2024-09-18 10:47:57.728843
+8713	Kostka_JGI_SP_P1_root_TrypPigBov_2024-09-19.fasta	1846	Metaproteome for smooth cordgrass root compartment sample SP_P1 (replicates combined) from salt marsh ecosystem Sapelo Island,GA,USA sequenced and annotated at JGI (https://genome.jgi.doe.gov/portal/Metexcmicrobiome/Metexcmicrobiome.info.html)	1	5707091	560893350	1	1.104896e+06	2024-10-15 21:26:14.963677
+8725	Kostka_JGI_SP_P1_root_TrypPigBov_2024-09-19_5x_1.fasta	1846	Auto-created	0	1140134	112178576	1	220901	2024-10-16 12:34:32.657501
+8726	Kostka_JGI_SP_P1_root_TrypPigBov_2024-09-19_5x_2.fasta	1846	Auto-created	0	1141969	112178658	1	220996	2024-10-16 12:34:32.670977
+8727	Kostka_JGI_SP_P1_root_TrypPigBov_2024-09-19_5x_3.fasta	1846	Auto-created	0	1142120	112178496	1	221046	2024-10-16 12:34:32.675923
+8728	Kostka_JGI_SP_P1_root_TrypPigBov_2024-09-19_5x_4.fasta	1846	Auto-created	0	1140901	112178912	1	220953	2024-10-16 12:34:32.680029
+8729	Kostka_JGI_SP_P1_root_TrypPigBov_2024-09-19_5x_5.fasta	1846	Auto-created	0	1141967	112178708	1	221005	2024-10-16 12:34:32.684161
+8708	Kostka_JGI_SP_P1_sed_TrypPigBov_2024-09-19.fasta	1846	Metaproteome for smooth cordgrass sediment sample SP_P1 (replicates combined) from salt marsh ecosystem Sapelo Island,GA,USA sequenced and annotated at JGI (https://genome.jgi.doe.gov/portal/Metexcmicrobiome/Metexcmicrobiome.info.html)	1	913593	151820972	1	323584	2024-10-15 21:26:14.943643
+8752	Kostka_JGI_SP_P1_sed_TrypPigBov_2024-09-19_5x_1.fasta	1846	Auto-created	0	182811	30363907	1	64944	2024-10-17 14:42:58.064477
+8753	Kostka_JGI_SP_P1_sed_TrypPigBov_2024-09-19_5x_2.fasta	1846	Auto-created	0	182767	30364508	1	64894	2024-10-17 14:42:58.076081
+8754	Kostka_JGI_SP_P1_sed_TrypPigBov_2024-09-19_5x_3.fasta	1846	Auto-created	0	182334	30364161	1	64911	2024-10-17 14:42:58.084443
+8755	Kostka_JGI_SP_P1_sed_TrypPigBov_2024-09-19_5x_4.fasta	1846	Auto-created	0	182874	30364396	1	64915	2024-10-17 14:42:58.090992
+8756	Kostka_JGI_SP_P1_sed_TrypPigBov_2024-09-19_5x_5.fasta	1846	Auto-created	0	182807	30364000	1	64925	2024-10-17 14:42:58.095792
+8710	Kostka_JGI_SP_P3_root_TrypPigBov_2024-09-19.fasta	1846	Metaproteome for smooth cordgrass root compartment sample SP_P3 (replicates combined) from salt marsh ecosystem Sapelo Island,GA,USA sequenced and annotated at JGI (https://genome.jgi.doe.gov/portal/Metexcmicrobiome/Metexcmicrobiome.info.html)	1	5173829	482343987	1	953344	2024-10-15 21:26:14.954492
+8730	Kostka_JGI_SP_P3_root_TrypPigBov_2024-09-19_5x_1.fasta	1846	Auto-created	0	1034159	96468771	1	190748	2024-10-16 12:39:50.997002
+8731	Kostka_JGI_SP_P3_root_TrypPigBov_2024-09-19_5x_2.fasta	1846	Auto-created	0	1035587	96469141	1	190907	2024-10-16 12:39:51.010444
+8732	Kostka_JGI_SP_P3_root_TrypPigBov_2024-09-19_5x_3.fasta	1846	Auto-created	0	1035508	96468626	1	190795	2024-10-16 12:39:51.015878
+8733	Kostka_JGI_SP_P3_root_TrypPigBov_2024-09-19_5x_4.fasta	1846	Auto-created	0	1035090	96468780	1	190752	2024-10-16 12:39:51.021058
+8734	Kostka_JGI_SP_P3_root_TrypPigBov_2024-09-19_5x_5.fasta	1846	Auto-created	0	1033485	96468669	1	190775	2024-10-16 12:39:51.025975
+8714	Kostka_JGI_VCR_P1_root_TrypPigBov_2024-09-19.fasta	1846	Metaproteome for smooth cordgrass root compartment sample VCR_P1 (replicates combined) from salt marsh ecosystem Northampton County,VA,USA sequenced and annotated at JGI (https://genome.jgi.doe.gov/portal/Metexcmicrobiome/Metexcmicrobiome.info.html)	1	5867953	582084796	1	1.151283e+06	2024-10-15 21:26:14.966022
+8737	Kostka_JGI_VCR_P1_root_TrypPigBov_2024-09-19_5x_1.fasta	1846	Auto-created	0	1174206	116417408	1	230244	2024-10-17 11:54:43.743467
+8738	Kostka_JGI_VCR_P1_root_TrypPigBov_2024-09-19_5x_2.fasta	1846	Auto-created	0	1173397	116416934	1	230157	2024-10-17 11:54:43.755207
+8739	Kostka_JGI_VCR_P1_root_TrypPigBov_2024-09-19_5x_3.fasta	1846	Auto-created	0	1173104	116416903	1	230276	2024-10-17 11:54:43.763225
+8740	Kostka_JGI_VCR_P1_root_TrypPigBov_2024-09-19_5x_4.fasta	1846	Auto-created	0	1173068	116416816	1	230282	2024-10-17 11:54:43.768142
+8741	Kostka_JGI_VCR_P1_root_TrypPigBov_2024-09-19_5x_5.fasta	1846	Auto-created	0	1174178	116416735	1	230330	2024-10-17 11:54:43.772645
+8712	Kostka_JGI_VCR_P3_root_TrypPigBov_2024-09-19.fasta	1846	Metaproteome for smooth cordgrass root compartment sample VCR_P3 (replicates combined) from salt marsh ecosystem Northampton County,VA,USA sequenced and annotated at JGI (https://genome.jgi.doe.gov/portal/Metexcmicrobiome/Metexcmicrobiome.info.html)	1	5500303	534425840	1	1.050419e+06	2024-10-15 21:26:14.960295
+8742	Kostka_JGI_VCR_P3_root_TrypPigBov_2024-09-19_5x_1.fasta	1846	Auto-created	0	1099965	106884966	1	210128	2024-10-17 14:13:37.717289
+8743	Kostka_JGI_VCR_P3_root_TrypPigBov_2024-09-19_5x_2.fasta	1846	Auto-created	0	1100549	106885134	1	210049	2024-10-17 14:13:37.728517
+8744	Kostka_JGI_VCR_P3_root_TrypPigBov_2024-09-19_5x_3.fasta	1846	Auto-created	0	1099640	106885057	1	210075	2024-10-17 14:13:37.734867
+8745	Kostka_JGI_VCR_P3_root_TrypPigBov_2024-09-19_5x_4.fasta	1846	Auto-created	0	1100089	106885520	1	210084	2024-10-17 14:13:37.738587
+8746	Kostka_JGI_VCR_P3_root_TrypPigBov_2024-09-19_5x_5.fasta	1846	Auto-created	0	1100060	106885163	1	210092	2024-10-17 14:13:37.742102
+8736	Kostka_JGI_VCR_P3_sed_TrypPigBov_2024-09-19.fasta	1846	Metaproteome for smooth cordgrass sediment sample VCR_P3 (replicates combined) from salt marsh ecosystem Northampton County,VA,USA sequenced and annotated at JGI (https://genome.jgi.doe.gov/portal/Metexcmicrobiome/Metexcmicrobiome.info.html)	1	3833421	693781195	1	1.429709e+06	2024-10-16 20:38:55.322392
+8757	Kostka_JGI_VCR_P3_sed_TrypPigBov_2024-09-19_5x_1.fasta	1846	Auto-created	0	766673	138756189	1	285949	2024-10-17 15:02:06.013453
+8758	Kostka_JGI_VCR_P3_sed_TrypPigBov_2024-09-19_5x_2.fasta	1846	Auto-created	0	766138	138756455	1	285860	2024-10-17 15:02:06.023591
+8759	Kostka_JGI_VCR_P3_sed_TrypPigBov_2024-09-19_5x_3.fasta	1846	Auto-created	0	767153	138756200	1	286050	2024-10-17 15:02:06.027297
+8760	Kostka_JGI_VCR_P3_sed_TrypPigBov_2024-09-19_5x_4.fasta	1846	Auto-created	0	766716	138755790	1	285923	2024-10-17 15:02:06.030702
+8761	Kostka_JGI_VCR_P3_sed_TrypPigBov_2024-09-19_5x_5.fasta	1846	Auto-created	0	766741	138756561	1	285932	2024-10-17 15:02:06.034176
 7006	LCA_ACODB_2040502000_JGI.fasta	1135	Leafcutter ant proteins from JGI	1	1275863	132388602	1	151793	2021-05-28 15:04:00
 7007	LCA_ACODT_2038011000_JGI.fasta	1135	Leafcutter ant proteins from JGI	1	1285907	119879259	1	139453	2021-05-28 15:04:00
 7008	LCA_ATEDB_2032320007_JGI.fasta	1135	Leafcutter ant proteins from JGI	1	524534	55351914	1	63010	2021-05-28 15:04:00
@@ -6765,6 +6820,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 7625	SFA_Soil_JGI_Ga0531532_TrypPigBov_2022-11-02_5x_4.fasta	1686	Auto-created	0	921189	167158224	1	328582	2022-11-02 19:22:00
 7626	SFA_Soil_JGI_Ga0531532_TrypPigBov_2022-11-02_5x_5.fasta	1686	Auto-created	0	922818	167158146	1	328693	2022-11-02 19:22:00
 7628	SFA_Soil_JGI_Ga0531532_subset_TrypPigBov_2023-01-12.fasta	1686	EUP# 60039 SFA soil metagenome sequenced at JGI; subset of SFA_Soil_JGI_Ga0531532_TrypPigBov_2022-11-02.fasta based on MS-GF+ search results	1	116118	29532443	1	32327	2023-01-12 14:23:00
+8763	SFA_Soils_60449-MAGs_TrypPigBov_2024-10-28.fasta	1847	Bacterial and fungal sequences from enrichments of fungal hyphae; prepared by Robert Danczak and provided by Amy Zimmerman	1	1910403	608626154	1	858309	2024-10-29 14:38:06.871222
 139	SO1777_MtrA.fasta	4		0	1	333	1	1	2004-07-15 20:02:00
 140	SO1778.fasta	4		0	1	671	1	1	2004-06-02 10:01:00
 636	SRR_Peru_Concatenated_2011-11-01.fasta	1105	Short DNA sequence reads from microbial community off of Peru coast	1	200000	20000000	1	77439	2011-11-01 11:44:00
@@ -8385,7 +8441,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 -- Name: t_organism_db_file_org_db_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 8707, true);
+SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 8763, true);
 
 
 --

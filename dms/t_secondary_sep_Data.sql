@@ -69,6 +69,7 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 104	LC-Dionex-Formic_3hr	Dionex LC, formic acid, 180 minute (3 hr) separation	1	LC-Formic_3hr	1	2017-08-31 16:34:20
 88	LC-Dionex-Formic_5hr	Dionex LC, formic acid, 300 minute (5 hr) separation	1	LC-Formic_5hr	1	2016-01-28 21:28:29
 125	LC-Dionex-Formic_90min	Dionex, formic acid, 90 minute separation	1	LC-Formic_90min	1	2022-12-20 12:43:14
+146	LC-Dionex-NH4OAc_120min	Dionex LC, ammonium acetate, 90 minute separation, 120 minute total	1	Other	3	2024-10-04 15:47:47.946263
 142	LC-Dionex-NH4OAc_40min	Dionex LC, ammonium acetate, 25 minute separation, 40 minute total	1	Other	3	2024-05-24 13:38:09
 109	LC-Dionex-NanoPot_100min		1	LC-NanoPot_2hr	0	2018-09-02 08:12:29
 110	LC-Dionex-NanoPot_150min		1	LC-NanoPot_3hr	0	2018-10-19 20:56:42
@@ -113,6 +114,7 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 128	LC-Neo-Formic_2hr	Neo, formic acid, 2 hour separation	1	LC-Formic_2hr	1	2022-12-20 12:46:28
 145	LC-Neo-Formic_30min	Neo LC, formic acid, 30 minute separation	1	LC-Formic_30min	1	2024-05-30 10:33:58
 129	LC-Neo-Formic_3hr	Neo, formic acid, 3 hour separation	1	LC-Formic_3hr	1	2022-12-20 12:46:45
+147	LC-Neo-Formic_70SPD_20Min	Neo, formic acid, 20 min separation	1	LC-Formic_20min	1	2024-10-07 16:14:53.335849
 126	LC-Neo-Formic_90min	Neo, formic acid, 90 minute separation	1	LC-Formic_90min	1	2022-12-20 12:45:52
 7	LC-ORNL-Standard	Datasets acquired at Oak Ridge National Lab	0	Other	0	2004-09-27 16:26:09
 124	LC-PCR-Tube_2hr	LC-PCR-Tube_2hr	1	LC-PCR-Tube	1	2022-11-15 08:29:27

@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.2
--- Dumped by pg_dump version 16.2
+-- Dumped from database version 16.4
+-- Dumped by pg_dump version 16.4
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -41,6 +41,7 @@ COPY public.t_analysis_job_state (job_state_id, job_state, comment) FROM stdin;
 17	Data Extraction In Progress	No longer used
 18	Data Extraction Failed	No longer used
 19	Special Proc. Waiting	Waiting for jobs that this job depends on to finish
+20	Pending	The analysis job request for this job has a positive value for "max_active_jobs"; this job's state will be set to 1=New when not enough jobs have state 1, 2, or 5
 99	Job Broker Failure	No longer used
 \.
 
