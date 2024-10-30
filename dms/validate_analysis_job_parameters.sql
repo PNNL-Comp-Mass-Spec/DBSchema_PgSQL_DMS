@@ -115,6 +115,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_parameters(IN _toolname
 **          01/03/2024 mem - Update warning messages
 **          03/03/2024 mem - Trim whitespace when extracting values from XML
 **          09/30/2024 mem - Add support for FragPipe
+**          10/29/2024 mem - Use function get_split_fasta_settings() to determine the split FASTA settings
 **
 *****************************************************/
 DECLARE
@@ -137,8 +138,8 @@ DECLARE
     _fileSizeMB numeric;
     _fileSizeGB numeric;
     _dynModCount int;
-    _numberOfClonedSteps text;
-    _splitFasta text := '';
+    _splitFastaEnabled boolean;
+    _numberOfClonedSteps int;
 
     _currentlocation text := 'Start';
     _sqlState text;
@@ -858,7 +859,7 @@ BEGIN
 
             If Not Exists (SELECT settings_file_id FROM t_settings_files WHERE file_name = _settingsFileName::citext) Then
                 _message := format('Settings file not found: %s', _settingsFileName);
-                _returnCode := 'U5333';
+                _returnCode := 'U5334';
 
                 If _showDebugMessages Then
                     RAISE INFO '%', _message;
@@ -867,27 +868,12 @@ BEGIN
                 RETURN;
             End If;
 
-            SELECT XmlQ.value
-            INTO _splitFasta
-            FROM (
-                SELECT Trim(xmltable.section) AS section,
-                       Trim(xmltable.name)    AS name,
-                       Trim(xmltable.value)   AS value
-                FROM (SELECT contents AS settings
-                      FROM t_settings_files
-                      WHERE file_name = _settingsFileName::citext
-                     ) Src,
-                     XMLTABLE('//sections/section/item'
-                              PASSING Src.settings
-                              COLUMNS section text PATH '../@name',
-                                      name    text PATH '@key',
-                                      value   text PATH '@value'
-                                      )
-                 ) XmlQ
-            WHERE name::citext = 'SplitFasta';
+            SELECT split_fasta_enabled, number_of_cloned_steps, message
+            INTO _splitFastaEnabled, _numberOfClonedSteps, _message
+            FROM get_split_fasta_settings(_settingsFileName);
 
-            If Not FOUND Or Lower(Coalesce(_splitFasta, 'false')) <> 'true' Then
-                _message := format('Search tool %s requires a SplitFasta settings file', _toolName);
+            If Not FOUND Then
+                _message := format('Function split_fasta_enabled() did not return any rows for settings file %s', _settingsFileName);
                 _returnCode := 'U5335';
 
                 If _showDebugMessages Then
@@ -897,28 +883,20 @@ BEGIN
                 RETURN;
             End If;
 
-            SELECT XmlQ.value
-            INTO _numberOfClonedSteps
-            FROM (
-                SELECT Trim(xmltable.section) AS section,
-                       Trim(xmltable.name)    AS name,
-                       Trim(xmltable.value)   AS value
-                FROM (SELECT contents AS settings
-                      FROM t_settings_files
-                      WHERE file_name = _settingsFileName::citext
-                     ) Src,
-                     XMLTABLE('//sections/section/item'
-                              PASSING Src.settings
-                              COLUMNS section text PATH '../@name',
-                                      name    text PATH '@key',
-                                      value   text PATH '@value'
-                                      )
-                 ) XmlQ
-            WHERE name::citext = 'NumberOfClonedSteps';
-
-            If Not FOUND Or public.try_cast(_numberOfClonedSteps, 0) < 1 Then
+            If Not _splitFastaEnabled Then
                 _message := format('Search tool %s requires a SplitFasta settings file', _toolName);
                 _returnCode := 'U5336';
+
+                If _showDebugMessages Then
+                    RAISE INFO '%', _message;
+                End If;
+
+                RETURN;
+            End If;
+
+            If _numberOfClonedSteps < 1 Then
+                _message := format('Search tool %s requires a SplitFasta settings file that has "NumberOfClonedSteps" defined', _toolName);
+                _returnCode := 'U5337';
 
                 If _showDebugMessages Then
                     RAISE INFO '%', _message;
