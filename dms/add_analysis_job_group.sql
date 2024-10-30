@@ -121,6 +121,7 @@ CREATE OR REPLACE PROCEDURE public.add_analysis_job_group(IN _datasetlist text, 
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          09/30/2024 mem - Add support for data package based FragPipe jobs
+**          10/29/2024 mem - Call set_max_active_jobs_for_request() if _requestID is greater than 1
 **
 *****************************************************/
 DECLARE
@@ -287,7 +288,7 @@ BEGIN
                 RAISE EXCEPTION '%', _message;
             End If;
 
-            If _requestID <= 0 Then
+            If _requestID <= 1 Then
                 _message := 'Data-package based jobs must be associated with an analysis job request';
                 RAISE EXCEPTION '%', _message;
             End If;
@@ -826,9 +827,9 @@ BEGIN
             -- Deal with request
             ---------------------------------------------------
 
-            If _requestID = 0 Then
+            If _requestID < 1 Then
                 _requestID := 1; -- for the default request
-            Else
+            ElsIf _requestID > 1 Then
                 -- Make sure _requestID is in state 1 = 'New' or state 5 = 'New (Review Required)'
 
                 SELECT request_state_id
@@ -857,11 +858,25 @@ BEGIN
                     -- Request ID is non-zero and request is not in state 1 or state 5
                     RAISE EXCEPTION 'Request is not in state New; cannot create jobs for request %', _requestID;
                 End If;
+
+                -- Possibly define a value for max_active_jobs in t_analysis_job_request
+
+                CALL set_max_active_jobs_for_request(
+                        _requestID  => _requestID,
+                        _jobCount   => _jobCountToBeCreated,
+                        _infoOnly   => false,
+                        _message    => _message,
+                        _returnCode => _returnCode
+                        );
+
+                If Coalesce(_jobStateID, 1) <= 1 AND Exists (SELECT request_id FROM t_analysis_job_request WHERE request_id = _requestID AND max_active_jobs > 0) Then
+                    -- Use job state 20=Pending for the new jobs
+                    _jobStateID := 20;
+                End If;
             End If;
 
             ---------------------------------------------------
-            -- Get new job number for every dataset
-            -- in temporary table
+            -- Get new job number for every dataset in temporary table
             ---------------------------------------------------
 
             CREATE TEMP TABLE Tmp_NewJobIDs (ID int);
