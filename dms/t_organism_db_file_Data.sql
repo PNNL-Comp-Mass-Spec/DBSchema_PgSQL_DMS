@@ -6821,6 +6821,11 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 7626	SFA_Soil_JGI_Ga0531532_TrypPigBov_2022-11-02_5x_5.fasta	1686	Auto-created	0	922818	167158146	1	328693	2022-11-02 19:22:00
 7628	SFA_Soil_JGI_Ga0531532_subset_TrypPigBov_2023-01-12.fasta	1686	EUP# 60039 SFA soil metagenome sequenced at JGI; subset of SFA_Soil_JGI_Ga0531532_TrypPigBov_2022-11-02.fasta based on MS-GF+ search results	1	116118	29532443	1	32327	2023-01-12 14:23:00
 8763	SFA_Soils_60449-MAGs_TrypPigBov_2024-10-28.fasta	1847	Bacterial and fungal sequences from enrichments of fungal hyphae; prepared by Robert Danczak and provided by Amy Zimmerman	1	1910403	608626154	1	858309	2024-10-29 14:38:06.871222
+8764	SFA_Soils_60449-MAGs_TrypPigBov_2024-10-28_5x_1.fasta	1847	Auto-created	0	382117	121385456	1	174398	2024-10-30 09:50:10.344823
+8765	SFA_Soils_60449-MAGs_TrypPigBov_2024-10-28_5x_2.fasta	1847	Auto-created	0	381979	121385605	1	174380	2024-10-30 09:50:10.356652
+8766	SFA_Soils_60449-MAGs_TrypPigBov_2024-10-28_5x_3.fasta	1847	Auto-created	0	382609	121385445	1	174464	2024-10-30 09:50:10.362209
+8767	SFA_Soils_60449-MAGs_TrypPigBov_2024-10-28_5x_4.fasta	1847	Auto-created	0	381482	121385979	1	174308	2024-10-30 09:50:10.366723
+8768	SFA_Soils_60449-MAGs_TrypPigBov_2024-10-28_5x_5.fasta	1847	Auto-created	0	382216	121385590	1	174415	2024-10-30 09:50:10.371118
 139	SO1777_MtrA.fasta	4		0	1	333	1	1	2004-07-15 20:02:00
 140	SO1778.fasta	4		0	1	671	1	1	2004-06-02 10:01:00
 636	SRR_Peru_Concatenated_2011-11-01.fasta	1105	Short DNA sequence reads from microbial community off of Peru coast	1	200000	20000000	1	77439	2011-11-01 11:44:00
@@ -8441,7 +8446,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 -- Name: t_organism_db_file_org_db_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 8763, true);
+SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 8768, true);
 
 
 --

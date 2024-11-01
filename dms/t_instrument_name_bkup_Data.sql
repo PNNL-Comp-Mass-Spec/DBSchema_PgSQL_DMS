@@ -274,7 +274,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 93	VPro01	Finnigan_Ion_Trap	VelosPro	1162	1345	secfso	Inactive	EMSL 1621	Velos Pro Ion Trap	2012-07-13 14:11:46
 89	Vanderbilt_VOrbiETD01	LTQ_FT	VelosOrbi	1098	1446	fso	Inactive	VU (Tennessee)	Vanderbilt Institute LTQ-Velos Orbitrap	2012-03-21 13:19:23
 90	WashU_TripleTOF5600	Sciex_TripleTOF	Sciex_TripleTOF	1133	1134	fso	Inactive	WUSL (Washington University in St. Louis)	Data acquired under the CPTAC project	2012-05-14 20:28:39
-174	XevoG2_01	Waters_TOF	Waters_TOF	3536	4888	secfso	Active	BSF 1215	Transfer/Moved from BSEL in September 2020	2020-09-23 12:48:22
+174	XevoG2_01	Waters_TOF	Waters_TOF	3536	5003	secfso	Active	BSF 1215	Transfer/Moved from BSEL in September 2020	2020-09-23 12:48:22
 255	timsTOFFlex02	BrukerTOF_TDF	timsTOF_Flex	4863	4997	secfso	Active	EMSL 1444	Bruker timsTOF Flex with ESI source. Also has MALDI imaging capability	2024-07-03 13:46:33
 256	timsTOFFlex02_Imaging	timsTOF_MALDI_Imaging	MALDI_timsTOF_Imaging	4863	4962	secfso	Active	EMSL 1444	Bruker timsTOF Flex with MALDI imaging capability	2024-07-03 13:47:58
 194	timsTOFScp01	BrukerTOF_TDF	timsTOF_SCP	4442	4853	secfso	Active	EMSL 1314	Bruker timsTOF for single cell proteomics; for MassIVE, use timsTOF SCP, MS:1003231	2023-04-19 16:36:27
