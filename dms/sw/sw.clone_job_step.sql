@@ -61,6 +61,7 @@ CREATE OR REPLACE PROCEDURE sw.clone_job_step(IN _job integer, IN _xmlparameters
 **          09/24/2014 mem - Rename Job in T_Job_Step_Dependencies
 **          07/28/2023 mem - Ported to PostgreSQL
 **          10/11/2023 mem - No longer show a message when Special_Instructions is not 'Clone'
+**          10/30/2024 mem - Change comparison used to validate that values are positive integers
 **
 *****************************************************/
 DECLARE
@@ -125,7 +126,7 @@ BEGIN
 
     _numClones := public.try_cast(_valueText, 0);
 
-    If _numClones = 0 Then
+    If _numClones < 1 Then
         If _debugMode Then
             RAISE INFO 'Job parameter "NumberOfClonedSteps" for job % is not a positive integer (%); unable to create cloned steps', _job, _valueText;
         End If;
@@ -150,7 +151,7 @@ BEGIN
 
     _cloneStepNumBase := public.try_cast(_valueText, 0);
 
-    If _cloneStepNumBase = 0 Then
+    If _cloneStepNumBase < 1 Then
         If _debugMode Then
             RAISE INFO 'Job parameter "CloneStepRenumberStart" for job % is not a positive integer (%); unable to create cloned steps', _job, _valueText;
         End If;
