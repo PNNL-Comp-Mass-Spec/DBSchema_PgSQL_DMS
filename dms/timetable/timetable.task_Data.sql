@@ -192,7 +192,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 181	98	10	Promote protein collection states (1200 months)	SQL	CALL pc.promote_protein_collection_state (_addNewProteinHeaders => false, _mostRecentMonths => 1200);	\N	\N	f	t	0
 183	99	10	Disable all managers	SQL	CALL mc.enable_disable_all_managers (_enable => false, _infoOnly => false);	\N	\N	f	t	0
 184	99	20	Enable Status Msg DB Updater managers	SQL	CALL mc.enable_disable_all_managers (_managerTypeIdList => '14', _managerNameList => 'all', _enable => true, _infoonly => false);	\N	\N	f	t	0
-197	99	30	Disable chain 99	SQL	CALL disable_timetable_chain (_chainID => 99);	\N	\N	f	f	0
+197	99	30	Disable chain 99	SQL	CALL disable_timetable_chain (_chainID => 99);	\N	\N	f	t	0
 185	100	10	Disable Analysis Managers	SQL	CALL mc.disable_analysis_managers (_infoOnly => false);	\N	\N	f	t	0
 186	100	20	Disable chain 100	SQL	CALL disable_timetable_chain (_chainID => 100);	\N	\N	f	t	0
 187	101	10	Disable Space Managers	SQL	CALL mc.disable_space_managers (_infoOnly => false);	\N	\N	f	t	0
@@ -206,6 +206,8 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 195	104	20	Enable CTM step tools	SQL	SELECT * FROM cap.enable_disable_archive_step_tools (_enable => true, _disableComment => 'Disabled for scheduled archive maintenance');	\N	\N	f	t	0
 196	104	30	Disable chain 104	SQL	CALL disable_timetable_chain (_chainID => 104);	\N	\N	f	t	0
 198	105	10	Update cached analysis job state name for recent and active jobs	SQL	CALL update_cached_analysis_job_state_name_recent_and_active (_mostRecentDays => 50);	\N	\N	f	t	0
+199	106	10	Sleep 8 seconds	BUILTIN	Sleep	\N	\N	f	f	0
+200	106	20	Update pending jobs	SQL	CALL update_pending_jobs(_requestID => 0, _infoOnly => false);	\N	\N	f	t	0
 \.
 
 
@@ -213,7 +215,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 -- Name: task_task_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.task_task_id_seq', 198, true);
+SELECT pg_catalog.setval('timetable.task_task_id_seq', 200, true);
 
 
 --
