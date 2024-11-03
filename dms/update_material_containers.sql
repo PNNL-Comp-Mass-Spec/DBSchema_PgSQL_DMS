@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE public.update_material_containers(IN _mode text, IN 
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          08/22/2024 mem - Add missing underscore to variable name passed to update_material_items()
+**          11/02/2024 mem - Do not allow a container to be retired if it is associated with an active sample prep request (even if the container is empty)
 **
 *****************************************************/
 DECLARE
@@ -49,6 +50,7 @@ DECLARE
     _locStatus citext;
     _nonEmptyContainerCount int := 1;
     _nonEmptyContainers text;
+    _prepRequestID int;
     _moveType text := '??';
 BEGIN
     _message := '';
@@ -256,6 +258,34 @@ BEGIN
     End If;
 
     ---------------------------------------------------
+    -- Assure that the container is not associated with an active sample prep request (even if the container is empty)
+    ---------------------------------------------------
+
+    SELECT PrepRequests.prep_request_id
+    INTO _prepRequestID
+    FROM Tmp_Material_Container_List MC
+         INNER JOIN (SELECT prep_request_id,
+                            Trim(unnest(string_to_array(material_container_list, ','))) AS material_container
+                     FROM t_sample_prep_request
+                     WHERE state_id IN (1,2,3,6)                -- Active Sample Prep Requests
+                           And material_container_list <> ''
+                    ) PrepRequests ON MC.name = PrepRequests.material_container
+    ORDER BY prep_request_id, Material_Container
+    LIMIT 1;
+
+    If FOUND Then
+        _message := format('Container %s is associated with active sample prep request ID %s: either the sample prep request needs to be closed or the container needs to be disassociated from the prep request',
+                           _containerList, _prepRequestID);
+
+        _returnCode := 'U5125';
+
+        DROP TABLE Tmp_Material_Container_List;
+        RETURN;
+
+    End If;
+
+
+    ---------------------------------------------------
     -- For 'contents' container retirement, also retire contents
     ---------------------------------------------------
 
@@ -294,7 +324,7 @@ BEGIN
                 _message := format('All containers must be inactive in order to unretire them: %s', _containerList);
             End If;
 
-            _returnCode := 'U5125';
+            _returnCode := 'U5126';
 
             DROP TABLE Tmp_Material_Container_List;
             RETURN;
@@ -303,6 +333,7 @@ BEGIN
 
     ---------------------------------------------------
     -- Update containers to be at new location
+    -- If retiring a container, _locationID will be 1, corresponding to the 'None' location
     ---------------------------------------------------
 
     UPDATE t_material_containers
@@ -329,7 +360,7 @@ BEGIN
         _moveType := 'Container Move';
     Else
       _message := format('Invalid material container update mode: %s', _mode);
-      _returnCode := 'U5126';
+      _returnCode := 'U5127';
 
       DROP TABLE Tmp_Material_Container_List;
       RETURN;
