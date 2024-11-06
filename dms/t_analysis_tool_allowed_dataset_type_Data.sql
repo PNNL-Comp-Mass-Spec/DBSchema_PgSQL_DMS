@@ -1493,6 +1493,7 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 93	MS-CID/ETD-MSn	
 93	MS-ETD-MSn	
 93	MS-MSn	
+94	IMS-HMS-HMSn	
 \.
 
 

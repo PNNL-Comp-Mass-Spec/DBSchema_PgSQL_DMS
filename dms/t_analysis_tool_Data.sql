@@ -32,6 +32,7 @@ COPY public.t_analysis_tool (analysis_tool_id, analysis_tool, tool_base_name, pa
 27	Decon2LS_V2	Decon2LS	1010	\\\\gigasax\\DMS_Parameter_Files\\Decon2LS	G:\\DMS_Parameter_Files\\Decon2LS	??	HMMA_Peak	yes	1	(na)	0	N	Extract deconvolved MS1 scan information	0	0	1
 61	Decon2LS_V2_MzXML	Decon2LS	1010	\\\\gigasax\\DMS_Parameter_Files\\Decon2LS	G:\\DMS_Parameter_Files\\Decon2LS	??	HMMA_Peak	yes	1	(na)	0	N	\N	0	1	1
 92	DiaNN	DiaNN	1035	\\\\gigasax\\DMS_Parameter_Files\\DiaNN	G:\\DMS_Parameter_Files\\DiaNN	DiaNN_Standard.xml	DNN_Peptide_Hit	no	1	\N	1	N	\N	0	1	1
+94	DiaNN_timsTOF	DiaNN	1035	\\\\gigasax\\DMS_Parameter_Files\\DiaNN	G:\\DMS_Parameter_Files\\DiaNN	DiaNN_Standard.xml	DNN_Peptide_Hit	no	1	\N	1	N	\N	0	1	1
 81	Formularity_Bruker	Formularity	1030	\\\\gigasax\\DMS_Parameter_Files\\Formularity	G:\\DMS_Parameter_Files\\Formularity	Formularity_DefSettings.xml	FRM_Search	no	0	(na)	0	N	\N	0	1	1
 87	Formularity_Bruker_Decon	Formularity	1030	\\\\gigasax\\DMS_Parameter_Files\\Formularity	G:\\DMS_Parameter_Files\\Formularity	Formularity_DefSettings.xml	FRM_Search	no	1	\N	0	N	\N	0	1	1
 85	Formularity_Thermo	Formularity	1030	\\\\gigasax\\DMS_Parameter_Files\\Formularity	G:\\DMS_Parameter_Files\\Formularity	Formularity_DefSettings.xml	FRM_Search	no	1	(na)	0	N	\N	0	1	1

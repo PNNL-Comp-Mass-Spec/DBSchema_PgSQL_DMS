@@ -248,6 +248,7 @@ COPY public.t_analysis_tool_allowed_instrument_class (analysis_tool_id, instrume
 93	Agilent_TOF_V2	
 93	Finnigan_Ion_Trap	
 93	LTQ_FT	
+94	BrukerTOF_TDF	
 \.
 
 
