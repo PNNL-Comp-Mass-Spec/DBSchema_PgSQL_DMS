@@ -25,10 +25,11 @@ CREATE OR REPLACE PROCEDURE public.set_max_active_jobs_for_request(IN _requestid
 **
 **  Auth:   mem
 **  Date:   10/29/2024 mem - Initial version
+**          11/04/2024 mem - Decrease the maximum allowed count of in-progress jobs to 75
 **
 *****************************************************/
 DECLARE
-    _maxInProgressJobs int := 175;
+    _maxInProgressJobs int := 75;
     _settingsFileName text;
     _maxActiveJobs int := 0;
     _splitFastaEnabled boolean := false;
