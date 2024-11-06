@@ -22,6 +22,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_step_params_as_table(_job integer, _step
 **          02/12/2020 mem - Add argument _paramName, which can be used to filter the results
 **          06/06/2023 mem - Ported to PostgreSQL
 **          06/20/2023 mem - Use citext for columns in the output table
+**          11/04/2024 mem - Drop the temporary table if get_task_step_params() does not return any rows
 **
 *****************************************************/
 DECLARE
@@ -48,6 +49,7 @@ BEGIN
     FROM cap.get_task_step_params(_job, _step) Src;
 
     If Not FOUND Then
+        DROP TABLE Tmp_JobParamsTable;
         RETURN;
     End If;
 
