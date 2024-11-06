@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE public.backfill_pipeline_jobs(IN _infoonly boolean D
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          08/23/2024 mem - Query tables directly
 **          09/30/2024 mem - Auto change script FragPipe_DataPkg to FragPipe
+**          11/04/2024 mem - Auto change script DiaNN_timsTOF_DataPkg to DiaNN_timsTOF
 **
 *****************************************************/
 DECLARE
@@ -272,6 +273,10 @@ BEGIN
 
             If _jobInfo.Script SIMILAR TO 'MSFragger[_]%'::citext Then
                 _jobInfo.Script := 'MSFragger';
+            End If;
+
+            If _jobInfo.Script SIMILAR TO 'DiaNN_timsTOF[_]%'::citext Then
+                _jobInfo.Script := 'DiaNN_timsTOF';
             End If;
 
             If _jobInfo.Script SIMILAR TO 'DiaNN[_]%'::citext Then
