@@ -131,6 +131,7 @@ CREATE OR REPLACE PROCEDURE sw.request_step_task_xml(IN _processorname text, INO
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          08/03/2024 mem - Ignore case when filtering on processor name
+**          11/04/2024 mem - When previewing available job steps, round Next_Try to the nearest second
 **
 *****************************************************/
 DECLARE
@@ -1687,7 +1688,7 @@ BEGIN
                            END AS Association_Type,
                            CJS.Tool_Priority,
                            CJS.Job_Priority,
-                           JS.Next_Try,
+                           Left(date_trunc('second', JS.Next_Try)::text, 19) AS Next_Try,
                            J.Dataset,
                            JS.Remote_Info_ID
                     FROM Tmp_CandidateJobSteps CJS

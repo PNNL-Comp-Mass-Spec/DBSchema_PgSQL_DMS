@@ -40,6 +40,8 @@ BEGIN
         _infoLevel := 1;
     End If;
 
+    RAISE INFO '';
+
     CALL sw.get_default_remote_info_for_manager (
                 _processorName,
                 _remoteInfoXML => _remoteInfo); -- Output
