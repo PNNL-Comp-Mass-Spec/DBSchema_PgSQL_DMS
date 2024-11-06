@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE sw.copy_history_to_job(IN _job integer, IN _debugmod
 **          07/25/2019 mem - Add Remote_Start and Remote_Finish
 **          07/31/2023 mem - Ported to PostgreSQL
 **          08/02/2023 mem - Move the _message and _returnCode arguments to the end of the argument list
+**          11/05/2024 mem - Check for _dateStamp being null instead of using "If Not Found Then"
 **
 *****************************************************/
 DECLARE
@@ -100,7 +101,7 @@ BEGIN
     FROM sw.t_jobs_history
     WHERE job = _job AND state = 4;
 
-    If Not FOUND Then
+    If _dateStamp Is Null Then
         RAISE INFO 'No successful jobs found in sw.t_jobs_history for job %; will look for a failed job', _job;
 
         -- Find most recent historic job, regardless of job state
@@ -110,7 +111,7 @@ BEGIN
         FROM sw.t_jobs_history
         WHERE job = _job;
 
-        If Not FOUND Then
+        If _dateStamp Is Null Then
             _message := format('Job not found in sw.t_jobs_history: %s', _job);
             RAISE WARNING '%', _message;
 
@@ -118,7 +119,6 @@ BEGIN
         End If;
 
         RAISE INFO 'Match found, saved on %', public.timestamp_text(_dateStamp);
-
     End If;
 
     BEGIN
