@@ -122,6 +122,7 @@ CREATE OR REPLACE PROCEDURE public.add_analysis_job_group(IN _datasetlist text, 
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          09/30/2024 mem - Add support for data package based FragPipe jobs
 **          10/29/2024 mem - Call set_max_active_jobs_for_request() if _requestID is greater than 1
+**          11/05/2024 mem - Add support for tool DiaNN_timsTOF
 **
 *****************************************************/
 DECLARE
@@ -283,8 +284,8 @@ BEGIN
         CREATE INDEX IX_Tmp_DatasetInfo_Dataset_Name ON Tmp_DatasetInfo (Dataset_Name);
 
         If _dataPackageID > 0 Then
-            If Not _toolName::citext In ('MaxQuant', 'FragPipe', 'MSFragger', 'DiaNN') Then
-                _message := format('%s is not a compatible tool for job requests with a data package; the only supported tools are MaxQuant, FragPipe, MSFragger, and DiaNN', _toolName);
+            If Not _toolName::citext In ('MaxQuant', 'FragPipe', 'MSFragger', 'DiaNN', 'DiaNN_timsTOF') Then
+                _message := format('%s is not a compatible tool for job requests with a data package; the only supported tools are MaxQuant, FragPipe, MSFragger, DiaNN, and DiaNN_timsTOF', _toolName);
                 RAISE EXCEPTION '%', _message;
             End If;
 
@@ -575,7 +576,7 @@ BEGIN
 
             _logErrors := true;
 
-            If _toolName::citext In ('MaxQuant', 'FragPipe', 'MSFragger', 'DiaNN') Then
+            If _toolName::citext In ('MaxQuant', 'FragPipe', 'MSFragger', 'DiaNN', 'DiaNN_timsTOF') Then
 
                 SELECT param_file_storage_path
                 INTO _paramFileStoragePath
@@ -638,8 +639,12 @@ BEGIN
                 FROM Tmp_SettingsFile_Values_DataPkgJob
                 WHERE KeyName = 'CacheFolderRootPath';
 
-                If Trim(Coalesce(_msXmlGenerator, '')) <> '' And Trim(Coalesce(_msXMLOutputType, '')) <> '' And _msXmlGenerator <> 'skip' Then
+                If _toolName::citext = 'DiaNN_timsTOF' Then
+                    _createMzMLFilesFlag := 'False';
+                ElsIf Trim(Coalesce(_msXmlGenerator, '')) <> '' And Trim(Coalesce(_msXMLOutputType, '')) <> '' And _msXmlGenerator <> 'skip' Then
                     _createMzMLFilesFlag := 'True';
+                Else
+                    _createMzMLFilesFlag := 'False';
                 End If;
 
                 If Trim(Coalesce(_cacheFolderRootPath, '')) = '' Then
@@ -705,6 +710,10 @@ BEGIN
 
                 If _toolName::citext = 'DiaNN' Then
                     _scriptName := 'DiaNN_DataPkg';
+                End If;
+
+                If _toolName::citext = 'DiaNN_timsTOF' Then
+                    _scriptName := 'DiaNN_timsTOF_DataPkg';
                 End If;
 
                 CALL sw.add_update_local_job_in_broker (
