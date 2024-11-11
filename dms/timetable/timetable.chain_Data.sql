@@ -77,7 +77,7 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 63	Update cached sample prep request items	37 2 * * *	\N	0	t	f	f	\N	\N
 64	Update cached separation usage by dataset	24 0/6 * * *	\N	0	t	f	f	\N	\N
 65	Update cached tissue names	00 15 * * 3,7	\N	0	t	f	f	\N	\N
-66	Update capture task states	* * * * *	\N	0	t	f	f	\N	\N
+66	Update capture task jobs and steps (update_task_context)	* * * * *	\N	0	t	f	f	\N	\N
 67	Update charge code usage	32 0/3 * * *	\N	0	t	f	f	\N	\N
 68	Update charge codes from warehouse	42 5 * * *	\N	0	t	f	f	\N	\N
 69	Update data package EUS info	25 5/8 * * *	\N	0	t	f	f	\N	\N
@@ -91,7 +91,7 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 77	Update job step processing stats	0/20 * * * *	\N	0	t	f	f	\N	\N
 78	Update missed DMS file info	0 21 * * *	\N	0	t	f	f	\N	\N
 79	Update missed MyEMSL state info	25 19 * * *	\N	0	t	f	f	\N	\N
-80	Update pipeline job states	* * * * *	\N	0	t	f	f	\N	\N
+80	Update pipeline jobs and steps (update_context)	* * * * *	\N	0	t	f	f	\N	\N
 81	Update prep LC run work packages	38 15 * * 7	\N	0	t	f	f	\N	\N
 82	Update status history, cap	1 0/3 * * *	\N	0	t	f	f	\N	\N
 83	Update status history, public	0 0/6 * * *	\N	0	t	f	f	\N	\N
