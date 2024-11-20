@@ -1,8 +1,8 @@
 --
--- Name: local_error_handler(text, text, text, text, text, text, text, boolean, boolean, integer); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: local_error_handler(text, text, text, text, text, text, text, boolean, boolean, integer, boolean); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.local_error_handler(_sqlstate text, _exceptionmessage text, _exceptiondetail text, _exceptioncontext text, _callingproclocation text DEFAULT ''::text, _callingprocname text DEFAULT '<auto>'::text, _callingprocschema text DEFAULT '<auto>'::text, _logerror boolean DEFAULT false, _displayerror boolean DEFAULT false, _duplicateentryholdoffhours integer DEFAULT 0) RETURNS text
+CREATE OR REPLACE FUNCTION public.local_error_handler(_sqlstate text, _exceptionmessage text, _exceptiondetail text, _exceptioncontext text, _callingproclocation text DEFAULT ''::text, _callingprocname text DEFAULT '<auto>'::text, _callingprocschema text DEFAULT '<auto>'::text, _logerror boolean DEFAULT false, _displayerror boolean DEFAULT false, _duplicateentryholdoffhours integer DEFAULT 0, _logerrorstopubliclogtable boolean DEFAULT true) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION public.local_error_handler(_sqlstate text, _exception
 **    _logError                     If true, log the error in the t_log_entries table that corresponds to the calling procedure's schema (or public.t_log_entries if the given schema does not have table t_log_entries)
 **    _displayError                 If true, show the formatted error message using RAISE WARNING
 **    _duplicateEntryHoldoffHours   Set this to a value greater than 0 to prevent duplicate entries being posted within the given number of hours
+**    _logErrorsToPublicLogTable    When true, if _type is 'Error' and _targetSchema is not public (or an empty string), also log the error message to public.t_log_entries (defaults to True)
 **
 **  Example usage:
 **        EXCEPTION
@@ -52,6 +53,7 @@ CREATE OR REPLACE FUNCTION public.local_error_handler(_sqlstate text, _exception
 **          09/01/2023 mem - Remove unnecessary cast to citext for string constants
 **          09/07/2023 mem - Align assignment statements
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
+**          11/18/2024 mem - Add argument _logErrorsToPublicLogTable
 **
 *****************************************************/
 DECLARE
@@ -139,7 +141,13 @@ BEGIN
     -- RAISE WARNING 'Context: %', _exceptionContext;
 
     If _logError Then
-        CALL public.post_log_entry ('Error', _message, _callingProcName, _callingProcSchema, _duplicateEntryHoldoffHours, _ignoreErrors => true);
+        CALL public.post_log_entry ('Error',
+                                    _message,
+                                    _callingProcName,
+                                    _callingProcSchema,
+                                    _duplicateEntryHoldoffHours,
+                                    _ignoreErrors              => true,
+                                    _logErrorsToPublicLogTable => _logErrorsToPublicLogTable);
     End If;
 
     RETURN _message;
@@ -159,5 +167,5 @@ END
 $$;
 
 
-ALTER FUNCTION public.local_error_handler(_sqlstate text, _exceptionmessage text, _exceptiondetail text, _exceptioncontext text, _callingproclocation text, _callingprocname text, _callingprocschema text, _logerror boolean, _displayerror boolean, _duplicateentryholdoffhours integer) OWNER TO d3l243;
+ALTER FUNCTION public.local_error_handler(_sqlstate text, _exceptionmessage text, _exceptiondetail text, _exceptioncontext text, _callingproclocation text, _callingprocname text, _callingprocschema text, _logerror boolean, _displayerror boolean, _duplicateentryholdoffhours integer, _logerrorstopubliclogtable boolean) OWNER TO d3l243;
 

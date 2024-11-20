@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE cap.update_task_context(IN _bypassdms boolean DEFAUL
 **          06/21/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          08/27/2024 mem - Change default value for _loopingUpdateInterval to 10 seconds (previously 5 seconds)
+**          11/18/2024 mem - When calling local_error_handler, set _logErrorsToPublicLogTable to false
 **
 *****************************************************/
 DECLARE
@@ -237,7 +238,9 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => _currentLocation, _logError => Not _infoOnly);
+                        _callingProcLocation       => _currentLocation,
+                        _logError                  => Not _infoOnly,
+                        _logErrorsToPublicLogTable => false);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
@@ -296,7 +299,9 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => _currentLocation, _logError => Not _infoOnly);
+                        _callingProcLocation       => _currentLocation,
+                        _logError                  => Not _infoOnly,
+                        _logErrorsToPublicLogTable => false);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
@@ -353,7 +358,9 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => _currentLocation, _logError => Not _infoOnly);
+                        _callingProcLocation       => _currentLocation,
+                        _logError                  => Not _infoOnly,
+                        _logErrorsToPublicLogTable => false);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
@@ -409,7 +416,9 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => _currentLocation, _logError => Not _infoOnly);
+                        _callingProcLocation       => _currentLocation,
+                        _logError                  => Not _infoOnly,
+                        _logErrorsToPublicLogTable => false);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
@@ -457,7 +466,9 @@ BEGIN
 
         _message := local_error_handler (
                         _sqlState, _exceptionMessage, _exceptionDetail, _exceptionContext,
-                        _callingProcLocation => _currentLocation, _logError => Not _infoOnly);
+                        _callingProcLocation       => _currentLocation,
+                        _logError                  => Not _infoOnly,
+                        _logErrorsToPublicLogTable => false);
 
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
