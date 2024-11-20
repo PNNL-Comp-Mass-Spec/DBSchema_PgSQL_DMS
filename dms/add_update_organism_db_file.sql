@@ -1,8 +1,8 @@
 --
--- Name: add_update_organism_db_file(text, text, integer, bigint, integer, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: add_update_organism_db_file(text, text, integer, bigint, integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.add_update_organism_db_file(IN _fastafilename text, IN _organismname text, IN _numproteins integer, IN _numresidues bigint, IN _filesizekb integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.add_update_organism_db_file(IN _fastafilename text, IN _organismname text, IN _numproteins integer, IN _numresidues bigint, IN _filesizekb integer DEFAULT 0, IN _isdecoy boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -18,12 +18,13 @@ CREATE OR REPLACE PROCEDURE public.add_update_organism_db_file(IN _fastafilename
 **    _numProteins      Number of proteins in the FASTA file
 **    _numResidues      Total number of residues in the proteins
 **    _fileSizeKB       FASTA file size, in KB
+**    _isDecoy          When true, the FASTA file contains both forward and reverse protein sequences
 **    _message          Status message
 **    _returnCode       Return code
 **
 **  Auth:   mem
 **  Date:   01/24/2014 mem - Initial version
-**          01/15/2015 mem - Added parameter _fileSizeKB
+**          01/15/2015 mem - Add parameter _fileSizeKB
 **          06/16/2017 mem - Restrict access using VerifySPAuthorized
 **          08/01/2017 mem - Use THROW if not authorized
 **          01/31/2020 mem - Add _returnCode, which duplicates the integer returned by this procedure; _returnCode is varchar for compatibility with Postgres error codes
@@ -31,6 +32,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_organism_db_file(IN _fastafilename
 **          01/15/2024 mem - Ported to PostgreSQL
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          11/14/2024 mem - Add parameter _isDecoy
 **
 *****************************************************/
 DECLARE
@@ -83,6 +85,7 @@ BEGIN
     _numProteins   := Coalesce(_numProteins, 0);
     _numResidues   := Coalesce(_numResidues, 0);
     _fileSizeKB    := Coalesce(_fileSizeKB, 0);
+    _isDecoy       := Coalesce(_isDecoy, false);
 
     If _fastaFileName = '' Then
         _message := 'FASTA file name must be specified';
@@ -121,13 +124,14 @@ BEGIN
 
     MERGE INTO t_organism_db_file AS target
     USING (SELECT _fastaFileName AS FileName,
-               _organismID AS OrganismID,
-               'Auto-created' AS Description,
-               0 AS Active,
-               _numProteins AS NumProteins,
-               _numResidues AS NumResidues,
-               _fileSizeKB AS FileSizeKB,
-               1 AS Valid
+                  _organismID    AS OrganismID,
+                  'Auto-created' AS Description,
+                  0              AS Active,
+                  _numProteins   AS NumProteins,
+                  _numResidues   AS NumResidues,
+                  _fileSizeKB    AS FileSizeKB,
+                  _isDecoy       AS IsDecoy,
+                  1 AS Valid
           ) AS Source
     ON (target.file_name = source.FileName)
     WHEN MATCHED THEN
@@ -138,7 +142,8 @@ BEGIN
             num_proteins = source.NumProteins,
             num_residues = source.NumResidues,
             file_size_kb = source.FileSizeKB,
-            valid = source.valid
+            is_decoy     = source.IsDecoy,
+            valid        = source.valid
     WHEN NOT MATCHED THEN
         INSERT (file_name,
                 organism_id,
@@ -147,6 +152,7 @@ BEGIN
                 num_proteins,
                 num_residues,
                 file_size_kb,
+                is_decoy,
                 valid)
         VALUES (source.FileName,
                 source.OrganismID,
@@ -155,6 +161,7 @@ BEGIN
                 source.NumProteins,
                 source.NumResidues,
                 source.FileSizeKB,
+                source.IsDecoy,
                 source.Valid);
 
     If _existingEntry Then
@@ -167,11 +174,5 @@ END
 $$;
 
 
-ALTER PROCEDURE public.add_update_organism_db_file(IN _fastafilename text, IN _organismname text, IN _numproteins integer, IN _numresidues bigint, IN _filesizekb integer, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
-
---
--- Name: PROCEDURE add_update_organism_db_file(IN _fastafilename text, IN _organismname text, IN _numproteins integer, IN _numresidues bigint, IN _filesizekb integer, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
---
-
-COMMENT ON PROCEDURE public.add_update_organism_db_file(IN _fastafilename text, IN _organismname text, IN _numproteins integer, IN _numresidues bigint, IN _filesizekb integer, INOUT _message text, INOUT _returncode text) IS 'AddUpdateOrganismDBFile';
+ALTER PROCEDURE public.add_update_organism_db_file(IN _fastafilename text, IN _organismname text, IN _numproteins integer, IN _numresidues bigint, IN _filesizekb integer, IN _isdecoy boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
