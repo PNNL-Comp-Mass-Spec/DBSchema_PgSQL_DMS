@@ -301,7 +301,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1323	N15_3x	Residue with three 15N-labeled atoms	2.991105	2.9802	H	UniMod	Label:15N(3)	N15_3x	N(-3) 15N(3)
 1325	N15_4x	Residue with four 15N-labeled atoms	3.98814	3.9736	R	UniMod	Label:15N(4)	N15_4x	N(-4) 15N(4)
 1324	N15_CAlk	15N-labeled cysteine that is alkylated	58.01854	58.0447	C	PNNL		N15_CAlk	H3 C2 O 15N
-1251	NEM	Nethylmaleimide	125.047676	125.1253	-	UniMod	Nethylmaleimide	N-ethylmaleimide on cysteines	H(7) C(6) N O(2)
+1251	NEM	Nethylmaleimide	125.047679	125.1253	-	UniMod	Nethylmaleimide	N-ethylmaleimide on cysteines	H(7) C(6) N O(2)
 1409	NEM_2H5	Nethylmaleimide with 5 deuteriums	130.079062	130.1561	-	UniMod	NEM:2H(5)	\N	H(2) 2H(5) C(6) N O(2)
 1517	NEM_S2	N-ethylmaleimide polysulfide	188.99182	\N	-	PNNL	NEM_S2	S2-Nethylmaleimide	H(7) C(6) N O(2) S2
 1431	NEMsulf	N-ethylmaleimide persulfide	157.019749	\N	-	UniMod	NEMsulfur	S-Nethylmaleimide	H(7) C(6) N O(2) S

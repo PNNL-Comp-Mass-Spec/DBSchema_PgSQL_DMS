@@ -821,6 +821,7 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 1583	Trizodia_species		2017-11-02 09:54:47	Trizodia species, general organism	Trizodia_sp	\\\\gigasax\\DMS_Organism_Files\\Trizodia_species\\	http://gigasax/DMS_Organism_Files/Trizodia_species/	Eukaryota	Fungi	Ascomycota	Sphagnopsida	Sphagnales	Sphagnaceae	Trizodia	sp.	na	11	0	1	1180	1206386	1
 1690	Trypanosoma_brucei_brucei		2020-11-12 10:18:06		T_brucei	\\\\gigasax\\DMS_Organism_Files\\Trypanosoma_brucei_brucei\\	http://gigasax/DMS_Organism_Files/Trypanosoma_brucei_brucei/	Eukaryota		Euglenozoa	Kinetoplastea	Trypanosomatida	Trypanosomatidae	Trypanosoma	brucei	na	0	0	1	5702	5702	1
 1687	Uniprot_General_Collections		2020-09-18 11:41:11	For general protein collections and static files derived from Uniprot	Uniprot_General	\\\\proto-4\\DMS_Organism_Files\\Uniprot_General_Collections\\	http://proto-4/DMS_Organism_Files/Uniprot_General_Collections/	Bacteria	Prokaryote	Community	na	na	na	na	na	na	0	0	1	48479	48479	1
+1848	Ustilago_maydis		2024-11-20 10:09:29.606091	Ustilago maydis	U_maydis	\\\\gigasax\\DMS_Organism_Files\\Ustilago_maydis\\		Eukaryota	Fungi	Basidiomycota	Ustilaginomycetes	Ustilaginales	Ustilaginaceae	Ustilago	maydis	na	0	0	1	5270	5270	1
 1218	Utkanos	\N	2011-03-31 17:32:10	Organism for testing informatics procedures	Utkanos	\\\\gigasax\\DMS_Organism_Files\\Utkanos\\	http://gigasax/DMS_Organism_Files/Utkanos/	ReallyReallyBigDomain	ReallyBigKingdom	LittlePhylum	\N	\N	\N	na	na	na	0	0	1	\N	\N	1
 1551	Vaginal_Microbial_Community		2017-03-23 16:04:46	Microbial community associated with vaginal samples	Vaginal_Microbial_Community	\\\\gigasax\\DMS_Organism_Files\\Vaginal_Microbial_Community\\	http://gigasax/DMS_Organism_Files/Vaginal_Microbial_Community/	Bacteria	Prokaryote	Community	na	na	na	na	na	na	0	0	1	48479	48479	1
 1729	Variovorax_beijingensis		2022-01-06 18:10:42	Variovorax beijingensis	V_beijingensis	\\\\gigasax\\DMS_Organism_Files\\Variovorax_beijingensis\\	http://gigasax/DMS_Organism_Files/Variovorax_beijingensis/	Bacteria	Prokaryote	Proteobacteria	Betaproteobacteria	Burkholderiales	Comamonadaceae	Variovorax	beijingensis	na	0	0	1		2496117	1
@@ -859,7 +860,7 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 -- Name: t_organisms_organism_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organisms_organism_id_seq', 1847, true);
+SELECT pg_catalog.setval('public.t_organisms_organism_id_seq', 1848, true);
 
 
 --
