@@ -12,7 +12,8 @@ CREATE TABLE public.t_organism_db_file (
     num_residues bigint,
     valid smallint DEFAULT 1,
     file_size_kb real DEFAULT 0,
-    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    created timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    is_decoy boolean DEFAULT false NOT NULL
 );
 
 
