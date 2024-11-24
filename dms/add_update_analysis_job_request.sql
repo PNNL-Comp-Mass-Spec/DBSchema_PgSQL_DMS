@@ -125,6 +125,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_request(IN _datasets 
 **          08/12/2024 mem - Do not allow _requesterPRN to be 'pgdms'
 **          09/30/2024 mem - Auto-change _protCollOptionsList to 'seq_direction=decoy,filetype=fasta' when running FragPipe
 **                         - Require that _dataPackageID be defined when using a match between runs workflow file for FragPipe
+**          11/23/2024 mem - When the tool is MSFragger or FragPipe, if using an Organism DB file, auto-switch to the decoy version if it exists
 **
 *****************************************************/
 DECLARE
@@ -155,6 +156,8 @@ DECLARE
     _organismID int;
     _warning text;
     _priority int;
+    _decoyOrganismDBName citext;
+    _organismDbFileIsDecoy bool;
     _profileModeMSnDatasets int := 0;
     _stateID int := -1;
     _newRequestNum int;
@@ -501,21 +504,44 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Assure that we are running a decoy search if using MODa, FragPipe, or MSFragger
-        -- However, if the parameter file contains _NoDecoy in the name, we'll allow @protCollOptionsList to contain Decoy
+        -- Assure that we are running a decoy search if using MODa, FragPipe, or MSFragger and using a protein collection
+        -- However, if the parameter file contains _NoDecoy in the name, allow @protCollOptionsList to contain Decoy
+        --
+        -- If searching an Organism DB file instead of a protein collection, auto-switch to the decoy version of the FASTA file if it exists
         ---------------------------------------------------
 
         If (_toolName ILike 'MODa%' Or
             _toolName ILike 'FragPipe%' Or
             _toolName ILike 'MSFragger%'
            ) And
-           _protCollOptionsList ILike '%forward%' And
            Not _paramFileName ILike '%_NoDecoy%'
         Then
-            _protCollOptionsList := 'seq_direction=decoy,filetype=fasta';
+            If _protCollOptionsList ILike '%forward%' Then
+                _protCollOptionsList := 'seq_direction=decoy,filetype=fasta';
 
-            If Coalesce(_message, '') = '' Then
-                _message := format('Note: changed protein options to decoy-mode since %s expects the FASTA file to have decoy proteins', _toolName);
+                If Coalesce(_message, '') = '' Then
+                    _message := format('Note: changed protein options to decoy-mode since %s expects the FASTA file to have decoy proteins', _toolName);
+                End If;
+            ElsIf _organismDBName <> 'na' And _organismDBName <> '' Then
+                SELECT is_decoy
+                INTO _organismDbFileIsDecoy
+                FROM t_organism_db_file
+                WHERE file_name = _organismDBName::citext;
+
+                If FOUND And Not _organismDbFileIsDecoy Then
+                    _decoyOrganismDBName := Replace(_organismDBName::citext, '.fasta', '_decoy.fasta');
+
+                    If Exists (SELECT org_db_file_id FROM t_organism_db_file WHERE file_name = _decoyOrganismDBName) Then
+                        SELECT file_name
+                        INTO _organismDBName
+                        FROM t_organism_db_file
+                        WHERE file_name = _decoyOrganismDBName;
+
+                        If Coalesce(_message, '') = '' Then
+                            _message := format('Note: changed the Organism DB file to the decoy version since %s expects the FASTA file to have decoy proteins', _toolName);
+                        End If;
+                    End If;
+                End If;
             End If;
         End If;
 
@@ -817,7 +843,6 @@ BEGIN
     If _dropDatasetListTempTable Then
         DROP TABLE IF EXISTS Tmp_DatasetList;
     End If;
-
 END
 $$;
 
