@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_organism_db_file(IN _fastafilename
 /****************************************************
 **
 **  Desc:
-**      Add new or edit an existing legacy organism DB file in t_organism_db_file
+**      Add new or edit an existing Organism DB file in t_organism_db_file
 **
 **      Added/updated files will have an auto-defined description that starts with "Auto-created", and will have active set to 0
 **

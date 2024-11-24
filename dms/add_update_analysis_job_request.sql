@@ -19,7 +19,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_request(IN _datasets 
 **    _protCollNameList                 Comma-separated list of protein collection names
 **    _protCollOptionsList              Protein collection options
 **    _organismName                     Organism name
-**    _organismDBName                   Legacy fasta file; typically 'na'
+**    _organismDBName                   Organism DB file (aka "Individual FASTA file" or "legacy FASTA file"); typically 'na'
 **    _requesterUsername                Requester username
 **    _comment                          Job request comment
 **    _specialProcessing                Special processing parameters; typically ''

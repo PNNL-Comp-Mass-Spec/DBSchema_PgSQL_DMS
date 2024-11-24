@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_params(IN _toolna
 **
 **  Arguments:
 **    _toolName             If blank, will assume _orgDbReqd=1
-**    _organismDBName       Organism DB name (legacy FASTA file)
+**    _organismDBName       Organism DB file (aka "Individual FASTA file" or "legacy FASTA file")
 **    _organismName         Organism name
 **    _protCollNameList     Comma-separated list of protein collection names
 **                          Will set _returnCode to 'U5310' and update _message if over 4000 characters long
@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE public.validate_protein_collection_params(IN _toolna
 **          07/23/2024 mem - Call procedure public.validate_protein_collection_states()
 **          08/07/2024 mem - Fix variable name typo when calling validate_protein_collection_states()
 **                         - Add missing Drop Table command for temp table
+**          11/23/2024 mem - Update messages to use "Organism DB File" instead of "Legacy FASTA file"
 **
 *****************************************************/
 DECLARE
@@ -156,7 +157,7 @@ BEGIN
 
     If _orgDbReqd = 0 Then
         If _organismDBName::citext <> 'na' Or _protCollNameList::citext <> 'na' Or _protCollOptionsList::citext <> 'na' Then
-            _message := format('Protein parameters must all be "na"; you have: Legacy FASTA (OrgDBName) = "%s", ProteinCollectionList = "%s", ProteinOptionsList = "%s"',
+            _message := format('Protein parameters must all be "na"; you have: Individual FASTA (Organism DB File) = "%s", Protein Collection List = "%s", Protein Options List = "%s"',
                                _organismDBName, _protCollNameList,  _protCollOptionsList);
 
             _returnCode := 'U5393';
@@ -167,14 +168,14 @@ BEGIN
     End If;
 
     If Not _organismDBName::citext In ('', 'na') And Not _protCollNameList::citext In ('', 'na') Then
-        -- User defined both a Legacy FASTA file and a Protein Collection List
+        -- User defined both an Organism DB File and a Protein Collection List
         -- Auto-change _organismDBName to 'na' if possible
         If Exists (SELECT job FROM t_analysis_job
                    WHERE organism_db_name = _organismDBName::citext AND
                          protein_collection_list = _protCollNameList::citext AND
                          job_state_id IN (1, 2, 4, 14)) Then
 
-            -- Existing job found with both this legacy FASTA file name and this protein collection list
+            -- Existing job found with both this Organism DB File and this protein collection list
             -- Thus, use the protein collection list and clear _organismDBName
             _organismDBName := '';
 
@@ -183,7 +184,7 @@ BEGIN
 
     If Not _organismDBName::citext In ('', 'na') Then
         If Not _protCollNameList::citext In ('', 'na') Then
-            _message := 'Cannot define both a Legacy FASTA file and a Protein Collection List; one must be "na"';
+            _message := 'Cannot define both an Organism DB File and a Protein Collection List; one must be "na"';
             _returnCode := 'U5314';
             RETURN;
         End If;
@@ -213,7 +214,7 @@ BEGIN
             WHERE ODB.file_name = _organismDBName::citext AND O.active > 0 AND ODB.valid > 0;
 
             If FOUND Then
-                _message := format('Legacy FASTA file "%s" is defined for organism %s; you specified organism %s; cannot continue',
+                _message := format('Organism DB File "%s" is defined for organism %s; you specified organism %s; cannot continue',
                                    _organismDBName, _organismMatch, _organismName);
 
                 _returnCode := 'U5320';
@@ -227,13 +228,13 @@ BEGIN
                            WHERE ODB.file_name = _organismDBName::citext AND
                                  (O.active = 0 OR ODB.valid = 0)) Then
 
-                    _message := format('Legacy FASTA file "%s" is disabled and cannot be used (see t_organism_db_file)', _organismDBName);
+                    _message := format('Organism DB File "%s" is disabled and cannot be used (see t_organism_db_file)', _organismDBName);
                     _returnCode := 'U5321';
                     RETURN;
 
                 Else
 
-                    _message := format('Legacy FASTA file "%s" is not a recognized FASTA file', _organismDBName);
+                    _message := format('Organism DB File "%s" is not a recognized FASTA file', _organismDBName);
                     _returnCode := 'U5322';
                     RETURN;
 

@@ -27,7 +27,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_parameters(IN _toolname
 **    _toolName                             Analysis tool name
 **    _paramFileName                        Input/Output: Parameter file name
 **    _settingsFileName                     Input/Output: Settings file name
-**    _organismDBName                       Input/Output: Organism DB name (legacy FASTA file); should be 'na' if using a protein collection list
+**    _organismDBName                       Input/Output: Organism DB file (aka "Individual FASTA file" or "legacy FASTA file"); should be 'na' if using a protein collection list
 **    _organismName                         Organism name
 **    _protCollNameList                     Input/Output: Comma-separated list of protein collection names
 **                                          Procedure validate_protein_collection_params will set _returnCode to 'U5310' and update _message if over 4000 characters long
@@ -116,6 +116,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_parameters(IN _toolname
 **          03/03/2024 mem - Trim whitespace when extracting values from XML
 **          09/30/2024 mem - Add support for FragPipe
 **          10/29/2024 mem - Use function get_split_fasta_settings() to determine the split FASTA settings
+**          11/23/2024 mem - Update messages to use "Organism DB File" instead of "Legacy FASTA file"
 **
 *****************************************************/
 DECLARE
@@ -787,7 +788,7 @@ BEGIN
                             _paramFileName::citext SIMILAR TO '%PartTryp_StatCysAlk_[0-9]%ppm%' Or
                             _paramFileName::citext SIMILAR TO '%[_]Tryp[_]%')
                     Then
-                        _message := format('Legacy fasta file "%s" is very large (%s); you must choose a parameter file that is fully tryptic (MSGFPlus_Tryp_) '
+                        _message := format('Organism DB file "%s" is very large (%s); you must choose a parameter file that is fully tryptic (MSGFPlus_Tryp_) '
                                            'or is partially tryptic but has no dynamic mods (MSGFPlus_PartTryp_NoMods)',
                                             _organismDBName, _sizeDescription);
 
@@ -819,7 +820,7 @@ BEGIN
 
                     If FOUND And Coalesce(_dynModCount, 0) > 1 Then
                         -- Parameter has more than one dynamic mod; this search will take too long
-                        _message := format('Legacy FASTA file %s is very large (%s); you cannot use a parameter file with %s dynamic mods. '
+                        _message := format('Organism DB file %s is very large (%s); you cannot use a parameter file with %s dynamic mods. '
                                            'Preferably use a parameter file with no dynamic mods (though you _might_ get away with 1 dynamic mod).',
                                            _organismDBName, _sizeDescription, _dynModCount);
 
@@ -836,7 +837,7 @@ BEGIN
                 -- If using MS-GF+ and the file is over 600 MB, you must use MSGFPlus_SplitFasta
                 If Coalesce(_fileSizeKB, 0) > 600*1024 Then
                     If _toolName ILike '%MSGF%' And Not _toolName ILike '%SplitFasta%' Then
-                        _message := format('Legacy fasta file "%s" is very large (%s); you must use analysis tool MSGFPlus_SplitFasta or MSGFPlus_MzML_SplitFasta',
+                        _message := format('Organism DB file "%s" is very large (%s); you must use analysis tool MSGFPlus_SplitFasta or MSGFPlus_MzML_SplitFasta',
                                             _organismDBName, _sizeDescription);
 
                         _returnCode := 'U5352';
