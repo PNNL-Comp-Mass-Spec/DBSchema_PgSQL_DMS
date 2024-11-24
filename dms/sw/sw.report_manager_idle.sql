@@ -27,6 +27,7 @@ CREATE OR REPLACE PROCEDURE sw.report_manager_idle(IN _managername text DEFAULT 
 **          09/07/2023 mem - Align assignment statements
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          11/23/2024 mem - Fix bug that failed to cast _managerName to citext
 **
 *****************************************************/
 DECLARE
@@ -89,7 +90,7 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    If Not Exists (SELECT processor_id FROM sw.t_local_processors WHERE processor_name = _managerName::text) Then
+    If Not Exists (SELECT processor_id FROM sw.t_local_processors WHERE processor_name = _managerName::citext) Then
         _message := format('Manager not found in sw.t_local_processors: %s', _managerName);
         RAISE EXCEPTION '%', _message;
     End If;

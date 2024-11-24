@@ -117,6 +117,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_parameters(IN _toolname
 **          09/30/2024 mem - Add support for FragPipe
 **          10/29/2024 mem - Use function get_split_fasta_settings() to determine the split FASTA settings
 **          11/23/2024 mem - Update messages to use "Organism DB File" instead of "Legacy FASTA file"
+**                         - Fix bug that failed to cast _organismDBName to citext
 **
 *****************************************************/
 DECLARE
@@ -735,7 +736,7 @@ BEGIN
             SELECT file_size_kb
             INTO _fileSizeKB
             FROM t_organism_db_file
-            WHERE file_name = _organismDBName::text;
+            WHERE file_name = _organismDBName::citext;
 
             If FOUND And _fileSizeKB > 0 Then
                 _fileSizeMB := _fileSizeKB / 1024.0;
