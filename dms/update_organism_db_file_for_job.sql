@@ -9,8 +9,9 @@ CREATE OR REPLACE PROCEDURE public.update_organism_db_file_for_job(IN _job integ
 **
 **  Desc:
 **      Update the Organism DB file for an analysis job, though only if the job currently has an organism DB file defined
-**
 **      Used by the analysis manager when it auto-changes the organism DB file to a decoy FASTA file for FragPipe or MSFragger
+**
+**      Updates public.t_analysis_job, public.t_analysis_job_request, and sw.t_job_parameters
 **
 **  Arguments:
 **    _job              Analysis job number
@@ -29,6 +30,7 @@ DECLARE
     _authorized boolean;
 
     _currentFastaFile citext;
+    _requestId int;
     _newFastaFile citext;
     _section text;
     _msg text;
@@ -82,8 +84,8 @@ BEGIN
     -- Assure that the job exists and that it currently has an organism DB file defined
     ---------------------------------------------------
 
-    SELECT organism_db_name
-    INTO _currentFastaFile
+    SELECT organism_db_name, request_id
+    INTO _currentFastaFile, _requestId
     FROM t_analysis_job
     WHERE job = _job;
 
@@ -139,6 +141,43 @@ BEGIN
     End If;
 
     ---------------------------------------------------
+    -- Update t_analysis_job_request, provided it is not already associated with the new FASTA file (and _requestId is greater than 1)
+    ---------------------------------------------------
+
+    If _requestId > 1 Then
+        SELECT organism_db_name
+        INTO _currentFastaFile
+        FROM t_analysis_job_request
+        WHERE request_id = _requestId;
+
+        If Not FOUND Then
+            RAISE WARNING 'Job request ID not found in t_analysis_job_request: %', _requestId;
+            _requestId = 0;
+        ElsIf Not _currentFastaFile LIKE '%.fasta' Then
+            RAISE WARNING 'Job request does not have an organism DB file defined; not associating % with job request ID %', _fastaFileName, _requestId;
+            _requestId = 0;
+        End If;
+
+        If _requestId > 1 Then
+            If _currentFastaFile = _newFastaFile Then
+                _msg := format('Job request ID %s is already associated with %s; leaving t_analysis_job_request unchanged', _requestId, _newFastaFile);
+                RAISE INFO '%', _msg;
+            Else
+                UPDATE t_analysis_job_request
+                SET organism_db_name = _newFastaFile,
+                    comment = public.append_to_text(comment, 'auto-switched FASTA file to ' || _newFastaFile)
+                WHERE request_id = _requestId AND
+                      organism_db_name <> _newFastaFile;
+
+                _msg := format('Associated job request ID %s with FASTA file %s', _requestId, _newFastaFile);
+                RAISE INFO '%', _msg;
+            End If;
+
+            _message := public.append_to_text(_message, _msg);
+        End If;
+    End If;
+
+    ---------------------------------------------------
     -- Also update sw.t_job_parameters (query comes from sw.get_job_step_params_work)
     ---------------------------------------------------
 
@@ -156,8 +195,9 @@ BEGIN
     WHERE xmltable.name = 'LegacyFastaFileName';
 
     If _currentFastaFile = _newFastaFile Then
-        _message := format('Pipeline parameters for job %s already have %s; leaving sw.t_job_parameters unchanged', _job, _newFastaFile);
-        RAISE INFO '%', _message;
+        _msg := format('Pipeline parameters for job %s already have %s; leaving sw.t_job_parameters unchanged', _job, _newFastaFile);
+        RAISE INFO '%', _msg;
+        _message := public.append_to_text(_message, _msg);
     Else
         CALL sw.add_update_job_parameter (
                 _job        => _job,
