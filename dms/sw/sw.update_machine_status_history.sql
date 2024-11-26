@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.update_machine_status_history(IN _minimumtimeinte
 /****************************************************
 **
 **  Desc:
-**      Append new entries to sw.T_Machine_Status_History, summarizing the number of active jobs on each machine
+**      Append new entries to sw.t_machine_status_history, summarizing the number of active jobs on each machine
 **      and the max reported free memory in the last 24 hours
 **
 **  Arguments:

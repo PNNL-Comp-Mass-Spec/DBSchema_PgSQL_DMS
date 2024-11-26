@@ -40,7 +40,7 @@ CREATE OR REPLACE PROCEDURE public.delete_dataset(IN _datasetname text, IN _info
 **          09/27/2018 mem - Added parameter _infoOnly
 **                         - Now showing the unconsumed requested run
 **          09/28/2018 mem - Flag AutoReq requested runs as 'To be deleted' instead of 'To be marked active'
-**          11/16/2018 mem - Delete dataset file info from cap.T_Dataset_Info_XML
+**          11/16/2018 mem - Delete dataset file info from cap.t_dataset_info_xml
 **                           Change the default for _infoOnly to true
 **                           Rename the first parameter
 **          04/17/2019 mem - Delete rows in t_cached_dataset_stats (previously t_cached_dataset_instruments)

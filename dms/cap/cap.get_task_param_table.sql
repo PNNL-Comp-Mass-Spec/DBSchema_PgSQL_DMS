@@ -36,7 +36,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_param_table(_job integer, _dataset text,
 **          01/14/2010 grk - Removed path ID fields
 **          05/04/2010 grk - Added instrument class params
 **          03/23/2012 mem - Now including EUS_Instrument_ID
-**          04/09/2013 mem - Now looking up Perform_Calibration from public.T_Instrument_Name
+**          04/09/2013 mem - Now looking up Perform_Calibration from public.t_instrument_name
 **          08/20/2013 mem - Now looking up EUS_Proposal_ID
 **          09/04/2013 mem - Now including TransferFolderPath (later renamed to TransferDirectoryPath)
 **          05/29/2015 mem - Add support for column Capture_Subfolder

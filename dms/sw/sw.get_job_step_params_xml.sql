@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_step_params_xml(_job integer, _step intege
 **  Desc:
 **      Get job step parameters for given job step, formatted as XML
 **
-**      Data comes from sw.T_Job_Parameters, not from the public tables
+**      Data comes from sw.t_job_parameters, not from the public tables
 **
 **  Arguments:
 **    _job                  Job number

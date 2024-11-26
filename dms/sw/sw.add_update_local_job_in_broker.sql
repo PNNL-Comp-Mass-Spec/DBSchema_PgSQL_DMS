@@ -25,7 +25,7 @@ CREATE OR REPLACE PROCEDURE sw.add_update_local_job_in_broker(INOUT _job integer
 **    _returnCode               Return code
 **    _callingUser              Calling user
 **    _debugMode                When true, display debug messages (the new job will not be actually created)
-**    _logDebugMessages         When true, log debug messages in sw.T_Log_Entries (ignored if _debugMode is false)
+**    _logDebugMessages         When true, log debug messages in sw.t_log_entries (ignored if _debugMode is false)
 **
 **  Example contents of _jobParam
 **      Note that element and attribute names are case sensitive (use Value= and not value=)

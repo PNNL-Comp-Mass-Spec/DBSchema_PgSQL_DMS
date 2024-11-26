@@ -9,7 +9,7 @@ CREATE OR REPLACE FUNCTION sw.copy_runtime_metadata_from_history(_job integer, _
 /****************************************************
 **
 **  Desc:
-**      Copy selected pieces of metadata from the history tables to sw.T_Jobs and sw.T_Job_Steps
+**      Copy selected pieces of metadata from the history tables to sw.t_jobs and sw.t_job_steps
 *
 **      Specifically:
 **        Start, Finish, Processor,
@@ -24,7 +24,7 @@ CREATE OR REPLACE FUNCTION sw.copy_runtime_metadata_from_history(_job integer, _
 **      for comparison purposes back to the original results
 **
 **      It will only copy the runtime metadata if the Results_Transfer (or Results_Cleanup) steps
-**      in sw.T_Job_Steps match exactly the Results_Transfer (or Results_Cleanup) steps in sw.T_Job_Steps_History
+**      in sw.t_job_steps match exactly the Results_Transfer (or Results_Cleanup) steps in sw.t_job_steps_history
 **
 **      Additionally, data is only copied if the job step with a newer start time
 **      has a state of 4 or 5 (Running or Complete) and a null Finish date
@@ -102,7 +102,7 @@ CREATE OR REPLACE FUNCTION sw.copy_runtime_metadata_from_history(_joblist text, 
 /****************************************************
 **
 **  Desc:
-**      Copy selected pieces of metadata from the history tables to sw.T_Jobs and sw.T_Job_Steps
+**      Copy selected pieces of metadata from the history tables to sw.t_jobs and sw.t_job_steps
 *
 **      Specifically:
 **        Start, Finish, Processor,
@@ -117,7 +117,7 @@ CREATE OR REPLACE FUNCTION sw.copy_runtime_metadata_from_history(_joblist text, 
 **      for comparison purposes back to the original results
 **
 **      It will only copy the runtime metadata if the Results_Transfer (or Results_Cleanup) steps
-**      in sw.T_Job_Steps match exactly the Results_Transfer (or Results_Cleanup) steps in sw.T_Job_Steps_History
+**      in sw.t_job_steps match exactly the Results_Transfer (or Results_Cleanup) steps in sw.t_job_steps_history
 **
 **      Additionally, data is only copied if the job step with a newer start time
 **      has a state of 4 or 5 (Running or Complete) and a null Finish date

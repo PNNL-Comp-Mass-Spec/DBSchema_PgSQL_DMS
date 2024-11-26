@@ -9,16 +9,16 @@ CREATE OR REPLACE PROCEDURE sw.delete_old_jobs_from_history(IN _infoonly boolean
 **
 **  Desc:
 **      Delete jobs over three years old from the history tables:
-**      - sw.T_Jobs_History
-**      - sw.T_Job_Steps_History
-**      - sw.T_Job_Step_Dependencies_History
-**      - sw.T_Job_Parameters_History
+**      - sw.t_jobs_history
+**      - sw.t_job_steps_history
+**      - sw.t_job_step_dependencies_history
+**      - sw.t_job_parameters_history
 **
 **      However, assure that at least 250,000 jobs are retained
 **
 **      Additionally:
-**      - Delete old status rows from sw.T_Machine_Status_History
-**      - Delete old rows from sw.T_Job_Step_Processing_Stats
+**      - Delete old status rows from sw.t_machine_status_history
+**      - Delete old rows from sw.t_job_step_processing_stats
 **
 **  Arguments:
 **    _infoOnly     When true, preview the 10 oldest and 10 newest jobs that would be deleted

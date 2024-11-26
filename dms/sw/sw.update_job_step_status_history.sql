@@ -8,10 +8,10 @@ CREATE OR REPLACE PROCEDURE sw.update_job_step_status_history(IN _minimumtimeint
 /****************************************************
 **
 **  Desc:
-**      Append new entries to sw.T_Job_Step_Status_History, summarizing the number of job steps in each state in sw.T_Job_Steps
+**      Append new entries to sw.t_job_step_status_history, summarizing the number of job steps in each state in sw.t_job_steps
 **
 **  Arguments:
-**    _minimumTimeIntervalMinutes                   Set this to 0 to force the addition of new data to sw.T_Job_Step_Status_History
+**    _minimumTimeIntervalMinutes                   Set this to 0 to force the addition of new data to sw.t_job_step_status_history
 **    _minimumTimeIntervalMinutesForIdenticalStats  This controls how often identical stats will get added to the table
 **    _infoOnly                                     When true, preview updates
 **    _message                                      Status message

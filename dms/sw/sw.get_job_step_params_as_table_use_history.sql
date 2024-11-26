@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_step_params_as_table_use_history(_job inte
 **  Desc:
 **      Get job step parameters for given job step
 **
-**      Data comes from sw.T_Job_Parameters_History, not from the public schema tables
+**      Data comes from sw.t_job_parameters_history, not from the public schema tables
 **
 **  Arguments:
 **    _job int          Job number

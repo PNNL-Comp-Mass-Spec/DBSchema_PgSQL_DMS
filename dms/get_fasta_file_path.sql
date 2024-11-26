@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION public.get_fasta_file_path(_fastafilename text, _orga
 **  Desc:
 **      Return the appropriate path to the FASTA file based on file Name and organism Name
 **      If the FASTA file name is blank or 'na', return the standalone FASTA path for the given organism
-**      Otherwise, look for the file in pc.T_Archived_Output_Files
+**      Otherwise, look for the file in pc.t_archived_output_files
 **      or V_FASTA_File_Paths
 **
 **  Arguments:

@@ -9,7 +9,7 @@ CREATE OR REPLACE PROCEDURE dpkg.find_stale_myemsl_uploads(IN _staleuploaddays i
 **
 **  Desc:
 **      Look for unverified entries added to dpkg.t_myemsl_uploads over 45 days ago (customize with _staleUploadDays)
-**      For any that are found, sets the ErrorCode to 101 and posts an entry to dpkg.T_Log_Entries
+**      For any that are found, sets the ErrorCode to 101 and posts an entry to dpkg.t_log_entries
 **
 **  Arguments:
 **    _staleUploadDays      Stale upload threshold, in days

@@ -15,10 +15,10 @@ CREATE OR REPLACE PROCEDURE cap.update_dms_file_info_xml(IN _datasetid integer, 
 **
 **      Table                       Columns / Description
 **      -----                       ---------------------
-**      public.T_Dataset            Acq_Time_Start, Acq_Time_End, Scan_Count, File_Size_Bytes, File_Info_Last_Modified
-**      public.T_Dataset_Info       Scan_Count_MS, Scan_Count_MSn, Elution_Time_Max, Scan_Types, Scan_Count_DIA, etc.
-**      public.T_Dataset_ScanTypes  Scan_Type, Scan_Count, Scan_Filter
-**      public.T_Dataset_Files      File_Path, File_Size_Bytes, File_Hash, File_Size_Rank
+**      public.t_dataset            Acq_Time_Start, Acq_Time_End, Scan_Count, File_Size_Bytes, File_Info_Last_Modified
+**      public.t_dataset_info       Scan_Count_MS, Scan_Count_MSn, Elution_Time_Max, Scan_Types, Scan_Count_DIA, etc.
+**      public.t_dataset_scantypes  Scan_Type, Scan_Count, Scan_Filter
+**      public.t_dataset_files      File_Path, File_Size_Bytes, File_Hash, File_Size_Rank
 **
 **  Arguments:
 **    _datasetID                    Dataset ID

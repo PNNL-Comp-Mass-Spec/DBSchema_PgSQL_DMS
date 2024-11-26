@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE sw.delete_job_if_new_or_failed(IN _job integer, INOU
 /****************************************************
 **
 **  Desc:
-**      Delete the given job from sw.T_Jobs if the state is New, Failed, or Holding
+**      Delete the given job from sw.t_jobs if the state is New, Failed, or Holding
 **      Does not delete the job if it has running job steps (though if the step started over 7 days ago, ignore that job step)
 **      This procedure is called by public.delete_analysis_job()
 **

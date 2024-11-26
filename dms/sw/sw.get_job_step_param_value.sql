@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_step_param_value(_job integer, _step integ
 **      If multiple sections have the same parameter, returns the first one (sorting by Section name)
 **      To see all of the parameters that match a wildcard-based name, use sw.get_job_step_params_as_table()
 **
-**      Data comes from sw.T_Job_Parameters, not from the public schema tables
+**      Data comes from sw.t_job_parameters, not from the public schema tables
 **
 **  Arguments:
 **    _job int          Job number

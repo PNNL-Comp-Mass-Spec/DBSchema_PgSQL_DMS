@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION sw.get_job_step_params_as_table(_job integer, _step i
 **  Desc:
 **      Get job step parameters for given job step
 **
-**      Data comes from sw.T_Job_Parameters, not from the public schema tables
+**      Data comes from sw.t_job_parameters, not from the public schema tables
 **
 **  Arguments:
 **    _job int          Job number
@@ -82,7 +82,6 @@ BEGIN
     FROM Tmp_JobParamsTable Src;
 
     DROP TABLE Tmp_JobParamsTable;
-
 END
 $$;
 

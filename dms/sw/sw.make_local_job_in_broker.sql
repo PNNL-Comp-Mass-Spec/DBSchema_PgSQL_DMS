@@ -26,7 +26,7 @@ CREATE OR REPLACE PROCEDURE sw.make_local_job_in_broker(IN _scriptname text, IN 
 **                                sw.t_debug_tmp_job_parameters
 **                              When _debugMode is true, the new job will not be added to sw.t_jobs
 **
-**    _logDebugMessages         Set to true to log debug messages in sw.T_Log_Entries (ignored if _debugMode is false)
+**    _logDebugMessages         Set to true to log debug messages in sw.t_log_entries (ignored if _debugMode is false)
 **    _job                      Output: job number
 **    _resultsDirectoryName     Output: results folder name
 **    _message                  Status message

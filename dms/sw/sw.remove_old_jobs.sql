@@ -17,9 +17,9 @@ CREATE OR REPLACE PROCEDURE sw.remove_old_jobs(IN _intervaldaysforsuccess intege
 **    _message                  Status message
 **    _returnCode               Return code
 **    _validateJobStepSuccess   When true, remove any jobs that have failed, in progress, or holding job steps
-**    _jobListOverride          Comma-separated list of jobs to remove from T_Jobs, T_Job_Steps, and T_Job_Parameters
+**    _jobListOverride          Comma-separated list of jobs to remove from sw.t_jobs, sw.t_job_steps, and sw.t_job_parameters
 **    _maxJobsToProcess         Maximum number of jobs to process
-**    _logDeletions             When true, logs each deleted job number in sw.T_Log_Entries
+**    _logDeletions             When true, logs each deleted job number in sw.t_log_entries
 **    _logToConsoleOnly         When _logDeletions is true, optionally set this to true to only show deleted job info in the output console (via RAISE INFO messages)
 **
 **  Auth:   grk
