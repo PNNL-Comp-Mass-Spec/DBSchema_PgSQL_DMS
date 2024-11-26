@@ -1,8 +1,8 @@
 --
--- Name: add_update_organism_db_file(text, text, integer, bigint, integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: add_update_organism_db_file(text, text, integer, bigint, integer, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.add_update_organism_db_file(IN _fastafilename text, IN _organismname text, IN _numproteins integer, IN _numresidues bigint, IN _filesizekb integer DEFAULT 0, IN _isdecoy boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.add_update_organism_db_file(IN _fastafilename text, IN _organismname text, IN _numproteins integer, IN _numresidues bigint, IN _filesizekb integer DEFAULT 0, IN _isdecoy boolean DEFAULT false, IN _parentfastafile text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -10,7 +10,11 @@ CREATE OR REPLACE PROCEDURE public.add_update_organism_db_file(IN _fastafilename
 **  Desc:
 **      Add new or edit an existing Organism DB file in t_organism_db_file
 **
-**      Added/updated files will have an auto-defined description that starts with "Auto-created", and will have active set to 0
+**      If _isDecoy is false or _parentFastaFile is '', added/updated files will have an auto-defined description
+**      that starts with "Auto-created", and will have active set to 0
+**
+**      If _isDecoy is true and _parentFastaFile is defined, added/updated files will have an auto-defined description
+**      of the form "Decoy version of ParentFasta_TrypPigBov_2022-04-04.fasta (auto-created)", and will have active set to 1
 **
 **  Arguments:
 **    _fastaFileName    FASTA file name, e.g. 'UniProt_Bacteria_100species_TrypPigBov_Bos_Taurus_2021-02-22.fasta'
@@ -19,6 +23,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_organism_db_file(IN _fastafilename
 **    _numResidues      Total number of residues in the proteins
 **    _fileSizeKB       FASTA file size, in KB
 **    _isDecoy          When true, the FASTA file contains both forward and reverse protein sequences
+**    _parentFastaFile  When adding a decoy FASTA file, this is the name of the parent (non-decoy) FASTA file
 **    _message          Status message
 **    _returnCode       Return code
 **
@@ -33,6 +38,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_organism_db_file(IN _fastafilename
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          11/14/2024 mem - Add parameter _isDecoy
+**          11/23/2024 mem - Add parameter _parentFastaFile
+**                         - When _isDecoy is true and _parentFastaFile is defined, set Active to 1 and include the parent FASTA file name in the description
 **
 *****************************************************/
 DECLARE
@@ -43,6 +50,8 @@ DECLARE
 
     _organismID int := 0;
     _existingEntry boolean := false;
+    _description text;
+    _isActive int := 0;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -80,12 +89,13 @@ BEGIN
     -- Validate the inputs
     ---------------------------------------------------
 
-    _fastaFileName := Trim(Coalesce(_fastaFileName, ''));
-    _organismName  := Trim(Coalesce(_organismName, ''));
-    _numProteins   := Coalesce(_numProteins, 0);
-    _numResidues   := Coalesce(_numResidues, 0);
-    _fileSizeKB    := Coalesce(_fileSizeKB, 0);
-    _isDecoy       := Coalesce(_isDecoy, false);
+    _fastaFileName   := Trim(Coalesce(_fastaFileName, ''));
+    _organismName    := Trim(Coalesce(_organismName, ''));
+    _numProteins     := Coalesce(_numProteins, 0);
+    _numResidues     := Coalesce(_numResidues, 0);
+    _fileSizeKB      := Coalesce(_fileSizeKB, 0);
+    _isDecoy         := Coalesce(_isDecoy, false);
+    _parentFastaFile := Trim(Coalesce(_parentFastaFile, ''));
 
     If _fastaFileName = '' Then
         _message := 'FASTA file name must be specified';
@@ -115,6 +125,18 @@ BEGIN
     End If;
 
     ---------------------------------------------------
+    -- Define the Organism DB file description
+    ---------------------------------------------------
+
+    If _isDecoy And _parentFastaFile <> '' Then
+        _description := format('Decoy version of %s (auto-created)', _parentFastaFile);
+        _isActive    := 1;
+    Else
+        _description := 'Auto-created';
+        _isActive    := 0;
+    End If;
+
+    ---------------------------------------------------
     -- Add/update t_organism_db_file
     ---------------------------------------------------
 
@@ -123,27 +145,27 @@ BEGIN
     End If;
 
     MERGE INTO t_organism_db_file AS target
-    USING (SELECT _fastaFileName AS FileName,
-                  _organismID    AS OrganismID,
-                  'Auto-created' AS Description,
-                  0              AS Active,
-                  _numProteins   AS NumProteins,
-                  _numResidues   AS NumResidues,
-                  _fileSizeKB    AS FileSizeKB,
-                  _isDecoy       AS IsDecoy,
-                  1 AS Valid
+    USING (SELECT _fastaFileName  AS FileName,
+                  _organismID     AS OrganismID,
+                  _description    AS Description,
+                  _isActive       AS Active,
+                  _numProteins    AS NumProteins,
+                  _numResidues    AS NumResidues,
+                  _fileSizeKB     AS FileSizeKB,
+                  _isDecoy        AS IsDecoy,
+                  1               AS Valid
           ) AS Source
     ON (target.file_name = source.FileName)
     WHEN MATCHED THEN
         UPDATE SET
-            organism_id = source.OrganismID,
-            description = format('%s; updated %s', source.description, public.timestamp_text(CURRENT_TIMESTAMP)),
-            active = source.active,
+            organism_id  = source.OrganismID,
+            description  = format('%s; updated %s', source.Description, public.timestamp_text(CURRENT_TIMESTAMP)),
+            active       = source.Active,
             num_proteins = source.NumProteins,
             num_residues = source.NumResidues,
             file_size_kb = source.FileSizeKB,
             is_decoy     = source.IsDecoy,
-            valid        = source.valid
+            valid        = source.Valid
     WHEN NOT MATCHED THEN
         INSERT (file_name,
                 organism_id,
@@ -156,8 +178,8 @@ BEGIN
                 valid)
         VALUES (source.FileName,
                 source.OrganismID,
-                source.description,
-                source.active,
+                source.Description,
+                source.Active,
                 source.NumProteins,
                 source.NumResidues,
                 source.FileSizeKB,
@@ -169,10 +191,9 @@ BEGIN
     Else
         _message := format('Added %s to t_organism_db_file', _fastaFileName);
     End If;
-
 END
 $$;
 
 
-ALTER PROCEDURE public.add_update_organism_db_file(IN _fastafilename text, IN _organismname text, IN _numproteins integer, IN _numresidues bigint, IN _filesizekb integer, IN _isdecoy boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.add_update_organism_db_file(IN _fastafilename text, IN _organismname text, IN _numproteins integer, IN _numresidues bigint, IN _filesizekb integer, IN _isdecoy boolean, IN _parentfastafile text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
