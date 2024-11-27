@@ -45,6 +45,8 @@ CREATE OR REPLACE PROCEDURE public.copy_requested_run(IN _requestid integer, IN 
 **                         - Ported to PostgreSQL
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
+**          11/26/2024 mem - When _infoOnly is false, show the new request ID using Raise Info
+**                         - Show error messages using Raise Warning
 **
 *****************************************************/
 DECLARE
@@ -158,9 +160,9 @@ BEGIN
 
     END LOOP;
 
-    If _infoOnly Then
+    RAISE INFO '';
 
-        RAISE INFO '';
+    If _infoOnly Then
 
         _formatSpecifier := '%-17s %-60s %-60s %-50s %-18s %-20s %-25s %-15s %-8s %-10s %-20s %-20s %-25s %-12s %-8s %-15s %-6s %-9s %-15s %-17s %-7s %-14s %-20s %-30s %-10s %-10s %-10s';
 
@@ -379,6 +381,8 @@ BEGIN
             _message := format('Problem trying to copy an existing requested run; no rows added for request ID %s', _requestID);
         End If;
 
+        RAISE WARNING '%', _message;
+
         CALL post_log_entry ('Error', _message, 'Copy_Requested_Run');
 
         _returnCode := 'U5254';
@@ -389,6 +393,8 @@ BEGIN
         _targetType := 11;
         CALL public.alter_event_log_entry_user ('public', _targetType, _newRequestID, _stateID, _callingUser, _message => _alterEnteredByMessage);
     End If;
+
+    RAISE INFO 'Copied request ID %, creating request ID %: %', _requestID, _newRequestID, _newRequestName;
 
     ------------------------------------------------------------
     -- Copy factors from the source requested run to the new one
@@ -413,6 +419,8 @@ BEGIN
 
     If _returnCode <> '' Then
         _message := format('Problem copying factors from requested run %s to requested run %s; _returnCode = %s', _requestID, _newRequestID, _returnCode);
+        RAISE WARNING '%', _message;
+
         CALL post_log_entry ('Error', _message, 'Copy_Requested_Run');
         RETURN;
     End If;
@@ -439,6 +447,10 @@ BEGIN
                     _message    => _message,        -- Output
                     _returnCode => _returnCode);    -- Output
 
+    If _returnCode <> '' Then
+        RAISE WARNING 'Call to update_cached_requested_run_eus_users failed with return code %: %', _returnCode, _message;
+    End If;
+
     ---------------------------------------------------
     -- Update stats in t_cached_requested_run_batch_stats
     ---------------------------------------------------
@@ -456,6 +468,7 @@ BEGIN
                         _returnCode  => _returnCode);   -- Output
 
         If _returnCode <> '' Then
+            RAISE WARNING 'Call to update_cached_requested_run_batch_stats failed with return code %: %', _returnCode, _msg;
             _message := public.append_to_text(_message, _msg);
         End If;
     End If;
