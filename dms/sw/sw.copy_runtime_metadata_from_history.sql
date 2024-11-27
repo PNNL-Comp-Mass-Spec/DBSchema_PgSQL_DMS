@@ -556,7 +556,6 @@ BEGIN
 
     DROP TABLE Tmp_Jobs;
     DROP TABLE Tmp_JobStepsToUpdate;
-
 END
 $$;
 

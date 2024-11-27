@@ -89,7 +89,6 @@ BEGIN
     LIMIT 1;
 
     DROP TABLE Tmp_JobParamsTable;
-
 END
 $$;
 

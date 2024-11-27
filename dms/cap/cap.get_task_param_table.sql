@@ -321,7 +321,6 @@ BEGIN
     ORDER BY P.Section, P.Name;
 
     DROP TABLE Tmp_Param_Tab;
-
 END
 $$;
 

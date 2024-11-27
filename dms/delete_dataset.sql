@@ -618,7 +618,6 @@ BEGIN
     RAISE INFO 'Deleted dataset ID %', _datasetID;
 
     RAISE INFO 'ToDo: delete %', _datasetDirectoryPath;
-
 END
 $$;
 

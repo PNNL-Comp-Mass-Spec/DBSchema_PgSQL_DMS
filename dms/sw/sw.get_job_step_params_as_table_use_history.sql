@@ -81,7 +81,6 @@ BEGIN
     FROM Tmp_JobParamsTable Src;
 
     DROP TABLE Tmp_JobParamsTable;
-
 END
 $$;
 
