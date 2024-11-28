@@ -53,6 +53,7 @@ CREATE OR REPLACE FUNCTION public.get_monthly_instrument_usage_report(_instrumen
 **                         - Include schema name when calling function verify_sp_authorized()
 **          10/09/2024 mem - When determining the instrument name for the Instrument ID specified by _eusInstrumentId, preferably choose the first active instrument, sorted alphabetically by name
 **          11/27/2024 mem - Filter on usage type when parsing long interval usage info
+**                         - Fix bug that failed to show interval length when _outputFormat is 'Details'
 **
 *****************************************************/
 DECLARE
@@ -842,7 +843,7 @@ BEGIN
                    _eusInstrumentId AS EMSL_Inst_ID,
                    U.Start,
                    U.Type,
-                   U.Duration AS Minutes,
+                   CASE WHEN U.Type = 'Interval' THEN U.Interval ELSE U.Duration END AS Minutes,
                    null::numeric AS Percentage,
                    U.Proposal,
                    U.Usage,
@@ -967,4 +968,10 @@ $$;
 
 
 ALTER FUNCTION public.get_monthly_instrument_usage_report(_instrument text, _eusinstrumentid integer, _year text, _month text, _outputformat text) OWNER TO d3l243;
+
+--
+-- Name: FUNCTION get_monthly_instrument_usage_report(_instrument text, _eusinstrumentid integer, _year text, _month text, _outputformat text); Type: COMMENT; Schema: public; Owner: d3l243
+--
+
+COMMENT ON FUNCTION public.get_monthly_instrument_usage_report(_instrument text, _eusinstrumentid integer, _year text, _month text, _outputformat text) IS 'GetMonthlyInstrumentUsageReport';
 
