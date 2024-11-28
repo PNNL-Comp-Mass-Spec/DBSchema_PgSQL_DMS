@@ -52,6 +52,7 @@ CREATE OR REPLACE FUNCTION public.get_monthly_instrument_usage_report(_instrumen
 **          09/08/2023 mem - Adjust capitalization of keywords
 **                         - Include schema name when calling function verify_sp_authorized()
 **          10/09/2024 mem - When determining the instrument name for the Instrument ID specified by _eusInstrumentId, preferably choose the first active instrument, sorted alphabetically by name
+**          11/27/2024 mem - Filter on usage type when parsing long interval usage info
 **
 *****************************************************/
 DECLARE
@@ -361,7 +362,7 @@ BEGIN
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
-        WHERE NOT Breakdown IS NULL;
+        WHERE Breakdown::text LIKE '%Broken%';
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -372,7 +373,7 @@ BEGIN
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
-        WHERE NOT Breakdown IS NULL;
+        WHERE Breakdown::text LIKE '%Maintenance%';
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -383,7 +384,7 @@ BEGIN
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
-        WHERE NOT Breakdown IS NULL;
+        WHERE Breakdown::text LIKE '%OtherNotAvailable%';
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -394,7 +395,7 @@ BEGIN
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
-        WHERE NOT Breakdown IS NULL;
+        WHERE Breakdown::text LIKE '%StaffNotAvailable%';
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Operator, Proposal, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -406,7 +407,7 @@ BEGIN
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
-        WHERE NOT Breakdown IS NULL;
+        WHERE Breakdown::text LIKE '%CapDev%';
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Operator, Proposal, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -418,7 +419,7 @@ BEGIN
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
-        WHERE NOT Breakdown IS NULL;
+        WHERE Breakdown::text LIKE '%ResourceOwner%';
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -429,7 +430,7 @@ BEGIN
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
-        WHERE NOT Breakdown IS NULL;
+        WHERE Breakdown::text LIKE '%InstrumentAvailable%';
 
         INSERT INTO Tmp_ApportionedIntervals (Dataset_ID, Start, Interval, Proposal, Users, Usage, Comment)
         SELECT Tmp_LongIntervals.Dataset_ID,
@@ -448,13 +449,14 @@ BEGIN
                Tmp_LongIntervals.Comment
         FROM Tmp_LongIntervals
         INNER JOIN Tmp_InstrumentUsage ON Tmp_InstrumentUsage.Dataset_ID = Tmp_LongIntervals.Dataset_ID
-        WHERE NOT Breakdown IS NULL;
+        WHERE Breakdown::text LIKE '% User%';
 
         ---------------------------------------------------
         -- Get rid of meaningless apportioned long intervals
         ---------------------------------------------------
 
-        DELETE FROM Tmp_ApportionedIntervals WHERE Interval = 0;
+        DELETE FROM Tmp_ApportionedIntervals
+        WHERE Coalesce(Interval, 0) = 0;
 
         If _outputFormat = 'debug1' Then
 
