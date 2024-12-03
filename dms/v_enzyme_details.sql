@@ -4,11 +4,11 @@
 
 CREATE VIEW public.v_enzyme_details AS
  SELECT enzyme_name,
-    NULLIF(p1, 'na'::public.citext) AS left_cleave_point,
-    NULLIF(p1_exception, 'na'::public.citext) AS left_no_cleave_point,
-    NULLIF(p2, 'na'::public.citext) AS right_cleave_point,
-    NULLIF(p2_exception, 'na'::public.citext) AS right_no_cleave_point,
-    NULLIF(cleavage_method, 'na'::public.citext) AS cleavage_method,
+    NULLIF((p1)::text, ('na'::public.citext)::text) AS left_cleave_point,
+    NULLIF((p1_exception)::text, ('na'::public.citext)::text) AS left_no_cleave_point,
+    NULLIF((p2)::text, ('na'::public.citext)::text) AS right_cleave_point,
+    NULLIF((p2_exception)::text, ('na'::public.citext)::text) AS right_no_cleave_point,
+    NULLIF((cleavage_method)::text, ('na'::public.citext)::text) AS cleavage_method,
     cleavage_offset AS "offset",
     sequest_enzyme_index AS selected_enzyme_index
    FROM public.t_enzymes;

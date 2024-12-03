@@ -15,22 +15,22 @@ OPTIONS (
     schema_name 'proteomics_views',
     table_name 'vw_instruments'
 );
-ALTER FOREIGN TABLE eus.vw_instruments ALTER COLUMN instrument_id OPTIONS (
+ALTER FOREIGN TABLE ONLY eus.vw_instruments ALTER COLUMN instrument_id OPTIONS (
     column_name 'instrument_id'
 );
-ALTER FOREIGN TABLE eus.vw_instruments ALTER COLUMN active_sw OPTIONS (
+ALTER FOREIGN TABLE ONLY eus.vw_instruments ALTER COLUMN active_sw OPTIONS (
     column_name 'active_sw'
 );
-ALTER FOREIGN TABLE eus.vw_instruments ALTER COLUMN primary_instrument OPTIONS (
+ALTER FOREIGN TABLE ONLY eus.vw_instruments ALTER COLUMN primary_instrument OPTIONS (
     column_name 'primary_instrument'
 );
-ALTER FOREIGN TABLE eus.vw_instruments ALTER COLUMN instrument_name OPTIONS (
+ALTER FOREIGN TABLE ONLY eus.vw_instruments ALTER COLUMN instrument_name OPTIONS (
     column_name 'instrument_name'
 );
-ALTER FOREIGN TABLE eus.vw_instruments ALTER COLUMN eus_display_name OPTIONS (
+ALTER FOREIGN TABLE ONLY eus.vw_instruments ALTER COLUMN eus_display_name OPTIONS (
     column_name 'eus_display_name'
 );
-ALTER FOREIGN TABLE eus.vw_instruments ALTER COLUMN available_hours OPTIONS (
+ALTER FOREIGN TABLE ONLY eus.vw_instruments ALTER COLUMN available_hours OPTIONS (
     column_name 'available_hours'
 );
 

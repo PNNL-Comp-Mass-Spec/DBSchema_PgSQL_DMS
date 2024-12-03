@@ -16,25 +16,25 @@ OPTIONS (
     schema_name 'proteomics_views',
     table_name 'vw_proposals'
 );
-ALTER FOREIGN TABLE eus.vw_proposals ALTER COLUMN project_id OPTIONS (
+ALTER FOREIGN TABLE ONLY eus.vw_proposals ALTER COLUMN project_id OPTIONS (
     column_name 'project_id'
 );
-ALTER FOREIGN TABLE eus.vw_proposals ALTER COLUMN title OPTIONS (
+ALTER FOREIGN TABLE ONLY eus.vw_proposals ALTER COLUMN title OPTIONS (
     column_name 'title'
 );
-ALTER FOREIGN TABLE eus.vw_proposals ALTER COLUMN proposal_type OPTIONS (
+ALTER FOREIGN TABLE ONLY eus.vw_proposals ALTER COLUMN proposal_type OPTIONS (
     column_name 'proposal_type'
 );
-ALTER FOREIGN TABLE eus.vw_proposals ALTER COLUMN proposal_type_display OPTIONS (
+ALTER FOREIGN TABLE ONLY eus.vw_proposals ALTER COLUMN proposal_type_display OPTIONS (
     column_name 'proposal_type_display'
 );
-ALTER FOREIGN TABLE eus.vw_proposals ALTER COLUMN actual_start_date OPTIONS (
+ALTER FOREIGN TABLE ONLY eus.vw_proposals ALTER COLUMN actual_start_date OPTIONS (
     column_name 'actual_start_date'
 );
-ALTER FOREIGN TABLE eus.vw_proposals ALTER COLUMN actual_end_date OPTIONS (
+ALTER FOREIGN TABLE ONLY eus.vw_proposals ALTER COLUMN actual_end_date OPTIONS (
     column_name 'actual_end_date'
 );
-ALTER FOREIGN TABLE eus.vw_proposals ALTER COLUMN project_uuid OPTIONS (
+ALTER FOREIGN TABLE ONLY eus.vw_proposals ALTER COLUMN project_uuid OPTIONS (
     column_name 'project_uuid'
 );
 

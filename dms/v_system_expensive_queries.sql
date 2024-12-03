@@ -10,7 +10,7 @@ CREATE VIEW public.v_system_expensive_queries AS
     "substring"(query, 1, 200) AS query_excerpt,
     queryid
    FROM public.pg_stat_statements ss
-  ORDER BY total_exec_time DESC
+  ORDER BY (round((total_exec_time)::numeric, 2)) DESC
  LIMIT 500;
 
 

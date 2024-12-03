@@ -15,22 +15,22 @@ OPTIONS (
     schema_name 'proteomics_views',
     table_name 'vw_requested_allocated_hours'
 );
-ALTER FOREIGN TABLE eus.vw_requested_allocated_hours ALTER COLUMN instrument_id OPTIONS (
+ALTER FOREIGN TABLE ONLY eus.vw_requested_allocated_hours ALTER COLUMN instrument_id OPTIONS (
     column_name 'instrument_id'
 );
-ALTER FOREIGN TABLE eus.vw_requested_allocated_hours ALTER COLUMN eus_display_name OPTIONS (
+ALTER FOREIGN TABLE ONLY eus.vw_requested_allocated_hours ALTER COLUMN eus_display_name OPTIONS (
     column_name 'eus_display_name'
 );
-ALTER FOREIGN TABLE eus.vw_requested_allocated_hours ALTER COLUMN proposal_id OPTIONS (
+ALTER FOREIGN TABLE ONLY eus.vw_requested_allocated_hours ALTER COLUMN proposal_id OPTIONS (
     column_name 'proposal_id'
 );
-ALTER FOREIGN TABLE eus.vw_requested_allocated_hours ALTER COLUMN requested_hours OPTIONS (
+ALTER FOREIGN TABLE ONLY eus.vw_requested_allocated_hours ALTER COLUMN requested_hours OPTIONS (
     column_name 'requested_hours'
 );
-ALTER FOREIGN TABLE eus.vw_requested_allocated_hours ALTER COLUMN allocated_hours OPTIONS (
+ALTER FOREIGN TABLE ONLY eus.vw_requested_allocated_hours ALTER COLUMN allocated_hours OPTIONS (
     column_name 'allocated_hours'
 );
-ALTER FOREIGN TABLE eus.vw_requested_allocated_hours ALTER COLUMN fy OPTIONS (
+ALTER FOREIGN TABLE ONLY eus.vw_requested_allocated_hours ALTER COLUMN fy OPTIONS (
     column_name 'fy'
 );
 
