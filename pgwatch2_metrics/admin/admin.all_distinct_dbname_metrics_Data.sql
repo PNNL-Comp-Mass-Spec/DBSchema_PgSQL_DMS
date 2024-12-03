@@ -2,12 +2,13 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.4
--- Dumped by pg_dump version 16.4
+-- Dumped from database version 17.2
+-- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -63,6 +64,7 @@ DMSDev	archiver	2024-04-17 15:08:51.112197-07
 DMSDev	backends	2024-04-17 15:08:40.828173-07
 DMSDev	backup_age_pgbackrest	2024-04-17 15:08:43.802272-07
 DMSDev	bgwriter	2024-04-17 15:08:43.523348-07
+DMSDev	configuration_changes	2024-11-28 19:18:42.49616-08
 DMSDev	configured_dbs	2024-04-18 16:21:42.034525-07
 DMSDev	cpu_load	2024-04-17 15:08:42.041528-07
 DMSDev	db_size	2024-04-17 15:08:41.094857-07
@@ -80,6 +82,7 @@ DMSDev	psutil_disk	2024-04-17 15:08:43.256485-07
 DMSDev	psutil_disk_io_total	2024-04-17 15:08:40.966262-07
 DMSDev	psutil_mem	2024-04-17 15:08:43.383123-07
 DMSDev	recommendations	2024-04-17 15:08:40.699458-07
+DMSDev	replication_slots	2024-12-01 20:52:43.255362-08
 DMSDev	sequence_health	2024-04-17 15:08:46.052792-07
 DMSDev	server_log_event_counts	2024-04-17 15:08:40.714759-07
 DMSDev	settings	2024-04-17 15:08:49.193667-07

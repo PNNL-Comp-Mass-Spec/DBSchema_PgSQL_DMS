@@ -2,12 +2,13 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.4
--- Dumped by pg_dump version 16.4
+-- Dumped from database version 17.2
+-- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -21,28 +22,28 @@ SET row_security = off;
 --
 
 COPY public.t_general_statistics (entry_id, category, label, value, last_affected) FROM stdin;
-1000	Job_Count	All	2336498.000	2024-11-20 20:03:23.237739
-1001	Job_Count	Last 7 days	621.000	2024-11-20 20:03:23.237739
-1002	Job_Count	Last 30 days	13131.000	2024-11-20 20:03:23.237739
-1003	Job_Count	New	3.000	2024-11-20 20:03:23.237739
-1004	Campaign_Count	All	2079.000	2024-11-20 17:03:23.162489
-1005	Campaign_Count	Last 7 days	1.000	2024-11-20 17:03:23.162489
-1006	Campaign_Count	Last 30 days	21.000	2024-11-20 17:03:23.162489
+1000	Job_Count	All	2340053.000	2024-12-02 14:03:54.925359
+1001	Job_Count	Last 7 days	316.000	2024-12-02 14:03:54.925359
+1002	Job_Count	Last 30 days	11962.000	2024-12-02 14:03:54.925359
+1003	Job_Count	New	1.000	2024-12-01 23:03:54.382893
+1004	Campaign_Count	All	2080.000	2024-11-25 14:03:28.570743
+1005	Campaign_Count	Last 7 days	0.000	2024-11-27 14:03:30.719327
+1006	Campaign_Count	Last 30 days	5.000	2024-12-01 14:03:54.081119
 1007	CellCulture_Count	All	18022.000	2024-08-06 17:03:05.868691
 1008	CellCulture_Count	Last 7 days	0.000	2024-08-06 17:03:05.868691
 1009	CellCulture_Count	Last 30 days	0.000	2024-08-06 17:03:05.868691
-1010	Dataset_Count	All	1262277.000	2024-11-20 20:03:23.237739
-1011	Dataset_Count	Last 7 days	613.000	2024-11-20 20:03:23.237739
-1012	Dataset_Count	Last 30 days	9791.000	2024-11-20 20:03:23.237739
-1013	Experiment_Count	All	387577.000	2024-11-20 17:03:23.162489
-1014	Experiment_Count	Last 7 days	313.000	2024-11-20 17:03:23.162489
-1015	Experiment_Count	Last 30 days	2234.000	2024-11-20 17:03:23.162489
+1010	Dataset_Count	All	1265103.000	2024-12-02 14:03:54.925359
+1011	Dataset_Count	Last 7 days	135.000	2024-12-02 14:03:54.925359
+1012	Dataset_Count	Last 30 days	9724.000	2024-12-02 14:03:54.925359
+1013	Experiment_Count	All	389135.000	2024-12-02 14:03:54.925359
+1014	Experiment_Count	Last 7 days	396.000	2024-12-02 14:03:54.925359
+1015	Experiment_Count	Last 30 days	2461.000	2024-12-02 14:03:54.925359
 1016	Organism_Count	All	832.000	2024-11-20 11:03:22.915576
-1017	Organism_Count	Last 7 days	1.000	2024-11-20 11:03:22.915576
-1018	Organism_Count	Last 30 days	2.000	2024-11-20 11:03:22.915576
-1019	RawDataTB	All	779	2024-11-15 14:03:07.385142
-1020	RawDataTB	Last 7 days	0	2024-11-14 17:03:06.613857
-1021	RawDataTB	Last 30 days	8	2024-11-19 14:03:21.94151
+1017	Organism_Count	Last 7 days	0.000	2024-11-22 11:03:25.067992
+1018	Organism_Count	Last 30 days	1.000	2024-11-28 17:03:50.773076
+1019	RawDataTB	All	782	2024-11-26 17:03:29.519164
+1020	RawDataTB	Last 7 days	0	2024-11-27 17:03:30.827669
+1021	RawDataTB	Last 30 days	8	2024-11-30 14:03:52.800174
 \.
 
 

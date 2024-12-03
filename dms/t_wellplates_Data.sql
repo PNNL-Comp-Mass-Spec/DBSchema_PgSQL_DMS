@@ -2,12 +2,13 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.4
--- Dumped by pg_dump version 16.4
+-- Dumped from database version 17.2
+-- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -474,6 +475,12 @@ COPY public.t_wellplates (wellplate_id, wellplate, description, created) FROM st
 1451	TEDDY_Val_2_Plate_02	TEDDY Validation 2 Digested Peptides - Plate 2	2024-11-13 13:43:03.185216
 1452	TEDDY_Val_2_Plate_03	TEDDY Validation 2 Digested Peptides - Plate 3	2024-11-20 12:03:35.098382
 1453	TEDDY_Val_2_Plate_04	TEDDY Validation 2 Digested Peptides - Plate 4	2024-11-20 12:03:42.094915
+1454	TEDDY_Val_2_Plate_05	TEDDY Validation 2 Digested Peptides - Plate 5	2024-11-25 08:46:22.561787
+1455	TEDDY_Val_2_Plate_06	TEDDY Validation 2 Digested Peptides - Plate 6	2024-11-25 08:46:29.471781
+1456	TEDDY_Val_2_Plate_07	TEDDY Validation 2 Digested Peptides - Plate 7	2024-12-02 11:17:40.251286
+1457	TEDDY_Val_2_Plate_08	TEDDY Validation 2 Digested Peptides - Plate 8	2024-12-02 11:17:47.950612
+1458	TEDDY_Val_2_Plate_09	TEDDY Validation 2 Digested Peptides - Plate 9	2024-12-02 11:36:57.89264
+1459	TEDDY_Val_2_Plate_10	TEDDY Validation 2 Digested Peptides - Plate 10	2024-12-02 11:37:09.690564
 \.
 
 
@@ -481,7 +488,7 @@ COPY public.t_wellplates (wellplate_id, wellplate, description, created) FROM st
 -- Name: t_wellplates_wellplate_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_wellplates_wellplate_id_seq', 1453, true);
+SELECT pg_catalog.setval('public.t_wellplates_wellplate_id_seq', 1459, true);
 
 
 --

@@ -2,12 +2,13 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.4
--- Dumped by pg_dump version 16.4
+-- Dumped from database version 17.2
+-- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -3133,7 +3134,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 548	Fungi_Diatoms_GreenAlgae_OtherProteins_EBI_Stds_2008-05-20.fasta	1106	Created by Matt	0	519919	224995274	1	251696	2008-05-20 16:32:00	f
 545	Fungi_Proteins_Combined_GT200_2008-05-01.fasta	16	Created by Matt	0	365143	199858824	1	225058	2008-05-02 23:57:00	f
 7533	Fusobacteria_UniProt_TrEMBL_2022-03-02.fasta	1746	https://www.uniprot.org/uniprot/?query=fusobacteria&sort=score	1	259346	84021955	1	120870	2022-05-02 14:09:00	f
-7268	GCA_003055145.1_ASM305514v1.fasta	1135	Leafcutter any proteins	1	7163	3619999	1	3724	2021-09-02 19:50:00	f
+7268	GCA_003055145.1_ASM305514v1.fasta	1135	Leafcutter ant proteins	1	7163	3619999	1	3724	2021-09-02 19:50:00	f
 299	GDR_2000-03-21.fasta	1		0	3117	963879	1	1126	2001-04-20 11:19:00	f
 300	GDR_2000-03-21_PepStds.fasta	1		0	3131	964082	1	1126	2004-01-07 17:13:00	f
 301	GDR_DR2340_Only_2001-09-28.fasta	1		0	2	726	1	1	2001-09-28 17:35:00	f
@@ -4597,6 +4598,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 7766	KDP_N_cycling_genes_DRAM_TrypPigBov_2023-06-28.fasta	1733	N-cycling genes called by DRAM, provided by BK Song (songb@vims.edu)	1	1155	412565	1	525	2023-06-28 17:53:00	f
 7767	KDP_N_cycling_genes_RAST_TrypPigBov_2023-06-28.fasta	1733	N-cycling genes called by RAST, provided by BK Song (songb@vims.edu)\r\n	1	24484	6852578	1	11220	2023-06-28 17:54:00	f
 7529	KDP_N_cycling_genes_TrypPigBov_2022-04-04.fasta	1733	N-cycling genes from all Nakdong river sediment metagenomes, compiled by Bongkeun Song (songb@vims.edu)	1	5846	1598532	1	1957	2022-04-04 18:04:00	f
+8770	KDP_N_cycling_genes_TrypPigBov_2022-04-04_decoy.fasta	1733	Decoy version of KDP_N_cycling_genes_TrypPigBov_2022-04-04.fasta (auto-created)	1	11692	3197064	1	3935	2024-11-22 21:14:09.930223	t
 1972	KNP_Hybrid_contigs_prodigal_TrypPigBov_2016-11-04.fasta	16	Rick White generated community files	1	845546	236882186	1	363503	2016-11-04 14:59:00	f
 1982	KNP_Hybrid_contigs_prodigal_TrypPigBov_2016-11-04_15x_01.fasta	16	Auto-created	0	56300	15792654	1	23998	2016-11-04 18:25:00	f
 1983	KNP_Hybrid_contigs_prodigal_TrypPigBov_2016-11-04_15x_02.fasta	16	Auto-created	0	56627	15791825	1	24040	2016-11-04 18:25:00	f
@@ -7434,6 +7436,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 237	SwissProt_2001-11-23_Minus_HUMAN.fasta	14		0	95111	33921793	1	40137	2001-12-12 15:22:00	f
 689	Switchgrass_Rhiz_MG-RAST_metagenome_DecoyWithContams_2013-10-10.fasta	1346	350 genecalling file from MG-RAST for switchgrass rhizobial community	0	14621713	438651390	1	2.560001e+06	2013-10-10 15:46:00	t
 2991	Synechococcus_elongatus_PCC7942_Uniprot_20160107_TrimProtMet.fasta	1292	Synechococcus_elongatus_PCC7942_Uniprot_20160107.fasta with the N-terminal methionine removed from each protein	1	2870	862375	1	1223	2018-03-20 16:13:00	f
+8771	Synechococcus_elongatus_PCC7942_Uniprot_20160107_TrimProtMet_decoy.fasta	1292	Decoy version of Synechococcus_elongatus_PCC7942_Uniprot_20160107_TrimProtMet.fasta (auto-created)	1	5740	1724750	1	2457	2024-11-23 20:23:43.249052	t
 533	Syntig_proteins_trypsin_nonredundant.fasta	1036	Condensed list of tryptic peptides from SAR11 syntigs	0	1998125	53103552	1	74190	2007-01-25 11:30:00	f
 431	Syntrophotobacter_fumaroxidans_revisedContig_2004-12-04.fasta	1012		0	4031	855709	1	954	2005-09-09 09:48:00	f
 5950	T0B_ga0395845_TrypPigBov_2020-07-01.fasta	1632	https://genome.jgi.doe.gov/portal/T0Bmetagenome_FD/T0Bmetagenome_FD.download.html; 109 duplicates removed	1	759910	76220979	1	169093	2020-07-01 21:24:00	f
@@ -8285,7 +8288,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 331	bovine_casein_precursors_2002-06-21.fasta	9		0	4	850	1	2	2002-06-21 09:47:00	f
 328	bovinecytochromeC.fasta	9		0	1	104	1	1	2001-09-17 17:14:00	f
 324	contaminants.fasta	12		0	179	51134	1	73	2001-12-04 16:42:00	f
-325	contaminants_not_in_db.fasta	12		0	7	103	1	1	\N	f
+325	contaminants_not_in_db.fasta	12		0	7	103	1	1	1998-05-15 12:09:00	f
 637	fibr_anno_mimic_2011-12-05.fasta	16	False proteins, corresponding to protein collection fibr_anno_renamed_2010-06-04	1	74974	17563814	1	18856	2011-12-05 15:19:00	f
 7727	ga0566199_ga0566201_TrypPig_combined_2023-06-05.fasta	1557	combined genomes sent by Baldrian lab for searching their samples; Tomáš Vetrovský (kostelecke.uzeniny@seznam.cz): ga0566199_proteins_annotated, ga0566201_proteins_annotated, & Fagus_sylvatica_FSYLV_37_PL_JAMY_annotated	1	30198030	5012494014	1	7.667019e+06	2023-06-05 11:00:00	f
 8053	ga0566199_ga0566201_TrypPig_combined_2023-06-05_25x_01.fasta	1557	Auto-created	0	1207975	200500124	1	299496	2023-11-10 08:39:00	f
@@ -8317,7 +8320,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 244	hmga_project_db6.fasta	8		0	5	530	1	0	2002-03-08 15:41:00	f
 280	horse_myoglobin_2001-11-27.fasta	37		0	1	153	1	1	2002-03-19 16:24:00	f
 245	human.fasta	8		0	56104	13239234	1	0	2001-09-07 11:33:00	f
-148	ipi.RAT.fasta	36		0	28556	11887012	1	14978	\N	f
+148	ipi.RAT.fasta	36		0	28556	11887012	1	14978	2003-09-02 08:00:00	f
 568	nR_SDG_orf_trans_070626_withComtaminants_FRFR.fasta	16	Proteins for Hee-Jung Jung	0	12002	5890746	1	8811	2009-07-29 16:35:00	f
 7597	nmdc_mga0wn63_proteins.fasta	31		1	2083935	288340928	1	549230	2022-10-03 16:32:00	f
 7598	nmdc_mga0wn63_proteins_22x_01.fasta	31	Auto-created; Tryp_Pig_Bov added by Purvine 2022-10-19	0	95703	13111185	1	24759	2022-10-03 16:52:00	f
@@ -8361,7 +8364,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 205	phosvitins_from_chicken_2003-2-28.fasta	16		0	3	563	1	1	2003-02-28 16:51:00	f
 468	pir_2005-10-27.fasta	16		0	283416	96216762	1	118223	2005-10-27 21:27:00	f
 209	proteinmix.fasta	16		0	11	3137	1	4	2004-02-18 15:08:00	f
-149	rat.fasta	36		0	21576	7443696	1	0	\N	f
 124	shewanella_1999-12-08.fasta	4		0	6008	1544829	1	1635	1999-12-08 00:00:00	f
 125	shewanella_2001-01-08.fasta	4		0	4756	1469878	1	1509	2001-01-08 00:00:00	f
 5642	soilwarming.prodigal-proteins_LBNL_20200303_10x_01.fasta	1675	Auto-created	0	255361	57598222	0	98302	2020-03-19 08:39:00	f
@@ -8447,7 +8449,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 -- Name: t_organism_db_file_org_db_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 8769, true);
+SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 8771, true);
 
 
 --

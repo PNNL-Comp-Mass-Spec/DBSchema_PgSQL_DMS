@@ -2,12 +2,13 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.4
--- Dumped by pg_dump version 16.4
+-- Dumped from database version 17.2
+-- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -410,9 +411,9 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1268	TMT0Tag	Thermo Tandem Mass Tag 0 (zero) label	224.152478	224.2994	-	UniMod	TMT	\N	H(20) C(12) N(2) O(2)
 1540	TMT16Gly2	16-plex TMT plus di-Gly left from Ubiquitinylation	418.25008	\N	-	PNNL		\N	\N
 1509	TMT16Tag	Thermo Tandem Mass Tag 16 label; TMTpro	304.207146	304.3127	-	UniMod	TMTpro	\N	H(25) C(8) 13C(7) N 15N(2) O(3)
-1489	TMT2Tag	Thermo Tandem Mass Tag 2 label (duplex)	225.155833	\N	-	UniMod	TMT2plex	\N	H(20) C(11) 13C N(2) O(2)
+1489	TMT2Tag	Thermo Tandem Mass Tag 2 label (duplex)	225.155833	225.2921	-	UniMod	TMT2plex	\N	H(20) C(11) 13C N(2) O(2)
 1488	TMT6Gly2	TMT6 Plex plus di-Gly left from Ubiquitinylation	343.20583	\N	-	PNNL		\N	\N
-1267	TMT6Tag	Thermo Tandem Mass Tag 6 label (sixplex). Note that TMT10 and TMT11 have the same monoisotopic mass as TMT6.	229.162933	\N	-	UniMod	TMT6plex	\N	H(20) C(8) 13C(4) N 15N O(2)
+1267	TMT6Tag	Thermo Tandem Mass Tag 6 label (sixplex). Note that TMT10 and TMT11 have the same monoisotopic mass as TMT6.	229.162932	229.2634	-	UniMod	TMT6plex	\N	H(20) C(8) 13C(4) N 15N O(2)
 1545	TMTpro0	TMTpro-zero labeled samples; TMTpro Reagent without isotopic label	295.189592	295.3773	-	UniMod	TMTpro_zero	\N	H(25) C(15) N(3) O(3)
 1226	Taxol	Addition of Taxol to Cys	1206.4685	1207.27816	-	PNNL		\N	\N
 1391	ThrToPro	Thr to Pro substitution	-3.994915	\N	-	UniMod	Thr->Pro	Misacylation of the tRNA or editing of the charged tRNA	C O(-1)
@@ -452,12 +453,13 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1257	btrylACP	thiol acylation of phosphopantetheinylate addition to hydroxyl t	411.4319	\N	-	PNNL		\N	\N
 1254	holoACP	phosphopantetheinylate addition to hydroxyl through phosphoester	340.3341	\N	-	PNNL		\N	\N
 1237	iTRAQ8	iTRAQ 8-Plex modification	304.205353	\N	-	UniMod	iTRAQ8plex	iTRAQ8	H(24) C(7) 13C(7) N(3) 15N O(3)
-1381	iodoTMT0	Thermo iodoTMT0 (zero) label	324.216156	\N	-	UniMod	iodoTMT	\N	H(28) C(16) N(4) O(3)
-1382	iodoTMT6	Thermo iodoTMT6 (six) label	329.226593	\N	-	UniMod	iodoTMT6plex	\N	H(28) C(12) 13C(4) N(3) 15N O(3)
+1381	iodoTMT0	Thermo iodoTMT0 (zero) label	324.216141	324.4185	-	UniMod	iodoTMT	\N	H(28) C(16) N(4) O(3)
+1382	iodoTMT6	Thermo iodoTMT6 (six) label	329.226595	329.3825	-	UniMod	iodoTMT6plex	\N	H(28) C(12) 13C(4) N(3) 15N O(3)
 1179	itrac	itrac (iTRAQ)	144.102066	144.1544	-	UniMod	iTRAQ4plex	iTRAQ	H(12) C(4) 13C(3) N 15N O
 1259	malnlACP	malonylation of phosphopantetheinylate addition to hydroxyl thro	427.3882	\N	-	PNNL		\N	\N
 1367	palmtlic	Cys-palmitoleic acid S-linked, C16H28O	236.21402	\N	-	UniMod	Palmitoleyl	\N	H(28) C(16) O
 1512	palmtoyl	Palmitoylation	238.229666	\N	-	UniMod	Palmitoyl	\N	H(30) C(16) O
+1574	shTMT	Super Heavy Tandem Mass Tag	235.176741	235.2201	-	UniMod	shTMT	\N	H(20) C(3) 13C(9) 15N(2) O(2)
 1368	vaccenic	Cys-vaccenic acid S-linked, C18H32O	264.2453	\N	-	PNNL		\N	\N
 \.
 
@@ -466,7 +468,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 -- Name: t_mass_correction_factors_mass_correction_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1573, true);
+SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1574, true);
 
 
 --

@@ -303,6 +303,7 @@ mc	procedure	enable_space_managers	d3l243	public	EXECUTE
 mc	function	get_manager_parameters	d3l243	public	EXECUTE
 mc	procedure	get_manager_parameters_work	d3l243	public	EXECUTE
 mc	function	parse_manager_name_list	d3l243	public	EXECUTE
+mc	procedure	pause_manager_task_requests	d3l243	public	EXECUTE
 mc	procedure	report_manager_error_cleanup	d3l243	public	EXECUTE
 mc	procedure	set_manager_error_cleanup_mode	d3l243	public	EXECUTE
 mc	procedure	set_manager_update_required	d3l243	public	EXECUTE
@@ -520,6 +521,7 @@ public	function	decode_base64	d3l243	public	EXECUTE
 public	function	decrypt	d3l243	public	EXECUTE
 public	function	decrypt_iv	d3l243	public	EXECUTE
 public	procedure	delete_analysis_job	d3l243	public	EXECUTE
+public	procedure	delete_analysis_job	d3l243	public	EXECUTE
 public	procedure	delete_analysis_request	d3l243	public	EXECUTE
 public	procedure	delete_aux_info	d3l243	public	EXECUTE
 public	procedure	delete_dataset	d3l243	public	EXECUTE
@@ -602,6 +604,7 @@ public	function	get_campaign_work_package_list	d3l243	public	EXECUTE
 public	function	get_current_function_info	d3l243	public	EXECUTE
 public	function	get_current_manager_activity	d3l243	public	EXECUTE
 public	function	get_data_analysis_request_batch_list	d3l243	public	EXECUTE
+public	function	get_data_analysis_request_data_package_list	d3l243	public	EXECUTE
 public	function	get_data_package_xml	d3l243	public	EXECUTE
 public	procedure	get_dataset_details_from_dataset_info_xml	d3l243	public	EXECUTE
 public	function	get_dataset_factor_count	d3l243	public	EXECUTE
@@ -636,6 +639,7 @@ public	function	get_fasta_file_path	d3l243	public	EXECUTE
 public	function	get_file_attachment_path	d3l243	public	EXECUTE
 public	function	get_filename	d3l243	public	EXECUTE
 public	function	get_fiscal_year_from_date	d3l243	public	EXECUTE
+public	function	get_fiscal_year_instrument_usage_report	d3l243	public	EXECUTE
 public	function	get_fiscal_year_start	d3l243	public	EXECUTE
 public	function	get_fiscal_year_text_from_date	d3l243	public	EXECUTE
 public	function	get_hplc_run_dataset_list	d3l243	public	EXECUTE
@@ -706,6 +710,7 @@ public	function	get_run_tracking_monthly_info_by_id	d3l243	public	EXECUTE
 public	function	get_sample_prep_request_eus_users_list	d3l243	public	EXECUTE
 public	procedure	get_spectral_library_id	d3l243	public	EXECUTE
 public	function	get_spectral_library_settings_hash	d3l243	public	EXECUTE
+public	function	get_split_fasta_settings	d3l243	public	EXECUTE
 public	procedure	get_taxonomy_value_by_taxonomy_id	d3l243	public	EXECUTE
 public	procedure	get_tissue_id	d3l243	public	EXECUTE
 public	function	get_user_id	d3l243	public	EXECUTE
@@ -847,6 +852,7 @@ public	procedure	set_capture_task_busy	d3l243	public	EXECUTE
 public	procedure	set_capture_task_complete	d3l243	public	EXECUTE
 public	procedure	set_dataset_create_task_complete	d3l243	public	EXECUTE
 public	procedure	set_external_dataset_purge_priority	d3l243	public	EXECUTE
+public	procedure	set_max_active_jobs_for_request	d3l243	public	EXECUTE
 public	procedure	set_purge_task_complete	d3l243	public	EXECUTE
 public	procedure	set_spectral_library_create_task_complete	d3l243	public	EXECUTE
 public	procedure	show_delimited_text_wrapped	d3l243	public	EXECUTE
@@ -955,6 +961,8 @@ public	function	trigfn_t_settings_files_after_insert	d3l243	public	EXECUTE
 public	function	trigfn_t_settings_files_after_update	d3l243	public	EXECUTE
 public	function	trigfn_t_spectral_library_after_update	d3l243	public	EXECUTE
 public	function	trigfn_t_storage_path_after_update	d3l243	public	EXECUTE
+public	function	trigfn_v_analysis_job_instead_of_update	d3l243	public	EXECUTE
+public	function	trigfn_v_spectral_library_instead_of_update	d3l243	public	EXECUTE
 public	function	trim_schema_change_log_source_data	d3l243	public	EXECUTE
 public	function	trim_whitespace	d3l243	public	EXECUTE
 public	function	trim_whitespace_and_punctuation	d3l243	public	EXECUTE
@@ -968,12 +976,14 @@ public	procedure	update_analysis_job_processing_stats	d3l243	public	EXECUTE
 public	procedure	update_analysis_job_processor_group_associations	d3l243	public	EXECUTE
 public	procedure	update_analysis_job_processor_group_membership	d3l243	public	EXECUTE
 public	procedure	update_analysis_job_state_name_cached	d3l243	public	EXECUTE
+public	procedure	update_analysis_job_state_name_cached_work	d3l243	public	EXECUTE
 public	procedure	update_analysis_job_tool_name_cached	d3l243	public	EXECUTE
 public	procedure	update_analysis_jobs	d3l243	public	EXECUTE
 public	procedure	update_analysis_jobs_work	d3l243	public	EXECUTE
 public	procedure	update_biomaterial_tracking	d3l243	public	EXECUTE
 public	procedure	update_bionet_host_status	d3l243	public	EXECUTE
 public	procedure	update_bionet_host_status_from_list	d3l243	public	EXECUTE
+public	procedure	update_cached_analysis_job_state_name_recent_and_active	d3l243	public	EXECUTE
 public	procedure	update_cached_dataset_folder_paths	d3l243	public	EXECUTE
 public	procedure	update_cached_dataset_instruments	d3l243	public	EXECUTE
 public	procedure	update_cached_dataset_links	d3l243	public	EXECUTE
@@ -1024,7 +1034,9 @@ public	procedure	update_material_locations	d3l243	public	EXECUTE
 public	procedure	update_mts_cached_data_status	d3l243	public	EXECUTE
 public	procedure	update_myemsl_state	d3l243	public	EXECUTE
 public	procedure	update_notification_user_registration	d3l243	public	EXECUTE
+public	procedure	update_organism_db_file_for_job	d3l243	public	EXECUTE
 public	procedure	update_organism_list_for_biomaterial	d3l243	public	EXECUTE
+public	procedure	update_pending_jobs	d3l243	public	EXECUTE
 public	procedure	update_prep_lc_run_work_package_list	d3l243	public	EXECUTE
 public	procedure	update_protein_collection_usage	d3l243	public	EXECUTE
 public	procedure	update_requested_run_admin	d3l243	public	EXECUTE
@@ -1114,6 +1126,7 @@ sw	function	consolidate_log_messages	d3l243	public	EXECUTE
 sw	procedure	copy_history_to_job	d3l243	public	EXECUTE
 sw	procedure	copy_history_to_job_multi	d3l243	public	EXECUTE
 sw	procedure	copy_job_to_history	d3l243	public	EXECUTE
+sw	function	copy_runtime_metadata_from_history	d3l243	public	EXECUTE
 sw	function	copy_runtime_metadata_from_history	d3l243	public	EXECUTE
 sw	procedure	create_job_steps	d3l243	public	EXECUTE
 sw	function	create_parameters_for_job	d3l243	public	EXECUTE
@@ -1407,6 +1420,7 @@ dpkg	view	v_data_package_campaigns_list_report	d3l243	readaccess	SELECT
 dpkg	view	v_data_package_dataset_aggregation_list_report	d3l243	readaccess	SELECT
 dpkg	view	v_data_package_dataset_export	d3l243	readaccess	SELECT
 dpkg	view	v_data_package_dataset_files_list_report	d3l243	readaccess	SELECT
+dpkg	view	v_data_package_dataset_qc_list_report	d3l243	readaccess	SELECT
 dpkg	view	v_data_package_datasets_list_report	d3l243	readaccess	SELECT
 dpkg	view	v_data_package_detail_report	d3l243	readaccess	SELECT
 dpkg	view	v_data_package_entry	d3l243	readaccess	SELECT
@@ -1538,7 +1552,6 @@ ont	table	t_unimod_bricks	d3l243	readaccess	SELECT
 ont	table	t_unimod_mods	d3l243	readaccess	SELECT
 ont	table	t_unimod_specificity	d3l243	readaccess	SELECT
 ont	table	t_unimod_specificity_nl	d3l243	readaccess	SELECT
-ont	view	v_bto_id_to_name	d3l243	readaccess	SELECT
 ont	view	v_bto_tissue_report	d3l243	readaccess	SELECT
 ont	view	v_cv_bto	d3l243	readaccess	SELECT
 ont	view	v_cv_cl	d3l243	readaccess	SELECT
@@ -1668,6 +1681,9 @@ pc	view	v_protein_headers	d3l243	readaccess	SELECT
 pc	view	v_protein_storage_entry_import	d3l243	readaccess	SELECT
 pc	view	v_ref_id_protein_id_xref	d3l243	readaccess	SELECT
 public	table	get_load_average_copy	d3l243	readaccess	SELECT
+public	view	pg_stat_kcache	d3l243	readaccess	SELECT
+public	view	pg_stat_kcache_detail	d3l243	readaccess	SELECT
+public	view	pg_stat_statements	d3l243	readaccess	SELECT
 public	table	pgbench_accounts	d3l243	readaccess	SELECT
 public	table	pgbench_branches	d3l243	readaccess	SELECT
 public	table	pgbench_history	d3l243	readaccess	SELECT
@@ -1751,6 +1767,7 @@ public	table	t_charge_code_activation_state	d3l243	readaccess	SELECT
 public	table	t_charge_code_state	d3l243	readaccess	SELECT
 public	table	t_data_analysis_request	d3l243	readaccess	SELECT
 public	table	t_data_analysis_request_batch_ids	d3l243	readaccess	SELECT
+public	table	t_data_analysis_request_data_package_ids	d3l243	readaccess	SELECT
 public	sequence	t_data_analysis_request_request_id_seq	d3l243	readaccess	SELECT
 public	table	t_data_analysis_request_state_name	d3l243	readaccess	SELECT
 public	table	t_data_analysis_request_type_name	d3l243	readaccess	SELECT
@@ -1970,6 +1987,7 @@ public	sequence	t_reference_compound_compound_id_seq	d3l243	readaccess	SELECT
 public	table	t_reference_compound_type_name	d3l243	readaccess	SELECT
 public	sequence	t_reference_compound_type_name_compound_type_id_seq	d3l243	readaccess	SELECT
 public	table	t_reporter_ion_observation_rates	d3l243	readaccess	SELECT
+public	table	t_reporter_ion_observation_rates_addnl	d3l243	readaccess	SELECT
 public	table	t_requested_run	d3l243	readaccess	SELECT
 public	table	t_requested_run_batch_group	d3l243	readaccess	SELECT
 public	sequence	t_requested_run_batch_group_batch_group_id_seq	d3l243	readaccess	SELECT
@@ -2311,6 +2329,7 @@ public	view	v_factor_count_by_dataset	d3l243	readaccess	SELECT
 public	view	v_factor_count_by_experiment	d3l243	readaccess	SELECT
 public	view	v_factor_count_by_req_run_batch	d3l243	readaccess	SELECT
 public	view	v_factor_count_by_requested_run	d3l243	readaccess	SELECT
+public	view	v_fasta_file_paths	d3l243	readaccess	SELECT
 public	view	v_file_attachment_export	d3l243	readaccess	SELECT
 public	view	v_file_attachment_list_report	d3l243	readaccess	SELECT
 public	view	v_file_attachment_stats_by_id	d3l243	readaccess	SELECT
@@ -2516,6 +2535,7 @@ public	view	v_param_file_list_report	d3l243	readaccess	SELECT
 public	view	v_param_file_mass_mod_info	d3l243	readaccess	SELECT
 public	view	v_param_file_mass_mods	d3l243	readaccess	SELECT
 public	view	v_param_file_mass_mods_list_report	d3l243	readaccess	SELECT
+public	view	v_param_file_mass_mods_padded	d3l243	readaccess	SELECT
 public	view	v_param_file_picklist	d3l243	readaccess	SELECT
 public	view	v_param_file_report	d3l243	readaccess	SELECT
 public	view	v_param_file_type_picklist	d3l243	readaccess	SELECT
@@ -2558,6 +2578,7 @@ public	view	v_reference_compound_helper_list_report	d3l243	readaccess	SELECT
 public	view	v_reference_compound_list_report	d3l243	readaccess	SELECT
 public	view	v_reference_compound_type_name_picklist	d3l243	readaccess	SELECT
 public	view	v_reporter_ion_observation_rate_list_report	d3l243	readaccess	SELECT
+public	view	v_reporter_ion_observation_rate_tmtpro_list_report	d3l243	readaccess	SELECT
 public	view	v_req_run_instrument_picklist_ex	d3l243	readaccess	SELECT
 public	view	v_requested_run_active_export	d3l243	readaccess	SELECT
 public	view	v_requested_run_admin_report	d3l243	readaccess	SELECT
@@ -2633,6 +2654,8 @@ public	view	v_settings_files_detail_report	d3l243	readaccess	SELECT
 public	view	v_settings_files_entry	d3l243	readaccess	SELECT
 public	view	v_settings_files_list_report	d3l243	readaccess	SELECT
 public	view	v_source_analysis_job	d3l243	readaccess	SELECT
+public	view	v_spectral_library	d3l243	readaccess	SELECT
+public	view	v_spectral_library_list_report	d3l243	readaccess	SELECT
 public	view	v_staff_roles_list_report	d3l243	readaccess	SELECT
 public	view	v_statistics_analysis_jobs_by_day	d3l243	readaccess	SELECT
 public	view	v_statistics_dataset_captures_by_day	d3l243	readaccess	SELECT
@@ -2725,6 +2748,7 @@ sw	table	t_step_tool_versions	d3l243	readaccess	SELECT
 sw	sequence	t_step_tool_versions_tool_version_id_seq	d3l243	readaccess	SELECT
 sw	table	t_step_tools	d3l243	readaccess	SELECT
 sw	sequence	t_step_tools_step_tool_id_seq	d3l243	readaccess	SELECT
+sw	view	v_active_job_stats	d3l243	readaccess	SELECT
 sw	view	v_analysis_status_monitor	d3l243	readaccess	SELECT
 sw	view	v_analysis_status_monitor2	d3l243	readaccess	SELECT
 sw	view	v_dms_analysis_job_processor_group_association_recent	d3l243	readaccess	SELECT
@@ -3065,6 +3089,7 @@ dpkg	view	v_data_package_campaigns_list_report	d3l243	writeaccess	SELECT
 dpkg	view	v_data_package_dataset_aggregation_list_report	d3l243	writeaccess	SELECT
 dpkg	view	v_data_package_dataset_export	d3l243	writeaccess	SELECT
 dpkg	view	v_data_package_dataset_files_list_report	d3l243	writeaccess	SELECT
+dpkg	view	v_data_package_dataset_qc_list_report	d3l243	writeaccess	SELECT
 dpkg	view	v_data_package_datasets_list_report	d3l243	writeaccess	SELECT
 dpkg	view	v_data_package_detail_report	d3l243	writeaccess	SELECT
 dpkg	view	v_data_package_entry	d3l243	writeaccess	SELECT
@@ -3309,7 +3334,6 @@ ont	table	t_unimod_bricks	d3l243	writeaccess	SELECT
 ont	table	t_unimod_mods	d3l243	writeaccess	SELECT
 ont	table	t_unimod_specificity	d3l243	writeaccess	SELECT
 ont	table	t_unimod_specificity_nl	d3l243	writeaccess	SELECT
-ont	view	v_bto_id_to_name	d3l243	writeaccess	SELECT
 ont	view	v_bto_tissue_report	d3l243	writeaccess	SELECT
 ont	view	v_cv_bto	d3l243	writeaccess	SELECT
 ont	view	v_cv_cl	d3l243	writeaccess	SELECT
@@ -3765,6 +3789,10 @@ public	table	t_data_analysis_request_batch_ids	d3l243	writeaccess	DELETE
 public	table	t_data_analysis_request_batch_ids	d3l243	writeaccess	INSERT
 public	table	t_data_analysis_request_batch_ids	d3l243	writeaccess	SELECT
 public	table	t_data_analysis_request_batch_ids	d3l243	writeaccess	UPDATE
+public	table	t_data_analysis_request_data_package_ids	d3l243	writeaccess	DELETE
+public	table	t_data_analysis_request_data_package_ids	d3l243	writeaccess	INSERT
+public	table	t_data_analysis_request_data_package_ids	d3l243	writeaccess	SELECT
+public	table	t_data_analysis_request_data_package_ids	d3l243	writeaccess	UPDATE
 public	sequence	t_data_analysis_request_request_id_seq	d3l243	writeaccess	SELECT
 public	table	t_data_analysis_request_state_name	d3l243	writeaccess	SELECT
 public	table	t_data_analysis_request_type_name	d3l243	writeaccess	SELECT
@@ -4243,6 +4271,10 @@ public	table	t_reporter_ion_observation_rates	d3l243	writeaccess	DELETE
 public	table	t_reporter_ion_observation_rates	d3l243	writeaccess	INSERT
 public	table	t_reporter_ion_observation_rates	d3l243	writeaccess	SELECT
 public	table	t_reporter_ion_observation_rates	d3l243	writeaccess	UPDATE
+public	table	t_reporter_ion_observation_rates_addnl	d3l243	writeaccess	DELETE
+public	table	t_reporter_ion_observation_rates_addnl	d3l243	writeaccess	INSERT
+public	table	t_reporter_ion_observation_rates_addnl	d3l243	writeaccess	SELECT
+public	table	t_reporter_ion_observation_rates_addnl	d3l243	writeaccess	UPDATE
 public	table	t_requested_run	d3l243	writeaccess	DELETE
 public	table	t_requested_run	d3l243	writeaccess	INSERT
 public	table	t_requested_run	d3l243	writeaccess	SELECT
@@ -4674,6 +4706,7 @@ public	view	v_factor_count_by_dataset	d3l243	writeaccess	SELECT
 public	view	v_factor_count_by_experiment	d3l243	writeaccess	SELECT
 public	view	v_factor_count_by_req_run_batch	d3l243	writeaccess	SELECT
 public	view	v_factor_count_by_requested_run	d3l243	writeaccess	SELECT
+public	view	v_fasta_file_paths	d3l243	writeaccess	SELECT
 public	view	v_file_attachment_export	d3l243	writeaccess	SELECT
 public	view	v_file_attachment_list_report	d3l243	writeaccess	SELECT
 public	view	v_file_attachment_stats_by_id	d3l243	writeaccess	SELECT
@@ -4879,6 +4912,7 @@ public	view	v_param_file_list_report	d3l243	writeaccess	SELECT
 public	view	v_param_file_mass_mod_info	d3l243	writeaccess	SELECT
 public	view	v_param_file_mass_mods	d3l243	writeaccess	SELECT
 public	view	v_param_file_mass_mods_list_report	d3l243	writeaccess	SELECT
+public	view	v_param_file_mass_mods_padded	d3l243	writeaccess	SELECT
 public	view	v_param_file_picklist	d3l243	writeaccess	SELECT
 public	view	v_param_file_report	d3l243	writeaccess	SELECT
 public	view	v_param_file_type_picklist	d3l243	writeaccess	SELECT
@@ -4921,6 +4955,7 @@ public	view	v_reference_compound_helper_list_report	d3l243	writeaccess	SELECT
 public	view	v_reference_compound_list_report	d3l243	writeaccess	SELECT
 public	view	v_reference_compound_type_name_picklist	d3l243	writeaccess	SELECT
 public	view	v_reporter_ion_observation_rate_list_report	d3l243	writeaccess	SELECT
+public	view	v_reporter_ion_observation_rate_tmtpro_list_report	d3l243	writeaccess	SELECT
 public	view	v_req_run_instrument_picklist_ex	d3l243	writeaccess	SELECT
 public	view	v_requested_run_active_export	d3l243	writeaccess	SELECT
 public	view	v_requested_run_admin_report	d3l243	writeaccess	SELECT
@@ -4996,6 +5031,8 @@ public	view	v_settings_files_detail_report	d3l243	writeaccess	SELECT
 public	view	v_settings_files_entry	d3l243	writeaccess	SELECT
 public	view	v_settings_files_list_report	d3l243	writeaccess	SELECT
 public	view	v_source_analysis_job	d3l243	writeaccess	SELECT
+public	view	v_spectral_library	d3l243	writeaccess	SELECT
+public	view	v_spectral_library_list_report	d3l243	writeaccess	SELECT
 public	view	v_staff_roles_list_report	d3l243	writeaccess	SELECT
 public	view	v_statistics_analysis_jobs_by_day	d3l243	writeaccess	SELECT
 public	view	v_statistics_dataset_captures_by_day	d3l243	writeaccess	SELECT
@@ -5182,6 +5219,7 @@ sw	table	t_step_tools	d3l243	writeaccess	INSERT
 sw	table	t_step_tools	d3l243	writeaccess	SELECT
 sw	table	t_step_tools	d3l243	writeaccess	UPDATE
 sw	sequence	t_step_tools_step_tool_id_seq	d3l243	writeaccess	SELECT
+sw	view	v_active_job_stats	d3l243	writeaccess	SELECT
 sw	view	v_analysis_status_monitor	d3l243	writeaccess	SELECT
 sw	view	v_analysis_status_monitor2	d3l243	writeaccess	SELECT
 sw	view	v_dms_analysis_job_processor_group_association_recent	d3l243	writeaccess	SELECT
