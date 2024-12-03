@@ -17,6 +17,7 @@ pg_checkpoint	false	true	false	false	false	false	-1	********	[NULL]	false	NULL	4
 pg_create_subscription	false	true	false	false	false	false	-1	********	[NULL]	false	NULL	6,304
 pg_database_owner	false	true	false	false	false	false	-1	********	[NULL]	false	NULL	6,171
 pg_execute_server_program	false	true	false	false	false	false	-1	********	[NULL]	false	NULL	4,571
+pg_maintain	false	true	false	false	false	false	-1	********	[NULL]	false	NULL	6,337
 pg_monitor	false	true	false	false	false	false	-1	********	[NULL]	false	NULL	3,373
 pg_read_all_data	false	true	false	false	false	false	-1	********	[NULL]	false	NULL	6,181
 pg_read_all_settings	false	true	false	false	false	false	-1	********	[NULL]	false	NULL	3,374
