@@ -38,7 +38,7 @@ COPY public.t_instrument_group_allowed_ds_type (instrument_group, dataset_type, 
 5500XL_SOLiD	Tracking		0	0
 Agilent_FTMS	HMS		0	0
 Agilent_GC	GC		0	0
-Agilent_GC_MS	GC-MS		51611	2285
+Agilent_GC_MS	GC-MS		51701	2264
 Agilent_GC_MS	GC-SIM		0	0
 Agilent_Ion_Trap	MS		0	0
 Agilent_Ion_Trap	MS-MSn		710	0
@@ -50,7 +50,7 @@ Agilent_TOF_V2	HMS		418	29
 Agilent_TOF_V2	HMS-HMSn	Typical mode	397	0
 Agilent_TOF_V2	MS	\N	0	0
 Altis	MRM		0	0
-Ascend	DIA-HMS-HCD-HMSn		711	655
+Ascend	DIA-HMS-HCD-HMSn		734	678
 Ascend	HMS		12	9
 Ascend	HMS-CID/ETD-HMSn		0	0
 Ascend	HMS-CID/ETD-MSn		0	0
@@ -68,7 +68,7 @@ Ascend	HMS-HCD-CID/ETD-HMSn		0	0
 Ascend	HMS-HCD-CID/ETD-MSn		0	0
 Ascend	HMS-HCD-ETD-HMSn		8	0
 Ascend	HMS-HCD-ETD-MSn		0	0
-Ascend	HMS-HCD-HMSn		2161	888
+Ascend	HMS-HCD-HMSn		2171	881
 Ascend	HMS-HCD-MSn		52	36
 Ascend	HMS-HMSn		0	0
 Ascend	HMS-MSn		0	0
@@ -99,7 +99,7 @@ Ascend_Frac	HMS-MSn		0	0
 Ascend_Frac	HMS-PQD-CID/ETD-MSn		0	0
 Ascend_Frac	HMS-PQD-ETD-MSn		0	0
 Ascend_Frac	MS-MSn		0	0
-Astral	DIA-HMS-HCD-HMSn		630	630
+Astral	DIA-HMS-HCD-HMSn		789	789
 Astral	HMS		15	15
 Astral	HMS-CID/ETD-HMSn		0	0
 Astral	HMS-CID/ETD-MSn		0	0
@@ -117,7 +117,7 @@ Astral	HMS-HCD-CID/ETD-HMSn		0	0
 Astral	HMS-HCD-CID/ETD-MSn		0	0
 Astral	HMS-HCD-ETD-HMSn		0	0
 Astral	HMS-HCD-ETD-MSn		0	0
-Astral	HMS-HCD-HMSn		803	803
+Astral	HMS-HCD-HMSn		812	812
 Astral	HMS-HCD-MSn		0	0
 Astral	HMS-HMSn		0	0
 Astral	HMS-MSn		0	0
@@ -134,7 +134,7 @@ Bruker_FTMS	MALDI-HMS	Single-scan MALDI (not imaging)	12572	1195
 Bruker_QTOF	HMS		3228	0
 Bruker_QTOF	HMS-HMSn		180	0
 Bruker_QTOF	MALDI-HMS		0	0
-DataFolders	DataFiles		1476	138
+DataFolders	DataFiles		1498	160
 Eclipse	DIA-HMS-HCD-HMSn		1104	254
 Eclipse	HMS		568	6
 Eclipse	HMS-CID/ETD-HMSn		1	0
@@ -153,8 +153,8 @@ Eclipse	HMS-HCD-CID/ETD-HMSn		0	0
 Eclipse	HMS-HCD-CID/ETD-MSn		0	0
 Eclipse	HMS-HCD-ETD-HMSn		159	0
 Eclipse	HMS-HCD-ETD-MSn		1	0
-Eclipse	HMS-HCD-HMSn		12108	3034
-Eclipse	HMS-HCD-MSn		4409	1721
+Eclipse	HMS-HCD-HMSn		12117	3011
+Eclipse	HMS-HCD-MSn		4432	1704
 Eclipse	HMS-HMSn		20	0
 Eclipse	HMS-MSn		27	1
 Eclipse	HMS-PQD-CID/ETD-MSn		0	0
@@ -185,9 +185,9 @@ Eclipse_Frac	HMS-PQD-CID/ETD-MSn		0	0
 Eclipse_Frac	HMS-PQD-ETD-MSn		0	0
 Eclipse_Frac	MS-MSn		0	0
 Exactive	HMS		17040	0
-Exploris	DIA-HMS-HCD-HMSn		5161	4865
+Exploris	DIA-HMS-HCD-HMSn		5161	4819
 Exploris	HMS		27	27
-Exploris	HMS-HCD-HMSn		11598	9317
+Exploris	HMS-HCD-HMSn		11814	9470
 Exploris	HMS-HMSn		11	10
 Exploris_Frac	HMS		0	0
 Exploris_Frac	HMS-HCD-HMSn		0	0
@@ -216,7 +216,7 @@ LTQ_FT	HMS-MSn	Typical mode	10163	0
 LTQ_FT	MS-MSn		62	0
 LTQ_Prep	MS		132	0
 LTQ_Prep	MS-MSn	Typical mode	10743	0
-Lumos	DIA-HMS-HCD-HMSn		945	309
+Lumos	DIA-HMS-HCD-HMSn		945	287
 Lumos	HMS		1016	151
 Lumos	HMS-CID/ETD-HMSn		74	3
 Lumos	HMS-CID/ETD-MSn		3	0
@@ -229,14 +229,14 @@ Lumos	HMS-ETciD-MSn		12	0
 Lumos	HMS-EThcD-HMSn		224	0
 Lumos	HMS-EThcD-MSn		0	0
 Lumos	HMS-HCD-CID-HMSn		727	122
-Lumos	HMS-HCD-CID-MSn		18737	13498
+Lumos	HMS-HCD-CID-MSn		19207	13820
 Lumos	HMS-HCD-CID/ETD-HMSn		84	0
 Lumos	HMS-HCD-CID/ETD-MSn		0	0
 Lumos	HMS-HCD-ETD-HMSn		1032	54
 Lumos	HMS-HCD-ETD-MSn		0	0
-Lumos	HMS-HCD-HMSn		28989	1271
-Lumos	HMS-HCD-MSn		9059	1826
-Lumos	HMS-HMSn		899	218
+Lumos	HMS-HCD-HMSn		29015	1265
+Lumos	HMS-HCD-MSn		9066	1817
+Lumos	HMS-HMSn		901	220
 Lumos	HMS-MSn		530	0
 Lumos	HMS-PQD-CID/ETD-MSn		0	0
 Lumos	HMS-PQD-ETD-MSn		0	0
@@ -266,9 +266,9 @@ Lumos_Frac	HMS-PQD-CID/ETD-MSn		0	0
 Lumos_Frac	HMS-PQD-ETD-MSn		0	0
 Lumos_Frac	MS-MSn		0	0
 MALDI_Imaging	C60-SIMS-HMS	Imaging datasets using C60 SIMS	52	0
-MALDI_Imaging	MALDI-HMS	Typical mode	2202	190
+MALDI_Imaging	MALDI-HMS	Typical mode	2207	191
 MALDI_TOF	MALDI-HMS		359	0
-MALDI_timsTOF_Imaging	MALDI-HMS		64	64
+MALDI_timsTOF_Imaging	MALDI-HMS		67	67
 NMR	1D-C		0	0
 NMR	1D-H		0	0
 NMR	2D		0	0
@@ -282,16 +282,16 @@ Other	HMS-MSn		0	0
 Other	MS		0	0
 Other	MS-MSn		0	0
 PrepHPLC	UV		73	0
-QEHFX	DIA-HMS-HCD-HMSn		462	406
+QEHFX	DIA-HMS-HCD-HMSn		478	422
 QEHFX	HMS		231	9
-QEHFX	HMS-HCD-HMSn		35766	5525
+QEHFX	HMS-HCD-HMSn		35831	5489
 QEHFX	HMS-HMSn		0	0
 QEHFX_Frac	HMS		0	0
 QEHFX_Frac	HMS-HCD-HMSn		0	0
 QEHFX_Frac	HMS-HMSn		0	0
 QExactive	DIA-HMS-HCD-HMSn		626	88
-QExactive	HMS		31296	9741
-QExactive	HMS-HCD-HMSn		129515	19681
+QExactive	HMS		31393	9838
+QExactive	HMS-HCD-HMSn		130368	20321
 QExactive	HMS-HMSn		15	0
 QExactive_Frac	HMS		0	0
 QExactive_Frac	HMS-HCD-HMSn		0	0
@@ -308,7 +308,7 @@ SLIM	IMS-HMS-HMSn	\N	0	0
 SLIM	IMS-HMS-MSn	\N	0	0
 Sciex_TripleTOF	HMS-HMSn		26	0
 Shimadzu_GC	GC-MS		326	0
-TSQ	MRM	Use for MRM	151115	10596
+TSQ	MRM	Use for MRM	151115	10592
 TSQ	MS		166	0
 TSQ	MS-MSn	Use for MSn	2935	0
 TSQ_Frac	MRM		0	0
@@ -316,13 +316,13 @@ TSQ_Frac	MS		0	0
 TSQ_Frac	MS-MSn		0	0
 Thermo_SII_LC	CAD		158	158
 Thermo_SII_LC	UV		0	0
-VelosOrbi	HMS		12085	1237
+VelosOrbi	HMS		12085	497
 VelosOrbi	HMS-CID/ETD-HMSn		195	0
 VelosOrbi	HMS-CID/ETD-MSn		932	0
 VelosOrbi	HMS-ETD-HMSn		911	0
 VelosOrbi	HMS-ETD-MSn		128	0
 VelosOrbi	HMS-HCD-CID-HMSn		1920	0
-VelosOrbi	HMS-HCD-CID-MSn		60225	374
+VelosOrbi	HMS-HCD-CID-MSn		60225	290
 VelosOrbi	HMS-HCD-CID/ETD-HMSn		37	0
 VelosOrbi	HMS-HCD-CID/ETD-MSn		1099	0
 VelosOrbi	HMS-HCD-ETD-HMSn		335	0
@@ -330,7 +330,7 @@ VelosOrbi	HMS-HCD-ETD-MSn		216	0
 VelosOrbi	HMS-HCD-HMSn		28711	0
 VelosOrbi	HMS-HCD-MSn		130	12
 VelosOrbi	HMS-HMSn		3024	17
-VelosOrbi	HMS-MSn		66473	12
+VelosOrbi	HMS-MSn		66473	10
 VelosOrbi	HMS-PQD-CID/ETD-MSn		35	0
 VelosOrbi	HMS-PQD-ETD-MSn		0	0
 VelosOrbi	LAESI-HMS	LAESI source coupled to an Orbitrap; results are in folders with a .raw file plus related files	2	0
@@ -353,7 +353,7 @@ timsTOF	IMS-HMS-HMSn		42	0
 timsTOF_Flex	IMS-HMS		0	0
 timsTOF_Flex	IMS-HMS-HMSn		11	11
 timsTOF_SCP	IMS-HMS		0	0
-timsTOF_SCP	IMS-HMS-HMSn		2651	1766
+timsTOF_SCP	IMS-HMS-HMSn		2681	1749
 \.
 
 

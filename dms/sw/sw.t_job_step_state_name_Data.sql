@@ -22,6 +22,7 @@ SET row_security = off;
 --
 
 COPY sw.t_job_step_state_name (step_state_id, step_state, description) FROM stdin;
+0	(none)	State not defined
 1	Waiting	Step has not been run yet, and it cannot be assigned yet.
 2	Enabled	Step can be run because all its dependencies have been satisfied
 3	Skipped	Step will not be run because a conditional dependency was triggered.
