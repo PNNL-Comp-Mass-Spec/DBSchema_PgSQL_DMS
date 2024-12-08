@@ -66,7 +66,7 @@ Limit (cost=0.42..11.43 rows=125 width=290)
 Planning Time: 0.277 ms
 Execution Time: 0.290 ms
 
--- Query 2: filter on request name
+-- Query 2: filter on experiment name
 EXPLAIN (ANALYZE, COSTS, VERBOSE, BUFFERS, FORMAT TEXT)
 SELECT *
 FROM t_experiments
