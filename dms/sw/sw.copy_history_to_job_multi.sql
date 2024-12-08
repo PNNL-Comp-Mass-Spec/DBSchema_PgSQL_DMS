@@ -37,6 +37,8 @@ CREATE OR REPLACE PROCEDURE sw.copy_history_to_job_multi(IN _joblist text, IN _i
 **          08/08/2023 mem - Fix typo in warning message
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **          01/03/2024 mem - Update warning messages
+**          12/07/2024 mem - Show jobs that could not be copied since they do not exist in sw.t_jobs_history with state 4 and a non-null "saved" date
+**                         - Show progress messages when copying 10 or more jobs
 **
 *****************************************************/
 DECLARE
@@ -44,6 +46,7 @@ DECLARE
     _jobCount int;
     _jobDateDescription text;
     _deleteCount int;
+    _jobsToDelete text;
     _insertCount int;
 
     _job int := 0;
@@ -147,13 +150,25 @@ BEGIN
     -- Remove jobs where DateStamp is null
     ---------------------------------------------------
 
-    DELETE FROM Tmp_JobsToCopy
+    SELECT COUNT(*)
+    INTO _deleteCount
+    FROM Tmp_JobsToCopy
     WHERE DateStamp IS NULL;
-    --
-    GET DIAGNOSTICS _deleteCount = ROW_COUNT;
 
     If _deleteCount > 0 Then
-        RAISE INFO 'Deleted % % from _jobList because they do not exist in sw.t_jobs_history with state 4', _deleteCount, public.check_plural(_deleteCount, 'job', 'jobs');
+        SELECT string_agg(job::text, ', ')
+        INTO _jobsToDelete
+        FROM Tmp_JobsToCopy
+        WHERE DateStamp IS NULL;
+
+        DELETE FROM Tmp_JobsToCopy
+        WHERE DateStamp IS NULL;
+
+        RAISE INFO 'Deleted % % from _jobList because % exist in sw.t_jobs_history with state 4: %',
+                   _deleteCount,
+                   public.check_plural(_deleteCount, 'job', 'jobs'),
+                   public.check_plural(_deleteCount, 'it does not', 'they do not'),
+                   _jobsToDelete;
     End If;
 
     SELECT string_agg(job::text, ', ' ORDER BY Job)
@@ -235,7 +250,11 @@ BEGIN
         -- Copy job steps
         ---------------------------------------------------
 
-        _currentLocation := 'Populate sw.t_job_steps';
+        _currentLocation := 'Populating sw.t_job_steps';
+
+        If _jobsCopied >= 10 Then
+            RAISE INFO '%', _currentLocation;
+        End If;
 
         INSERT INTO sw.t_job_steps (
             job,
@@ -312,6 +331,10 @@ BEGIN
 
         _currentLocation := format('Insert into sw.t_job_parameters for %s', _jobDateDescription);
 
+        If _jobsCopied >= 10 Then
+            RAISE INFO 'Populating sw.t_job_parameters';
+        End If;
+
         INSERT INTO sw.t_job_parameters (job, parameters)
         SELECT JPH.job,
                JPH.parameters
@@ -331,6 +354,10 @@ BEGIN
         ---------------------------------------------------
 
         _currentLocation := format('Insert into sw.t_job_step_dependencies for %s', _jobDateDescription);
+
+        If _jobsCopied >= 10 Then
+            RAISE INFO 'Populating sw.t_job_step_dependencies';
+        End If;
 
         -- First delete any extra steps that are in sw.t_job_step_dependencies
 
@@ -464,6 +491,10 @@ BEGIN
 
         _currentLocation := 'Updating job parameters and storage server info';
 
+        If _jobsCopied >= 10 Then
+            RAISE INFO '%', _currentLocation;
+        End If;
+
         FOR _job IN
             SELECT Job
             FROM Tmp_JobsToCopy
@@ -517,7 +548,9 @@ BEGIN
             If Extract(epoch from (clock_timestamp() - _lastStatusTime)) >= 15 Then
                 _lastStatusTime := clock_timestamp();
                 _progressMsg := format('Updating job parameters and storage info for copied jobs: %s / %s', _jobsRefreshed, _jobsCopied);
+
                 CALL public.post_log_entry ('Progress', _progressMsg, 'Copy_History_To_Job_Multi', 'sw');
+                RAISE INFO '%', _progressMsg;
             End If;
 
         END LOOP;
@@ -541,7 +574,6 @@ BEGIN
 
     DROP TABLE IF EXISTS Tmp_JobsToCopy;
     DROP TABLE IF EXISTS Tmp_JobsMissingDependencies;
-
 END
 $$;
 
