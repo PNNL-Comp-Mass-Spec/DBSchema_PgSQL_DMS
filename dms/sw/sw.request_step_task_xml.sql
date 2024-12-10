@@ -132,6 +132,7 @@ CREATE OR REPLACE PROCEDURE sw.request_step_task_xml(IN _processorname text, INO
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          08/03/2024 mem - Ignore case when filtering on processor name
 **          11/04/2024 mem - When previewing available job steps, round Next_Try to the nearest second
+**          12/08/2024 mem - Fix logic bug checking whether _logSPUsage is true
 **
 *****************************************************/
 DECLARE
@@ -329,7 +330,7 @@ BEGIN
                 RAISE WARNING 'Manager version is an empty string; updated latest_request in sw.t_local_processors but left manager_version unchanged';
             End If;
 
-            If Not Coalesce(_logSPUsage, false) Then
+            If Coalesce(_logSPUsage, false) Then
                 INSERT INTO sw.t_sp_usage (
                     posted_by,
                     processor_id,
