@@ -23,12 +23,6 @@ SET row_security = off;
 
 COPY pc.t_sp_authorization (entry_id, procedure_name, login_name, host_name, host_ip) FROM stdin;
 1	*	DMSWebUser	gigasax	130.20.225.2
-2	*	DMSWebUser	prismweb2	130.20.224.55
-9	*	DMSWebUser	prismweb2_IPv6	2620:0:50f1:118::5fd
-12	*	DMSWebUser	prismweb2_IPv6_alt	2620:0:50f1:118::11fd
-3	*	DMSWebUser	prismweb3	130.20.225.91
-10	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::199
-4	*	DMSWebUser	prismwebdev2	130.20.227.157
 5	*	PNL\\D3L243	*	*
 7	*	PNL\\gibb713	*	*
 8	*	PNL\\memadmin	*	*

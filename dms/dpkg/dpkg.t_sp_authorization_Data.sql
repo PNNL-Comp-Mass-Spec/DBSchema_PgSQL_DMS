@@ -23,12 +23,6 @@ SET row_security = off;
 
 COPY dpkg.t_sp_authorization (entry_id, procedure_name, login_name, host_name, host_ip) FROM stdin;
 1	*	DMSWebUser	gigasax	130.20.225.2
-2	*	DMSWebUser	prismweb2	130.20.224.55
-10	*	DMSWebUser	prismweb2_IPv6	2620:0:50f1:118::5fd
-13	*	DMSWebUser	prismweb2_IPv6_alt	2620:0:50f1:118::11fd
-3	*	DMSWebUser	prismweb3	130.20.225.91
-11	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::1199
-4	*	DMSWebUser	prismwebdev2	130.20.227.157
 5	*	PNL\\D3L243	*	*
 8	*	PNL\\gibb713	*	*
 9	*	PNL\\memadmin	*	*
@@ -42,7 +36,7 @@ COPY dpkg.t_sp_authorization (entry_id, procedure_name, login_name, host_name, h
 -- Name: t_sp_authorization_entry_id_seq; Type: SEQUENCE SET; Schema: dpkg; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('dpkg.t_sp_authorization_entry_id_seq', 13, true);
+SELECT pg_catalog.setval('dpkg.t_sp_authorization_entry_id_seq', 14, true);
 
 
 --
