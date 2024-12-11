@@ -7,7 +7,8 @@ CREATE TABLE public.t_sp_authorization (
     procedure_name public.citext NOT NULL,
     login_name public.citext NOT NULL,
     host_name public.citext NOT NULL,
-    host_ip public.citext DEFAULT ''::public.citext NOT NULL
+    host_ip public.citext DEFAULT ''::public.citext NOT NULL,
+    cascade_to_all_schema boolean DEFAULT false NOT NULL
 );
 
 
