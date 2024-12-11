@@ -74,6 +74,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **                         - Use CURRENT_USER instead of SESSION_USER when _infoOnly is true
 **          03/24/2024 mem - Include the authorization table name in the error message
 **          06/23/2024 mem - Update usage example to have an exception handler around the Commit statement
+**          12/10/2024 mem - Add support for column cascade_to_all_schema in public.t_sp_authorization (only applicable for rows where procedure_name is '*')
 **
 *****************************************************/
 DECLARE
@@ -85,6 +86,8 @@ DECLARE
     _result int;
     _authorized boolean := false;
     _message text;
+    _authorizationDescription text = '';
+    _authorizationTableDescription text;
 
     _sqlState text;
     _exceptionMessage text;
@@ -147,11 +150,11 @@ BEGIN
         End If;
     */
 
-    ---------------------------------------------------
-    -- Query t_sp_authorization in the specified schema
-    ---------------------------------------------------
-
     _authorizationTableWithSchema := format('%I.%I', _targetSchema, 't_sp_authorization');
+
+    ---------------------------------------------------
+    -- Look for procedure _procedureName in t_sp_authorization in the specified schema
+    ---------------------------------------------------
 
     _s := format(
             'SELECT COUNT(*) '
@@ -167,7 +170,12 @@ BEGIN
 
     If _result > 0 Then
         _authorized := true;
+        _authorizationDescription := format('User found in %s with procedure_name ''%s''', 'public.t_sp_authorization', _procedureName);
     Else
+        ---------------------------------------------------
+        -- Look for procedure '*' in t_sp_authorization in the specified schema
+        ---------------------------------------------------
+
         _s := format(
                 'SELECT COUNT(*) '
                 'FROM %s auth '
@@ -182,6 +190,28 @@ BEGIN
 
         If _result > 0 Then
             _authorized := true;
+            _authorizationDescription := format('User found in %s with procedure_name ''*''', _authorizationTableWithSchema);
+        Else
+            ---------------------------------------------------
+            -- Look for procedure '*' with cascade_to_all_schema=true in public.t_sp_authorization
+            ---------------------------------------------------
+
+            _s := format(
+                    'SELECT COUNT(*) '
+                    'FROM %s auth '
+                    'WHERE auth.procedure_name = ''*'' AND cascade_to_all_schema AND '
+                          '(auth.login_name = $1::citext OR login_name LIKE ''PNL\\%%'' AND Substring(login_name, 5)::citext = $1::citext) AND '
+                          '(auth.host_ip = $2 Or auth.host_ip = ''*'')',
+                    'public.t_sp_authorization');
+
+            EXECUTE _s
+            INTO _result
+            USING Coalesce(_userName, '??'), host(_clientHostIP);
+
+            If _result > 0 Then
+                _authorized := true;
+                _authorizationDescription := format('User found in %s with procedure_name ''*'' and cascade_to_all_schema = true', 'public.t_sp_authorization');
+            End If;
         End If;
     End If;
 
@@ -189,17 +219,24 @@ BEGIN
 
     If _authorized Then
         RETURN QUERY
-        SELECT true, _procedureName, _userName, host(_clientHostIP), '' AS message;
+        SELECT true, _procedureName, _userName, host(_clientHostIP), _authorizationDescription AS message;
 
         RETURN;
     End If;
+
+    _authorizationTableDescription := format('%s%s',
+                                             _authorizationTableWithSchema,
+                                             CASE WHEN Lower(_authorizationTableWithSchema) = 'public.t_sp_authorization'
+                                                  THEN ''
+                                                  ELSE ' (and also public.t_sp_authorization)'
+                                             END);
 
     If _infoOnly Then
         _message := format('Access denied to %s for current user (%s on host IP %s); see table %s',
                            Coalesce(_procedureNameWithSchema, _procedureName),
                            Coalesce(_userName, '??'),
                            Coalesce(host(_clientHostIP), 'null'),
-                           _authorizationTableWithSchema);
+                           _authorizationTableDescription);
 
         RETURN QUERY
         SELECT false, _procedureName, _userName, host(_clientHostIP), _message AS message;
@@ -211,7 +248,7 @@ BEGIN
                        Coalesce(_userName, '??'),
                        Coalesce(_procedureNameWithSchema, _procedureName),
                        Coalesce(host(_clientHostIP), 'null'),
-                       _authorizationTableWithSchema);
+                       _authorizationTableDescription);
 
     If _logError Then
         -- Set _ignoreErrors to true when calling post_log_entry since the calling user might not have permission to add a row to t_log_entries
