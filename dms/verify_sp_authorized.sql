@@ -1,8 +1,8 @@
 --
--- Name: verify_sp_authorized(text, text, boolean, boolean); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: verify_sp_authorized(text, text, boolean, boolean, boolean); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _targetschema text DEFAULT 'public'::text, _logerror boolean DEFAULT false, _infoonly boolean DEFAULT false) RETURNS TABLE(authorized boolean, procedure_name text, user_name text, host_ip text, message text)
+CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _targetschema text DEFAULT 'public'::text, _logerror boolean DEFAULT false, _infoonly boolean DEFAULT false, _showauthsrc boolean DEFAULT false) RETURNS TABLE(authorized boolean, procedure_name text, user_name text, host_ip text, message text)
     LANGUAGE plpgsql
     AS $_$
 /****************************************************
@@ -17,6 +17,7 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **    _logError         When true, try to log an error message to t_log_entries (in the given schema) if the user does not have permission to call the procedure
 **                      If the user does not have write access to t_log_entries, a warning will be raised instead
 **    _infoOnly         When true, check for access, but do not log errors, even if _logError is true
+**    _showAuthSrc      When true, show the authorization source using RAISE INFO when the user is allowed to use the procedure
 **
 **  Returns:
 **      Table where the authorized column is true if authorized, false if not authorized
@@ -75,6 +76,8 @@ CREATE OR REPLACE FUNCTION public.verify_sp_authorized(_procedurename text, _tar
 **          03/24/2024 mem - Include the authorization table name in the error message
 **          06/23/2024 mem - Update usage example to have an exception handler around the Commit statement
 **          12/10/2024 mem - Add support for column cascade_to_all_schema in public.t_sp_authorization (only applicable for rows where procedure_name is '*')
+**          12/11/2024 mem - Add parameter _showAuthSrc to optionally show the authorization source using RAISE INFO when the user is allowed to use the procedure
+**                         - Only include the authorization source in the query results if _infoOnly is true
 **
 *****************************************************/
 DECLARE
@@ -101,6 +104,7 @@ BEGIN
     _procedureName := Trim(Coalesce(_procedureName, ''));
     _logError      := Coalesce(_logError, false);
     _infoOnly      := Coalesce(_infoOnly, false);
+    _showAuthSrc   := Coalesce(_showAuthSrc, false);
 
     _targetSchema  := Trim(Coalesce(_targetSchema, ''));
 
@@ -218,8 +222,19 @@ BEGIN
     _procedureNameWithSchema := format('%I.%I', _targetSchema, _procedureName);
 
     If _authorized Then
+        If _showAuthSrc Then
+            RAISE INFO '%', _authorizationDescription;
+        End If;
+
         RETURN QUERY
-        SELECT true, _procedureName, _userName, host(_clientHostIP), _authorizationDescription AS message;
+        SELECT true AS authorized,
+               _procedureName,
+               _userName,
+               host(_clientHostIP) AS host_ip,
+               CASE WHEN _infoOnly
+                    THEN _authorizationDescription
+                    ELSE ''
+               END AS message;
 
         RETURN;
     End If;
@@ -277,11 +292,11 @@ END
 $_$;
 
 
-ALTER FUNCTION public.verify_sp_authorized(_procedurename text, _targetschema text, _logerror boolean, _infoonly boolean) OWNER TO d3l243;
+ALTER FUNCTION public.verify_sp_authorized(_procedurename text, _targetschema text, _logerror boolean, _infoonly boolean, _showauthsrc boolean) OWNER TO d3l243;
 
 --
--- Name: FUNCTION verify_sp_authorized(_procedurename text, _targetschema text, _logerror boolean, _infoonly boolean); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: FUNCTION verify_sp_authorized(_procedurename text, _targetschema text, _logerror boolean, _infoonly boolean, _showauthsrc boolean); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.verify_sp_authorized(_procedurename text, _targetschema text, _logerror boolean, _infoonly boolean) IS 'VerifySPAuthorized';
+COMMENT ON FUNCTION public.verify_sp_authorized(_procedurename text, _targetschema text, _logerror boolean, _infoonly boolean, _showauthsrc boolean) IS 'VerifySPAuthorized';
 
