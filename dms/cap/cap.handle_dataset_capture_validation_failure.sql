@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE cap.handle_dataset_capture_validation_failure(IN _da
 **          06/17/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          01/20/2024 mem - Ignore case when resolving dataset name to ID
+**          12/11/2024 mem - Only call update_dms_file_info_xml if the dataset has an entry in t_dataset_info_xml
 **
 *****************************************************/
 DECLARE
@@ -135,29 +136,31 @@ BEGIN
         RETURN;
     End If;
 
-    -- Call update_dms_file_info_xml to push the dataset info into public.t_dataset_info
-    -- If a duplicate dataset is found, _returnCode will be 'U5360'
-    CALL cap.update_dms_file_info_xml (
-                _datasetID,
-                _deleteFromTableOnSuccess => true,
-                _message                  => _message,      -- Output
-                _returnCode               => _returnCode);  -- Output
+    If Exists (SELECT dataset_id FROM cap.t_dataset_info_xml WHERE dataset_id = _datasetID) Then
+        -- Call update_dms_file_info_xml to push the dataset info into public.t_dataset_info
+        -- If a duplicate dataset is found, _returnCode will be 'U5360'
+        CALL cap.update_dms_file_info_xml (
+                    _datasetID,
+                    _deleteFromTableOnSuccess => true,
+                    _message                  => _message,      -- Output
+                    _returnCode               => _returnCode);  -- Output
 
-    If _returnCode = 'U5360' Then
-        -- Use special completion code of 101
-        CALL public.set_capture_task_complete (
-                        _datasetName,
-                        _completionCode => 101,
-                        _message        => _message,        -- Output
-                        _returnCode     => _returnCode,     -- Output
-                        _failureMessage => _message);
+        If _returnCode = 'U5360' Then
+            -- Use special completion code of 101
+            CALL public.set_capture_task_complete (
+                            _datasetName,
+                            _completionCode => 101,
+                            _message        => _message,        -- Output
+                            _returnCode     => _returnCode,     -- Output
+                            _failureMessage => _message);
 
-        -- Fail out the capture task job with state 14 (Failed, Ignore Job Step States)
-        UPDATE cap.t_tasks
-        SET State = 14
-        WHERE Job = _captureJob;
+            -- Fail out the capture task job with state 14 (Failed, Ignore Job Step States)
+            UPDATE cap.t_tasks
+            SET State = 14
+            WHERE Job = _captureJob;
 
-        RETURN;
+            RETURN;
+        End If;
     End If;
 
     UPDATE cap.t_tasks
