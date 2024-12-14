@@ -5,7 +5,7 @@
 CREATE VIEW public.v_analysis_job_psm_list_report AS
  SELECT aj.job,
     aj.state_name_cached AS state,
-    analysistool.analysis_tool AS tool,
+    aj.analysis_tool_cached AS tool,
     ds.dataset,
     instname.instrument,
     psm.spectra_searched,
@@ -56,12 +56,11 @@ CREATE VIEW public.v_analysis_job_psm_list_report AS
     (aj.progress)::numeric(9,2) AS job_progress,
     (aj.eta_minutes)::numeric(18,1) AS job_eta_minutes,
     ((dfp.dataset_url)::text || 'QC/index.html'::text) AS qc_link
-   FROM ((((((((((public.t_analysis_job aj
+   FROM (((((((((public.t_analysis_job aj
      JOIN public.t_dataset ds ON ((aj.dataset_id = ds.dataset_id)))
      JOIN public.v_dataset_folder_paths dfp ON ((ds.dataset_id = dfp.dataset_id)))
      JOIN public.t_dataset_rating_name dr ON ((ds.dataset_rating_id = dr.dataset_rating_id)))
      JOIN public.t_organisms org ON ((aj.organism_id = org.organism_id)))
-     JOIN public.t_analysis_tool analysistool ON ((aj.analysis_tool_id = analysistool.analysis_tool_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))

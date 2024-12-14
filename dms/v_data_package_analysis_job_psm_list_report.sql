@@ -6,7 +6,7 @@ CREATE VIEW public.v_data_package_analysis_job_psm_list_report AS
  SELECT dpj.data_pkg_id AS data_pkg,
     aj.job,
     aj.state_name_cached AS state,
-    analysistool.analysis_tool AS tool,
+    aj.analysis_tool_cached AS tool,
     ds.dataset,
     instname.instrument,
     psm.spectra_searched,
@@ -56,14 +56,13 @@ CREATE VIEW public.v_data_package_analysis_job_psm_list_report AS
     aj.job_state_id AS state_id,
     (aj.progress)::numeric(9,2) AS job_progress,
     (aj.eta_minutes)::numeric(18,1) AS job_eta_minutes
-   FROM ((((((((((((dpkg.t_data_package_analysis_jobs dpj
+   FROM (((((((((((dpkg.t_data_package_analysis_jobs dpj
      JOIN public.t_analysis_job aj ON ((aj.job = dpj.job)))
      JOIN public.t_dataset ds ON ((aj.dataset_id = ds.dataset_id)))
      JOIN public.v_dataset_archive_path dap ON ((dap.dataset_id = ds.dataset_id)))
      JOIN public.t_storage_path spath ON ((ds.storage_path_id = spath.storage_path_id)))
      JOIN public.t_dataset_rating_name dr ON ((ds.dataset_rating_id = dr.dataset_rating_id)))
      JOIN public.t_organisms org ON ((aj.organism_id = org.organism_id)))
-     JOIN public.t_analysis_tool analysistool ON ((aj.analysis_tool_id = analysistool.analysis_tool_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
      JOIN public.t_experiments e ON ((ds.exp_id = e.exp_id)))
      JOIN public.t_campaign c ON ((e.campaign_id = c.campaign_id)))
