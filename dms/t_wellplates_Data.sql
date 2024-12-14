@@ -483,6 +483,10 @@ COPY public.t_wellplates (wellplate_id, wellplate, description, created) FROM st
 1459	TEDDY_Val_2_Plate_10	TEDDY Validation 2 Digested Peptides - Plate 10	2024-12-02 11:37:09.690564
 1460	TEDDY_Val_2_Plate_11	TEDDY Validation 2 Digested Peptides - Plate 11	2024-12-10 10:39:47.29032
 1461	TEDDY_Val_2_Plate_12	TEDDY Validation 2 Digested Peptides - Plate 12	2024-12-10 10:39:56.828665
+1462	TEDDY_Val_2_Plate_13	TEDDY Validation 2 Digested Peptides - Plate 13	2024-12-13 06:41:43.849637
+1463	TEDDY_Val_2_Plate_14	TEDDY Validation 2 Digested Peptides - Plate 14	2024-12-13 06:41:50.203488
+1464	TEDDY_Val_2_Plate_15	TEDDY Validation 2 Digested Peptides - Plate 15	2024-12-13 06:41:56.613097
+1465	TEDDY_Val_2_Plate_16	TEDDY Validation 2 Digested Peptides - Plate 16	2024-12-13 06:42:02.833652
 \.
 
 
@@ -490,7 +494,7 @@ COPY public.t_wellplates (wellplate_id, wellplate, description, created) FROM st
 -- Name: t_wellplates_wellplate_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_wellplates_wellplate_id_seq', 1461, true);
+SELECT pg_catalog.setval('public.t_wellplates_wellplate_id_seq', 1465, true);
 
 
 --

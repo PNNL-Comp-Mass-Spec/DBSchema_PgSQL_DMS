@@ -2618,6 +2618,8 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 6379	EMSL_51065_LW2_2017_192505_TrypPigBov_2020-07-15.fasta	1681	Lara Audrey Hug <laura.audrey.hug@gmail.com> University of Waterloo\r\n; 4747 duplicates collapsed	1	3019210	516295324	1	742480	2020-07-17 19:19:00	f
 6380	EMSL_51065_LW3_2017_Ga0378408_TrypPigBov_2020-07-16.fasta	1681	Lara Audrey Hug <laura.audrey.hug@gmail.com> University of Waterloo\r\n; 14328 duplicates collapsed	1	9735241	1329040442	1	2.076949e+06	2020-07-17 19:20:00	f
 6381	EMSL_51065_LW4_2017_192502_TrypPigBov_2020-07-15.fasta	1681	Lara Audrey Hug <laura.audrey.hug@gmail.com> University of Waterloo\r\n; 3924duplicates collapsed	1	3916220	620468932	1	908190	2020-07-17 19:21:00	f
+8773	EMSL_60964_Ellenbogen_MAGs_TrypPigBov_2024-12-12.fasta	1849	Prodigal-produced protein translation from dereplicated genes annotated in metagenome assemblies provided by Jared Ellenbogen (Jared.Ellenbogen@colostate.edu)	1	6831406	2095452990	1	3.32288e+06	2024-12-11 21:15:27.235591	f
+8772	EMSL_60964_Ellenbogen_Methanogen_TrypPigBov_2024-12-12.fasta	1849	DRAM-produced methanogen database from 495 SIP metagenomes provided by Jared Ellenbogen (Jared.Ellenbogen@colostate.edu)	1	1010209	299096648	1	420864	2024-12-11 21:15:27.235591	f
 7732	EUP_60009_Metagenomes_ABBY_Ga0586920_TrypPigBov_2023-06-21.fasta	1788	Metagenome ABBY_070-M-17.5-2-20190702-ga2, sequenced at JGI, provided by Thea Whitman (twhitman@wisc.edu) on FICUS EUP # 60009	1	5614914	979873724	1	1.976302e+06	2023-06-27 12:19:00	f
 7929	EUP_60009_Metagenomes_ABBY_Ga0586920_TrypPigBov_2023-06-21_15x_01.fasta	1788	Auto-created	0	374890	65324637	1	131808	2023-10-19 09:55:00	f
 7930	EUP_60009_Metagenomes_ABBY_Ga0586920_TrypPigBov_2023-06-21_15x_02.fasta	1788	Auto-created	0	374543	65324804	1	131742	2023-10-19 09:55:00	f
@@ -8449,7 +8451,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 -- Name: t_organism_db_file_org_db_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 8771, true);
+SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 8773, true);
 
 
 --
