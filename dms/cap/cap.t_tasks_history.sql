@@ -40,6 +40,12 @@ CREATE INDEX ix_t_tasks_history_dataset ON cap.t_tasks_history USING btree (data
 CREATE INDEX ix_t_tasks_history_dataset_id ON cap.t_tasks_history USING btree (dataset_id);
 
 --
+-- Name: ix_t_tasks_history_dataset_lower_text_pattern_ops; Type: INDEX; Schema: cap; Owner: d3l243
+--
+
+CREATE INDEX ix_t_tasks_history_dataset_lower_text_pattern_ops ON cap.t_tasks_history USING btree (lower((dataset)::text) text_pattern_ops);
+
+--
 -- Name: ix_t_tasks_history_job; Type: INDEX; Schema: cap; Owner: d3l243
 --
 

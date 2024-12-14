@@ -29,6 +29,12 @@ ALTER TABLE ONLY pc.t_protein_collection_members_cached
 CREATE INDEX ix_t_protein_collection_members_cached_protein_id ON pc.t_protein_collection_members_cached USING btree (protein_id);
 
 --
+-- Name: ix_t_protein_collection_members_cached_protein_name_text_ops; Type: INDEX; Schema: pc; Owner: d3l243
+--
+
+CREATE INDEX ix_t_protein_collection_members_cached_protein_name_text_ops ON pc.t_protein_collection_members_cached USING btree (lower((protein_name)::text) text_pattern_ops);
+
+--
 -- Name: t_protein_collection_members_cached fk_t_protein_collection_members_cached_t_protein_collections; Type: FK CONSTRAINT; Schema: pc; Owner: d3l243
 --
 

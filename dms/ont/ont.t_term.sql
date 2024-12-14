@@ -44,6 +44,12 @@ CREATE INDEX ix_t_term_is_leaf ON ont.t_term USING btree (is_leaf);
 CREATE INDEX ix_t_term_namespace ON ont.t_term USING btree (namespace);
 
 --
+-- Name: ix_t_term_term_name_lower_text_pattern_ops; Type: INDEX; Schema: ont; Owner: d3l243
+--
+
+CREATE INDEX ix_t_term_term_name_lower_text_pattern_ops ON ont.t_term USING btree (lower((term_name)::text) text_pattern_ops);
+
+--
 -- Name: ix_term_ontology_id; Type: INDEX; Schema: ont; Owner: d3l243
 --
 

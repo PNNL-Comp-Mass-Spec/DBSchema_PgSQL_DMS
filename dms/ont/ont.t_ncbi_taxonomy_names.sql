@@ -46,6 +46,12 @@ CREATE INDEX ix_t_ncbi_taxonomy_names_name ON ont.t_ncbi_taxonomy_names USING bt
 CREATE INDEX ix_t_ncbi_taxonomy_names_name_class_name_include_tax_id ON ont.t_ncbi_taxonomy_names USING btree (name_class, name) INCLUDE (tax_id);
 
 --
+-- Name: ix_t_ncbi_taxonomy_names_name_lower_text_pattern_ops; Type: INDEX; Schema: ont; Owner: d3l243
+--
+
+CREATE INDEX ix_t_ncbi_taxonomy_names_name_lower_text_pattern_ops ON ont.t_ncbi_taxonomy_names USING btree (lower((name)::text) text_pattern_ops);
+
+--
 -- Name: ix_t_ncbi_taxonomy_names_tax_id; Type: INDEX; Schema: ont; Owner: d3l243
 --
 

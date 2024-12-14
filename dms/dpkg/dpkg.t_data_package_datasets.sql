@@ -21,6 +21,18 @@ ALTER TABLE ONLY dpkg.t_data_package_datasets
     ADD CONSTRAINT pk_t_data_package_datasets PRIMARY KEY (data_pkg_id, dataset_id);
 
 --
+-- Name: ix_t_data_package_datasets_dataset; Type: INDEX; Schema: dpkg; Owner: d3l243
+--
+
+CREATE INDEX ix_t_data_package_datasets_dataset ON dpkg.t_data_package_datasets USING btree (dataset);
+
+--
+-- Name: ix_t_data_package_datasets_dataset_lower_text_pattern_ops; Type: INDEX; Schema: dpkg; Owner: d3l243
+--
+
+CREATE INDEX ix_t_data_package_datasets_dataset_lower_text_pattern_ops ON dpkg.t_data_package_datasets USING btree (lower((dataset)::text) text_pattern_ops);
+
+--
 -- Name: t_data_package_datasets fk_t_data_package_datasets_t_data_package; Type: FK CONSTRAINT; Schema: dpkg; Owner: d3l243
 --
 

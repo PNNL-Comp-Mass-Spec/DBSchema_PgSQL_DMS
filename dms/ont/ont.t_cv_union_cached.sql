@@ -45,6 +45,12 @@ ALTER TABLE ONLY ont.t_cv_union_cached
 CREATE INDEX ix_t_cv_union_cached_grandparent_term_name ON ont.t_cv_union_cached USING btree (grandparent_term_name);
 
 --
+-- Name: ix_t_cv_union_cached_grandparent_term_name_text_pattern_ops; Type: INDEX; Schema: ont; Owner: d3l243
+--
+
+CREATE INDEX ix_t_cv_union_cached_grandparent_term_name_text_pattern_ops ON ont.t_cv_union_cached USING btree (lower((grandparent_term_name)::text) text_pattern_ops);
+
+--
 -- Name: ix_t_cv_union_cached_identifier_include_term_name; Type: INDEX; Schema: ont; Owner: d3l243
 --
 
@@ -55,6 +61,12 @@ CREATE INDEX ix_t_cv_union_cached_identifier_include_term_name ON ont.t_cv_union
 --
 
 CREATE INDEX ix_t_cv_union_cached_parent_term_name ON ont.t_cv_union_cached USING btree (parent_term_name);
+
+--
+-- Name: ix_t_cv_union_cached_parent_term_name_text_pattern_ops; Type: INDEX; Schema: ont; Owner: d3l243
+--
+
+CREATE INDEX ix_t_cv_union_cached_parent_term_name_text_pattern_ops ON ont.t_cv_union_cached USING btree (lower((parent_term_name)::text) text_pattern_ops);
 
 --
 -- Name: ix_t_cv_union_cached_source; Type: INDEX; Schema: ont; Owner: d3l243
@@ -73,6 +85,12 @@ CREATE INDEX ix_t_cv_union_cached_term_name ON ont.t_cv_union_cached USING btree
 --
 
 CREATE INDEX ix_t_cv_union_cached_term_name_include_identifier ON ont.t_cv_union_cached USING btree (term_name) INCLUDE (identifier);
+
+--
+-- Name: ix_t_cv_union_cached_term_name_lower_text_pattern_ops; Type: INDEX; Schema: ont; Owner: d3l243
+--
+
+CREATE INDEX ix_t_cv_union_cached_term_name_lower_text_pattern_ops ON ont.t_cv_union_cached USING btree (lower((term_name)::text) text_pattern_ops);
 
 --
 -- Name: ix_t_cv_union_cached_term_pk; Type: INDEX; Schema: ont; Owner: d3l243

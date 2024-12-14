@@ -72,6 +72,12 @@ CREATE INDEX ix_t_cv_newt_grandparent_term_id_text_computed_column ON ont.t_cv_n
 CREATE INDEX ix_t_cv_newt_grandparent_term_name ON ont.t_cv_newt USING btree (grandparent_term_name);
 
 --
+-- Name: ix_t_cv_newt_grandparent_term_name_lower_text_pattern_ops; Type: INDEX; Schema: ont; Owner: d3l243
+--
+
+CREATE INDEX ix_t_cv_newt_grandparent_term_name_lower_text_pattern_ops ON ont.t_cv_newt USING btree (lower((grandparent_term_name)::text) text_pattern_ops);
+
+--
 -- Name: ix_t_cv_newt_identifier; Type: INDEX; Schema: ont; Owner: d3l243
 --
 
@@ -108,6 +114,12 @@ CREATE INDEX ix_t_cv_newt_parent_term_id_text_computed_column ON ont.t_cv_newt U
 CREATE INDEX ix_t_cv_newt_parent_term_name ON ont.t_cv_newt USING btree (parent_term_name);
 
 --
+-- Name: ix_t_cv_newt_parent_term_name_lower_text_pattern_ops; Type: INDEX; Schema: ont; Owner: d3l243
+--
+
+CREATE INDEX ix_t_cv_newt_parent_term_name_lower_text_pattern_ops ON ont.t_cv_newt USING btree (lower((parent_term_name)::text) text_pattern_ops);
+
+--
 -- Name: ix_t_cv_newt_synonym; Type: INDEX; Schema: ont; Owner: d3l243
 --
 
@@ -118,6 +130,12 @@ CREATE INDEX ix_t_cv_newt_synonym ON ont.t_cv_newt USING btree (synonym);
 --
 
 CREATE INDEX ix_t_cv_newt_term_name ON ont.t_cv_newt USING btree (term_name);
+
+--
+-- Name: ix_t_cv_newt_term_name_lower_text_pattern_ops; Type: INDEX; Schema: ont; Owner: d3l243
+--
+
+CREATE INDEX ix_t_cv_newt_term_name_lower_text_pattern_ops ON ont.t_cv_newt USING btree (lower((term_name)::text) text_pattern_ops);
 
 --
 -- Name: ix_t_cv_newt_term_pk; Type: INDEX; Schema: ont; Owner: d3l243

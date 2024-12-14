@@ -47,10 +47,22 @@ ALTER TABLE ONLY cap.t_tasks
     ADD CONSTRAINT pk_t_tasks PRIMARY KEY (job);
 
 --
+-- Name: ix_t_tasks_dataset; Type: INDEX; Schema: cap; Owner: d3l243
+--
+
+CREATE INDEX ix_t_tasks_dataset ON cap.t_tasks USING btree (dataset);
+
+--
 -- Name: ix_t_tasks_dataset_id; Type: INDEX; Schema: cap; Owner: d3l243
 --
 
 CREATE INDEX ix_t_tasks_dataset_id ON cap.t_tasks USING btree (dataset_id);
+
+--
+-- Name: ix_t_tasks_dataset_lower_text_pattern_ops; Type: INDEX; Schema: cap; Owner: d3l243
+--
+
+CREATE INDEX ix_t_tasks_dataset_lower_text_pattern_ops ON cap.t_tasks USING btree (lower((dataset)::text) text_pattern_ops);
 
 --
 -- Name: ix_t_tasks_script_dataset; Type: INDEX; Schema: cap; Owner: d3l243

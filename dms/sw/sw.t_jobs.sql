@@ -35,10 +35,22 @@ ALTER TABLE ONLY sw.t_jobs
     ADD CONSTRAINT pk_t_jobs PRIMARY KEY (job);
 
 --
+-- Name: ix_t_jobs_dataset; Type: INDEX; Schema: sw; Owner: d3l243
+--
+
+CREATE INDEX ix_t_jobs_dataset ON sw.t_jobs USING btree (dataset);
+
+--
 -- Name: ix_t_jobs_dataset_id_include_job_state; Type: INDEX; Schema: sw; Owner: d3l243
 --
 
 CREATE INDEX ix_t_jobs_dataset_id_include_job_state ON sw.t_jobs USING btree (dataset_id) INCLUDE (job, state);
+
+--
+-- Name: ix_t_jobs_dataset_lower_text_pattern_ops; Type: INDEX; Schema: sw; Owner: d3l243
+--
+
+CREATE INDEX ix_t_jobs_dataset_lower_text_pattern_ops ON sw.t_jobs USING btree (lower((dataset)::text) text_pattern_ops);
 
 --
 -- Name: ix_t_jobs_state; Type: INDEX; Schema: sw; Owner: d3l243

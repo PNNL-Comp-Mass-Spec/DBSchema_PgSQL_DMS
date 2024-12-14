@@ -65,6 +65,12 @@ ALTER TABLE ONLY public.t_analysis_job
 CREATE INDEX ix_t_analysis_job_analysis_tool_cached ON public.t_analysis_job USING btree (analysis_tool_cached);
 
 --
+-- Name: ix_t_analysis_job_analysis_tool_cached_lower_text_pattern_ops; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_analysis_tool_cached_lower_text_pattern_ops ON public.t_analysis_job USING btree (lower((analysis_tool_cached)::text) text_pattern_ops);
+
+--
 -- Name: ix_t_analysis_job_batch_id_include_job_id; Type: INDEX; Schema: public; Owner: d3l243
 --
 
@@ -119,6 +125,18 @@ CREATE INDEX ix_t_analysis_job_organism_dbname ON public.t_analysis_job USING bt
 CREATE INDEX ix_t_analysis_job_param_file_name ON public.t_analysis_job USING btree (param_file_name);
 
 --
+-- Name: ix_t_analysis_job_param_file_name_lower_text_pattern_ops; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_param_file_name_lower_text_pattern_ops ON public.t_analysis_job USING btree (lower((param_file_name)::text) text_pattern_ops);
+
+--
+-- Name: ix_t_analysis_job_protein_collections_lower_text_pattern_ops; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_protein_collections_lower_text_pattern_ops ON public.t_analysis_job USING btree (lower((protein_collection_list)::text) text_pattern_ops);
+
+--
 -- Name: ix_t_analysis_job_request_id; Type: INDEX; Schema: public; Owner: d3l243
 --
 
@@ -129,6 +147,12 @@ CREATE INDEX ix_t_analysis_job_request_id ON public.t_analysis_job USING btree (
 --
 
 CREATE INDEX ix_t_analysis_job_settings_file_name ON public.t_analysis_job USING btree (settings_file_name);
+
+--
+-- Name: ix_t_analysis_job_settings_file_name_lower_text_pattern_ops; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_analysis_job_settings_file_name_lower_text_pattern_ops ON public.t_analysis_job USING btree (lower((settings_file_name)::text) text_pattern_ops);
 
 --
 -- Name: ix_t_analysis_job_started_include_job_state_id_progress; Type: INDEX; Schema: public; Owner: d3l243

@@ -231,6 +231,18 @@ CREATE INDEX ix_t_requested_run_eus_usage_type_include_eus_proposal_id ON public
 CREATE INDEX ix_t_requested_run_exp_id_include_name_id_state ON public.t_requested_run USING btree (exp_id) INCLUDE (request_name, request_id, state_name);
 
 --
+-- Name: ix_t_requested_run_instrument_group; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_instrument_group ON public.t_requested_run USING btree (instrument_group);
+
+--
+-- Name: ix_t_requested_run_instrument_group_lower_text_pattern_ops; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_requested_run_instrument_group_lower_text_pattern_ops ON public.t_requested_run USING btree (lower((instrument_group)::text) text_pattern_ops);
+
+--
 -- Name: ix_t_requested_run_name_state_include_id; Type: INDEX; Schema: public; Owner: d3l243
 --
 

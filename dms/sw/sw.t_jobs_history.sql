@@ -47,6 +47,12 @@ CREATE INDEX ix_t_jobs_history_data_pkg_id ON sw.t_jobs_history USING btree (dat
 CREATE INDEX ix_t_jobs_history_dataset ON sw.t_jobs_history USING btree (dataset);
 
 --
+-- Name: ix_t_jobs_history_dataset_lower_text_pattern_ops; Type: INDEX; Schema: sw; Owner: d3l243
+--
+
+CREATE INDEX ix_t_jobs_history_dataset_lower_text_pattern_ops ON sw.t_jobs_history USING btree (lower((dataset)::text) text_pattern_ops);
+
+--
 -- Name: ix_t_jobs_history_job; Type: INDEX; Schema: sw; Owner: d3l243
 --
 

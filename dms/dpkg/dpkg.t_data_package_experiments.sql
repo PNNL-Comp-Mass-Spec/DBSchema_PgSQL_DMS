@@ -21,6 +21,18 @@ ALTER TABLE ONLY dpkg.t_data_package_experiments
     ADD CONSTRAINT pk_t_data_package_experiments PRIMARY KEY (data_pkg_id, experiment_id);
 
 --
+-- Name: ix_t_data_package_experiments_experiment; Type: INDEX; Schema: dpkg; Owner: d3l243
+--
+
+CREATE INDEX ix_t_data_package_experiments_experiment ON dpkg.t_data_package_experiments USING btree (experiment);
+
+--
+-- Name: ix_t_data_package_experiments_experiment_lower_text_pattern_ops; Type: INDEX; Schema: dpkg; Owner: d3l243
+--
+
+CREATE INDEX ix_t_data_package_experiments_experiment_lower_text_pattern_ops ON dpkg.t_data_package_experiments USING btree (lower((experiment)::text) text_pattern_ops);
+
+--
 -- Name: t_data_package_experiments fk_t_data_package_experiments_t_data_package; Type: FK CONSTRAINT; Schema: dpkg; Owner: d3l243
 --
 
