@@ -82,7 +82,6 @@ DMSDev	psutil_disk	2024-04-17 15:08:43.256485-07
 DMSDev	psutil_disk_io_total	2024-04-17 15:08:40.966262-07
 DMSDev	psutil_mem	2024-04-17 15:08:43.383123-07
 DMSDev	recommendations	2024-04-17 15:08:40.699458-07
-DMSDev	replication_slots	2024-12-01 20:52:43.255362-08
 DMSDev	sequence_health	2024-04-17 15:08:46.052792-07
 DMSDev	server_log_event_counts	2024-04-17 15:08:40.714759-07
 DMSDev	settings	2024-04-17 15:08:49.193667-07

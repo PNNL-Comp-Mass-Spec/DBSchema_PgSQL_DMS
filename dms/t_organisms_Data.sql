@@ -220,6 +220,7 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 13	Cytomegalovirus_human	Human_cytomegalovirus_UniProt_2015-10-21	2002-01-10 10:16:50	Human Cytomegalovirus	Human_Cytomegalovirus	\\\\gigasax\\DMS_Organism_Files\\Cytomegalovirus_human\\	http://gigasax/DMS_Organism_Files/Cytomegalovirus_human/	Viruses			None	Herpesvirales	Herpesviridae	Cytomegalovirus	Human herpesvirus 5		1	0	1	10359	10359	1
 1502	Cytophaga_hutchinsonii		2016-06-21 09:38:13	Cytophaga hutchinsonii	C_hutchinsonii	\\\\gigasax\\DMS_Organism_Files\\Cytophaga_hutchinsonii\\	http://gigasax/DMS_Organism_Files/Cytophaga_hutchinsonii/	Bacteria	Prokaryote	Bacteroidetes	Cytophagia	Cytophagales	Cytophagaceae	Cytophaga	hutchinsonii	na	0	0	1	985	985	1
 1794	DTRA_80982		2023-10-10 13:20:06	UniProt protein collections for DTRA project 80982	DTRA_80982	\\\\proto-4\\DMS_Organism_Files\\DTRA_80982\\	http://proto-4/DMS_Organism_Files/DTRA_80982/							na	na	na	0	0	1		\N	0
+1850	Dalcin-Martins_Metagenomes		2024-12-17 22:37:48.567121	Dalcin-Martins Metagenomes	Dalcin-Martins_Metagenomes	\\\\proto-4\\DMS_Organism_Files\\Dalcin-Martins_Metagenomes\\	https://proto-4/DMS_Organism_Files/Dalcin-Martins_Metagenomes/							na	na	na	0	0	1		\N	0
 18	Danio_rerio	Danio_rerio_RefSeq_2015-09-08	2002-05-20 14:32:54	Danio rerio (Zebrafish)	D_rerio	\\\\gigasax\\DMS_Organism_Files\\Danio_rerio\\	http://gigasax/DMS_Organism_Files/Danio_rerio/	Eukaryota	Metazoa	Chordata	Actinopteri	Cypriniformes	Cyprinidae	Danio	rerio		1	2	0	7955	7955	1
 1217	Dehalococcoides_ethenogenes	Dehalococcoides_ethenogenes_195_RefSeq_uid57763_2014-08-14	2011-03-01 10:13:01	Dehalococcoides ethenogenes	D_ethenogenes	\\\\gigasax\\DMS_Organism_Files\\Dehalococcoides_ethenogenes\\	http://gigasax/DMS_Organism_Files/Dehalococcoides_ethenogenes/	Bacteria	Prokaryote	Chloroflexi	Dehalococcoidia	Dehalococcoidales	Dehalococcoidaceae	Dehalococcoides	ethenogenes	na	11	0	1	61434	61434	1
 1228	Dehalococcoides_ethenogenes_195	Dehalococcoides_ethenogenes_195_RefSeq_uid57763_2014-08-14	2011-05-31 14:23:43	Dehalococcoides species ethenogenes strain 195	D_ethenogenes_195	\\\\gigasax\\DMS_Organism_Files\\Dehalococcoides_ethenogenes_195\\	http://gigasax/DMS_Organism_Files/Dehalococcoides_ethenogenes_195/	Bacteria	Prokaryote	Chloroflexi	Dehalococcoidia	Dehalococcoidales	Dehalococcoidaceae	Dehalococcoides	mccartyi	195	11	0	1	243164	243164	1
@@ -862,7 +863,7 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 -- Name: t_organisms_organism_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organisms_organism_id_seq', 1849, true);
+SELECT pg_catalog.setval('public.t_organisms_organism_id_seq', 1850, true);
 
 
 --

@@ -858,6 +858,9 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 1865	89	57	LTQ_FT	Ascend%		CPTAC%		CPTAC4[_]LIHC[_]U[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynMetOx_TMTExclusive_K_Ubiq_Stat_CysAlk_TMT_16Plex_20ppmParTol_PlusOne_IsotopeError.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2024-12-04 15:29:43.4428	D3L243	90	1	0	2024-12-04 15:37:31.961783
 1866	89	57	LTQ_FT	Ascend%		CPTAC%		CPTAC4[_]LIHC[_]P[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynSTYPhos_Stat_CysAlk_TMT_16Plex_Protocol1_20ppmParTol.txt	MzML_StatCysAlk_S_Phospho_Dyn_TY_Phospho_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2024-12-04 15:29:46.868585	D3L243	90	1	0	2024-12-04 15:37:31.974744
 1867	89	57	LTQ_FT	Ascend%		CPTAC%		CPTAC4[_]LIHC[_]A[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynMetOx_TMTExclusive_K_Acetyl_K_Carbamyl_N_Deamid_Stat_CysAlk_TMT_16Plex_20ppmParTol_PlusOne_IsotopeError.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2024-12-04 15:29:51.116179	D3L243	90	1	0	2024-12-04 15:37:31.977944
+1868	85	50	LTQ_FT	Ascend%		CPTAC%		CPTAC4[_]LIHC[_]Pooled_QC%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_Stat_CysAlk_Precursor380-1000.txt	DiaNN_Standard.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01,iRT_Fusion	seq_direction=forward,filetype=fasta	3		1		2024-12-16 11:11:38.457384	D3L243	86	1	0	2024-12-16 11:11:38.457384
+1869	85	50	LTQ_FT	Ascend%		CPTAC%		CPTAC4[_]LIHC[_]NCI7%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_Stat_CysAlk_Precursor380-1000.txt	DiaNN_Standard.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01,iRT_Fusion	seq_direction=forward,filetype=fasta	3		1		2024-12-16 11:11:50.321773	D3L243	86	1	0	2024-12-16 11:11:50.321773
+1870	85	50	LTQ_FT	Ascend%		CPTAC%		CPTAC4[_]LIHC[_]C3%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_Stat_CysAlk_Precursor380-1000.txt	DiaNN_Standard.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01,iRT_Fusion	seq_direction=forward,filetype=fasta	3		1		2024-12-16 11:12:04.255965	D3L243	86	1	0	2024-12-16 11:12:04.255965
 \.
 
 
@@ -865,7 +868,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 -- Name: t_predefined_analysis_predefine_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1867, true);
+SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1870, true);
 
 
 --

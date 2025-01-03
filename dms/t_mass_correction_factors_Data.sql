@@ -51,7 +51,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1401	ABP_Ser1	Serine protease activity-based probe	393.2042	393.4321	-	PNNL	ABP_Ser1	ABP_Ser1	C(18) H(34) O(7) P
 1400	ABP_TEV	Activity based proteomics TEV tag for serine	677.3513102	677.727421	-	PNNL	ABP_TEV	ABP_TEV	C28 H52 N7 O10 P
 1485	ABP_TEV2	Activity based proteomics TEV-FP2 tag for serine	633.3250968	633.674861	-	PNNL	ABP_TEV_FP2	ABP_TEV_FP2	H(48) C(26) N(7) O(9) (P)
-1306	ADPRibos	ADP Ribose addition (UniMod #231)	541.061096	\N	-	UniMod	ADP-Ribosyl	\N	H(21) C(15) N(5) O(13) P(2)
+1306	ADPRibos	ADP Ribose addition (UniMod #213)	541.06111	541.3005	-	UniMod	ADP-Ribosyl	ADP-Ribose	H(21) C(15) N(5) O(13) P(2)
 1263	ATW8BtnS	ATW8 probe, Biotin stripped, C30H50N7O4S	604.3645	\N	-	PNNL		\N	\N
 1265	ATW8TEV	ATW8 Probe, TEV, C27H48N8O5	564.3748	\N	-	PNNL		\N	\N
 1232	AcNHS-SS	acetylation of the Sulfo-NHS-SS-Biotin probe	145.019745	\N	-	UniMod	CAMthiopropanoyl	Ac-Sulfo-NHS-SS-Biotin	H(7) C(5) N O(2) S
@@ -282,7 +282,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1521	Me3NoTMT	Trimethylation on TMT-labeled samples; remove 6-plex TMT and add tri-methylation	-187.115983	\N	-	PNNL	TrimethylNoTMT	\N	\N
 1219	Mercury	Mercury Hg(II) adduct	199.9549	\N	-	PNNL		\N	\N
 1379	MetLossA	Removal of initiator methionine from protein N-terminus, then acetylation of the new N-terminus	-89.029922	\N	-	UniMod	Met-loss+Acetyl	\N	H(-7) C(-3) N(-1) S(-1)
-1463	MetToHBG	Substitution of HBG for Met during translation	-21.98772	-22.07118	-	PNNL	MetToHBG	\N	C(1) H(-2) S(-1)
+1463	MetToHPG	Substitution of HPG for Met during translation	-21.987721	-22.07118	-	UniMod	Met->Hpg	\N	H(-2) C S(-1)
 1392	MetToLys	Met to Lys substitution	-2.945522	\N	-	UniMod	Met->Lys	Misacylation of the tRNA or editing of the charged tRNA	H(-1) N O S(-1)
 1159	Met_2O18	Methylation with Two O18	18.0241	18.0262	-	PNNL	Methyl_plus_two_O18	Methylation, two O18	H(2) C O(-2) 18O(2)
 1569	Met_C13	Deuterium methylation with C13	18.037835	18.0377	-	UniMod	Methyl:2H(3)13C(1)	Methyl-Heavy	H(-1) 2H(3) 13C
