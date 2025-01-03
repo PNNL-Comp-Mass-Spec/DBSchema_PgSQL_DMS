@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_job_request_existing_jobs(IN _p
 **          09/07/2023 mem - Ported to PostgreSQL
 **          09/08/2023 mem - Include schema name when calling function verify_sp_authorized()
 **          09/13/2023 mem - Remove unnecessary delimiter argument when calling append_to_text()
+**          01/02/2025 mem - When processing a single request ID, show the matching analysis jobs when _infoOnly is true
 **
 *****************************************************/
 DECLARE
@@ -110,6 +111,48 @@ BEGIN
                 _infoData := format(_formatSpecifier,
                                     _previewData.Request_ID,
                                     _previewData.Status
+                                   );
+
+                RAISE INFO '%', _infoData;
+            END LOOP;
+
+            -- Show the matching analysis jobs
+
+            _formatSpecifier := '%-10s %-10s %-47s';
+
+            _infoHead := format(_formatSpecifier,
+                                'Request_ID',
+                                'Job',
+                                'Already_in_T_Analysis_Job_Request_Existing_Jobs'
+                               );
+
+            _infoHeadSeparator := format(_formatSpecifier,
+                                         '----------',
+                                         '----------',
+                                         '-----------------------------------------------'
+                                        );
+
+            RAISE INFO '';
+            RAISE INFO '%', _infoHead;
+            RAISE INFO '%', _infoHeadSeparator;
+
+            FOR _previewData IN
+                SELECT DISTINCT
+                       _requestID AS Request_ID,
+                       JobList.Job,
+                       CASE WHEN AJRJ.job Is Null
+                            THEN 'No'
+                            ELSE 'Yes'
+                       END AS Already_Cached
+                FROM public.get_existing_jobs_matching_job_request(_requestID) JobList
+                     LEFT OUTER JOIN t_analysis_job_request_existing_jobs AJRJ
+                       ON JobList.Job = AJRJ.job AND AJRJ.Request_ID = _requestID
+                ORDER BY JobList.Job
+            LOOP
+                _infoData := format(_formatSpecifier,
+                                    _previewData.Request_ID,
+                                    _previewData.Job,
+                                    _previewData.Already_Cached
                                    );
 
                 RAISE INFO '%', _infoData;
