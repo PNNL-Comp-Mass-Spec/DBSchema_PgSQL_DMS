@@ -137,7 +137,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 125	67	10	Sleep 17 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 126	67	20	Update charge code usage	SQL	CALL public.update_charge_code_usage_proc (_infoOnly => false);	\N	\N	f	t	0
 127	68	10	Sleep 42 seconds	BUILTIN	Sleep	\N	\N	f	f	0
-128	68	20	Update charge codes from warehouse	SQL	CALL update_charge_codes_from_warehouse (_infoOnly => false);	\N	\N	f	t	0
+128	68	20	Update charge codes from warehouse	SQL	CALL update_charge_codes_from_warehouse (_updateAll => false, _explicitChargeCodeList => '', _infoOnly => false);	\N	\N	f	t	0
 129	69	10	Update data package EUS info	SQL	CALL dpkg.update_data_package_eus_info ('0');	\N	\N	f	t	0
 130	70	10	Sleep 10 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 131	70	20	Update dataset interval and instrument usage for multiple instruments	SQL	CALL update_dataset_interval_for_multiple_instruments (\r\n           _daysToProcess => 180,\r\n           _updateEMSLInstrumentUsage => true);	\N	\N	f	t	0
