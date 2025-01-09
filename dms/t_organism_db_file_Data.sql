@@ -4913,6 +4913,32 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 1072	Kansas_metagenome_12902_TrypPig_Bov_2014-11-25_25x_23.fasta	31	Auto-created	0	1244924	112745375	1	184908	2014-11-25 13:45:00	f
 1073	Kansas_metagenome_12902_TrypPig_Bov_2014-11-25_25x_24.fasta	31	Auto-created	0	1244823	112745390	1	184908	2014-11-25 13:45:00	f
 1074	Kansas_metagenome_12902_TrypPig_Bov_2014-11-25_25x_25.fasta	31	Auto-created	0	1245463	112745009	1	184908	2014-11-25 13:45:00	f
+9022	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06.fasta	31	Kaiko 1.0 (casanovo) generated fasta from Uniprot using the Kansas soil dataset at 10% identity and 100% peptide sequence coverage	1	14419167	6133201749	1	8.188931e+06	2025-01-07 09:04:24.28879	f
+9025	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_01.fasta	31	Auto-created	0	575834	245328119	1	319762	2025-01-07 10:13:57.347059	f
+9026	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_02.fasta	31	Auto-created	0	576585	245327927	1	319858	2025-01-07 10:13:57.366085	f
+9027	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_03.fasta	31	Auto-created	0	575779	245327993	1	319764	2025-01-07 10:13:57.371371	f
+9028	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_04.fasta	31	Auto-created	0	576977	245327876	1	319911	2025-01-07 10:13:57.376873	f
+9029	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_05.fasta	31	Auto-created	0	576179	245328879	1	319803	2025-01-07 10:13:57.382566	f
+9030	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_06.fasta	31	Auto-created	0	577764	245327918	1	320010	2025-01-07 10:13:57.387993	f
+9031	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_07.fasta	31	Auto-created	0	576152	245328125	1	319823	2025-01-07 10:13:57.393554	f
+9032	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_08.fasta	31	Auto-created	0	575189	245328691	1	319694	2025-01-07 10:13:57.398964	f
+9033	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_09.fasta	31	Auto-created	0	578402	245327486	1	320070	2025-01-07 10:13:57.404464	f
+9034	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_10.fasta	31	Auto-created	0	576228	245328102	1	319800	2025-01-07 10:13:57.409946	f
+9035	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_11.fasta	31	Auto-created	0	576861	245327779	1	319906	2025-01-07 10:13:57.415475	f
+9036	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_12.fasta	31	Auto-created	0	577155	245328037	1	319911	2025-01-07 10:13:57.421549	f
+9037	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_13.fasta	31	Auto-created	0	577303	245328522	1	319930	2025-01-07 10:13:57.426916	f
+9038	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_14.fasta	31	Auto-created	0	576481	245328087	1	319879	2025-01-07 10:13:57.432395	f
+9039	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_15.fasta	31	Auto-created	0	576204	245328128	1	319795	2025-01-07 10:13:57.437588	f
+9040	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_16.fasta	31	Auto-created	0	577070	245328221	1	319929	2025-01-07 10:13:57.442963	f
+9041	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_17.fasta	31	Auto-created	0	578030	245327612	1	320028	2025-01-07 10:13:57.448365	f
+9042	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_18.fasta	31	Auto-created	0	576607	245327955	1	319861	2025-01-07 10:13:57.453655	f
+9043	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_19.fasta	31	Auto-created	0	578133	245328437	1	320054	2025-01-07 10:13:57.458844	f
+9044	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_20.fasta	31	Auto-created	0	576223	245327766	1	319803	2025-01-07 10:13:57.46413	f
+9045	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_21.fasta	31	Auto-created	0	576178	245327866	1	319820	2025-01-07 10:13:57.469411	f
+9046	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_22.fasta	31	Auto-created	0	577418	245328625	1	319957	2025-01-07 10:13:57.474616	f
+9047	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_23.fasta	31	Auto-created	0	577155	245327717	1	319905	2025-01-07 10:13:57.479757	f
+9048	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_24.fasta	31	Auto-created	0	576820	245328363	1	319897	2025-01-07 10:13:57.485354	f
+9049	Kansas_soil_kaiko1_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_25.fasta	31	Auto-created	0	576440	245327518	1	319833	2025-01-07 10:13:57.490656	f
 8840	Kansas_soil_kaiko1_pident_100_coverage_35_TrypPigBov_2024-12-19.fasta	31	Kaiko 1.0 (casanovo) generated fasta from Uniprot using the Kansas soil dataset at 100% identity and 35% peptide sequence coverage	1	9840949	4195628223	1	5.597336e+06	2024-12-18 15:13:58.149205	f
 8947	Kansas_soil_kaiko1_pident_100_coverage_35_TrypPigBov_2024-12-19_25x_01.fasta	31	Auto-created	0	392544	167825003	1	218506	2024-12-30 11:04:29.254355	f
 8948	Kansas_soil_kaiko1_pident_100_coverage_35_TrypPigBov_2024-12-19_25x_02.fasta	31	Auto-created	0	393437	167825597	1	218629	2024-12-30 11:04:29.404903	f
@@ -5017,6 +5043,32 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 8994	Kansas_soil_kaiko1_pident_90_coverage_50_TrypPigBov_2024-12-19_25x_23.fasta	31	Auto-created	0	523006	224595305	1	292132	2024-12-30 11:18:29.454001	f
 8995	Kansas_soil_kaiko1_pident_90_coverage_50_TrypPigBov_2024-12-19_25x_24.fasta	31	Auto-created	0	523482	224595640	1	292181	2024-12-30 11:18:29.459629	f
 8996	Kansas_soil_kaiko1_pident_90_coverage_50_TrypPigBov_2024-12-19_25x_25.fasta	31	Auto-created	0	523804	224596023	1	292201	2024-12-30 11:18:29.465467	f
+9024	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06.fasta	31	Kaiko 2.0 (casanovo) generated fasta from Uniprot using the Kansas soil dataset at 10% identity and 100% peptide sequence coverage	1	14530928	6085282942	1	8.177828e+06	2025-01-07 09:07:23.975403	f
+9050	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_01.fasta	31	Auto-created	0	580982	243411750	1	319405	2025-01-07 10:14:10.487098	f
+9051	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_02.fasta	31	Auto-created	0	581394	243411391	1	319467	2025-01-07 10:14:10.809003	f
+9052	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_03.fasta	31	Auto-created	0	580953	243411079	1	319437	2025-01-07 10:14:10.831385	f
+9053	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_04.fasta	31	Auto-created	0	581839	243410914	1	319521	2025-01-07 10:14:11.127965	f
+9054	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_05.fasta	31	Auto-created	0	580686	243411349	1	319361	2025-01-07 10:14:11.145985	f
+9055	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_06.fasta	31	Auto-created	0	583105	243411739	1	319697	2025-01-07 10:14:11.318791	f
+9056	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_07.fasta	31	Auto-created	0	580446	243411267	1	319341	2025-01-07 10:14:11.357866	f
+9057	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_08.fasta	31	Auto-created	0	581110	243410981	1	319409	2025-01-07 10:14:11.549724	f
+9058	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_09.fasta	31	Auto-created	0	580521	243411790	1	319382	2025-01-07 10:14:11.594136	f
+9059	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_10.fasta	31	Auto-created	0	581037	243411346	1	319424	2025-01-07 10:14:11.78287	f
+9060	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_11.fasta	31	Auto-created	0	580057	243411353	1	319324	2025-01-07 10:14:11.79382	f
+9061	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_12.fasta	31	Auto-created	0	581998	243411275	1	319521	2025-01-07 10:14:11.95647	f
+9062	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_13.fasta	31	Auto-created	0	581012	243411158	1	319405	2025-01-07 10:14:11.986846	f
+9063	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_14.fasta	31	Auto-created	0	582529	243411157	1	319606	2025-01-07 10:14:12.187304	f
+9064	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_15.fasta	31	Auto-created	0	581849	243411733	1	319492	2025-01-07 10:14:12.217078	f
+9065	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_16.fasta	31	Auto-created	0	581946	243411339	1	319507	2025-01-07 10:14:12.417593	f
+9066	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_17.fasta	31	Auto-created	0	581236	243411698	1	319461	2025-01-07 10:14:12.442931	f
+9067	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_18.fasta	31	Auto-created	0	579887	243411125	1	319279	2025-01-07 10:14:12.630412	f
+9068	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_19.fasta	31	Auto-created	0	579855	243411743	1	319255	2025-01-07 10:14:12.640822	f
+9069	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_20.fasta	31	Auto-created	0	581756	243411236	1	319507	2025-01-07 10:14:12.804917	f
+9070	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_21.fasta	31	Auto-created	0	581199	243410960	1	319451	2025-01-07 10:14:12.815637	f
+9071	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_22.fasta	31	Auto-created	0	582103	243411429	1	319565	2025-01-07 10:14:12.826192	f
+9072	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_23.fasta	31	Auto-created	0	581611	243411016	1	319491	2025-01-07 10:14:13.134661	f
+9073	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_24.fasta	31	Auto-created	0	580955	243411156	1	319439	2025-01-07 10:14:13.332412	f
+9074	Kansas_soil_kaiko2_fasta_pident_100_coverage_7.61Gb_TrypPigBov_2025-01-06_25x_25.fasta	31	Auto-created	0	580862	243410958	1	319412	2025-01-07 10:14:13.357713	f
 8781	Kansas_soil_kaiko2_pident_100_coverage_35_TrypPigBov_2024-12-18.fasta	31	Kaiko 2.0 (casanovo) generated fasta from Uniprot using the Kansas soil dataset at 100% identity and 35% peptide sequence coverage	1	5881595	2416688561	1	3.266233e+06	2024-12-18 15:13:58.149205	f
 8844	Kansas_soil_kaiko2_pident_100_coverage_35_TrypPigBov_2024-12-18_25x_01.fasta	31	Auto-created	0	235638	96667919	1	127639	2024-12-20 09:55:00.650108	f
 8845	Kansas_soil_kaiko2_pident_100_coverage_35_TrypPigBov_2024-12-18_25x_02.fasta	31	Auto-created	0	235683	96665915	1	127643	2024-12-20 09:55:00.671902	f
@@ -8699,7 +8751,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 -- Name: t_organism_db_file_org_db_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9021, true);
+SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9074, true);
 
 
 --

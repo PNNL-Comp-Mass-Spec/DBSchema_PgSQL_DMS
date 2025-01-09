@@ -44,6 +44,7 @@ Monroe_CTM	DatasetInfo	3	0	Runs MSFileInfoScanner	2024-10-18 11:37:50.754207
 Monroe_CTM	DatasetIntegrity	3	0	Runs simple file/folder checks	2022-02-28 07:21:20
 Monroe_CTM	DatasetQuality	2	0	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
 Monroe_CTM	ImsDeMultiplex	3	0		2022-09-14 21:30:18
+Monroe_CTM	LCDatasetCapture	2	0		2025-01-08 16:25:38.820219
 Monroe_CTM	LCDatasetInfo	3	0		2024-02-12 14:21:43
 Monroe_CTM	SourceFileRename	3	0		2019-07-17 11:33:27
 Proto-10_CTM	ArchiveUpdate	4	0	Offline	2017-07-03 13:49:08
@@ -55,23 +56,23 @@ Proto-10_CTM_2	SourceFileRename	4	1		2019-07-17 11:33:34
 Proto-11_CTM	ArchiveUpdate	4	1		2024-10-14 17:14:45.990553
 Proto-11_CTM	DatasetArchive	3	1		2024-10-14 17:14:45.990553
 Proto-11_CTM	DatasetCapture	3	1		2024-09-28 19:34:26.936392
-Proto-11_CTM	LCDatasetCapture	3	1		2023-10-27 12:20:01
+Proto-11_CTM	LCDatasetCapture	3	1		2025-01-08 16:25:38.820219
 Proto-11_CTM	SourceFileRename	4	1		2019-07-17 11:33:34
 Proto-11_CTM_2	ArchiveUpdate	4	1		2024-10-14 17:14:45.990553
 Proto-11_CTM_2	DatasetCapture	2	1		2024-09-28 19:34:26.936392
-Proto-11_CTM_2	LCDatasetCapture	2	1		2023-10-27 12:20:01
+Proto-11_CTM_2	LCDatasetCapture	2	1		2025-01-08 16:25:38.820219
 Proto-11_CTM_2	SourceFileRename	4	1		2019-07-17 11:33:34
 Proto-2_CTM	ArchiveUpdate	4	1		2024-10-14 17:14:45.990553
 Proto-2_CTM	DatasetArchive	3	1		2024-10-14 17:14:45.990553
 Proto-2_CTM	DatasetCapture	2	1		2024-09-28 19:34:26.936392
-Proto-2_CTM	LCDatasetCapture	2	1		2023-10-27 12:20:01
+Proto-2_CTM	LCDatasetCapture	2	1		2025-01-08 16:25:38.820219
 Proto-2_CTM	SourceFileRename	4	1		2019-07-17 11:33:34
 Proto-2_CTM_2	ArchiveUpdate	4	1		2024-10-14 17:14:45.990553
 Proto-2_CTM_2	SourceFileRename	4	1		2019-07-17 11:33:34
 Proto-3_CTM	ArchiveUpdate	4	1		2024-10-14 17:14:45.990553
 Proto-3_CTM	DatasetArchive	3	1		2024-10-14 17:14:45.990553
 Proto-3_CTM	DatasetCapture	3	1		2024-09-28 19:34:26.936392
-Proto-3_CTM	LCDatasetCapture	3	1		2023-10-27 12:20:01
+Proto-3_CTM	LCDatasetCapture	3	1		2025-01-08 16:25:38.820219
 Proto-3_CTM	SourceFileRename	4	1		2019-07-17 11:33:34
 Proto-3_CTM_2	ArchiveUpdate	4	1		2024-10-14 17:14:45.990553
 Proto-3_CTM_2	DatasetArchive	3	1		2024-10-14 17:14:45.990553
@@ -79,11 +80,11 @@ Proto-3_CTM_2	SourceFileRename	4	1		2019-07-17 11:33:34
 Proto-4_CTM	ArchiveUpdate	4	1		2024-10-14 17:14:45.990553
 Proto-4_CTM	DatasetArchive	3	1		2024-10-14 17:14:45.990553
 Proto-4_CTM	DatasetCapture	2	1		2024-09-28 19:34:26.936392
-Proto-4_CTM	LCDatasetCapture	2	1		2023-10-27 12:20:01
+Proto-4_CTM	LCDatasetCapture	2	1		2025-01-08 16:25:38.820219
 Proto-4_CTM	SourceFileRename	4	1		2019-07-17 11:33:34
 Proto-4_CTM_2	ArchiveUpdate	4	1		2024-10-14 17:14:45.990553
 Proto-4_CTM_2	DatasetCapture	2	1		2024-09-28 19:34:26.936392
-Proto-4_CTM_2	LCDatasetCapture	2	1		2023-10-27 12:20:01
+Proto-4_CTM_2	LCDatasetCapture	2	1		2025-01-08 16:25:38.820219
 Proto-4_CTM_2	SourceFileRename	4	1		2019-07-17 11:33:34
 Proto-4_CTM_ProcProto-10	ArchiveUpdate	4	0	Runs on Proto-4 but processes data on Proto-10 (temporary fix in February 2016)	2016-02-10 15:30:03
 Proto-4_CTM_ProcProto-10	DatasetArchive	3	0	Runs on Proto-4 but processes data on Proto-10	2016-02-10 15:30:04
@@ -94,25 +95,25 @@ Proto-5_CTM	DatasetArchive	3	1		2024-10-14 17:14:45.990553
 Proto-5_CTM	SourceFileRename	4	1		2019-09-10 15:32:16
 Proto-5_CTM_2	ArchiveUpdate	4	1		2024-10-14 17:14:45.990553
 Proto-5_CTM_2	DatasetCapture	3	1		2024-09-28 19:34:26.936392
-Proto-5_CTM_2	LCDatasetCapture	3	1		2023-10-27 12:20:01
+Proto-5_CTM_2	LCDatasetCapture	3	1		2025-01-08 16:25:38.820219
 Proto-5_CTM_2	SourceFileRename	4	1		2019-09-10 15:32:15
 Proto-6_CTM	ArchiveUpdate	4	1		2024-10-14 17:14:45.990553
 Proto-6_CTM	DatasetArchive	3	1		2024-10-14 17:14:45.990553
 Proto-6_CTM	DatasetCapture	3	1		2024-09-28 19:34:26.936392
-Proto-6_CTM	LCDatasetCapture	3	1		2023-10-27 12:20:01
+Proto-6_CTM	LCDatasetCapture	3	1		2025-01-08 16:25:38.820219
 Proto-6_CTM	SourceFileRename	4	1		2019-07-17 11:33:34
 Proto-6_CTM_2	ArchiveUpdate	4	1		2024-10-14 17:14:45.990553
 Proto-6_CTM_2	DatasetCapture	2	1		2024-09-28 19:34:26.936392
-Proto-6_CTM_2	LCDatasetCapture	2	1		2023-10-27 12:20:01
+Proto-6_CTM_2	LCDatasetCapture	2	1		2025-01-08 16:25:38.820219
 Proto-6_CTM_2	SourceFileRename	4	1		2019-07-17 11:33:34
 Proto-7_CTM	ArchiveUpdate	4	1		2024-10-14 17:14:45.990553
 Proto-7_CTM	DatasetArchive	3	1		2024-10-14 17:14:45.990553
 Proto-7_CTM	DatasetCapture	3	1		2024-09-28 19:34:26.936392
-Proto-7_CTM	LCDatasetCapture	3	1		2023-10-27 12:20:01
+Proto-7_CTM	LCDatasetCapture	3	1		2025-01-08 16:25:38.820219
 Proto-7_CTM	SourceFileRename	4	1		2019-07-17 11:33:34
 Proto-7_CTM_2	ArchiveUpdate	4	1		2024-10-14 17:14:45.990553
 Proto-7_CTM_2	DatasetCapture	2	1		2024-09-28 19:34:26.936392
-Proto-7_CTM_2	LCDatasetCapture	2	1		2023-10-27 12:20:01
+Proto-7_CTM_2	LCDatasetCapture	2	1		2025-01-08 16:25:38.820219
 Proto-7_CTM_2	SourceFileRename	4	1		2019-07-17 11:33:34
 Proto-8_CTM	ArchiveUpdate	4	1		2024-10-14 17:14:45.990553
 Proto-8_CTM	DatasetArchive	3	1		2024-10-14 17:14:45.990553
@@ -125,7 +126,7 @@ Proto-9_CTM	DatasetArchive	3	1		2024-10-14 17:14:45.990553
 Proto-9_CTM	SourceFileRename	4	1		2019-07-17 11:33:34
 Proto-9_CTM_2	ArchiveUpdate	4	1		2024-10-14 17:14:45.990553
 Proto-9_CTM_2	DatasetCapture	3	1		2024-09-28 19:34:26.936392
-Proto-9_CTM_2	LCDatasetCapture	3	1		2023-10-27 12:20:01
+Proto-9_CTM_2	LCDatasetCapture	3	1		2025-01-08 16:25:38.820219
 Proto-9_CTM_2	SourceFileRename	4	1		2019-07-17 11:33:34
 Pub-50_CTM	ArchiveStatusCheck	3	1		2024-10-14 14:35:00.337965
 Pub-50_CTM	DatasetInfo	4	1	Runs MSFileInfoScanner	2024-10-18 11:37:50.754207

@@ -28,6 +28,7 @@ COPY public.t_dataset_type_name (dataset_type_id, dataset_type, description, act
 32	C60-SIMS-HMS	C60 SIMS HMS	1
 56	CAD	Charged aerosol detector	1
 35	Chip_Seq	DNA Sequencing Reads	1
+57	DIA-HMS-HCD-CID-MSn	High res MS with HCD-HMSn and DIA-CID-MSn	1
 55	DIA-HMS-HCD-HMSn	High res MS with DIA HCD HMSn	1
 27	DataFiles	DMS Pipeline Data or Data Packages	0
 41	EI-HMS	GC EI coupled with high res MS	1

@@ -25,8 +25,9 @@ COPY public.t_dataset_scan_type_glossary (scan_type, sort_key, comment) FROM std
 CID-HMSn	40	
 CID-MSn	41	
 CID-SRM	52	
-DIA-CID-HMSn	1	
-DIA-HCD-HMSn	2	
+DIA-CID-HMSn	2	
+DIA-CID-MSn	3	
+DIA-HCD-HMSn	1	
 ETD-HMSn	30	
 ETD-MSn	31	
 ETciD-HMSn	36	

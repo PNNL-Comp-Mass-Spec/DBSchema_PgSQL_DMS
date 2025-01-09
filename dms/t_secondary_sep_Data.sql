@@ -113,6 +113,7 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 127	LC-Neo-Formic_1hr	Neo, formic acid, 1 hour separation	1	LC-Formic_1hr	1	2022-12-20 12:46:10
 144	LC-Neo-Formic_20Min	Neo, formic acid, 20 Min separation	1	LC-Formic_20min	1	2024-05-30 10:30:01
 128	LC-Neo-Formic_2hr	Neo, formic acid, 2 hour separation	1	LC-Formic_2hr	1	2022-12-20 12:46:28
+148	LC-Neo-Formic_30Min_50SPD	Neo, formic acid, 28 Min separation, 22min data Acquisition.	1	LC-Formic_30min	1	2025-01-07 09:52:20.017138
 145	LC-Neo-Formic_30min	Neo LC, formic acid, 30 minute separation	1	LC-Formic_30min	1	2024-05-30 10:33:58
 129	LC-Neo-Formic_3hr	Neo, formic acid, 3 hour separation	1	LC-Formic_3hr	1	2022-12-20 12:46:45
 147	LC-Neo-Formic_70SPD_20Min	Neo, formic acid, 20 min separation	1	LC-Formic_20min	1	2024-10-07 16:14:53.335849
