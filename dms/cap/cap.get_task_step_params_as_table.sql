@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION cap.get_task_step_params_as_table(_job integer, _step
 **          06/06/2023 mem - Ported to PostgreSQL
 **          06/20/2023 mem - Use citext for columns in the output table
 **          11/04/2024 mem - Drop the temporary table if get_task_step_params() does not return any rows
+**          01/08/2025 mem - Query function get_task_param_table_local() if get_task_step_params() does not return any rows
 **
 *****************************************************/
 DECLARE
@@ -49,8 +50,16 @@ BEGIN
     FROM cap.get_task_step_params(_job, _step) Src;
 
     If Not FOUND Then
-        DROP TABLE Tmp_JobParamsTable;
-        RETURN;
+        -- The job likely does not exist in cap.t_task_steps, but it might have an entry in cap.t_task_parameters
+
+        INSERT INTO Tmp_JobParamsTable (Section, Name, Value)
+        SELECT Src.Section, Src.Name, Src.Value
+        FROM cap.get_task_param_table_local(_job) Src;
+
+        If Not FOUND Then
+            DROP TABLE Tmp_JobParamsTable;
+            RETURN;
+        End If;
     End If;
 
     ---------------------------------------------------
