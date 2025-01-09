@@ -10,7 +10,11 @@ CREATE VIEW public.v_helper_organism_db_list_report AS
     f.num_proteins,
     f.num_residues,
     (f.created)::date AS created,
-    round(((f.file_size_kb / (1024.0)::double precision))::numeric, 2) AS size_mb
+    round(((f.file_size_kb / (1024.0)::double precision))::numeric, 2) AS size_mb,
+        CASE
+            WHEN f.is_decoy THEN 'Yes'::public.citext
+            ELSE 'No'::public.citext
+        END AS is_decoy
    FROM (public.t_organism_db_file f
      JOIN public.t_organisms o ON ((f.organism_id = o.organism_id)))
   WHERE ((f.active > 0) AND (f.valid > 0));
