@@ -52,6 +52,7 @@ CREATE OR REPLACE PROCEDURE public.rename_dataset(IN _datasetnameold text DEFAUL
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          08/30/2024 mem - Pass a single backslash to Position()
+**          01/08/2025 mem - Append '\LC' to the dataset directory name when updating an LCDatasetCapture job
 **
 *****************************************************/
 DECLARE
@@ -74,6 +75,8 @@ DECLARE
     _suffixID int;
     _fileSuffix text;
     _continue boolean;
+    _jobInfo record;
+    _datasetDirectoryName text;
     _job int;
     _toolBaseName citext;
     _resultsFolder citext;
@@ -593,15 +596,16 @@ BEGIN
     --------------------------------------------
 
     CREATE TEMP TABLE Tmp_JobsToUpdate (
-         Job int NOT NULL
+         Job int NOT NULL,
+         Script text NOT NULL
     );
 
     --------------------------------------------
     -- Update capture task jobs in cap.t_tasks
     --------------------------------------------
 
-    INSERT INTO Tmp_JobsToUpdate (Job)
-    SELECT Job
+    INSERT INTO Tmp_JobsToUpdate (Job, Script)
+    SELECT Job, Script
     FROM cap.t_tasks
     WHERE dataset = _datasetNameOld::citext
     ORDER BY Job;
@@ -672,17 +676,23 @@ BEGIN
         -- Update capture task jobs in cap.t_tasks
         --------------------------------------------
 
-        FOR _job IN
-            SELECT Job
+        FOR _jobInfo IN
+            SELECT Job, Script
             FROM Tmp_JobsToUpdate
             ORDER BY Job
         LOOP
-            CALL cap.add_update_task_parameter (_job, 'JobParameters', 'Dataset',   _datasetNameNew, _message => _msg, _returnCode => _returnCode, _infoOnly => false);
-            CALL cap.add_update_task_parameter (_job, 'JobParameters', 'Directory', _datasetNameNew, _message => _msg, _returnCode => _returnCode, _infoOnly => false);
+            If _jobInfo.Script::citext = 'LCDatasetCapture' Then
+                _datasetDirectoryName := _datasetNameNew || '\LC';
+            Else
+                _datasetDirectoryName := _datasetNameNew;
+            End If;
+
+            CALL cap.add_update_task_parameter (_jobInfo.Job, 'JobParameters', 'Dataset',   _datasetNameNew,       _message => _msg, _returnCode => _returnCode, _infoOnly => false);
+            CALL cap.add_update_task_parameter (_jobInfo.Job, 'JobParameters', 'Directory', _datasetDirectoryName, _message => _msg, _returnCode => _returnCode, _infoOnly => false);
 
             UPDATE cap.t_tasks
             SET Dataset = _datasetNameNew
-            WHERE Job = _job;
+            WHERE Job = _jobInfo.Job;
         END LOOP;
 
     End If;
