@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE sw.reset_job_and_shared_results(IN _job integer, IN 
 **          09/07/2023 mem - Align assignment statements
 **          10/12/2023 mem - Add missing call to format()
 **                         - Fix bug using format() to append a message to _message
+**          01/09/2025 mem - Reset stats in table t_job_step_reset_stats (updated by set_step_task_complete)
 **
 *****************************************************/
 DECLARE
@@ -442,7 +443,7 @@ BEGIN
             RETURN;
         End If;
 
-        -- Reset the job (but don't delete it from the tables, and don't use sw.remove_selected_jobs since it would update sw.t_shared_results)
+        -- Reset the job (but don't delete it from the tables, and don't use sw.remove_selected_jobs since that would update sw.t_shared_results)
 
         -- Reset dependencies
         UPDATE sw.t_job_step_dependencies
@@ -450,6 +451,7 @@ BEGIN
             triggered = 0
         WHERE job = _job AND (evaluated <> 0 OR triggered <> 0);
 
+        -- Reset job steps
         UPDATE sw.t_job_steps
         SET state = 1,                    -- 1=Waiting
             tool_version_id = 1,          -- 1=Unknown
@@ -457,9 +459,18 @@ BEGIN
             remote_info_id = 1            -- 1=Unknown
         WHERE job = _job AND (state <> 1 OR Coalesce(tool_version_id, 0) <> 1 OR remote_info_id <> 1);
 
+        -- Reset job state
         UPDATE sw.t_jobs
         SET state = 1
         WHERE job = _job AND state <> 1;
+
+        -- Reset insufficient free disk space or available memory counts (if defined)
+        UPDATE t_job_step_reset_stats
+        SET disk_space_count = 0,
+            memory_count = 0,
+            comment = '',
+            last_affected = CURRENT_TIMESTAMP
+        WHERE job = _job;
 
     EXCEPTION
         WHEN OTHERS THEN
