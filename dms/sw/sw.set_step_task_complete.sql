@@ -81,6 +81,7 @@ CREATE OR REPLACE PROCEDURE sw.set_step_task_complete(IN _job integer, IN _step 
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          08/14/2024 mem - Set _logErrorsToPublicLogTable to false when calling post_log_entry with warning messages
 **          01/09/2025 mem - Add support for completion code 24 (CLOSEOUT_RESET_JOB_STEP_INSUFFICIENT_MEMORY)
+**          01/10/2025 mem - Log an error message when a job step has been reset over 35 times
 **
 *****************************************************/
 DECLARE
@@ -309,6 +310,9 @@ BEGIN
                 UPDATE sw.t_job_step_reset_stats
                 SET comment = _completionCodeDescription
                 WHERE job = _job AND step = _step;
+
+                _message := Replace(_completionCodeDescription, 'Job step', format('Job %s, step %s has been', _job, _step));
+                CALL post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw', _logErrorsToPublicLogTable => false);
             End If;
         End If;
 
@@ -503,7 +507,7 @@ BEGIN
 
         If Not Found Then
             _message := format('Job %s does not have a Mz_Refinery, MSXML_Gen, MSXML_Bruker, PBF_Gen, or ProMex step prior to step %s; Completion code %s (%s) is invalid',
-                                _job, _step, _completionCode, _completionCodeDescription);
+                               _job, _step, _completionCode, _completionCodeDescription);
 
             CALL public.post_log_entry ('Error', _message, 'Set_Step_Task_Complete', 'sw');
 
@@ -511,7 +515,7 @@ BEGIN
         Else
 
             _message := format('Re-running step %s for job %s because step %s reported completion code %s (%s)',
-                                _sharedResultStep, _job, _step, _completionCode, _completionCodeDescription);
+                               _sharedResultStep, _job, _step, _completionCode, _completionCodeDescription);
 
             If Exists (SELECT entry_id
                        FROM sw.t_log_entries
@@ -521,7 +525,7 @@ BEGIN
                       ) Then
 
                 _message := format('has already reported completion code %s (%s) within the last 24 hours',
-                                    _completionCode, _completionCodeDescription);
+                                   _completionCode, _completionCodeDescription);
 
                 UPDATE sw.t_job_steps
                 SET state = 7,        -- Holding
