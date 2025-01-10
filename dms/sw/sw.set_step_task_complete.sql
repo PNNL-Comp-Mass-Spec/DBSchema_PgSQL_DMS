@@ -80,6 +80,7 @@ CREATE OR REPLACE PROCEDURE sw.set_step_task_complete(IN _job integer, IN _step 
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          08/14/2024 mem - Set _logErrorsToPublicLogTable to false when calling post_log_entry with warning messages
+**          01/09/2025 mem - Add support for completion code 24 (CLOSEOUT_RESET_JOB_STEP_INSUFFICIENT_MEMORY)
 **
 *****************************************************/
 DECLARE
@@ -96,6 +97,8 @@ DECLARE
     _resetSharedResultStep boolean := false;
     _handleSkippedStep boolean := false;
     _completionCodeDescription text := 'Unknown completion reason';
+    _diskSpaceResetCount int;
+    _memoryResetCount int;
     _nextTry timestamp := CURRENT_TIMESTAMP;
     _holdoffIntervalMinutes int;
     _adjustedHoldoffInterval int;
@@ -161,13 +164,16 @@ BEGIN
            JS.State,
            JS.processor AS JobStepsProcessor,
            JS.tool AS StepTool,
-           JS.retry_count AS RetryCount
+           JS.retry_count AS RetryCount,
+           J.Dataset_ID AS DatasetID
     INTO _jobInfo
     FROM sw.t_job_steps JS
          INNER JOIN sw.t_local_processors LP
            ON LP.processor_name = JS.processor
          INNER JOIN sw.t_step_tools ST
            ON ST.step_tool = JS.tool
+         LEFT OUTER JOIN sw.t_jobs J            -- The job should exist in t_jobs, but using a left join in case it doesn't
+           ON J.job = JS.job
          LEFT OUTER JOIN sw.t_machines M
            ON LP.machine = M.machine
     WHERE JS.job = _job AND
@@ -253,13 +259,60 @@ BEGIN
             _completionCodeDescription := 'Skipped MaxQuant';
         End If;
 
-        If _completionCode = 23 Then        -- CLOSEOUT_RESET_JOB_STEP
-            _stepState := 2; -- New
-            _handleSkippedStep := false;
-            _completionCodeDescription := 'Insufficient memory or free disk space; retry';
+        If _completionCode = 23 Or          -- CLOSEOUT_RESET_JOB_STEP
+           _completionCode = 24             -- CLOSEOUT_RESET_JOB_STEP_INSUFFICIENT_MEMORY
+        Then
+            -- Add/update table t_job_step_reset_stats
+
+            SELECT disk_space_count, memory_count
+            INTO _diskSpaceResetCount, _memoryResetCount
+            FROM sw.t_job_step_reset_stats
+            WHERE job = _job AND step = _step;
+
+            If _completionCode = 23 Then
+                _diskSpaceResetCount := Coalesce(_diskSpaceResetCount, 0) + 1;
+            Else
+                _memoryResetCount := Coalesce(_memoryResetCount, 0) + 1;
+            End If;
+
+            If FOUND Then
+                UPDATE sw.t_job_step_reset_stats
+                SET disk_space_count = Coalesce(_diskSpaceResetCount, 0),
+                    memory_count     = Coalesce(_memoryResetCount, 0),
+                    last_affected = CURRENT_TIMESTAMP
+                WHERE job = _job AND step = _step;
+            Else
+                INSERT INTO sw.t_job_step_reset_stats (job, step, tool, disk_space_count, memory_count, dataset_id)
+                VALUES (_job, _step, _jobInfo.StepTool, Coalesce(_diskSpaceResetCount, 0), Coalesce(_memoryResetCount, 0), _jobInfo.DatasetID);
+            End If;
+
+            -- If a job step is reset more than 35 times, set _stepState to 6 (Failed)
+
+            If _completionCode = 23 And Coalesce(_diskSpaceResetCount, 0) > 35 Then
+                _stepState := 6;    -- Failed
+                _completionCodeDescription := 'Job step reset over 35 times due to insufficient free disk space';
+            ElsIf _completionCode = 24 And Coalesce(_memoryResetCount, 0) > 35 Then
+                _stepState := 6;    -- Failed
+                _completionCodeDescription := 'Job step reset over 35 times due to insufficient available memory';
+            Else
+                _stepState := 2;    -- New
+                _handleSkippedStep := false;
+
+                If _completionCode = 23 Then
+                    _completionCodeDescription := 'Insufficient disk space; retry';
+                Else
+                    _completionCodeDescription := 'Insufficient memory; retry';
+                End If;
+            End If;
+
+            If _stepState = 6 Then
+                UPDATE sw.t_job_step_reset_stats
+                SET comment = _completionCodeDescription
+                WHERE job = _job AND step = _step;
+            End If;
         End If;
 
-        If _completionCode = 20 Then        -- CLOSEOUT_NO_DATA Then
+        If _completionCode = 20 Then        -- CLOSEOUT_NO_DATA
             _completionCodeDescription := 'No Data';
 
             -- Note that Formularity and NOMSI jobs that report completion code 20 are handled in AutoFixFailedJobs
@@ -352,18 +405,18 @@ BEGIN
         End If;
 
         If _completionCode = 26 Then    -- FAILED_REMOTE
-            _stepState := 16 ; -- Failed_Remote
+            _stepState := 16;   -- Failed_Remote
             _completionCodeDescription := 'Failed remote';
         End If;
 
         If _completionCode = 27 Then    -- SKIPPED_DIA_NN_SPEC_LIB
-            _stepState := 3;   -- Skipped
+            _stepState := 3;    -- Skipped
             _handleSkippedStep := true;
             _completionCodeDescription := 'Skipped DIA-NN spectral library creation';
         End If;
 
         If _stepState = 0 Then
-            _stepState := 6;   -- Failed
+            _stepState := 6;    -- Failed
             _completionCodeDescription := 'General error';
         End If;
     End If;
@@ -559,7 +612,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Update FASTA file name (if one was passed in from the analysis tool manager)
+    -- Update FASTA file name (if one was passed in from the Analysis Manager)
     ---------------------------------------------------
 
     If Coalesce(_organismDBName,'') <> '' Then
