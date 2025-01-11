@@ -37,6 +37,7 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid int
 **          05/23/2023 mem - Use format() for string concatenation
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          01/10/2025 mem - Add table alias to fix ambiguous column reference
 **
 *****************************************************/
 DECLARE
@@ -89,19 +90,19 @@ BEGIN
     -- Make sure the soure parameter exists
     ---------------------------------------------------
 
-    If _returnCode = '' And Not Exists (SELECT entry_id FROM mc.t_param_value PV WHERE PV.param_type_id = _sourceParamTypeID) Then
+    If _returnCode = '' And Not Exists (SELECT PV.entry_id FROM mc.t_param_value PV WHERE PV.param_type_id = _sourceParamTypeID) Then
         _message := format('_sourceParamTypeID %s not found in mc.t_param_value; unable to continue', _sourceParamTypeID);
         RAISE WARNING '%', _message;
         _returnCode := 'U5203';
     End If;
 
-    If _returnCode = '' And Exists (SELECT entry_id FROM mc.t_param_value PV WHERE PV.param_type_id = _newParamTypeID) Then
+    If _returnCode = '' And Exists (SELECT PV.entry_id FROM mc.t_param_value PV WHERE PV.param_type_id = _newParamTypeID) Then
         _message := format('_newParamTypeID %s already exists in mc.t_param_value; unable to continue', _newParamTypeID);
         RAISE WARNING '%', _message;
         _returnCode := 'U5204';
     End If;
 
-    If _returnCode = '' And Not Exists (SELECT param_type_id FROM mc.t_param_type PT Where PT.param_type_id = _newParamTypeID) Then
+    If _returnCode = '' And Not Exists (SELECT PT.param_type_id FROM mc.t_param_type PT Where PT.param_type_id = _newParamTypeID) Then
         _message := format('_newParamTypeID %s not found in mc.t_param_type; unable to continue', _newParamTypeID);
         RAISE WARNING '%', _message;
         _returnCode := 'U5205';
