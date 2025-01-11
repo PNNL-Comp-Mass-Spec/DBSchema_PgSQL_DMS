@@ -2,7 +2,7 @@
 -- Name: duplicate_manager_parameter(integer, integer, text, text, text, text, boolean); Type: FUNCTION; Schema: mc; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text DEFAULT NULL::text, _commentoverride text DEFAULT NULL::text, _paramvaluesearchtext text DEFAULT NULL::text, _paramvaluereplacetext text DEFAULT NULL::text, _infoonly boolean DEFAULT true) RETURNS TABLE(status text, param_type_id integer, value public.citext, mgr_id integer, comment public.citext)
+CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid integer, _newparamtypeid integer, _paramvalueoverride text DEFAULT NULL::text, _commentoverride text DEFAULT NULL::text, _paramvaluesearchtext text DEFAULT NULL::text, _paramvaluereplacetext text DEFAULT NULL::text, _infoonly boolean DEFAULT true) RETURNS TABLE(status text, param_type_id integer, value public.citext, comment public.citext, mgr_id integer, mgr_name public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -38,6 +38,7 @@ CREATE OR REPLACE FUNCTION mc.duplicate_manager_parameter(_sourceparamtypeid int
 **          09/07/2023 mem - Align assignment statements
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          01/10/2025 mem - Add table alias to fix ambiguous column reference
+**                         - Include manager name in the query results
 **
 *****************************************************/
 DECLARE
@@ -79,10 +80,11 @@ BEGIN
     If _returnCode <> '' Then
         RETURN QUERY
         SELECT 'Warning' AS status,
-               0 as param_type_id,
-               _message::citext as value,
-               0,
-               ''::citext as comment;
+               0 AS param_type_id,
+               _message::citext AS value,
+               ''::citext AS comment,
+               0 AS mgr_id,
+               ''::citext AS mgr_name;
         RETURN;
     End If;
 
@@ -111,22 +113,26 @@ BEGIN
     If _returnCode <> '' Then
         RETURN QUERY
         SELECT 'Warning' AS status,
-               0 as param_type_id,
-               _message::citext as value,
-               0 as mgr_id,
-               ''::citext as comment;
+               0 AS param_type_id,
+               _message::citext AS value,
+               ''::citext AS comment,
+               0 AS mgr_id,
+               ''::citext AS mgr_name;
         RETURN;
     End If;
 
     If Not _paramValueSearchText Is Null Then
         If _infoOnly Then
             RETURN QUERY
-            SELECT 'Preview' as Status,
+            SELECT 'Preview' AS Status,
                    _newParamTypeID AS TypeID,
                    (Replace(PV.value::citext, _paramValueSearchText::citext, _paramValueReplaceText::citext))::citext AS value,
+                   Coalesce(_commentOverride, '')::citext AS comment,
                    PV.mgr_id,
-                   Coalesce(_commentOverride, '')::citext AS comment
+                   M.mgr_name
             FROM mc.t_param_value PV
+                 INNER JOIN mc.t_mgrs M
+                   ON PV.mgr_id = M.mgr_id
             WHERE PV.param_type_id = _sourceParamTypeID;
             RETURN;
         End If;
@@ -138,17 +144,18 @@ BEGIN
                Coalesce(_commentOverride, '') AS comment
         FROM mc.t_param_value PV
         WHERE PV.param_type_id = _sourceParamTypeID;
-
     Else
-
         If _infoOnly Then
             RETURN QUERY
-            SELECT 'Preview' as Status,
+            SELECT 'Preview' AS Status,
                    _newParamTypeID AS TypeID,
                    Coalesce(_paramValueOverride, PV.value)::citext AS value,
+                   Coalesce(_commentOverride, '')::citext AS comment,
                    PV.mgr_id,
-                   Coalesce(_commentOverride, '')::citext AS comment
+                   M.mgr_name
             FROM mc.t_param_value PV
+                 INNER JOIN mc.t_mgrs M
+                   ON PV.mgr_id = M.mgr_id
             WHERE PV.param_type_id = _sourceParamTypeID;
             RETURN;
         End If;
@@ -163,8 +170,10 @@ BEGIN
     End If;
 
     RETURN QUERY
-        SELECT 'Duplicated' as Status, PV.param_type_id, PV.value, PV.mgr_id, PV.comment
+        SELECT 'Duplicated' AS Status, PV.param_type_id, PV.value, PV.comment, PV.mgr_id, M.mgr_name
         FROM mc.t_param_value PV
+             INNER JOIN mc.t_mgrs M
+               ON PV.mgr_id = M.mgr_id
         WHERE PV.param_type_id = _newParamTypeID;
 
 EXCEPTION
@@ -183,11 +192,11 @@ EXCEPTION
 
     RETURN QUERY
     SELECT 'Error' AS Status,
-           0 as param_type_id,
-           _message::citext as value,
-           0 as mgr_id,
-           ''::citext as comment;
-
+           0 AS param_type_id,
+           _message::citext AS value,
+           ''::citext AS comment,
+           0 AS mgr_id,
+           ''::citext AS mgr_name;
 END
 $$;
 
