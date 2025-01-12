@@ -81,6 +81,7 @@ CREATE OR REPLACE PROCEDURE sw.set_step_task_complete(IN _job integer, IN _step 
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          08/14/2024 mem - Set _logErrorsToPublicLogTable to false when calling post_log_entry with warning messages
 **          01/09/2025 mem - Add support for completion code 24 (CLOSEOUT_RESET_JOB_STEP_INSUFFICIENT_MEMORY)
+**                         - Add/update table t_job_step_reset_stats when the completion code is 23 or 24
 **          01/10/2025 mem - Log an error message when a job step has been reset over 35 times
 **
 *****************************************************/
