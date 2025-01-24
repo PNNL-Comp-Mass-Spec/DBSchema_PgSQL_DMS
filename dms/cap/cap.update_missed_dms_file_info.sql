@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE cap.update_missed_dms_file_info(IN _deletefromtableo
 **          06/28/2023 mem - Fix bug that deleted all rows in the temporary table when _datasetIDs was an empty string
 **                         - Ported to PostgreSQL
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
+**          01/15/2025 mem - Set _logErrorsToPublicLogTable to false when logging errors
 **
 *****************************************************/
 DECLARE
@@ -181,7 +182,7 @@ BEGIN
             If _infoOnly Then
                 RAISE INFO '%', _logMsg;
             Else
-                CALL public.post_log_entry (_logMsgType, _logMsg, 'Update_Missed_DMS_File_Info', 'cap', _duplicateEntryHoldoffHours => 22);
+                CALL public.post_log_entry (_logMsgType, _logMsg, 'Update_Missed_DMS_File_Info', 'cap', _duplicateEntryHoldoffHours => 22, _logErrorsToPublicLogTable => false);
             End If;
 
         End If;
