@@ -159,6 +159,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset(IN _datasetname text, IN _
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          07/31/2024 mem - Remove the leading semicolon when removing the requested run comment from the dataset comment
+**          01/22/2025 mem - Include the dataset age in the error message if the dataset already exists and it was created within the last two hours
 **
 *****************************************************/
 DECLARE
@@ -190,11 +191,13 @@ DECLARE
     _badCh text;
     _ratingID int;
     _datasetID int;
-    _curDSTypeID int;
-    _curDSInstID int;
-    _curDSStateID int;
-    _curDSRatingID int;
-    _newDSStateID int;
+    _existingDatasetTypeID int;
+    _existingDatasetInstID int;
+    _existingDatasetStateID int;
+    _existingDatasetRatingID int;
+    _existingDatasetCreated timestamp;
+    _datasetAgeMinutes numeric;
+    _newDatasetStateID int;
     _columnID int := -1;
     _cartConfigID int;
     _sepID int := 0;
@@ -446,9 +449,12 @@ BEGIN
         -- Is entry already in database?
         ---------------------------------------------------
 
-        SELECT dataset_id, instrument_id,
-               dataset_state_id, dataset_rating_id
-        INTO _datasetID, _curDSInstID, _curDSStateID, _curDSRatingID
+        SELECT dataset_id,
+               instrument_id,
+               dataset_state_id,
+               dataset_rating_id,
+               created
+        INTO _datasetID, _existingDatasetInstID, _existingDatasetStateID, _existingDatasetRatingID, _existingDatasetCreated
         FROM t_dataset
         WHERE dataset = _datasetName::citext;
 
@@ -462,12 +468,18 @@ BEGIN
             -- Cannot create an entry that already exists
 
             If _addingDataset Then
-                RAISE EXCEPTION 'Cannot add dataset "%" since it already exists', _datasetName;
+                _datasetAgeMinutes := Round(extract(epoch FROM CURRENT_TIMESTAMP - _existingDatasetCreated) / 60.0, 1);
+
+                If _datasetAgeMinutes <= 120 Then
+                    RAISE EXCEPTION 'Cannot add dataset "%" since it already exists (created % minutes ago)', _datasetName, _datasetAgeMinutes;
+                Else
+                    RAISE EXCEPTION 'Cannot add dataset "%" since it already exists', _datasetName;
+                End If;
             End If;
 
             -- Do not allow a rating change from 'Unreviewed' to any other rating within this procedure
 
-            If _curDSRatingID = -10 And _rating::citext <> 'Unreviewed' Then
+            If _existingDatasetRatingID = -10 And _rating::citext <> 'Unreviewed' Then
                 RAISE EXCEPTION 'Cannot change dataset rating from Unreviewed with this mechanism; use the Dataset Disposition process instead ("https://dms2.pnl.gov/dataset_disposition/search" or SP UpdateDatasetDispositions)';
             End If;
         End If;
@@ -717,7 +729,7 @@ BEGIN
         -- Check for instrument changing when dataset not in new state
         ---------------------------------------------------
 
-        If _mode::citext In ('update', 'check_update') and _instrumentID <> _curDSInstID and _curDSStateID <> 1 Then
+        If _mode::citext In ('update', 'check_update') and _instrumentID <> _existingDatasetInstID and _existingDatasetStateID <> 1 Then
             RAISE EXCEPTION 'Cannot change instrument if dataset not in "new" state';
         End If;
 
@@ -1087,9 +1099,9 @@ BEGIN
             BEGIN
 
                 If Coalesce(_aggregationJobDataset, false) Then
-                    _newDSStateID := 3;
+                    _newDatasetStateID := 3;
                 Else
-                    _newDSStateID := 1;
+                    _newDatasetStateID := 1;
                 End If;
 
                 If _logDebugMessages Then
@@ -1126,7 +1138,7 @@ BEGIN
                     _datasetTypeID,
                     _wellNumber,
                     _secSep,
-                    _newDSStateID,
+                    _newDatasetStateID,
                     _folderName,
                     _storagePathID,
                     _experimentID,
@@ -1167,7 +1179,7 @@ BEGIN
                     End If;
 
                     _targetType := 4;
-                    CALL public.alter_event_log_entry_user ('public', _targetType, _datasetID, _newDSStateID, _callingUser, _message => _alterEnteredByMessage);
+                    CALL public.alter_event_log_entry_user ('public', _targetType, _datasetID, _newDatasetStateID, _callingUser, _message => _alterEnteredByMessage);
 
                     _targetType := 8;
                     CALL public.alter_event_log_entry_user ('public', _targetType, _datasetID, _ratingID,     _callingUser, _message => _alterEnteredByMessage);
@@ -1379,7 +1391,7 @@ BEGIN
             WHERE dataset_id = _datasetID;
 
             -- If _callingUser is defined, Call public.alter_event_log_entry_user to alter the entered_by field in t_event_log
-            If _callingUser <> '' And _ratingID <> Coalesce(_curDSRatingID, -1000) Then
+            If _callingUser <> '' And _ratingID <> Coalesce(_existingDatasetRatingID, -1000) Then
                 _targetType := 8;
                 CALL public.alter_event_log_entry_user ('public', _targetType, _datasetID, _ratingID, _callingUser, _message => _alterEnteredByMessage);
             End If;
@@ -1535,7 +1547,7 @@ BEGIN
             -- Skip jobs with dataset_unreviewed = 1 when looking for existing jobs (these jobs were created before the dataset was dispositioned)
             ---------------------------------------------------
 
-            If _ratingID >= 2 And Coalesce(_curDSRatingID, -1000) In (-5, -6, -7) Then
+            If _ratingID >= 2 And Coalesce(_existingDatasetRatingID, -1000) In (-5, -6, -7) Then
                 If Not Exists (SELECT dataset_id FROM t_analysis_job WHERE dataset_id = _datasetID AND dataset_unreviewed = 0) Then
                     CALL public.schedule_predefined_analysis_jobs (
                                     _datasetName,
