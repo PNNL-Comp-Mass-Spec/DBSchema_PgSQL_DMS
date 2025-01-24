@@ -139,7 +139,6 @@ BEGIN
         ---------------------------------------------------
 
         If _taskAssigned AND Not _infoOnly Then
-
             UPDATE T_Dataset_Create_Queue
             SET State_ID = 2,
                 Processor = _processorName,
@@ -201,7 +200,6 @@ BEGIN
         ---------------------------------------------------
 
         If _infoOnly Then
-
             -- Preview the next _taskCountToPreview available dataset creation tasks
 
             RAISE INFO '';
