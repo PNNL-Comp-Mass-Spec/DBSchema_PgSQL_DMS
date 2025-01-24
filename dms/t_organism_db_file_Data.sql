@@ -1594,6 +1594,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 1918	Cellulophaga_baltica_18_Ocean_Phage_38_1_NCBI2015_Tryp_Pig_Bov_nmers_AANDENYALAA.fasta	1362	AANDENYALAA appended to nmers of length 1 through 8 for Cellulophaga_baltica_18_NCBIPrerelease_2015-09-22, Ocean_Phage_38_1_NCBI_2015-09-22, and Tryp_Pig_Bov	1	4806969	84493010	1	202409	2016-10-04 17:07:00	f
 1917	Cellulophaga_baltica_18_Ocean_Phage_38_1_NCBI2015_Tryp_Pig_Bov_nmers_AANDENYNYADAS.fasta	1362	AANDENYNYADAS appended to nmers of length 1 through 8 for Cellulophaga_baltica_18_NCBIPrerelease_2015-09-22, Ocean_Phage_38_1_NCBI_2015-09-22, and Tryp_Pig_Bov	1	4806969	94106916	1	211799	2016-10-04 16:17:00	f
 2955	Cellulophaga_baltica_18_Uniprot_2016-02-08_TrimProtMet.fasta	1362	Cellulophaga_baltica_18_Uniprot_2016-02-08.fasta with the N-terminal methionine removed from each protein	1	3770	1319735	1	1735	2018-03-20 16:13:00	f
+9077	Chaetoceros_muelleri_CCMP1316_FilteredModels1_2023-11-28.fasta	1852	Chaetoceros muelleri CCMP1316 proteins from JGI, provided by Paul Piehowski (file Chamuel1_FilteredModels1_proteins_2023-11-28.fasta); includes Tryp_Pig_Bov	1	15896	7229927	1	8624	2025-01-08 19:12:04.664904	f
 178	Chicken_MBP_2003-01-06.fasta	16		0	1	173	1	1	2003-01-08 06:42:00	f
 179	Chimeric_Prot_Mix_2002-03-04.fasta	16		0	5	1553	1	2	2002-03-04 14:23:00	f
 2956	Chryseobacterium_indologenes_Uniprot_20160324_TrimProtMet.fasta	1487	Chryseobacterium_indologenes_Uniprot_20160324.fasta with the N-terminal methionine removed from each protein	1	4208	1376369	1	1896	2018-03-20 16:13:00	f
@@ -3149,6 +3150,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 7347	EastRiver_Surface_Near-river_2018_2019_TrypPigBov_2021-10-15_25x_24.fasta	1718	Auto-created	0	646713	75199838	1	190450	2021-10-21 10:07:00	f
 7348	EastRiver_Surface_Near-river_2018_2019_TrypPigBov_2021-10-15_25x_25.fasta	1718	Auto-created	0	646568	75199864	1	190509	2021-10-21 10:07:00	f
 2964	Ecoli_K12_Uniprot_2017-12-22_TrimProtMet.fasta	3	Ecoli_K12_Uniprot_2017-12-22.fasta with the N-terminal methionine removed from each protein	1	4582	1415504	1	1977	2018-03-20 16:13:00	f
+9078	Entomoneis_sp_UTEX_11IV18_1_GeneModels_FilteredModels1_2023-03-01.fasta	1851	Entomoneis sp. UTEX_11IV18 proteins from JGI, provided by Paul Piehowski (file Ent11IV18_1_GeneModels_FilteredModels1_aa.fasta); includes Tryp_Pig_Bov	1	32736	12535766	1	14144	2025-01-08 19:12:04.664904	f
 2965	Erythrobacter_HL-111_2016-06-21_TrimProtMet.fasta	1508	Erythrobacter_HL-111_2016-06-21.fasta with the N-terminal methionine removed from each protein	1	2945	949387	1	1142	2018-03-20 16:13:00	f
 7531	Eubacteria_UniProt_TrEMBL_2022-03-02.fasta	1744	https://www.uniprot.org/uniprot/?query=eubacteria&sort=score	1	38175	27682433	1	33365	2022-05-02 14:09:00	f
 1428	Euplotes_Crassus_6ft_gt20_plus_frameshifts_Tryp_Pig_Bov_2015-12-15.fasta	1159	Proteins from 6 frame translation of contigs (from Vlad Petyuk)	1	2017910	98467616	1	151914	2015-12-16 15:13:00	f
@@ -6595,7 +6597,6 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 201	PepStds_RJM_2004-01-06.fasta	16		0	14	203	1	1	2004-01-07 17:11:00	f
 202	Peptide_Mix_RJM_2002-03-18.fasta	16		0	20	277	1	1	2002-03-18 11:53:00	f
 203	Peptide_Mix_RJM_2002-04-03.fasta	16		0	23	306	1	2	2001-04-03 00:00:00	f
-1376	PermaFrost_proteins_TrypPigBovContams_2015-06-26.fasta	31	metaproteome from Jansson Nature paper dealing with Perma frost derived samples	1	2269015	504332370	1	872808	2015-12-11 12:49:00	f
 2057	PermaFrost_proteins_TrypPigBovContams_2015-06-26_15x_01.fasta	31	Auto-created	0	151025	33622173	1	57054	2016-11-05 06:50:00	f
 2058	PermaFrost_proteins_TrypPigBovContams_2015-06-26_15x_02.fasta	31	Auto-created	0	151121	33622061	1	57059	2016-11-05 06:50:00	f
 2059	PermaFrost_proteins_TrypPigBovContams_2015-06-26_15x_03.fasta	31	Auto-created	0	151131	33622082	1	57058	2016-11-05 06:50:00	f
@@ -6668,6 +6669,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 2099	Permafrost_moleculo_contigs_TruSeqApp_prodigal_TrypPigBov_2016-11-04_15x_13.fasta	31	Auto-created	0	52653	14765626	1	22463	2016-11-07 16:06:00	f
 2100	Permafrost_moleculo_contigs_TruSeqApp_prodigal_TrypPigBov_2016-11-04_15x_14.fasta	31	Auto-created	0	52392	14765592	1	22426	2016-11-07 16:06:00	f
 2101	Permafrost_moleculo_contigs_TruSeqApp_prodigal_TrypPigBov_2016-11-04_15x_15.fasta	31	Auto-created	0	52795	14764900	1	22483	2016-11-07 16:06:00	f
+1376	Permafrost_proteins_TrypPigBovContams_2015-06-26.fasta	31	Metaproteome from Jansson Nature paper dealing with permafrost derived samples	1	2269015	504332370	1	872808	2015-12-11 12:49:00	f
 2148	Pesticide_all_gDNA_contigs_1k_prodigal_TrypPigBov_2017-02-21.fasta	31	From Rick White III	1	1350499	297455818	1	472673	2017-02-21 09:49:00	f
 2213	Pesticide_all_gDNA_contigs_1k_prodigal_TrypPigBov_2017-02-21_15x_01.fasta	31	Auto-created	0	90265	19830299	1	30802	2017-04-28 11:53:00	f
 2214	Pesticide_all_gDNA_contigs_1k_prodigal_TrypPigBov_2017-02-21_15x_02.fasta	31	Auto-created	0	90003	19830716	1	30770	2017-04-28 11:53:00	f
@@ -8508,6 +8510,12 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 5046	Wrighton_metagenomes_All_315bins_concatenated_faa_TrypPigBov_2019-02-21_5x_4.fasta	1482	Auto-created	0	149332	47799116	1	67940	2019-02-21 20:12:00	f
 5047	Wrighton_metagenomes_All_315bins_concatenated_faa_TrypPigBov_2019-02-21_5x_5.fasta	1482	Auto-created	0	149226	47798591	1	67972	2019-02-21 20:12:00	f
 7536	Wrighton_metagenomes_all_ColumbiaRiver_assemblies_ge2point5kb_clean_TrypPigBov_2022-05-02.fasta	1482	Rodriguez Ramos,Josue <Josue.Rodriguez_Ramos@colostate.edu>;SBR proteome to unbinned scaffolds? We have concatenated all the assembled scaffolds >2.5k	1	1594717	407685857	1	466183	2022-05-02 16:38:00	f
+9079	YNP_CB_003_JGI_TrypPigBov_2025-01-20.fasta	1795	Metaproteome for hot spring (CB-003) sediment microbial community from Yellowstone National Park, WY, United States provided by Joelie Van Beek <joeliemvb@gmail.com> from Montana State University.	1	592069	97337940	1	137216	2025-01-21 15:46:20.231531	f
+9080	YNP_CB_020_JGI_TrypPigBov_2025-01-20.fasta	1795	Metaproteome for hot spring (CB-020) sediment microbial community from Yellowstone National Park, WY, United States provided by Joelie Van Beek <joeliemvb@gmail.com> from Montana State University.	1	1016188	221361084	1	301056	2025-01-21 15:46:20.231531	f
+9081	YNP_CB_052_JGI_Illumina_TrypPigBov_2025-01-20.fasta	1795	Metaproteome for hot spring (CB-052) sediment microbial community from Yellowstone National Park, WY, United States provided by Joelie Van Beek <joeliemvb@gmail.com> from Montana State University. (Illumina sequencing)	1	458751	91701990	1	126976	2025-01-21 15:46:20.231531	f
+9082	YNP_CB_052_JGI_PacBio_TrypPigBov_2025-01-20.fasta	1795	Metaproteome for hot spring (CB-052) sediment microbial community from Yellowstone National Park, WY, United States provided by Joelie Van Beek <joeliemvb@gmail.com> from Montana State University. (PacBio sequencing)	1	193941	51804371	1	68506	2025-01-21 15:46:20.231531	f
+9083	YNP_CB_058_JGI_TrypPigBov_2025-01-20.fasta	1795	Metaproteome for hot spring (CB-058) sediment microbial community from Yellowstone National Park, WY, United States provided by Joelie Van Beek <joeliemvb@gmail.com> from Montana State University.	1	795898	149655462	1	210944	2025-01-21 15:46:20.231531	f
+9084	YNP_CB_070_JGI_TrypPigBov_2025-01-20.fasta	1795	Metaproteome for hot spring (CB-070) sediment microbial community from Yellowstone National Park, WY, United States provided by Joelie Van Beek <joeliemvb@gmail.com> from Montana State University.	1	760101	167591826	1	227328	2025-01-21 15:46:20.231531	f
 7579	YNP_MS_Metagenome_TrypPigBov_2022-06-03.fasta	1579	Metagenome from dominant species of Mushroom and Octopus Springs of YNP; compiled as requested by David Ward (umbdw@montana.edu)	1	67169	21347110	1	29304	2022-06-07 14:26:00	f
 7585	YNP_MS_Metagenome_TrypPigBov_2022-06-21.fasta	1579	Metagenome from dominant species of Mushroom and Octopus Springs of YNP; compiled as requested by David Ward (umbdw@montana.edu); same proteins as YNP_MS_Metagenome_TrypPigBov_2022-06-03.fasta but with new protein names	1	67169	21347110	1	29566	2022-06-21 20:46:00	f
 216	YXXFXK.fasta	16		0	6860	89154	1	229	2004-09-03 17:23:00	f
@@ -8751,7 +8759,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 -- Name: t_organism_db_file_org_db_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9074, true);
+SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9084, true);
 
 
 --

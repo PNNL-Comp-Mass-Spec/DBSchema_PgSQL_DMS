@@ -108,8 +108,11 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1261	ChloroAA	Chloroacetamidine	56.0374464	56.06664	-	PNNL		CAA	H4 C2 N2
 1572	CitrBD	Citrulline + 2,3-Butanedione	50.999666	51.0434	-	PNNL		\N	C(4) H(1) N(-1) O
 1557	CitrButanedione	Citrulline + 2,3-Butanedione (+67.0183 is the wrong mass; instead, use CitrBD with mass +50.999666)	67.0183888	67.06602	-	PNNL		\N	C(4) H(3) O
+1575	CitrCyclohexanedione	Citrulline + cyclohexanedione	75.0056	75	-	PNNL		\N	
 1558	CitrCysteamine	Citrulline + 2,3-Butanedione + Cysteamine	142.0326578	142.19986	-	PNNL		\N	C(6) H(8) O N S
 1559	CitrMercapto	Citrulline + 2,3-Butanedione + Mercapto...	348.1527836	348.51004	-	PNNL		\N	C(13) H(26) O(2) N(5) S(2)
+1577	CitrMethylglyoxal	Citrulline + methylglyoxal	54.9968	55	-	PNNL		\N	
+1576	CitrPhenylglyoxal	Citrulline + phenylglyoxal	117.0148	117	-	PNNL		\N	
 1196	ClickBio	Click-Bio enrichment compound	539.252	\N	-	PNNL		ClickBio	\N
 1469	Crotonyl	Crotonylation	68.026215	\N	-	UniMod	Crotonyl	Crotonylation	H(4) C(4) O
 1337	Cyano	Cyano	24.995249	25.0095	-	UniMod	Cyano	Cyano	H(-1) C1 N1
@@ -468,7 +471,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 -- Name: t_mass_correction_factors_mass_correction_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1574, true);
+SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1577, true);
 
 
 --
