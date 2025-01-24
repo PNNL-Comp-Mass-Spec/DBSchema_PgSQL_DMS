@@ -142,6 +142,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_sample_prep_request(IN _requestnam
 **                         - Verify that _requestName is not an empty string
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          01/24/2025 mem - Set _estimatedMSRuns to 'None' if an empty string
 **
 *****************************************************/
 DECLARE
@@ -280,8 +281,11 @@ BEGIN
             _state := 'Closed';
         End If;
 
-        If _estimatedMSRuns = '' Then
-            RAISE EXCEPTION 'Estimated number of MS runs not specified; it should be 0 or a positive number';
+        If _estimatedMSRuns IN ('', '-', '?', '??') Then
+            _estimatedMSRuns := 'None';
+            _message := public.append_to_text(_message, 'Set "MS Runs To Be Generated" to "None"');
+        ElsIf _estimatedMSRuns::citext = 'none' Then
+            _estimatedMSRuns := 'None';
         End If;
 
         If Not _blockAndRandomizeSamples::citext In ('Yes', 'No', 'NA') Then
@@ -351,11 +355,15 @@ BEGIN
 
         If Not (_estimatedMSRuns::citext In ('0', 'None')) Then
             If _instrumentGroup::citext In ('none', 'na') Then
-                RAISE EXCEPTION 'Estimated runs must be 0 or "none" when instrument group is: %', _instrumentGroup;
+                RAISE EXCEPTION 'Estimated MS runs must be 0 or "None" when instrument group is: %', _instrumentGroup;
             End If;
 
             If public.try_cast(_estimatedMSRuns, null::int) Is Null Then
-                RAISE EXCEPTION 'Estimated runs must be an integer or "none"';
+                RAISE EXCEPTION 'Estimated MS runs must be an integer or "None"';
+            End If;
+
+            If public.try_cast(_estimatedMSRuns, null::int) < 0 Then
+                RAISE EXCEPTION 'Estimated MS runs cannot be negative';
             End If;
 
             If _instrumentGroup = '' Then
@@ -476,11 +484,15 @@ BEGIN
                 _tissueNameOrID   => _tissue,
                 _tissueIdentifier => _tissueIdentifier,     -- Output
                 _tissueName       => _tissueName,           -- Output
-                _message          => _message,              -- Output
+                _message          => _msg,                  -- Output
                 _returnCode       => _returnCode);          -- Output
 
         If _returnCode <> '' Then
-            RAISE EXCEPTION 'Could not resolve tissue name or id: "%"', _tissue;
+            If Trim(Coalesce(_msg, '')) = '' Then
+                RAISE EXCEPTION 'Could not resolve tissue name or id: "%"', _tissue;
+            Else
+                RAISE EXCEPTION 'Could not resolve tissue name or id; %', _msg;
+            End If;
         End If;
 
         ---------------------------------------------------
@@ -501,15 +513,15 @@ BEGIN
                         _requestedPersonnel             => _requestedPersonnel,     -- Input/Output
                         _assignedPersonnel              => _assignedPersonnel,      -- Input/Output
                         _requireValidRequestedPersonnel => true,
-                        _message                        => _message,                -- Output
+                        _message                        => _msg,                    -- Output
                         _returnCode                     => _returnCode);            -- Output
 
         If _returnCode <> '' Then
-            If Coalesce(_message, '') = '' Then
-                _message := 'Error validating the requested and assigned personnel';
+            If Trim(Coalesce(_msg, '')) = '' Then
+                _msg := 'Error validating the requested and assigned personnel';
             End If;
 
-            RAISE EXCEPTION '%', _message;
+            RAISE EXCEPTION '%', _msg;
         End If;
 
         ---------------------------------------------------
