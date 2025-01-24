@@ -53,6 +53,7 @@ CREATE OR REPLACE PROCEDURE public.rename_dataset(IN _datasetnameold text DEFAUL
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          08/30/2024 mem - Pass a single backslash to Position()
 **          01/08/2025 mem - Append '\LC' to the dataset directory name when updating an LCDatasetCapture job
+**          01/23/2025 mem - Add the Script column to queries that insert rows into Tmp_JobsToUpdate
 **
 *****************************************************/
 DECLARE
@@ -703,8 +704,8 @@ BEGIN
 
     TRUNCATE Tmp_JobsToUpdate;
 
-    INSERT INTO Tmp_JobsToUpdate (Job)
-    SELECT Job
+    INSERT INTO Tmp_JobsToUpdate (Job, Script)
+    SELECT Job, Script
     FROM sw.t_jobs
     WHERE Dataset = _datasetNameOld::citext
     ORDER BY Job;
@@ -835,8 +836,8 @@ BEGIN
     --   3: Interest
     --   5: Released
 
-    INSERT INTO Tmp_JobsToUpdate (Job)
-    SELECT Job
+    INSERT INTO Tmp_JobsToUpdate (Job, Script)
+    SELECT Job, AnalysisTool
     FROM V_Analysis_Job_Export
     WHERE NOT _infoOnly AND Dataset = _datasetNameNew::citext
           OR  _infoOnly AND Dataset = _datasetNameOld::citext
