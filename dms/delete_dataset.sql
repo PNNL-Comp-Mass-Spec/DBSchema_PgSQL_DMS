@@ -40,7 +40,7 @@ CREATE OR REPLACE PROCEDURE public.delete_dataset(IN _datasetname text, IN _info
 **          09/27/2018 mem - Added parameter _infoOnly
 **                         - Now showing the unconsumed requested run
 **          09/28/2018 mem - Flag AutoReq requested runs as 'To be deleted' instead of 'To be marked active'
-**          11/16/2018 mem - Delete dataset file info from cap.t_dataset_info_xml
+**          11/16/2018 mem - When previewing dataset deletion, show any rows in cap.t_dataset_info_xml
 **                           Change the default for _infoOnly to true
 **                           Rename the first parameter
 **          04/17/2019 mem - Delete rows in t_cached_dataset_stats (previously t_cached_dataset_instruments)
@@ -52,6 +52,7 @@ CREATE OR REPLACE PROCEDURE public.delete_dataset(IN _datasetname text, IN _info
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          05/08/2024 mem - Delete rows from t_cached_dataset_stats instead of t_cached_dataset_instruments
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          01/23/2025 mem - Delete dataset file info from cap.t_dataset_info_xml
 **
 *****************************************************/
 DECLARE
@@ -279,7 +280,7 @@ BEGIN
 
         INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
         SELECT 'To be deleted' AS Action,
-               'Capture task',
+               'Capture Task',
                Jobs.job,
                Jobs.script,
                format('State: %s, Imported: %s', Jobs.State, public.timestamp_text(Jobs.imported))
@@ -508,6 +509,17 @@ BEGIN
     End If;
 
     DELETE FROM t_dataset_info
+    WHERE dataset_id = _datasetID;
+
+    ---------------------------------------------------
+    -- Delete any entries in cap.t_dataset_info_xml
+    ---------------------------------------------------
+
+    If _showDebug Then
+        RAISE INFO 'Delete dataset ID % from cap.t_dataset_info_xml', _datasetID;
+    End If;
+
+    DELETE FROM cap.t_dataset_info_xml
     WHERE dataset_id = _datasetID;
 
     ---------------------------------------------------
