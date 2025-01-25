@@ -142,7 +142,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_sample_prep_request(IN _requestnam
 **                         - Verify that _requestName is not an empty string
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
-**          01/24/2025 mem - Set _estimatedMSRuns to 'None' if an empty string
+**          01/24/2025 mem - Set _estimatedMSRuns to '0' if an empty string, 'None', or 'na'
 **
 *****************************************************/
 DECLARE
@@ -281,11 +281,11 @@ BEGIN
             _state := 'Closed';
         End If;
 
-        If _estimatedMSRuns IN ('', '-', '?', '??') Then
-            _estimatedMSRuns := 'None';
-            _message := public.append_to_text(_message, 'Set "MS Runs To Be Generated" to "None"');
-        ElsIf _estimatedMSRuns::citext = 'none' Then
-            _estimatedMSRuns := 'None';
+        If _estimatedMSRuns IN ('-', '?', '??') Then
+            _estimatedMSRuns := '0';
+            _message := public.append_to_text(_message, 'Set "MS Runs To Be Generated" to "0"');
+        ElsIf _estimatedMSRuns::citext IN ('', 'None', 'na', 'n/a') Then
+            _estimatedMSRuns := '0';
         End If;
 
         If Not _blockAndRandomizeSamples::citext In ('Yes', 'No', 'NA') Then
@@ -355,7 +355,7 @@ BEGIN
 
         If Not (_estimatedMSRuns::citext In ('0', 'None')) Then
             If _instrumentGroup::citext In ('none', 'na') Then
-                RAISE EXCEPTION 'Estimated MS runs must be 0 or "None" when instrument group is: %', _instrumentGroup;
+                RAISE EXCEPTION 'Estimated MS runs must be 0 when instrument group is: %', _instrumentGroup;
             End If;
 
             If public.try_cast(_estimatedMSRuns, null::int) Is Null Then
@@ -388,7 +388,7 @@ BEGIN
                 INTO _instrumentGroupMatch
                 FROM t_instrument_name
                 WHERE instrument = _instrumentGroup::citext AND
-                      status <> 'inactive';
+                      status <> 'Inactive';
 
                 If FOUND Then
                     _instrumentGroup := _instrumentGroupMatch;
