@@ -5,6 +5,8 @@
 CREATE VIEW pc.v_archived_output_files AS
  SELECT aof.archived_file_id,
     xref.protein_collection_id,
+    pccol.collection_name,
+    pccol.num_proteins AS proteins,
     aof.authentication_hash,
     aof.archived_file_path,
     fs.archived_file_state,
@@ -13,10 +15,11 @@ CREATE VIEW pc.v_archived_output_files AS
     aof.file_modification_date,
     aof.creation_options,
     round((((aof.file_size_bytes)::numeric / 1024.0) / 1024.0), 3) AS file_size_mb
-   FROM (((pc.t_archived_output_files aof
+   FROM ((((pc.t_archived_output_files aof
      JOIN pc.t_archived_output_file_collections_xref xref ON ((aof.archived_file_id = xref.archived_file_id)))
      JOIN pc.t_archived_file_states fs ON ((aof.archived_file_state_id = fs.archived_file_state_id)))
-     JOIN pc.t_archived_file_types ft ON ((aof.archived_file_type_id = ft.archived_file_type_id)));
+     JOIN pc.t_archived_file_types ft ON ((aof.archived_file_type_id = ft.archived_file_type_id)))
+     LEFT JOIN pc.t_protein_collections pccol ON ((xref.protein_collection_id = pccol.protein_collection_id)));
 
 
 ALTER VIEW pc.v_archived_output_files OWNER TO d3l243;
