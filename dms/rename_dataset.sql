@@ -1,8 +1,8 @@
 --
--- Name: rename_dataset(text, text, integer, boolean, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: rename_dataset(text, text, integer, boolean, boolean, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.rename_dataset(IN _datasetnameold text DEFAULT ''::text, IN _datasetnamenew text DEFAULT ''::text, IN _newrequestedrunid integer DEFAULT 0, IN _infoonly boolean DEFAULT true, IN _showrequestedrunsbyexperiment boolean DEFAULT true, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.rename_dataset(IN _datasetnameold text DEFAULT ''::text, IN _datasetnamenew text DEFAULT ''::text, IN _newrequestedrunid integer DEFAULT 0, IN _infoonly boolean DEFAULT true, IN _showrequestedrunsbyexperiment boolean DEFAULT true, IN _showrenamecommands boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -19,6 +19,7 @@ CREATE OR REPLACE PROCEDURE public.rename_dataset(IN _datasetnameold text DEFAUL
 **    _infoOnly                         When true, preview updates
 **    _showRequestedRunsByExperiment    When true, show requested runs with an experiment name that starts with the experiment name associated with the dataset
 **                                      Set this to false if renaming a large number of datasets but not changing the request ID, since request name lookups can be slow
+**    _showRenameCommands               When true, and when _infoOnly is true, show directory and file rename commands, even if the new dataset name already exists
 **    _message                          Status message
 **    _returnCode                       Return code
 **
@@ -54,6 +55,8 @@ CREATE OR REPLACE PROCEDURE public.rename_dataset(IN _datasetnameold text DEFAUL
 **          08/30/2024 mem - Pass a single backslash to Position()
 **          01/08/2025 mem - Append '\LC' to the dataset directory name when updating an LCDatasetCapture job
 **          01/23/2025 mem - Add the Script column to queries that insert rows into Tmp_JobsToUpdate
+**          02/23/2025 mem - Change _requestedRunState to citext
+**                         - Add _showRenameCommands (only applicable if _infOnly is true)
 **
 *****************************************************/
 DECLARE
@@ -71,7 +74,7 @@ DECLARE
     _newExperimentID int;
     _newExperiment text;
     _requestedRunInfo record;
-    _requestedRunState text;
+    _requestedRunState citext;
     _datasetInfo record;
     _suffixID int;
     _fileSuffix text;
@@ -134,6 +137,7 @@ BEGIN
     _newRequestedRunID             := Coalesce(_newRequestedRunID, 0);
     _infoOnly                      := Coalesce(_infoOnly, false);
     _showRequestedRunsByExperiment := Coalesce(_showRequestedRunsByExperiment, true);
+    _showRenameCommands            := Coalesce(_showRenameCommands, false);
 
     If _datasetNameOld = '' Then
         _message := 'Old dataset name was not specified; unable to continue';
@@ -200,21 +204,33 @@ BEGIN
             _datasetAlreadyRenamed := true;
         End If;
     Else
-
         -- Old dataset name found; make sure the new name is not already in use
         If Exists (SELECT dataset_id FROM t_dataset WHERE dataset = _datasetNameNew::citext) Then
-            _message := format('New dataset name already exists; unable to rename %s to %s', _datasetNameOld, _datasetNameNew);
-            RAISE WARNING '%', _message;
-            RETURN;
-        End If;
+            If _showRenameCommands Then
+                RAISE INFO 'New dataset name already exists; will use the experiment name associated with the new dataset name';
+                _datasetAlreadyRenamed := true;
 
-        -- Lookup the experiment for this dataset (using the old name)
-        SELECT E.experiment
-        INTO _experiment
-        FROM t_dataset ds
-             INNER JOIN t_experiments E
-               ON DS.exp_id = E.exp_id
-        WHERE DS.dataset = _datasetNameOld::citext;
+                -- Lookup the experiment for this dataset (using the new dataset name)
+                SELECT E.experiment
+                INTO _experiment
+                FROM t_dataset ds
+                     INNER JOIN t_experiments E
+                       ON DS.exp_id = E.exp_id
+                WHERE DS.dataset = _datasetNameNew::citext;
+            Else
+                _message := format('New dataset name already exists; unable to rename %s to %s', _datasetNameOld, _datasetNameNew);
+                RAISE WARNING '%', _message;
+                RETURN;
+            End If;
+        Else
+            -- Lookup the experiment for this dataset (using the old dataset name)
+            SELECT E.experiment
+            INTO _experiment
+            FROM t_dataset ds
+                 INNER JOIN t_experiments E
+                   ON DS.exp_id = E.exp_id
+            WHERE DS.dataset = _datasetNameOld::citext;
+        End If;
     End If;
 
     If _datasetID = 0 Then
@@ -1032,5 +1048,5 @@ END
 $$;
 
 
-ALTER PROCEDURE public.rename_dataset(IN _datasetnameold text, IN _datasetnamenew text, IN _newrequestedrunid integer, IN _infoonly boolean, IN _showrequestedrunsbyexperiment boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.rename_dataset(IN _datasetnameold text, IN _datasetnamenew text, IN _newrequestedrunid integer, IN _infoonly boolean, IN _showrequestedrunsbyexperiment boolean, IN _showrenamecommands boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
