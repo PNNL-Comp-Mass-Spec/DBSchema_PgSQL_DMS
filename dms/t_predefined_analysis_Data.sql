@@ -862,6 +862,10 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 1869	85	50	LTQ_FT	Ascend%		CPTAC%		CPTAC4[_]LIHC[_]NCI7%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_Stat_CysAlk_Precursor380-1000.txt	DiaNN_Standard.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01,iRT_Fusion	seq_direction=forward,filetype=fasta	3		1		2024-12-16 11:11:50.321773	D3L243	86	1	0	2024-12-16 11:11:50.321773
 1870	85	50	LTQ_FT	Ascend%		CPTAC%		CPTAC4[_]LIHC[_]C3%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_Stat_CysAlk_Precursor380-1000.txt	DiaNN_Standard.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01,iRT_Fusion	seq_direction=forward,filetype=fasta	3		1		2024-12-16 11:12:04.255965	D3L243	86	1	0	2024-12-16 11:12:04.255965
 1871	85	13	LTQ_FT	Astral%		QC-Standard		QC[_]PP[_]MCF-7%				%QC%			%HCD-HMSn%					0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_STY_Phos_NTermAcet_Stat_CysAlk_Precursor400-1000.txt	DiaNN_Standard.xml	8	na	H_sapiens_UniProt_SPROT_2016-04-13_QC_PP_proteins,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		1	Label-free, enriched human QC for phosphopeptide samples	2025-01-07 17:24:13.490119	D3L243	86	1	0	2025-01-07 17:24:13.490119
+1872	89	56	LTQ_FT	%		CPTAC%		%CPTAC4[_]SKCM[_]Retro[_]W[_]PNNL[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_PartTryp_DynMetOx_Stat_CysAlk_TMT_16Plex_20ppmParTol.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2025-01-30 14:02:43.920543	D3L243	90	1	0	2025-01-30 14:02:43.920543
+1873	89	56	LTQ_FT	%		CPTAC%		%CPTAC4[_]SKCM[_]Retro[_]P[_]PNNL[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynSTYPhos_Stat_CysAlk_TMT_16Plex_Protocol1_20ppmParTol.txt	MzML_StatCysAlk_S_Phospho_Dyn_TY_Phospho_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2025-01-30 14:02:47.308628	D3L243	90	1	0	2025-01-30 14:02:47.308628
+1874	89	56	LTQ_FT	%		CPTAC%		%CPTAC4[_]SKCM[_]Retro[_]A[_]PNNL[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynMetOx_TMTExclusive_K_Acetyl_K_Carbamyl_N_Deamid_Stat_CysAlk_TMT_16Plex_20ppmParTol_PlusOne_IsotopeError.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2025-01-30 14:02:50.784237	D3L243	90	1	0	2025-01-30 14:02:50.784237
+1875	89	56	LTQ_FT	%		CPTAC%		%CPTAC4[_]SKCM[_]Retro[_]U[_]PNNL[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynMetOx_TMTExclusive_K_Ubiq_Stat_CysAlk_TMT_16Plex_20ppmParTol_PlusOne_IsotopeError.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2025-01-30 14:02:55.091473	D3L243	90	1	0	2025-01-30 14:02:55.091473
 \.
 
 
@@ -869,7 +873,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 -- Name: t_predefined_analysis_predefine_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1871, true);
+SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1875, true);
 
 
 --

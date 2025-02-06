@@ -176,7 +176,7 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 1175	Human_Mars_14_100mm_23	Multi Affinity Removal Column	5188-6558	101196117P	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Active	D3L365	AH (J. Jacobs). Exp 10/30/2022	2021-01-08 10:54:59
 1176	ZORBAX_008	ZORBAX	custom	USDHP01096	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	Exclusively for MoTrPAC - human study. POC-P.Piehowski; M.Gritsenko	2021-02-17 13:49:47
 1177	Human_Mars_14_100mm_24	Multi Affinity Removal Column	5188-6558	101230463E	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Active	D3L365	NAMRU use only (POC - Marina Gritsenko). Exp 01/30/2023	2021-03-15 15:43:31
-1178	ZORBAX_009	ZORBAX	custom	USDHP01044	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	For Clinical Projects; POC-Marina Gritsenko	2021-04-08 15:55:48
+1178	ZORBAX_009	ZORBAX	custom	USDHP01044	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Retired	D3L365	For Clinical Projects; POC-Marina Gritsenko	2021-04-08 15:55:48
 1179	Human_Mars_14_50mm_08	Multi Affinity Removal Column	5188-6557	101254264G	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Active	D3M765	See Tao Liu before using., Exp 4/30/23, Resin 0006551525	2021-06-09 07:46:41
 1180	Human_Mars_14_100mm_25	Multi Affinity Removal Column	5188-6558	101125426K	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Active	D3L365	 EMSL_COVID_Trivedi (P.Piehowski) Exp 02/28/2023	2021-08-21 13:25:09
 1181	Human_Mars_14_50mm_09	Multi Affinity Removal Column	5188-6557	101312277B	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Retired	D3M765	Moonshot Project. See Tao Liu before using., Exp 8/30/23, Resin 0006583844	2021-08-27 13:08:49
@@ -215,6 +215,7 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 1214	ZORBAX_014	ZORBAX	custom	USDHP01255	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	Exclusively for CPTAC4. POC- M. Gritsenko	2024-08-07 11:57:44.862537
 1215	XBridge_022	Waters XBridge	186003117	02493418613896	Waters	Silica	5 um	C18	4.6 mm	10 mm	250 mm	Active	D3H534	Heather's column. Please ask before using.	2024-08-20 14:25:20.413553
 1216	XBridge_023	Waters XBridge	186003117	02493405212488	Waters	Silica	5 um	C18	4.6 mm	10 mm	250 mm	Active	D3M765	Athena's new column. Please ask before using.	2024-09-03 12:45:18.569008
+1217	ZORBAX_015	ZORBAX	custom	USDHP01257	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	For Clinical Projects; POC-Marina Gritsenko	2025-01-29 16:30:27.389084
 \.
 
 
@@ -222,7 +223,7 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 -- Name: t_prep_lc_column_prep_column_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_prep_lc_column_prep_column_id_seq', 1216, true);
+SELECT pg_catalog.setval('public.t_prep_lc_column_prep_column_id_seq', 1217, true);
 
 
 --

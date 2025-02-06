@@ -5443,7 +5443,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 6997	LCA_Trachymyrmex_3300012997_JGI.fasta	1135	Leafcutter ant proteins from JGI	1	644865	61737536	1	74394	2021-05-27 17:29:00	f
 6998	LCA_Trachymyrmex_3300013023_JGI.fasta	1135	Leafcutter ant proteins from JGI	1	607042	55339085	1	67276	2021-05-27 17:29:00	f
 6999	LCA_Trachymyrmex_3300013025_JGI.fasta	1135	Leafcutter ant proteins from JGI	1	910609	85516736	1	103400	2021-05-27 17:29:00	f
-8157	LCB070_proteome_TrypPigBov_2024-01-17.fasta	1795	Meta-proteome for Lower Culex Basin hot spring number 70 at YellowStone National Park provided by Stavros Trimmer <strimm20@gmail.com> from Montana State University.	1	760101	167591826	1	223232	2024-01-18 18:37:00	f
+8157	LCB070_proteome_TrypPigBov_2024-01-17.fasta	1795	Metaproteome for Lower Culex Basin hot spring number 70 at YellowStone National Park provided by Stavros Trimmer <strimm20@gmail.com> from Montana State University. Disabled since this is a duplicate of LCB070_proteome_TrypPigBov_2024-01-17.fasta	0	760101	167591826	1	223232	2024-01-18 18:37:00	f
 7928	LCB70_R2_proteome_TrypPigBov_2023-10-13.fasta	1795	Verstraetearchaeota LCB70 culture metagenome provided by Anthony Kohtz (akohtz468@gmail.com) from Montana State University. Target organism (Methanosuratincola yellowstonensis LCB70) IDs start with MyLCB70.	1	58396	16612085	1	20259	2023-10-13 10:44:00	f
 1335	LLNL_ESCF_Metagenome_TrypPigBov_2015-11-06.fasta	31	LLNL ESCF Metatranscriptome of microbial mat community	1	4081468	537051167	1	631832	2015-11-17 12:30:00	f
 1361	LLNL_ESCF_Metagenome_TrypPigBov_2015-11-06_15x_01.fasta	31	Auto-created	0	271878	35803311	1	50170	2015-11-17 12:30:00	f
@@ -5462,16 +5462,16 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 1374	LLNL_ESCF_Metagenome_TrypPigBov_2015-11-06_15x_14.fasta	31	Auto-created	0	272131	35803744	1	50184	2015-11-17 12:30:00	f
 1375	LLNL_ESCF_Metagenome_TrypPigBov_2015-11-06_15x_15.fasta	31	Auto-created	0	271545	35803154	1	50152	2015-11-17 12:30:00	f
 644	LMDASGrenamed042612.fasta	1275	DNA loci file for Tick spit	1	21797	4500505	1	13885	2012-06-14 10:44:00	f
-8161	LSSW_07cm_wbins_proteome_TrypPigBov_2024-01-17.fasta	1795	Little Sippewissett salt marsh meta-proteome from the depth of 07cm provided by Stavros Trimmer <strimm20@gmail.com> from Montana State University.	1	1574337	263216230	1	362496	2024-01-18 18:37:00	f
+8161	LSSW_07cm_wbins_proteome_TrypPigBov_2024-01-17.fasta	1795	Little Sippewissett salt marsh metaproteome from the depth of 07cm provided by Stavros Trimmer <strimm20@gmail.com> from Montana State University.	1	1574337	263216230	1	362496	2024-01-18 18:37:00	f
 8198	LSSW_07cm_wbins_proteome_TrypPigBov_2024-01-17_5x_1.fasta	1795	Auto-created	0	314746	52643186	1	72645	2024-02-23 11:02:00	f
 8199	LSSW_07cm_wbins_proteome_TrypPigBov_2024-01-17_5x_2.fasta	1795	Auto-created	0	314982	52643156	1	72672	2024-02-23 11:02:00	f
 8200	LSSW_07cm_wbins_proteome_TrypPigBov_2024-01-17_5x_3.fasta	1795	Auto-created	0	314834	52643133	1	72634	2024-02-23 11:02:00	f
 8201	LSSW_07cm_wbins_proteome_TrypPigBov_2024-01-17_5x_4.fasta	1795	Auto-created	0	314809	52643241	1	72662	2024-02-23 11:02:00	f
 8202	LSSW_07cm_wbins_proteome_TrypPigBov_2024-01-17_5x_5.fasta	1795	Auto-created	0	314966	52643514	1	72664	2024-02-23 11:02:00	f
-8160	LSSW_09cm_wbins_proteome_TrypPigBov_2024-01-17.fasta	1795	Little Sippewissett salt marsh meta-proteome from the depth of 9cm provided by Stavros Trimmer <strimm20@gmail.com> from Montana State University.	1	1884535	320187021	1	439296	2024-01-18 18:37:00	f
-8159	LSSW_11cm_wbins_proteome_TrypPigBov_2024-01-17.fasta	1795	Little Sippewissett salt marsh meta-proteome from the depth of 11cm provided by Stavros Trimmer <strimm20@gmail.com> from Montana State University.	1	950531	148100075	1	205824	2024-01-18 18:37:00	f
-8158	LSSW_13cm_wbins_proteome_TrypPigBov_2024-01-17.fasta	1795	Little Sippewissett salt marsh meta-proteome from the depth of 13cm provided by Stavros Trimmer <strimm20@gmail.com> from Montana State University.	1	1599572	257895182	1	357376	2024-01-18 18:37:00	f
-8208	LSSW_9-13cm_combined_proteome_TrypPigBov_2024-03-15.fasta	1795	Combined Little Sippewissett salt marsh meta-proteome from the depth of 9-13 cm provided by Stavros Trimmer (strimm20@gmail.com) from Montana State University	1	3947854	630447525	1	898048	2024-03-15 16:23:00	f
+8160	LSSW_09cm_wbins_proteome_TrypPigBov_2024-01-17.fasta	1795	Little Sippewissett salt marsh metaproteome from the depth of 9cm provided by Stavros Trimmer <strimm20@gmail.com> from Montana State University.	1	1884535	320187021	1	439296	2024-01-18 18:37:00	f
+8159	LSSW_11cm_wbins_proteome_TrypPigBov_2024-01-17.fasta	1795	Little Sippewissett salt marsh metaproteome from the depth of 11cm provided by Stavros Trimmer <strimm20@gmail.com> from Montana State University.	1	950531	148100075	1	205824	2024-01-18 18:37:00	f
+8158	LSSW_13cm_wbins_proteome_TrypPigBov_2024-01-17.fasta	1795	Little Sippewissett salt marsh metaproteome from the depth of 13cm provided by Stavros Trimmer <strimm20@gmail.com> from Montana State University.	1	1599572	257895182	1	357376	2024-01-18 18:37:00	f
+8208	LSSW_9-13cm_combined_proteome_TrypPigBov_2024-03-15.fasta	1795	Combined Little Sippewissett salt marsh metaproteome from the depth of 9-13 cm provided by Stavros Trimmer (strimm20@gmail.com) from Montana State University	1	3947854	630447525	1	898048	2024-03-15 16:23:00	f
 8209	LSSW_9-13cm_combined_proteome_TrypPigBov_2024-03-15_5x_1.fasta	1795	Auto-created	0	790393	126089186	1	179732	2024-03-18 18:07:00	f
 8210	LSSW_9-13cm_combined_proteome_TrypPigBov_2024-03-15_5x_2.fasta	1795	Auto-created	0	788965	126089426	1	179649	2024-03-18 18:07:00	f
 8211	LSSW_9-13cm_combined_proteome_TrypPigBov_2024-03-15_5x_3.fasta	1795	Auto-created	0	789217	126089594	1	179649	2024-03-18 18:07:00	f
@@ -5872,7 +5872,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 336	MB_BCP_A2HS_2003-07-31.fasta	9		0	5	1217	1	2	2003-08-08 16:51:00	f
 337	MB_Mucin_2003-07-31.fasta	9		0	14	7346	1	9	2003-08-08 16:52:00	f
 272	MCF7_2002-01-18.fasta	8		0	516	303131	1	374	2002-01-24 15:46:00	f
-8156	MMB_sorts_proteomes_TrypPigBov_2024-01-17.fasta	1795	Multicellular magnetotactic bacteria from LSSM described in https://doi.org/10.1101/2023.11.27.568837; meta-proteome provided by Stavros Trimmer <strimm20@gmail.com> from Montana State University.	1	78336	39490354	1	47002	2024-01-18 18:37:00	f
+8156	MMB_sorts_proteomes_TrypPigBov_2024-01-17.fasta	1795	Multicellular magnetotactic bacteria from LSSM described in https://doi.org/10.1101/2023.11.27.568837; metaproteome provided by Stavros Trimmer <strimm20@gmail.com> from Montana State University.	1	78336	39490354	1	47002	2024-01-18 18:37:00	f
 8169	MSC1_DRAM_LRMG-JGI_SRMG-PNNL_TrypPigBov_2024-01-29.fasta	1721	MSC1 metagenome assembled by josue.rodriguez@pnnl.gov comprised of JGI annotations of LRMGs for SM_0501, SM_0528, SM_0529, SM_0530, SM_0531 and PNNL-based annotations of SRMGs for SM_0502, SM_0532, SM_0533, SM_0534, and SM_0535, with product descriptions and Tryp_Pig_Bov appended. No duplicates to collapse.	0	1996946	463262594	1	614826	2024-01-29 21:15:00	f
 8170	MSC1_DRAM_LRMG-JGI_SRMG-PNNL_TrypPigBov_2024-01-29_5x_1.fasta	1721	Auto-created	0	399235	92652460	1	120052	2024-01-29 21:32:00	f
 8171	MSC1_DRAM_LRMG-JGI_SRMG-PNNL_TrypPigBov_2024-01-29_5x_2.fasta	1721	Auto-created	0	399562	92652859	1	120142	2024-01-29 21:32:00	f
