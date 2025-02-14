@@ -31,10 +31,13 @@ CREATE OR REPLACE PROCEDURE pc.add_protein_sequence(IN _sequence text, IN _lengt
 **          12/11/2012 mem - Removed transaction
 **          08/20/2023 mem - Ported to PostgreSQL
 **          07/26/2024 mem - Assure that _mode is lowercase
+**          02/12/2025 mem - For existing proteins, update the molecular formula and monoisotopic if they differ from _molecularFormula or _monoisotopicMass
 **
 *****************************************************/
 DECLARE
     _proteinID int;
+    _currentMolecularFormula citext;
+    _currentMonoisotopicMass float;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -49,12 +52,26 @@ BEGIN
     -- Does entry already exist?
     ---------------------------------------------------
 
-    SELECT protein_id
-    INTO _proteinID
+    SELECT protein_id, molecular_formula, monoisotopic_mass
+    INTO _proteinID, _currentMolecularFormula, _currentMonoisotopicMass
     FROM pc.t_proteins
     WHERE length = _length AND sha1_hash = _sha1Hash::citext;
 
     If FOUND And _mode = 'add' Then
+
+        If character_length(_molecularFormula) > 0 AND _currentMolecularFormula IS DISTINCT FROM _molecularFormula OR
+           _monoisotopicMass > 0 AND Abs(_currentMonoisotopicMass - _monoisotopicMass) > 0.5 Then
+
+           -- Update the molecular formula, monoisotopic mass, and average mass
+           UPDATE pc.t_proteins
+           SET molecular_formula = _molecularFormula,
+               monoisotopic_mass = _monoisotopicMass,
+               average_mass      = _averageMass,
+               date_modified     = CURRENT_TIMESTAMP
+           WHERE protein_id = _proteinID;
+
+        End If;
+
         _returnCode := _proteinID::text;
         RETURN;
     End If;
