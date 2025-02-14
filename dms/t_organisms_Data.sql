@@ -278,6 +278,7 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 1797	EMSL_60417_Hug_Metagenomes		2023-10-26 10:48:55	EMSL 60417 Hug Metagenomes	Hug_Metagenomes	\\\\proto-4\\DMS_Organism_Files\\EMSL_60417_Hug_Metagenomes\\	http://proto-4/DMS_Organism_Files/EMSL_60417_Hug_Metagenomes/							na	na	na	0	0	1		\N	0
 1846	EMSL_60422_Kostka_Metagenomes		2024-09-17 21:15:01.528935	EMSL_60422_Kostka_Metagenomes	Kostka_Metagenomes	\\\\proto-4\\DMS_Organism_Files\\EMSL_60422_Kostka_Metagenomes\\	https://proto-4/DMS_Organism_Files/EMSL_60422_Kostka_Metagenomes/							na	na	na	0	0	1		\N	0
 1840	EMSL_60427_Bhatnagar_Metagenomes		2024-05-01 16:13:03	EMSL 60427 Bhatnagar Metagenomes	Bhatnagar_Metagenomes	\\\\proto-4\\DMS_Organism_Files\\EMSL_60427_Bhatnagar_Metagenomes\\	https://proto-4/DMS_Organism_Files/EMSL_60427_Bhatnagar_Metagenomes/							na	na	na	0	0	1		\N	0
+1856	EMSL_60447_Blazewicz_Metagenomes		2025-02-13 20:05:04.099172	EMSL_60447_Blazewicz_Metagenomes	Blazewicz_Metagenomes	\\\\proto-4\\DMS_Organism_Files\\EMSL_60447_Blazewicz_Metagenomes\\	https://proto-4/DMS_Organism_Files/EMSL_60447_Blazewicz_Metagenomes/							na	na	na	0	0	1		\N	0
 1798	EMSL_60578_Bohutsky_Metagenomes		2023-10-28 12:55:03	EMSL 60578 Bohutsky Metagenomes	Bohutsky_Metagenomes	\\\\proto-4\\DMS_Organism_Files\\Bohutsky_Metagenomes\\	http://proto-4/DMS_Organism_Files/Bohutsky_Metagenomes/							na	na	na	0	0	1		\N	0
 1849	EMSL_60964_Ellenbogen_Metagenomes		2024-12-11 20:56:58.616442	EMSL_60964_Ellenbogen_Metagenomes	Ellenbogen_Metagenomes	\\\\proto-4\\DMS_Organism_Files\\EMSL_60964_Ellenbogen_Metagenomes\\	https://proto-4/DMS_Organism_Files/EMSL_60964_Ellenbogen_Metagenomes/							na	na	na	0	0	1		\N	0
 1632	E_Fork_Poplar_Creek_EMSL_50513		2018-11-20 12:11:32	Sediment microbial community from East Fork Poplar Creek at ORNL	EForkPop	\\\\proto-4\\DMS_Organism_Files\\E_Fork_Poplar_Creek_EMSL_50513\\	http://gigasax/DMS_Organism_Files/E_Fork_Poplar_Creek_EMSL_50513/							na	na	na	0	0	1		\N	0
@@ -461,7 +462,7 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 1467	Measles_Virus		2016-01-07 10:03:13	Measles Virus	Measles_Virus	\\\\gigasax\\DMS_Organism_Files\\Measles_Virus\\	http://gigasax/DMS_Organism_Files/Measles_Virus/	Viruses				Mononegavirales	Paramyxoviridae	Morbillivirus	Measles virus	na	0	0	1	11234	11234	1
 1182	Medicago_sativa	\N	2010-06-25 12:44:21	Medicago sativa also known as Alfalfa	M_sativa	\\\\gigasax\\DMS_Organism_Files\\Medicago_sativa\\	http://gigasax/DMS_Organism_Files/Medicago_sativa/	Eukaryota	Viridiplantae	Streptophyta	rosids	Fabales	Fabaceae	Medicago	sativa	na	1	1	1	3879	3879	1
 1185	Medicago_truncatula	M_truncatula_R108_HiC_2021-10-11	2010-06-30 15:00:08	Medicago truncatula also known as Barrel Clover	M_truncatula	\\\\gigasax\\DMS_Organism_Files\\Medicago_truncatula\\	https://gigasax/DMS_Organism_Files/Medicago_truncatula/	Eukaryota	Viridiplantae	Streptophyta	Magnoliopsida	Fabales	Fabaceae	Medicago	truncatula	na	1	1	1	3880	3880	1
-1774	Megaptera_novaeangliae		2022-11-01 09:45:13	Megaptera novaeangliae (Humpback Whale)	M_novaeangliae	\\\\gigasax\\DMS_Organism_Files\\Megaptera_novaeanglicae\\	http://gigasax/DMS_Organism_Files/Megaptera_novaeanglicae/	Eukaryota	Metazoa	Chordata	Mammalia	Artiodactyla	Balaenopteridae	Megaptera	novaeangliae	na	0	0	1	9773	9773	1
+1774	Megaptera_novaeangliae	Megaptera_novaeangliae_2025-02-13	2022-11-01 09:45:13	Megaptera novaeangliae (Humpback Whale)	M_novaeangliae	\\\\gigasax\\DMS_Organism_Files\\Megaptera_novaeanglicae\\	https://gigasax/DMS_Organism_Files/Megaptera_novaeanglicae/	Eukaryota	Metazoa	Chordata	Mammalia	Artiodactyla	Balaenopteridae	Megaptera	novaeangliae	na	0	0	1	9773	9773	1
 1529	Meiothermus_ruber		2016-11-11 15:48:27	Meiothermus ruber	M_ruber	\\\\gigasax\\DMS_Organism_Files\\Meiothermus_ruber\\	http://gigasax/DMS_Organism_Files/Meiothermus_ruber/	Bacteria	Fungi	Deinococcus-Thermus	Deinococci	Thermales	Thermaceae	Meiothermus	ruber	na	1	3	1	277	277	1
 1317	Meleagris_gallopavo		2013-04-10 15:17:55	Meleagris gallopavo or Turkey	M_gallopavo	\\\\gigasax\\DMS_Organism_Files\\Meleagris_gallopavo\\	http://gigasax/DMS_Organism_Files/Meleagris_gallopavo/	Eukaryota	Metazoa	Chordata	Aves	Galliformes	Phasianidae	Meleagris	gallopavo	na	1	2	1	9103	9103	1
 1054	Mesocricetus_auratus		2007-04-04 10:19:28	Mesocricetus auratus (Golden or Syrian Hamster)	M_auratus	\\\\gigasax\\DMS_Organism_Files\\Mesocricetus_auratus\\	http://gigasax/DMS_Organism_Files/Mesocricetus_auratus/	Eukaryota	Metazoa	Chordata	Mammalia	Rodentia	Cricetidae	Mesocricetus	auratus		1	2	1	10036	10036	1
@@ -868,7 +869,7 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 -- Name: t_organisms_organism_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organisms_organism_id_seq', 1855, true);
+SELECT pg_catalog.setval('public.t_organisms_organism_id_seq', 1856, true);
 
 
 --

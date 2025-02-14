@@ -3944,6 +3944,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 1467	Hopland_Metagenome_TryPigBov_2016-01-05_15x_13.fasta	1321	Auto-created	0	71800	18948102	1	27243	2016-01-07 16:30:00	f
 1468	Hopland_Metagenome_TryPigBov_2016-01-05_15x_14.fasta	1321	Auto-created	0	72125	18947236	1	27279	2016-01-07 16:30:00	f
 1469	Hopland_Metagenome_TryPigBov_2016-01-05_15x_15.fasta	1321	Auto-created	0	71685	18947581	1	27228	2016-01-07 16:30:00	f
+9085	Hopland_Soil_FastDry_JGI_TrypPigBov_2025-02-14.fasta	1856	Metaproteome for Hopland soil after fast dry from metagenome standard draft sequenced at JGI, provided by Peter Chuckran (pete.chuckran@berkeley.edu)	1	1913107	310867540	1	680960	2025-02-13 20:19:17.75825	f
 3100	Hopland_Soil_Metagenome_SIP_all_TrypPigBov_2018-05-09.fasta	31	All SIP proteins from Hopland Soils, pairs with the binned proteins; EVAN STARR <starr.evan@berkeley.edu>	1	4130480	963354462	1	1.246811e+06	2018-05-09 16:59:00	f
 3101	Hopland_Soil_Metagenome_SIP_all_TrypPigBov_2018-05-09_25x_01.fasta	31	Auto-created	0	165440	38534509	1	48717	2018-05-14 14:39:00	f
 3102	Hopland_Soil_Metagenome_SIP_all_TrypPigBov_2018-05-09_25x_02.fasta	31	Auto-created	0	165299	38534027	1	48707	2018-05-14 14:39:00	f
@@ -3986,6 +3987,8 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 1943	Hopland_Soil_Metagenome_bin_ORF_RAWIII_TrypPigBov_2016-10-21_15x_13.fasta	31	Auto-created	0	72058	18727305	1	21109	2016-10-21 14:28:00	f
 1944	Hopland_Soil_Metagenome_bin_ORF_RAWIII_TrypPigBov_2016-10-21_15x_14.fasta	31	Auto-created	0	72035	18727196	1	21108	2016-10-21 14:28:00	f
 1945	Hopland_Soil_Metagenome_bin_ORF_RAWIII_TrypPigBov_2016-10-21_15x_15.fasta	31	Auto-created	0	72080	18727729	1	21111	2016-10-21 14:28:00	f
+9086	Hopland_Soil_SlowDry_JGI_TrypPigBov_2025-02-14.fasta	1856	Metaproteome for Hopland soil after slow dry from metagenome standard draft sequenced at JGI, provided by Peter Chuckran (pete.chuckran@berkeley.edu)	1	1938693	315219650	1	688128	2025-02-13 20:19:17.75825	f
+9087	Hopland_Soil_T0_JGI_TrypPigBov_2025-02-14.fasta	1856	Metaproteome for Hopland soil initial condition from metagenome standard draft sequenced at JGI, provided by Peter Chuckran (pete.chuckran@berkeley.edu)	1	2360231	389168781	1	845824	2025-02-13 20:19:17.75825	f
 2833	Hopland_soil_SIPderep_part_TrypPigBov_2018-01-19.fasta	31	from EVAN STARR <starr.evan@berkeley.edu>	1	219552	61846043	1	153390	2018-01-19 14:30:00	f
 2834	Hopland_soil_SIPderep_part_TrypPigBov_2018-01-19_25x_01.fasta	31	Auto-created	0	8764	2473899	1	5978	2018-01-19 14:56:00	f
 2835	Hopland_soil_SIPderep_part_TrypPigBov_2018-01-19_25x_02.fasta	31	Auto-created	0	8888	2474257	1	6032	2018-01-19 14:56:00	f
@@ -8759,7 +8762,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 -- Name: t_organism_db_file_org_db_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9084, true);
+SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9087, true);
 
 
 --
