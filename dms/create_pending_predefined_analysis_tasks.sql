@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE public.create_pending_predefined_analysis_tasks(IN _
 **          12/13/2023 mem - Add argument _datasetID, which can be used to process a single dataset
 **                         - Ported to PostgreSQL
 **          08/14/2024 mem - Add argument _showDebug
+**          02/15/2025 mem - Set update_required to 1 in t_cached_dataset_stats
 **
 *****************************************************/
 DECLARE
@@ -106,7 +107,6 @@ BEGIN
             _returnCode := 'U5260';
 
         Else
-
             CALL public.create_predefined_analysis_jobs (
                             _datasetName                => _currentItem.DatasetName,
                             _callingUser                => _currentItem.CallingUser,
@@ -119,6 +119,11 @@ BEGIN
                             _returnCode                 => _returnCode,     -- Output
                             _jobsCreated                => _jobsCreated);   -- Output
 
+            If _jobsCreated > 0 Then
+                UPDATE t_cached_dataset_stats
+                SET update_required = 1
+                WHERE dataset_id = _currentItem.DatasetID;
+            End If;
         End If;
 
         _returnCode := Upper(Trim(Coalesce(_returnCode, '')));

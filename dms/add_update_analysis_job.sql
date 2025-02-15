@@ -113,6 +113,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job(IN _datasetname text,
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          10/24/2024 mem - Prevent copying data package based jobs
+**          02/15/2025 mem - Set update_required to 1 in t_cached_dataset_stats
 **
 *****************************************************/
 DECLARE
@@ -750,6 +751,10 @@ BEGIN
                 RAISE INFO '%', _currentLocation;
             End If;
 
+            -------------------------------------------------
+            -- Create the job
+            -------------------------------------------------
+
             INSERT INTO t_analysis_job (
                 job,
                 priority,
@@ -807,6 +812,14 @@ BEGIN
                     _gid
                 );
             End If;
+
+            ---------------------------------------------------
+            -- Flag the cached dataset stats as needing to be updated for the new job
+            ---------------------------------------------------
+
+            UPDATE t_cached_dataset_stats
+            SET update_required = 1
+            WHERE dataset_id = _datasetID;
 
             DROP TABLE Tmp_DatasetInfo;
             RETURN;

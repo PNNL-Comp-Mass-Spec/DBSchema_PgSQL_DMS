@@ -123,6 +123,7 @@ CREATE OR REPLACE PROCEDURE public.add_analysis_job_group(IN _datasetlist text, 
 **          09/30/2024 mem - Add support for data package based FragPipe jobs
 **          10/29/2024 mem - Call set_max_active_jobs_for_request() if _requestID is greater than 1
 **          11/05/2024 mem - Add support for tool DiaNN_timsTOF
+**          02/15/2025 mem - Set update_required to 1 in t_cached_dataset_stats
 **
 *****************************************************/
 DECLARE
@@ -132,6 +133,7 @@ DECLARE
     _authorized boolean;
 
     _deleteCount int;
+    _datasetID int;
     _jobID int;
     _jobIDStart int;
     _jobIDEnd int;
@@ -764,6 +766,21 @@ BEGIN
                         _msgForLog := format('Error code %s calling Backfill_Pipeline_Jobs: %s', _returnCode, Coalesce(_msgForLog, '??'));
                         CALL post_log_entry ('Error', _msgForLog, 'Add_Analysis_Job_Group');
                     End If;
+
+                    -------------------------------------------------
+                    -- Flag the cached dataset stats as needing to be updated for the dataset associated with the pipeline job
+                    -------------------------------------------------
+
+                    SELECT dataset_id
+                    INTO _datasetID
+                    FROM t_analysis_job
+                    WHERE job = _pipelineJob;
+
+                    If FOUND Then
+                        UPDATE t_cached_dataset_stats
+                        SET update_required = 1
+                        WHERE dataset_id = _datasetID;
+                    End If;
                 End If;
 
             End If;
@@ -1065,6 +1082,15 @@ BEGIN
                 End If;
             End If;
 
+            -------------------------------------------------
+            -- Flag the cached dataset stats as needing to be updated for the datasets associated with the newly created jobs
+            -------------------------------------------------
+
+            UPDATE t_cached_dataset_stats CDS
+            SET update_required = 1
+            WHERE EXISTS (SELECT DS.dataset_id
+                          FROM Tmp_DatasetInfo DS
+                          WHERE DS.dataset_id = CDS.dataset_id);
         End If;
 
         ---------------------------------------------------
