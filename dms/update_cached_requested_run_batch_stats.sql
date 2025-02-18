@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_requested_run_batch_stats(IN _b
 **          01/02/2024 mem - Fix column name bug when joining v_requested_run_queue_times to t_requested_run
 **          01/19/2024 mem - Fix bug that failed to populate column separation_group_last when adding a new batch to t_cached_requested_run_batch_stats
 **                           Populate columns instrument_group_first and instrument_group_last
+**          02/17/2025 mem - Add support for requested run state 'Holding'
 **
 *****************************************************/
 DECLARE
@@ -164,7 +165,7 @@ BEGIN
                           FROM t_requested_run RR
                                INNER JOIN Tmp_BatchIDs
                                  ON RR.batch_id = Tmp_BatchIDs.batch_id
-                          WHERE RR.state_name = 'Active'
+                          WHERE RR.state_name IN ('Active', 'Holding')
                           GROUP BY RR.batch_id
                          ) ActiveStatsQ ON BatchQ.batch_id = ActiveStatsQ.batch_id
                   ) AS s

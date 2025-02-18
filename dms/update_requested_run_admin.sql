@@ -15,7 +15,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_admin(IN _requestlist te
 **
 **  Arguments:
 **    _requestList      XML describing requested run IDs to update
-**    _mode             Mode: 'Active', 'Inactive', 'Delete', or 'UnassignInstrument'
+**    _mode             Mode: 'Active', 'Inactive', 'Holding', 'Delete', or 'UnassignInstrument'
 **    _debugMode        When true, log the contents of _requestList in t_log_entries, and also log the number of requested runs updated
 **    _message          Status message
 **    _returnCode       Return code
@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_admin(IN _requestlist te
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          05/21/2024 mem - Call update_cached_requested_run_batch_stats after deleting requested runs
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          02/17/2025 mem - Add mode 'Holding'
 **
 *****************************************************/
 DECLARE
@@ -187,14 +188,21 @@ BEGIN
         RETURN;
     End If;
 
-    If Exists (SELECT Item FROM Tmp_Requests WHERE NOT Status::citext IN ('Active', 'Inactive')) Then
-        _message := 'Cannot change requested runs that are in status other than "Active" or "Inactive"';
-        RAISE WARNING '%', _message;
+    If Exists (SELECT Item FROM Tmp_Requests WHERE NOT Status::citext IN ('Active', 'Inactive', 'Holding')) Then
 
-        _returnCode := 'U5114';
-        DROP TABLE Tmp_Requests;
+        If _mode IN ('active', 'holding') And Not Exists (SELECT Item FROM Tmp_Requests WHERE NOT Status::citext IN ('Active', 'Inactive', 'Holding', 'Completed')) Then
+            -- Allow 'Completed' requests to be in Tmp_Requests, since they will be ignored below by the update query
+            _message := 'Not updating requested runs with state "Completed"';
+            RAISE INFO '%', _message;
+        Else
+            _message := 'Cannot change requested runs that are in status other than "Active", "Inactive", or "Holding"';
+            RAISE WARNING '%', _message;
 
-        RETURN;
+            _returnCode := 'U5114';
+            DROP TABLE Tmp_Requests;
+
+            RETURN;
+        End If;
     End If;
 
     If Exists (SELECT Item FROM Tmp_Requests WHERE NOT Origin::citext IN ('user', 'fraction') AND _mode <> 'delete') Then
@@ -223,7 +231,7 @@ BEGIN
     WHERE NOT Request_ID IS NULL
     ORDER BY Request_ID;
 
-    If _mode IN ('active', 'inactive') Then
+    If _mode IN ('active', 'inactive', 'holding') Then
         -----------------------------------------------------------
         -- Update status
         -----------------------------------------------------------
@@ -231,6 +239,7 @@ BEGIN
         UPDATE t_requested_run
         SET state_name = CASE WHEN _mode = 'active'   THEN 'Active'
                               WHEN _mode = 'inactive' THEN 'Inactive'
+                              WHEN _mode = 'holding'  THEN 'Holding'
                               ELSE state_name
                          END
         WHERE request_id IN (SELECT Request_ID FROM Tmp_Requests) AND
@@ -254,13 +263,16 @@ BEGIN
         End If;
 
         -----------------------------------------------------------
-        -- Call update_cached_requested_run_eus_users for each entry in Tmp_Requests
+        -- Call update_cached_requested_run_eus_users for each entry in Tmp_Requests (that does not have state 'Completed')
         -----------------------------------------------------------
 
         FOR _requestID IN
-            SELECT request_id
-            FROM Tmp_Requests
-            ORDER BY request_id
+            SELECT R.request_id
+            FROM Tmp_Requests R
+                 INNER JOIN t_requested_run RR
+                   ON RR.request_id = R.request_id
+            WHERE RR.state_name <> 'Completed'
+            ORDER BY R.request_id
         LOOP
             CALL public.update_cached_requested_run_eus_users (
                             _requestID  => _requestID,
@@ -355,7 +367,6 @@ BEGIN
         GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
         _usageMessage := format('Unassigned %s requested %s from the queued instrument', _updateCount, public.check_plural(_updateCount, 'run', 'runs'));
-
     End If;
 
     If _usageMessage = '' Then

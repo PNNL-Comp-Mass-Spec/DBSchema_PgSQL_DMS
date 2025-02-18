@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_wp(IN _oldworkpackage te
 **          03/06/2024 mem - Ported to PostgreSQL
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          02/17/2025 mem - Add support for requested run state 'Holding'
 **
 *****************************************************/
 DECLARE
@@ -214,7 +215,7 @@ BEGIN
                 RETURN;
             End If;
         Else
-            -- Find active requested runs that use _oldWorkPackage
+            -- Find active or holding requested runs that use _oldWorkPackage
             INSERT INTO Tmp_ReqRunsToUpdate (
                 Request_ID,
                 Request_Name,
@@ -224,7 +225,7 @@ BEGIN
                    request_name,
                    work_package
             FROM t_requested_run
-            WHERE state_name = 'Active' AND
+            WHERE state_name IN ('Active', 'Holding') AND
                   work_package = _oldWorkPackage;
             --
             GET DIAGNOSTICS _requestCountToUpdate = ROW_COUNT;

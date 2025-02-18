@@ -55,8 +55,9 @@ CREATE OR REPLACE PROCEDURE public.rename_dataset(IN _datasetnameold text DEFAUL
 **          08/30/2024 mem - Pass a single backslash to Position()
 **          01/08/2025 mem - Append '\LC' to the dataset directory name when updating an LCDatasetCapture job
 **          01/23/2025 mem - Add the Script column to queries that insert rows into Tmp_JobsToUpdate
-**          02/23/2025 mem - Change _requestedRunState to citext
+**          02/05/2025 mem - Change _requestedRunState to citext
 **                         - Add _showRenameCommands (only applicable if _infOnly is true)
+**          02/17/2025 mem - Add support for requested run state 'Holding'
 **
 *****************************************************/
 DECLARE
@@ -261,8 +262,8 @@ BEGIN
             RETURN;
         End If;
 
-        If Not _datasetAlreadyRenamed And _requestedRunState <> 'Active' Then
-            _message := format('New requested run is not active: %s', _newRequestedRunID);
+        If Not _datasetAlreadyRenamed And Not _requestedRunState IN ('Active', 'Holding') Then
+            _message := format('New requested run is not active or holding: %s', _newRequestedRunID);
             RAISE WARNING '%', _message;
             RETURN;
         End If;
@@ -537,9 +538,7 @@ BEGIN
 
             RAISE INFO '%', _infoData;
         END LOOP;
-
     Else
-
         If Not _infoOnly And Not _datasetAlreadyRenamed Then
             UPDATE t_requested_run
             SET dataset_id         = Null,

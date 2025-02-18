@@ -42,7 +42,7 @@ CREATE VIEW public.v_active_requested_runs AS
     days_in_queue_bin,
     wp_activation_state
    FROM public.v_requested_run_list_report_2
-  WHERE (status OPERATOR(public.=) 'Active'::public.citext);
+  WHERE (status OPERATOR(public.=) ANY (ARRAY['Active'::public.citext, 'Holding'::public.citext]));
 
 
 ALTER VIEW public.v_active_requested_runs OWNER TO d3l243;

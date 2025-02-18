@@ -18,6 +18,7 @@ CREATE OR REPLACE FUNCTION public.find_requested_runs_for_file_name(_filename te
 **  Date:   07/20/2012 grk - Initial release
 **          06/17/2022 mem - Ported to PostgreSQL
 **          01/21/2024 mem - Change data type of argument _fileName to text
+**          02/17/2025 mem - Add support for requested run state 'Holding'
 **
 *****************************************************/
 BEGIN
@@ -27,11 +28,10 @@ BEGIN
            char_length(RR.request_name) AS num_chars_matched,
            RR.dataset_id
     FROM t_requested_run RR
-    WHERE RR.state_name = 'Active' AND
+    WHERE RR.state_name IN ('Active', 'Holding') AND
           char_length(RR.request_name) <= char_length(_fileName) AND
           RR.request_name = Substring(_fileName, 1, char_length(RR.request_name))::citext
     ORDER BY char_length(request_name) DESC;
-
 END
 $$;
 

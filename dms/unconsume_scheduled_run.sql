@@ -63,6 +63,7 @@ CREATE OR REPLACE PROCEDURE public.unconsume_scheduled_run(IN _datasetname text,
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **          01/20/2024 mem - Ignore case when resolving dataset name to ID
 **          02/04/2024 mem - Add parameter _showDebug
+**          02/17/2025 mem - Add support for requested run state 'Holding'
 **
 *****************************************************/
 DECLARE
@@ -270,8 +271,8 @@ BEGIN
                         FROM t_requested_run
                         WHERE request_id = _requestIDOriginal;
 
-                        If _originalRequestStatus = 'Active' Then
-                            -- The original request is active, don't recycle anything
+                        If _originalRequestStatus IN ('Active', 'Holding') Then
+                            -- The original request is active or holding, don't recycle anything
 
                             If _requestIDOriginal = _requestID Then
                                 _addnlText := format('Not recycling request %s for dataset %s since it is already active', _requestID, _datasetName);
@@ -409,7 +410,6 @@ BEGIN
                     _requestIDOriginal,
                     _message    => _message,        -- Output
                     _returnCode => _returnCode);    -- Output
-
 END
 $$;
 

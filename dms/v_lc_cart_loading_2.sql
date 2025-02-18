@@ -21,7 +21,7 @@ CREATE VIEW public.v_lc_cart_loading_2 AS
      JOIN public.t_experiments ON ((rr.exp_id = t_experiments.exp_id)))
      JOIN public.t_dataset_type_name dtn ON ((rr.request_type_id = dtn.dataset_type_id)))
      JOIN public.t_eus_usage_type eut ON ((rr.eus_usage_type_id = eut.eus_usage_type_id)))
-  WHERE (rr.state_name OPERATOR(public.=) 'Active'::public.citext);
+  WHERE (rr.state_name OPERATOR(public.=) ANY (ARRAY['Active'::public.citext, 'Holding'::public.citext]));
 
 
 ALTER VIEW public.v_lc_cart_loading_2 OWNER TO d3l243;

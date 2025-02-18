@@ -18,7 +18,7 @@ CREATE VIEW public.v_requested_run_batch_export_rfid AS
             count(rr.request_id) AS requests,
             sum(
                 CASE
-                    WHEN (rr.state_name OPERATOR(public.=) 'Active'::public.citext) THEN 1
+                    WHEN (rr.state_name OPERATOR(public.=) ANY (ARRAY['Active'::public.citext, 'Holding'::public.citext])) THEN 1
                     ELSE 0
                 END) AS active_requests
            FROM public.t_requested_run rr

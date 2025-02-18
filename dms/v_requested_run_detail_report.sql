@@ -50,7 +50,7 @@ CREATE VIEW public.v_requested_run_detail_report AS
     rr.note,
     rr.special_instructions,
         CASE
-            WHEN ((rr.state_name OPERATOR(public.=) 'Active'::public.citext) AND (cc.activation_state >= 3)) THEN 10
+            WHEN ((rr.state_name OPERATOR(public.=) ANY (ARRAY['Active'::public.citext, 'Holding'::public.citext])) AND (cc.activation_state >= 3)) THEN 10
             ELSE (cc.activation_state)::integer
         END AS wp_activation_state
    FROM (((((((((((((((((((public.t_dataset_type_name dtn

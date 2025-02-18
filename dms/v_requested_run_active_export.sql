@@ -38,7 +38,7 @@ CREATE VIEW public.v_requested_run_active_export AS
      JOIN public.t_lc_cart lc ON ((rr.cart_id = lc.cart_id)))
      JOIN public.t_eus_usage_type eut ON ((rr.eus_usage_type_id = eut.eus_usage_type_id)))
      LEFT JOIN public.t_active_requested_run_cached_eus_users rrcu ON ((rr.request_id = rrcu.request_id)))
-  WHERE (rr.state_name OPERATOR(public.=) 'Active'::public.citext);
+  WHERE (rr.state_name OPERATOR(public.=) ANY (ARRAY['Active'::public.citext, 'Holding'::public.citext]));
 
 
 ALTER VIEW public.v_requested_run_active_export OWNER TO d3l243;

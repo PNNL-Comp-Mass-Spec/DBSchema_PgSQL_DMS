@@ -10,11 +10,11 @@ CREATE VIEW public.v_requested_run_queue_times AS
     batch_id,
     dataset_id,
     dataset_created,
-    dataset_acqtimestart AS dataset_acq_time_start,
+    dataset_acq_time_start,
         CASE
             WHEN (days_from_requested_run_create_to_dataset_acquired IS NULL) THEN
             CASE
-                WHEN (state_name OPERATOR(public.=) 'Active'::public.citext) THEN round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (requested_run_created)::timestamp with time zone)) / (86400)::numeric))
+                WHEN (state_name OPERATOR(public.=) ANY (ARRAY['Active'::public.citext, 'Holding'::public.citext])) THEN round((EXTRACT(epoch FROM (CURRENT_TIMESTAMP - (requested_run_created)::timestamp with time zone)) / (86400)::numeric))
                 ELSE NULL::numeric
             END
             WHEN (days_from_requested_run_create_to_dataset_acquired <= (0)::numeric) THEN
@@ -32,7 +32,7 @@ CREATE VIEW public.v_requested_run_queue_times AS
             rr.origin,
             ds.dataset_id,
             ds.created AS dataset_created,
-            ds.acq_time_start AS dataset_acqtimestart,
+            ds.acq_time_start AS dataset_acq_time_start,
             round((EXTRACT(epoch FROM (COALESCE(ds.acq_time_start, ds.created) - rr.created)) / (86400)::numeric)) AS days_from_requested_run_create_to_dataset_acquired
            FROM (public.t_requested_run rr
              LEFT JOIN public.t_dataset ds ON ((rr.dataset_id = ds.dataset_id)))) dataq;

@@ -32,7 +32,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **    _mode                         Mode: 'add', 'check_add', 'update', 'check_update', or 'add-auto'
 **    _secSep                       Separation group
 **    _mrmAttachment                MRM transition list file attachment
-**    _status                       State: 'Active', 'Inactive', 'Completed'
+**    _status                       State: 'Active', 'Inactive', 'Completed', 'Holding'
 **    _skipTransactionRollback      This is set to true when procedure add_update_dateset calls this procedure (unused on PostgreSQL)
 **    _autoPopulateUserListIfBlank  When true, auto-populate _eusUsersList if it is empty and _eusUsageType is 'USER', 'USER_ONSITE', or 'USER_REMOTE'
 **    _callingUser                  Calling user
@@ -155,6 +155,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          05/17/2024 mem - Update column cached_wp_activation_state
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          02/17/2025 mem - Add support for requested run state 'Holding'
 **
 *****************************************************/
 DECLARE
@@ -440,8 +441,8 @@ BEGIN
             _status := 'Active';
         End If;
 
-        If _mode::citext In ('add', 'check_add', 'update', 'check_update') And (Not (_status::citext In ('Active', 'Inactive', 'Completed'))) Then
-            RAISE EXCEPTION 'Status "%" is not valid; must be Active, Inactive, or Completed', _status;
+        If _mode::citext In ('add', 'check_add', 'update', 'check_update') And (Not (_status::citext In ('Active', 'Inactive', 'Completed', 'Holding'))) Then
+            RAISE EXCEPTION 'Status "%" is not valid; must be Active, Inactive, Completed, or Holding', _status;
         End If;
 
         If _mode::citext In ('update', 'check_update') And (_status::citext = 'Completed' And _oldStatus <> 'Completed' ) Then
@@ -808,7 +809,7 @@ BEGIN
             _allowNoneWP := true;
         End If;
 
-        If _status::citext <> 'Active' And (_eusUsageType::citext = 'Maintenance' Or _requestName::citext SIMILAR TO 'AutoReq[_]%') Then
+        If Not (_status::citext IN ('Active', 'Holding')) And (_eusUsageType::citext = 'Maintenance' Or _requestName::citext SIMILAR TO 'AutoReq[_]%') Then
             _allowNoneWP := true;
         End If;
 
@@ -846,7 +847,7 @@ BEGIN
         _resolvedInstrumentInfo := format('instrument group %s, run type %s, and separation group %s',
                                           _instrumentGroup, _msType, _separationGroup);
 
-        If _batch > 0 And _status::citext = 'Active' Then
+        If _batch > 0 And _status::citext IN ('Active', 'Holding') Then
 
             ---------------------------------------------------
             -- Verify that the instrument group is compatible with the new or existing batch for this requested run
@@ -1010,7 +1011,7 @@ BEGIN
                 CALL post_log_entry ('Debug', _debugMsg, 'Add_Update_Requested_Run');
             End If;
 
-            If _status::citext = 'Active' Then
+            If _status::citext IN ('Active', 'Holding') Then
                 -- Add a new row to t_active_requested_run_cached_eus_users
                 CALL public.update_cached_requested_run_eus_users (
                                 _requestID,
@@ -1052,7 +1053,7 @@ BEGIN
                 separation_group           = _separationGroup,
                 mrm_attachment             = _mrmAttachmentID,
                 state_name                 = _status,
-                created                    = CASE WHEN _oldStatus = 'Inactive' AND _status::citext = 'Active' THEN CURRENT_TIMESTAMP ELSE created END,
+                created                    = CASE WHEN _oldStatus = 'Inactive' AND _status::citext IN ('Active', 'Holding') THEN CURRENT_TIMESTAMP ELSE created END,
                 vialing_conc               = _vialingConc,
                 vialing_vol                = _vialingVol,
                 location_id                = _locationId
@@ -1138,7 +1139,6 @@ BEGIN
             _returnCode := _sqlState;
         End If;
     END;
-
 END
 $$;
 

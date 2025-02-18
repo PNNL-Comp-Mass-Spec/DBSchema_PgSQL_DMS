@@ -109,7 +109,10 @@ CREATE VIEW public.v_run_planning_report AS
                     rr.batch_id,
                     rrb.comment AS batch_comment,
                     rrb.batch_group_id,
-                    qs.queue_state_name AS queue_state,
+                        CASE
+                            WHEN (rr.state_name OPERATOR(public.=) 'Holding'::public.citext) THEN (('Holding: '::text || (qs.queue_state_name)::text))::public.citext
+                            ELSE qs.queue_state_name
+                        END AS queue_state,
                         CASE
                             WHEN (rr.queue_state = 2) THEN COALESCE(assignedinstrument.instrument, ''::public.citext)
                             ELSE ''::public.citext
@@ -147,7 +150,7 @@ CREATE VIEW public.v_run_planning_report AS
                      LEFT JOIN public.t_eus_proposals eup ON ((rr.eus_proposal_id OPERATOR(public.=) eup.proposal_id)))
                      LEFT JOIN public.t_eus_proposal_type ept ON ((eup.proposal_type OPERATOR(public.=) ept.proposal_type)))
                      LEFT JOIN public.t_instrument_name assignedinstrument ON ((rr.queue_instrument_id = assignedinstrument.instrument_id)))
-                  WHERE ((rr.state_name OPERATOR(public.=) 'Active'::public.citext) AND (rr.dataset_id IS NULL))) requestq
+                  WHERE ((rr.state_name OPERATOR(public.=) ANY (ARRAY['Active'::public.citext, 'Holding'::public.citext])) AND (rr.dataset_id IS NULL))) requestq
           GROUP BY requestq.inst_group, requestq.separation_group, requestq.fraction_count, requestq.ds_type, requestq.request_name_code, requestq.requester, requestq.work_package, requestq.wp_state, requestq.wp_activation_state, requestq.proposal, requestq.proposal_type, requestq.locked, requestq.last_ordered, requestq.queue_state, requestq.queued_instrument, requestq.batch_id, requestq.batch_prefix, requestq.requested_batch_priority, requestq.batch_comment, requestq.batch_group_id) groupq
      JOIN public.t_requested_run requestlookupq ON ((groupq.min_request = requestlookupq.request_id)))
      JOIN public.t_eus_usage_type teut ON ((requestlookupq.eus_usage_type_id = teut.eus_usage_type_id)))

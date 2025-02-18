@@ -73,6 +73,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_assignments(IN _mode tex
 **                         - For certain modes, call update_cached_requested_run_batch_stats() for the batches associated with the updated requested runs
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          02/17/2025 mem - Add support for requested run state 'Holding'
 **
 *****************************************************/
 DECLARE
@@ -288,7 +289,7 @@ BEGIN
                            LEFT OUTER JOIN Tmp_RequestIDs
                              ON Tmp_RequestIDs.RequestID = RR.request_id
                       WHERE RR.batch_id = _batchID AND
-                            RR.state_name = 'Active' AND
+                            RR.state_name IN ('Active', 'Holding') AND
                             Tmp_RequestIDs.RequestID IS NULL
                       UNION
                       SELECT _newInstrumentGroup AS InstGroup
@@ -303,7 +304,7 @@ BEGIN
                                LEFT OUTER JOIN Tmp_RequestIDs
                                  ON Tmp_RequestIDs.RequestID = RR.request_id
                           WHERE RR.batch_id = _batchID AND
-                                RR.state_name = 'Active' AND
+                                RR.state_name IN ('Active', 'Holding') AND
                                 Tmp_RequestIDs.RequestID IS NULL
                          ) DistinctQ;
 
@@ -313,7 +314,7 @@ BEGIN
                          INNER JOIN Tmp_RequestIDs
                            ON Tmp_RequestIDs.RequestID = RR.request_id
                     WHERE RR.batch_id = _batchID AND
-                          RR.state_name = 'Active';
+                          RR.state_name IN ('Active', 'Holding');
 
                     If char_length(_requestIDs) > 100 Then
                         _requestIDs := Trim(Substring(_requestIDs, 1, 100));
@@ -392,7 +393,7 @@ BEGIN
                 FROM T_Requested_Run RR
                      INNER JOIN Tmp_RequestIDs
                        ON Tmp_RequestIDs.RequestID = RR.request_id
-                WHERE RR.state_name = 'Active' AND
+                WHERE RR.state_name IN ('Active', 'Holding') AND
                       RR.instrument_group <> _instGroupForNewAssignedInstrument;
 
                 If Coalesce(_requestIDs, '') <> '' Then
@@ -414,7 +415,7 @@ BEGIN
                         INTO _activeRequestCountForBatch
                         FROM T_Requested_Run RR
                         WHERE RR.batch_id = _batchID AND
-                              RR.state_name = 'Active';
+                              RR.state_name IN ('Active', 'Holding');
 
                         SELECT COUNT(*)
                         INTO _activeRequestCountForUpdate
@@ -422,7 +423,7 @@ BEGIN
                              INNER JOIN Tmp_RequestIDs
                                ON Tmp_RequestIDs.RequestID = RR.request_id
                         WHERE RR.batch_id = _batchID AND
-                              RR.state_name = 'Active';
+                              RR.state_name IN ('Active', 'Holding');
 
                         If _activeRequestCountForBatch = _activeRequestCountForUpdate Then
                             _batchCountToAllow = _batchCountToAllow + 1;
@@ -566,7 +567,7 @@ BEGIN
                 instrument_group = CASE WHEN _newQueueState > 1 THEN _instGroupForNewAssignedInstrument ELSE instrument_group END
             FROM Tmp_RequestIDs
             WHERE RR.request_id = Tmp_RequestIDs.RequestID AND
-                  RR.state_name = 'Active';
+                  RR.state_name IN ('Active', 'Holding');
             --
             GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
@@ -574,17 +575,17 @@ BEGIN
                 _message := 'Can only update the assigned instrument for Active requested runs; all of the selected items are Completed or Inactive';
             Else
                 _message := format('Changed the assigned instrument to %s for %s requested %s',
-                                    _newValue, _updateCount, public.check_plural(_updateCount, 'run', 'runs'));
+                                   _newValue, _updateCount, public.check_plural(_updateCount, 'run', 'runs'));
 
                 SELECT COUNT(*)
                 INTO _inactiveCount
                 FROM t_requested_run RR INNER JOIN
                      Tmp_RequestIDs ON RR.request_id = Tmp_RequestIDs.RequestID
-                WHERE RR.state_name <> 'Active';
+                WHERE NOT RR.state_name IN ('Active', 'Holding');
 
                 If _inactiveCount > 0 Then
                     _message := format('%s; skipped %s %s since not Active',
-                                        _message, _inactiveCount, public.check_plural(_inactiveCount, 'request', 'requests'));
+                                       _message, _inactiveCount, public.check_plural(_inactiveCount, 'request', 'requests'));
                 End If;
             End If;
         End If;

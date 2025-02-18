@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE public.find_active_requested_run_for_dataset(IN _dat
 **          10/19/2020 mem - Rename the instrument group column to instrument_group
 **          09/11/2023 mem - Stop searching for matches once one or more requested runs are matched
 **                         - Ported to PostgreSQL
+**          02/17/2025 mem - Add support for requested run state 'Holding'
 **
 *****************************************************/
 DECLARE
@@ -109,14 +110,14 @@ BEGIN
             INTO _matchCount, _requestID
             FROM t_requested_run
             WHERE request_name LIKE _datasetPrefix || '%' AND
-                  state_name = 'Active';
+                  state_name IN ('Active', 'Holding');
         Else
             SELECT COUNT(request_id),
                    MIN(request_id)
             INTO _matchCount, _requestID
             FROM t_requested_run
             WHERE request_name LIKE _datasetPrefix || '%' AND
-                  state_name = 'Active' AND
+                  state_name IN ('Active', 'Holding') AND
                   exp_id = _experimentID;
         End If;
 
@@ -153,7 +154,6 @@ BEGIN
             RAISE INFO 'Match not found for dataset %', _datasetName;
         End If;
     End If;
-
 END
 $$;
 

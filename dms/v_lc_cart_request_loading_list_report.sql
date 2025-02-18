@@ -20,7 +20,7 @@ CREATE VIEW public.v_lc_cart_request_loading_list_report AS
      JOIN public.t_requested_run_batches rrb ON ((rr.batch_id = rrb.batch_id)))
      JOIN public.t_experiments e ON ((rr.exp_id = e.exp_id)))
      LEFT JOIN public.t_lc_cart_configuration cartconfig ON ((rr.cart_config_id = cartconfig.cart_config_id)))
-  WHERE (rr.state_name OPERATOR(public.=) 'Active'::public.citext);
+  WHERE (rr.state_name OPERATOR(public.=) ANY (ARRAY['Active'::public.citext, 'Holding'::public.citext]));
 
 
 ALTER VIEW public.v_lc_cart_request_loading_list_report OWNER TO d3l243;

@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_requested_run_eus_users(IN _req
 **          05/07/2023 mem - Remove unused variable
 **          09/08/2023 mem - Adjust capitalization of keywords
 **                         - Include schema name when calling function verify_sp_authorized()
+**          02/17/2025 mem - Add support for requested run state 'Holding'
 **
 *****************************************************/
 DECLARE
@@ -47,7 +48,7 @@ BEGIN
 
         If _requestID <> 0 Then
             -- Updating a specific requested run
-            If Exists (SELECT request_id FROM t_requested_run WHERE state_name = 'Active' AND request_id = _requestID) Then
+            If Exists (SELECT request_id FROM t_requested_run WHERE state_name IN ('Active', 'Holding') AND request_id = _requestID) Then
                 -- Updating a single requested run; to avoid commit conflicts, do not use a merge statement
                 If Exists (SELECT request_id FROM t_active_requested_run_cached_eus_users WHERE request_id = _requestID) Then
                     UPDATE t_active_requested_run_cached_eus_users
@@ -76,7 +77,7 @@ BEGIN
         USING (SELECT request_id AS Request_ID,
                       public.get_requested_run_eus_users_list(request_id, 'V') AS User_List
                FROM t_requested_run
-               WHERE state_name = 'Active' AND (_requestID = 0 OR request_id = _requestID)
+               WHERE state_name IN ('Active', 'Holding') AND (_requestID = 0 OR request_id = _requestID)
               ) AS source
         ON (target.request_id = source.request_id)
         WHEN MATCHED AND target.user_list IS DISTINCT FROM source.user_list THEN
@@ -95,7 +96,8 @@ BEGIN
                               FROM (SELECT request_id AS Request_ID,
                                            public.get_requested_run_eus_users_list(request_id, 'V') AS User_List
                                     FROM t_requested_run
-                                    WHERE state_name = 'Active' AND (_requestID = 0 OR request_id = _requestID)
+                                    WHERE state_name IN ('Active', 'Holding') AND
+                                          (_requestID = 0 OR request_id = _requestID)
                                    ) AS source
                               WHERE target.request_id = source.request_id);
         End If;
@@ -116,7 +118,6 @@ BEGIN
             _returnCode := _sqlState;
         End If;
     END;
-
 END
 $$;
 

@@ -40,14 +40,14 @@ CREATE VIEW public.v_requested_run_list_report_2 AS
     ds.comment AS dataset_comment,
     rr.request_name_code,
         CASE
-            WHEN (rr.state_name OPERATOR(public.<>) 'Active'::public.citext) THEN 0
+            WHEN (NOT (rr.state_name OPERATOR(public.=) ANY (ARRAY['Active'::public.citext, 'Holding'::public.citext]))) THEN 0
             WHEN (qt.days_in_queue <= (30)::numeric) THEN 30
             WHEN (qt.days_in_queue <= (60)::numeric) THEN 60
             WHEN (qt.days_in_queue <= (90)::numeric) THEN 90
             ELSE 120
         END AS days_in_queue_bin,
         CASE
-            WHEN ((rr.state_name OPERATOR(public.=) 'Active'::public.citext) AND (rr.cached_wp_activation_state >= 3)) THEN 10
+            WHEN ((rr.state_name OPERATOR(public.=) ANY (ARRAY['Active'::public.citext, 'Holding'::public.citext])) AND (rr.cached_wp_activation_state >= 3)) THEN 10
             ELSE (rr.cached_wp_activation_state)::integer
         END AS wp_activation_state
    FROM (((((((((((((((((public.t_requested_run rr

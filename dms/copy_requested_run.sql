@@ -14,7 +14,7 @@ CREATE OR REPLACE PROCEDURE public.copy_requested_run(IN _requestid integer, IN 
 **  Arguments:
 **    _requestID                Requested run ID to copy
 **    _datasetID                Dataset ID (use 0 or null if there is not a dataset to associate with the new requested run)
-**    _status                   State to use for the new requested run: 'Active', 'Completed', or 'Inactive'
+**    _status                   State to use for the new requested run: 'Active', 'Completed', 'Inactive', or 'Holding'
 **    _comment                  Requested run comment
 **    _requestNameAppendText    Text appended to the name of the newly created request; append nothing if null or ''
 **    _requestNameOverride      New request name to use; if blank, will be based on the existing request name, but will append _requestNameAppendText
