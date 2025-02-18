@@ -3989,6 +3989,11 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 1945	Hopland_Soil_Metagenome_bin_ORF_RAWIII_TrypPigBov_2016-10-21_15x_15.fasta	31	Auto-created	0	72080	18727729	1	21111	2016-10-21 14:28:00	f
 9086	Hopland_Soil_SlowDry_JGI_TrypPigBov_2025-02-14.fasta	1856	Metaproteome for Hopland soil after slow dry from metagenome standard draft sequenced at JGI, provided by Peter Chuckran (pete.chuckran@berkeley.edu)	1	1938693	315219650	1	688128	2025-02-13 20:19:17.75825	f
 9087	Hopland_Soil_T0_JGI_TrypPigBov_2025-02-14.fasta	1856	Metaproteome for Hopland soil initial condition from metagenome standard draft sequenced at JGI, provided by Peter Chuckran (pete.chuckran@berkeley.edu)	1	2360231	389168781	1	845824	2025-02-13 20:19:17.75825	f
+9088	Hopland_Soil_T0_JGI_TrypPigBov_2025-02-14_5x_1.fasta	1856	Auto-created	0	472596	77833659	1	169283	2025-02-14 09:23:27.005665	f
+9089	Hopland_Soil_T0_JGI_TrypPigBov_2025-02-14_5x_2.fasta	1856	Auto-created	0	471700	77833691	1	169204	2025-02-14 09:23:27.017703	f
+9090	Hopland_Soil_T0_JGI_TrypPigBov_2025-02-14_5x_3.fasta	1856	Auto-created	0	472219	77833684	1	169263	2025-02-14 09:23:27.025322	f
+9091	Hopland_Soil_T0_JGI_TrypPigBov_2025-02-14_5x_4.fasta	1856	Auto-created	0	471939	77834087	1	169236	2025-02-14 09:23:27.030109	f
+9092	Hopland_Soil_T0_JGI_TrypPigBov_2025-02-14_5x_5.fasta	1856	Auto-created	0	471777	77833660	1	169122	2025-02-14 09:23:27.034578	f
 2833	Hopland_soil_SIPderep_part_TrypPigBov_2018-01-19.fasta	31	from EVAN STARR <starr.evan@berkeley.edu>	1	219552	61846043	1	153390	2018-01-19 14:30:00	f
 2834	Hopland_soil_SIPderep_part_TrypPigBov_2018-01-19_25x_01.fasta	31	Auto-created	0	8764	2473899	1	5978	2018-01-19 14:56:00	f
 2835	Hopland_soil_SIPderep_part_TrypPigBov_2018-01-19_25x_02.fasta	31	Auto-created	0	8888	2474257	1	6032	2018-01-19 14:56:00	f
@@ -8762,7 +8767,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 -- Name: t_organism_db_file_org_db_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9087, true);
+SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9092, true);
 
 
 --
