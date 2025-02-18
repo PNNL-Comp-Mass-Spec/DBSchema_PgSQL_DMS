@@ -156,6 +156,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **          05/17/2024 mem - Update column cached_wp_activation_state
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          02/17/2025 mem - Add support for requested run state 'Holding'
+**                         - Assure that requested run state name is properly capitalized
 **
 *****************************************************/
 DECLARE
@@ -180,7 +181,8 @@ DECLARE
     _oldEusProposalID citext := '';
     _oldStatus citext := '';
     _matchFound boolean := false;
-    _statusID int := 0;
+    _stateID int := 0;
+    _stateNameMatch text;
     _experimentID int := 0;
     _userID int;
     _matchCount int;
@@ -461,13 +463,15 @@ BEGIN
             _wellNumber := null;
         End If;
 
-        SELECT state_id
-        INTO _statusID
+        SELECT state_id, state_name
+        INTO _stateID, _stateNameMatch
         FROM t_requested_run_state_name
         WHERE state_name = _status::citext;
 
         If Not FOUND Then
             RAISE EXCEPTION 'Invalid requested run state: %', _status;
+        Else
+            _status := _stateNameMatch;
         End If;
 
         ---------------------------------------------------

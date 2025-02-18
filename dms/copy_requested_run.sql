@@ -47,10 +47,12 @@ CREATE OR REPLACE PROCEDURE public.copy_requested_run(IN _requestid integer, IN 
 **          12/28/2023 mem - Use a variable for target type when calling alter_event_log_entry_user()
 **          11/26/2024 mem - When _infoOnly is false, show the new request ID using Raise Info
 **                         - Show error messages using Raise Warning
+**          02/17/2025 mem - Assure that requested run state name is properly capitalized
 **
 *****************************************************/
 DECLARE
     _stateID int;
+    _stateNameMatch text;
     _newRequestID int;
     _oldRequestName text;
     _newRequestName citext;
@@ -112,8 +114,8 @@ BEGIN
     -- Validate _status
     ---------------------------------------------------
 
-    SELECT state_id
-    INTO _stateID
+    SELECT state_id, state_name
+    INTO _stateID, _stateNameMatch
     FROM t_requested_run_state_name
     WHERE state_name = _status::citext;
 
@@ -128,6 +130,8 @@ BEGIN
 
         _returnCode := 'U5253';
         RETURN;
+    Else
+        _status := _stateNameMatch;
     End If;
 
     ---------------------------------------------------
