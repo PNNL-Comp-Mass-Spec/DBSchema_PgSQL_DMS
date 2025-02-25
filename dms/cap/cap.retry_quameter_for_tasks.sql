@@ -19,7 +19,7 @@ CREATE OR REPLACE FUNCTION cap.retry_quameter_for_tasks(_jobs text, _infoonly bo
 **    _jobs       List of capture task jobs whose steps should be reset
 **    _infoOnly   True to preview the changes,
 **
-** Example Usage:
+** Example usage:
 **   SELECT * FROM cap.retry_quameter_for_tasks('6016807, 6016805, 6016798', _infoOnly => true, _ignoreQuameterErrors => false);
 **
 **  Auth:   mem
@@ -42,7 +42,6 @@ DECLARE
     _exceptionDetail text;
     _exceptionContext text;
 BEGIN
-
     -----------------------------------------------------------
     -- Validate the inputs
     -----------------------------------------------------------

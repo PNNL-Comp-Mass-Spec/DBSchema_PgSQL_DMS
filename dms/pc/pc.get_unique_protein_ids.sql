@@ -14,7 +14,7 @@ CREATE OR REPLACE FUNCTION pc.get_unique_protein_ids(_collection1 integer, _coll
 **    _collection1  ID of the first protein collection
 **    _collection2  ID of the second protein collection
 **
-**  Example Usage:
+**  Example usage:
 **      -- 68 proteins are in collection 1 but not in collection 2
 **      SELECT COUNT(*)
 **      FROM pc.get_unique_protein_ids(3872, 3909);
@@ -29,7 +29,6 @@ CREATE OR REPLACE FUNCTION pc.get_unique_protein_ids(_collection1 integer, _coll
 **
 *****************************************************/
 BEGIN
-
     RETURN QUERY
     WITH
     Collection1 (protein_id, protein_collection_id) AS
@@ -47,7 +46,6 @@ BEGIN
          LEFT OUTER JOIN Collection2
            ON Collection1.protein_id = Collection2.protein_id
     WHERE Collection2.protein_id IS NULL;
-
 END
 $$;
 

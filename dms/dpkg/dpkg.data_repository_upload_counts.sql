@@ -16,7 +16,7 @@ CREATE OR REPLACE FUNCTION dpkg.data_repository_upload_counts(_filtermode intege
 **                      1: ProteomeXchange and MassIVE only
 **                      2: CPTAC, MoTrPAC, and TEDDY only
 **
-**  Example Usage:
+**  Example usage:
 **      -- All data repositories
 **      SELECT * FROM dpkg.data_repository_upload_counts(0);
 **
@@ -57,7 +57,7 @@ BEGIN
         _currentDate := '2018-01-01';
     End If;
 
-        _endDate     := current_timestamp::date;
+    _endDate := current_timestamp::date;
 
     ---------------------------------------------------
     -- Populate Tmp_Dates with the first day of each month that starts each quarter, starting with _currentDate

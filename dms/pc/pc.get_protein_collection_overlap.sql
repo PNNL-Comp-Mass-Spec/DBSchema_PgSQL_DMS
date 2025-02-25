@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION pc.get_protein_collection_overlap(_collectiononeid in
 **
 **      This is an overloaded verison of function pc.get_protein_collection_overlap(), which accepts either protein collection name or protein collection ID
 **
-**  Example Usage:
+**  Example usage:
 **      SELECT * FROM pc.get_protein_collection_overlap(2257, 4009);
 **
 **  Arguments:
@@ -51,7 +51,7 @@ CREATE OR REPLACE FUNCTION pc.get_protein_collection_overlap(_collectiononenameo
 **  Desc:
 **      Compares the proteins in two protein collections, reporting the number in common (exact same sequence), plus the number only in collection A or only in collection B
 **
-**  Example Usage:
+**  Example usage:
 **      SELECT * FROM pc.get_protein_collection_overlap('3996', '3909');
 **      SELECT * FROM pc.get_protein_collection_overlap('3996', 'H_sapiens_UniProt_SPROT_2023-09-01');
 **      SELECT * FROM pc.get_protein_collection_overlap('H_sapiens_UniProt_SPROT_2024-09-12', 'H_sapiens_UniProt_SPROT_2023-09-01');
@@ -110,7 +110,6 @@ BEGIN
 
             RETURN;
         End If;
-
 
         ---------------------------------------------------
         -- Resolve protein collection names and/or IDs
