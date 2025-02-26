@@ -51,9 +51,7 @@ CREATE VIEW public.v_analysis_job_detail_report_2 AS
             ELSE (dfp.dataset_url)::text
         END AS data_folder_link,
     public.get_job_psm_stats(j.job) AS psm_stats,
-    COALESCE(mtspt.pt_db_count, (0)::bigint) AS mts_pt_db_count,
-    COALESCE(mtsmt.mt_db_count, (0)::bigint) AS mts_mt_db_count,
-    COALESCE(pmtaskcountq.pmtasks, (0)::bigint) AS peak_matching_results,
+    j.dataset_id,
     j.created,
     j.start AS started,
     j.finish AS finished,
@@ -68,6 +66,9 @@ CREATE VIEW public.v_analysis_job_detail_report_2 AS
         END AS export_mode,
     t_yes_no.description AS dataset_unreviewed,
     t_myemsl_state.myemsl_state_name AS myemsl_state,
+    COALESCE(mtspt.pt_db_count, (0)::bigint) AS mts_pt_db_count,
+    COALESCE(mtsmt.mt_db_count, (0)::bigint) AS mts_mt_db_count,
+    COALESCE(pmtaskcountq.pmtasks, (0)::bigint) AS peak_matching_results,
     ajpg.group_name AS processor_group
    FROM ((((((ont.t_cv_bto_cached_names bto
      RIGHT JOIN (((((((((((public.t_analysis_job j
