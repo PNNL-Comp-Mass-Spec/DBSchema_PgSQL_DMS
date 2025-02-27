@@ -13,6 +13,9 @@ CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable text DEFAULT 't_cv_bt
 **      This is required after adding new information to a t_cv table,
 **      e.g., after adding new BTO terms to ont.t_cv_bto using a .owl file
 **
+**      The Ontology List Report uses view ont.v_ontology_list_report
+**      and that view uses view ont.v_term
+**
 **      The Ontology Detail Report uses view ont.v_ontology_detail_report
 **      and that view uses views ont.v_term and ont.v_term_lineage
 **
@@ -27,13 +30,19 @@ CREATE OR REPLACE FUNCTION ont.backfill_terms(_sourcetable text DEFAULT 't_cv_bt
 **    _previewRelationshipUpdates   Set to true to preview adding/removing relationships; false to actually update relationships
 **
 **  Usage:
-**      SELECT * FROM ont.backfill_terms  (
+**      SELECT * FROM ont.backfill_terms (
 **          _sourceTable                => 'ont.t_cv_bto',
 **          _namespace                  => 'BrendaTissueOBO',
 **          _infoOnly                   => false,
 **          _previewRelationshipUpdates => true);
 **
-**      SELECT * FROM ont.backfill_terms  (
+**      SELECT * FROM ont.backfill_terms (
+**          _sourceTable                => 't_cv_ms',
+**          _namespace                  => 'MS',
+**          _infoOnly                   => false,
+**          _previewRelationshipUpdates => false);
+**
+**      SELECT * FROM ont.backfill_terms (
 **          _sourceTable                => 'ont.t_cv_newt',
 **          _namespace                  => '',
 **          _infoOnly                   => false,
