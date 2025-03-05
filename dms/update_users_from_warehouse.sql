@@ -87,6 +87,7 @@ CREATE OR REPLACE PROCEDURE public.update_users_from_warehouse(IN _infoonly bool
 **          05/14/2016 mem - Add check for duplicate names
 **          08/22/2018 mem - Tabs to spaces
 **          03/09/2024 mem - Ported to PostgreSQL
+**          03/05/2025 mem - Ignore users with status 'obsolete'
 **
 *****************************************************/
 DECLARE
@@ -155,7 +156,8 @@ BEGIN
         FROM t_users U
              INNER JOIN pnnldata."VW_PUB_BMI_EMPLOYEE" Src
                ON U.hid = format('H%s', Src."HANFORD_ID")
-        WHERE U.update = 'Y';
+        WHERE U.update = 'Y' AND
+              U.status <> 'Obsolete';
 
         ----------------------------------------------------------
         -- Obtain info for associates
@@ -187,6 +189,7 @@ BEGIN
              LEFT OUTER JOIN Tmp_UserInfo Target
                ON U.user_id = Target.ID
         WHERE U.update = 'Y' AND
+              U.status <> 'Obsolete' AND
               Target.ID IS NULL;
 
         ----------------------------------------------------------
@@ -395,6 +398,7 @@ BEGIN
              LEFT OUTER JOIN Tmp_UserInfo Src
                ON U.user_id = Src.ID
         WHERE U.update = 'Y' AND
+              U.status <> 'Obsolete' AND
               Src.ID IS NULL;
         --
         GET DIAGNOSTICS _missingCount = ROW_COUNT;
@@ -427,6 +431,7 @@ BEGIN
              INNER JOIN Tmp_UserInfo Src
                ON U.user_id = Src.ID
         WHERE U.update = 'Y' AND
+              U.status <> 'Obsolete' AND
               U.username <> Src.Username AND
               Coalesce(Src.Username, '') <> '';
         --
