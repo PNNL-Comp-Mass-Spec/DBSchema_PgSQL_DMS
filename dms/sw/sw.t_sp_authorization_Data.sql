@@ -24,6 +24,7 @@ SET row_security = off;
 COPY sw.t_sp_authorization (entry_id, procedure_name, login_name, host_name, host_ip) FROM stdin;
 1	*	DMSWebUser	gigasax	130.20.225.2
 6	*	PNL\\D3L243	*	*
+17	*	PNL\\gibb166	*	*
 7	*	PNL\\gibb713	*	*
 8	*	PNL\\memadmin	*	*
 9	*	PNL\\msdadmin	gigasax	130.20.225.2
@@ -37,7 +38,7 @@ COPY sw.t_sp_authorization (entry_id, procedure_name, login_name, host_name, hos
 -- Name: t_sp_authorization_entry_id_seq; Type: SEQUENCE SET; Schema: sw; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('sw.t_sp_authorization_entry_id_seq', 16, true);
+SELECT pg_catalog.setval('sw.t_sp_authorization_entry_id_seq', 17, true);
 
 
 --

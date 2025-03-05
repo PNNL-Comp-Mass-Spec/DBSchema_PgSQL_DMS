@@ -36,6 +36,7 @@ COPY public.t_sp_authorization (entry_id, procedure_name, login_name, host_name,
 28	*	DMSWebUser	proto-2_IPv6	2620:0:50f1:118::193b	f
 21	add_requested_run_batch_location_scan	LCMSNetUser	*	*	f
 6	*	PNL\\D3L243	*	*	f
+31	*	PNL\\gibb166	*	*	f
 16	*	PNL\\gibb713	*	*	f
 17	*	PNL\\memadmin	*	*	f
 18	*	PNL\\msdadmin	*	*	f
@@ -48,7 +49,7 @@ COPY public.t_sp_authorization (entry_id, procedure_name, login_name, host_name,
 -- Name: t_sp_authorization_entry_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_sp_authorization_entry_id_seq', 30, true);
+SELECT pg_catalog.setval('public.t_sp_authorization_entry_id_seq', 31, true);
 
 
 --
