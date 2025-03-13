@@ -31,6 +31,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_group_membership_list(_instrume
 **          06/21/2022 mem - Ported to PostgreSQL
 **          05/30/2023 mem - Use format() for string concatenation
 **          01/20/2024 mem - Change the data type of _instrumentGroup to text
+**          03/13/2025 mem - Return an empty string instead of null if the instrument group does not have any active instruments
 **
 *****************************************************/
 DECLARE
@@ -71,7 +72,7 @@ BEGIN
         End If;
     End If;
 
-    RETURN _result;
+    RETURN Trim(Coalesce(_result, ''));
 END
 $$;
 
