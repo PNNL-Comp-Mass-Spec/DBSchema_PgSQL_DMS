@@ -112,7 +112,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1558	CitrCysteamine	Citrulline + 2,3-Butanedione + Cysteamine	142.0326578	142.19986	-	PNNL		\N	C(6) H(8) O N S
 1559	CitrMercapto	Citrulline + 2,3-Butanedione + Mercapto...	348.1527836	348.51004	-	PNNL		\N	C(13) H(26) O(2) N(5) S(2)
 1577	CitrMethylglyoxal	Citrulline + methylglyoxal	54.9968	55	-	PNNL		\N	
-1576	CitrPhenylglyoxal	Citrulline + phenylglyoxal	117.0148	117	-	PNNL		\N	
+1576	CitrPhenylglyoxal	Citrulline + phenylglyoxal	117.0102	117	-	PNNL		\N	
 1196	ClickBio	Click-Bio enrichment compound	539.252	\N	-	PNNL		ClickBio	\N
 1469	Crotonyl	Crotonylation	68.026215	\N	-	UniMod	Crotonyl	Crotonylation	H(4) C(4) O
 1337	Cyano	Cyano	24.995249	25.0095	-	UniMod	Cyano	Cyano	H(-1) C1 N1
@@ -237,6 +237,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1234	HisOxyN	Rearrangement and addition of oxygen to obtain Asparagine	-23.015984	-23.0366	-	UniMod	His->Asn	His2Asn	H(-1) C(-2) N(-1) O
 1389	HisToGlu	His to Glu substitution	-8.016319	\N	-	UniMod	His->Glu	Misacylation of the tRNA or editing of the charged tRNA	C(-1) N(-2) O(2)
 1573	HomocitrBD	Homocitrulline + 2,3-Butanedione	93.021464	93.08346	-	PNNL		\N	C(5) H(3) N(1) O
+1578	HomocitrPhenylglyoxal	Homocitrulline + phenylglyoxal	159.032	159	-	PNNL		\N	
 1399	Hypusine	replacement of Lysine	87.068414	87.1204	-	UniMod	hypusine	\N	H(9) C(4) N O
 1434	IAAABP	NCS_IAABP probe addition to Cysteine	394.197801	\N	-	PNNL		\N	C(19) H(28) N(3) O(6)
 1436	IAAABP-H	NCS_IAABP probe addition to Cysteine, minus H	393.1899762	\N	-	PNNL		\N	C(19) H(27) N(3) O(6)
@@ -471,7 +472,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 -- Name: t_mass_correction_factors_mass_correction_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1577, true);
+SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1578, true);
 
 
 --
