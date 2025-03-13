@@ -11,6 +11,7 @@ CREATE VIEW public.v_instrument_group_picklist AS
     sample_prep_visible,
     requested_run_visible,
         CASE
+            WHEN ((instruments OPERATOR(public.=) ''::public.citext) AND (instrument_group OPERATOR(public.~) similar_to_escape('%[_]frac'::text))) THEN instrument_group
             WHEN (instruments OPERATOR(public.=) ''::public.citext) THEN (((instrument_group)::text || (' (no active instruments)'::public.citext)::text))::public.citext
             ELSE (((((((instrument_group)::text || (' ('::public.citext)::text))::public.citext)::text || (instruments)::text) || (')'::public.citext)::text))::public.citext
         END AS instrument_group_and_instruments
