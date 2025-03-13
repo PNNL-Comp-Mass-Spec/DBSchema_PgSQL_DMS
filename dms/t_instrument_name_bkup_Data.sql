@@ -48,6 +48,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 21	9T_FTICR_Q	BrukerFTMS	FT_ZippedSFolders	103	173	fso	Inactive	EMSL 1326	9.4T Bruker w/special quad	2004-01-28 00:00:00
 102	AMOLF_VOrbiETD01	LTQ_FT	VelosOrbi	1230	1231	fso	Inactive	AMOLF (Netherlands)	AMOLF Orbitrap data from Ron Heeren	2012-12-03 12:31:26
 257	AgGCQTOF02	Agilent_TOF_V2	Agilent_GC_MS	4864	5038	secfso	Active	EMSL 1130	Agilent GC-QTOF, owned by EMSL	2024-07-03 14:52:21
+260	AgGCQTOF03	Agilent_TOF_V2	Agilent_GC_MS	5060	2	secfso	Active	EMSL 1649	GC-QTOF under Agilent collaboration agreement for GC-MS spectral libraries	2025-03-07 11:01:30.055909
 79	AgQTOF03	Agilent_TOF_V2	Agilent_TOF_V2	307	2155	secfso	Inactive	EMSL 1430	Agilent QTOF, WD67695	2011-02-01 16:58:52
 70	AgQTOF04	Agilent_TOF_V2	Agilent_TOF_V2	288	1025	fso	Inactive	EMSL 1430	Agilent QTOF	2010-11-04 15:01:20
 122	AgQTOF05	Agilent_TOF_V2	Agilent_TOF_V2	1545	3273	secfso	Inactive	EMSL 1401	Agilent QTOF for Metallomics.	2014-05-29 11:20:30
@@ -70,7 +71,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 247	Altis04	Triple_Quad	TSQ	4828	5030	secfso	Active	EMSL 1142	Thermo Altis Plus triple quad, MS:1003292	2024-04-16 16:59:57
 234	Aragorn	Waters_Acquity_LC	Waters_Acquity_LC	4585	4928	secfso	Active	EMSL 1142	Waters nanoAcquity LC	2023-11-03 13:15:38
 225	Arwen	Waters_Acquity_LC	Waters_Acquity_LC	4576	4919	secfso	Active	EMSL 1314	Waters Acquity M-Class LC	2023-11-02 17:25:10
-192	Ascend01	LTQ_FT	Ascend	4440	5012	secfso	Active	BSF 1229	Purchased by Leidos	2023-04-18 12:19:15
+192	Ascend01	LTQ_FT	Ascend	4440	5012	secfso	Active	BSF 1229	Orbitrap Ascend Tribrid, MS:1003356; Purchased by Leidos	2023-04-18 12:19:15
 254	Astral01	LTQ_FT	Astral	4839	5019	secfso	Active	BSF 2235	Thermo Astral instrument, 50% BSD, 50% NSD	2024-05-28 18:03:42
 131	BSF_GC01	Agilent_Ion_Trap	Agilent_GC	1754	2	secfso	Offline	BSF 1229	GC with FID	2015-07-06 16:23:30
 139	BSF_GC02	Agilent_Ion_Trap	Agilent_GC	1991	2	secfso	Offline	BSF 1215	GC with FID	2016-01-27 11:33:06
@@ -275,7 +276,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 93	VPro01	Finnigan_Ion_Trap	VelosPro	1162	1345	secfso	Inactive	EMSL 1621	Velos Pro Ion Trap	2012-07-13 14:11:46
 89	Vanderbilt_VOrbiETD01	LTQ_FT	VelosOrbi	1098	1446	fso	Inactive	VU (Tennessee)	Vanderbilt Institute LTQ-Velos Orbitrap	2012-03-21 13:19:23
 90	WashU_TripleTOF5600	Sciex_TripleTOF	Sciex_TripleTOF	1133	1134	fso	Inactive	WUSL (Washington University in St. Louis)	Data acquired under the CPTAC project	2012-05-14 20:28:39
-174	XevoG2_01	Waters_TOF	Waters_TOF	3536	5003	secfso	Active	BSF 1215	Transfer/Moved from BSEL in September 2020	2020-09-23 12:48:22
+174	XevoG2_01	Waters_TOF	Waters_TOF	3536	5059	secfso	Active	BSF 1215	Transfer/Moved from BSEL in September 2020	2020-09-23 12:48:22
 255	timsTOFFlex02	BrukerTOF_TDF	timsTOF_Flex	4863	5053	secfso	Active	EMSL 1444	Bruker timsTOF Flex with ESI source. Also has MALDI imaging capability	2024-07-03 13:46:33
 256	timsTOFFlex02_Imaging	timsTOF_MALDI_Imaging	MALDI_timsTOF_Imaging	4863	5024	secfso	Active	EMSL 1444	Bruker timsTOF Flex with MALDI imaging capability	2024-07-03 13:47:58
 194	timsTOFScp01	BrukerTOF_TDF	timsTOF_SCP	4442	5031	secfso	Active	EMSL 1314	Bruker timsTOF for single cell proteomics; for MassIVE, use timsTOF SCP, MS:1003231	2023-04-19 16:36:27

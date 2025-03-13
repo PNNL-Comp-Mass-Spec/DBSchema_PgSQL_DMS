@@ -869,6 +869,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 1876	89	23	LTQ_FT	Astral%		QC_Mammalian						QC[_]Mam%	%[_]DIA[_]%	%HMSn%		DIA%				0	0	MSGFPlus_MzML_NoRefine	MSGFPlus_Tryp_MetOx_StatCysAlk_20ppmParTol.txt	IonTrapDefSettings_MzML_48GB.xml	24	na	M_musculus_UniProt_SPROT_2013_09_2013-09-18,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		1	Similar to 1861, but allocates 48 GB to MS-GF+	2025-02-24 09:34:00.363727	D3L243	90	1	0	2025-02-24 09:34:00.363727
 1877	98	14	LTQ_FT	Astral%		QC_Mammalian						QC[_]Mam%	%[_]DIA[_]%	%HMSn%		DIA%				0	0	SMAQC_MSMS	SMAQC_2014-01-08.xml	na	24	na	na	na	2	SourceJob:Auto{Tool = "MSGFPlus_MzML_NoRefine" AND Settings_File = "IonTrapDefSettings_MzML_48GB.xml" AND Param_File = "MSGFPlus_Tryp_MetOx_StatCysAlk_20ppmParTol.txt"}, Job2:Auto{Tool = "MASIC_Finnigan"}	1	Corresponds to predefine 1876; similar to 1862, but limited to Astral datasets and excludes datasets with DIA in the name	2025-02-24 09:35:18.864189	D3L243	99	1	0	2025-02-24 09:35:18.864189
 1878	85	13	LTQ_FT	Exploris%		QC-Standard		QC[_]PP[_]MCF-7%				%QC%			DIA%					0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_STY_Phos_NTermAcet_Stat_CysAlk_Precursor400-1000.txt	DiaNN_Standard.xml	8	na	H_sapiens_UniProt_SPROT_2016-04-13_QC_PP_proteins,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		1	Label-free, enriched human QC for phosphopeptide samples	2025-02-28 10:10:40.843382	D3L243	86	1	0	2025-02-28 10:10:40.843382
+1879	90	59	LTQ_FT	%		MoTrPAC		MoTrPAC[_]T[0-9][_]HM[_]%[_]G[_]%						%HCD%			TMT18			0	0	MSGFPlus_MzML	MSGFPlus_PartTryp_DynMetOx_Stat_CysAlk_TMT_16Plex_20ppmParTol.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_UniProt_SPROT_2021-06-20,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	3		1	For MoTrPAC human muscle (HM) and human adipose (HA) samples, global	2025-03-11 15:21:26.228774	D3L243	91	1	0	2025-03-11 15:23:04.120564
 \.
 
 
@@ -876,7 +877,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 -- Name: t_predefined_analysis_predefine_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1878, true);
+SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1879, true);
 
 
 --

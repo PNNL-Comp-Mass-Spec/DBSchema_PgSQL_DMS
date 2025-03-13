@@ -154,7 +154,7 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 1153	XBridge_019	Waters XBridge	186003117	01793619533819	Waters	Silica	5 um	C18	4.6 mm	10 mm	250 mm	Active	D3K875	Carrie column. Please ask before using.	2017-06-08 09:13:43
 1154	Human_Mars_14_100mm_16	Multi Affinity Removal Column	5188-6558	100841828B	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Retired	D3M765	AH Project. See Jon Jacobs before using. Exp 04/30/2019	2017-07-28 06:06:57
 1155	Human_IgY14_LC5_05	Seppro IgY14 LC5	S4949-1EA	1002214038	Sigma	IgY	N/A	Ig antibodies	N/A	N/A	N/A	Active	D3M765	See Tao or Weijun before use! 6/30/17. Lot SLBP7519V	2017-08-24 10:52:41
-1156	ZORBAX_002	ZORBAX	custom	USDHP01071	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	CPTAC3 UCEC Use Only	2017-09-13 12:01:41
+1156	ZORBAX_002	ZORBAX	custom	USDHP01071	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Retired	D3L365	CPTAC3 UCEC Use Only	2017-09-13 12:01:41
 1157	ZORBAX_003	ZORBAX	custom	USDHP01072	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	CPTAC3 GBM Use Only	2017-09-13 12:02:09
 1158	ZORBAX_004	ZORBAX	custom	USDHP01078	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Retired	D3L365	Exclusively for PTRC. POC-P. Piehowski; M. Gritsenko	2017-11-20 10:35:26
 1159	ZORBAX_005	ZORBAX	custom	USDHP01081	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	Exclusively for MoTrPAC - method development and tests. POC-P.Piehowski; M.Gritsenko	2017-12-22 15:27:27
@@ -216,7 +216,7 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 1215	XBridge_022	Waters XBridge	186003117	02493418613896	Waters	Silica	5 um	C18	4.6 mm	10 mm	250 mm	Active	D3H534	Heather's column. Please ask before using.	2024-08-20 14:25:20.413553
 1216	XBridge_023	Waters XBridge	186003117	02493405212488	Waters	Silica	5 um	C18	4.6 mm	10 mm	250 mm	Active	D3M765	Athena's new column. Please ask before using.	2024-09-03 12:45:18.569008
 1217	ZORBAX_015	ZORBAX	custom	USDHP01257	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	For Clinical Projects; POC-Marina Gritsenko	2025-01-29 16:30:27.389084
-1218	ZORBAX_016	ZORBAX	custom	USDHP01256	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	POC-Marina Gritsenko	2025-02-17 16:30:30.556229
+1218	ZORBAX_016	ZORBAX	custom	USDHP01256	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	Alz Buchman project	2025-02-17 16:30:30.556229
 \.
 
 
