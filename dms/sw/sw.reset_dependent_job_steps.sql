@@ -1,6 +1,71 @@
 --
+-- Name: reset_dependent_job_steps(integer, boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
+--
+-- Overload 1
+
+CREATE OR REPLACE PROCEDURE sw.reset_dependent_job_steps(IN _job integer, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+    LANGUAGE plpgsql
+    AS $$
+/****************************************************
+**
+**  Desc:
+**      Reset entries in sw.t_job_steps and sw.t_job_step_dependencies for the given job
+**      for any job steps that are complete but depend on a job step that is
+**      enabled, in progress, or completed after the given job step finished
+**
+**      This procedure is a wrapper that calls sw.reset_dependent_job_steps(), sending the job number as text
+**
+**  Arguments:
+**    _jobs         Job number
+**    _infoOnly     When true, preview updates
+**    _message      Status message
+**    _returnCode   Return code
+**
+**  Example usage:
+**      CALL sw.reset_dependent_job_steps(2424566, _infoOnly => true);
+**      CALL sw.reset_dependent_job_steps(2424566, _infoOnly => false);
+**
+**  Auth:   mem
+**  Date:   03/13/2025 mem - Initial version
+**
+*****************************************************/
+DECLARE
+BEGIN
+    _message := '';
+    _returnCode := '';
+
+    BEGIN
+        -----------------------------------------------------------
+        -- Validate the inputs
+        -----------------------------------------------------------
+
+        _job      := Coalesce(_job, 0);
+        _infoOnly := Coalesce(_infoOnly, false);
+
+        If _job = 0 Then
+            _message := 'Job number should be a positive integer';
+            RAISE WARNING '%', _message;
+
+            _returnCode := 'U5201';
+            RETURN;
+        End If;
+
+        CALL sw.reset_dependent_job_steps(
+            _jobs       => _job::text,
+            _infoOnly   => _infoOnly,
+            _message    => _message,        -- Output
+            _returnCode => _returnCode);    -- Output
+    END;
+END
+$$;
+
+
+ALTER PROCEDURE sw.reset_dependent_job_steps(IN _job integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+
+--
 -- Name: reset_dependent_job_steps(text, boolean, text, text); Type: PROCEDURE; Schema: sw; Owner: d3l243
 --
+-- Overload 2
 
 CREATE OR REPLACE PROCEDURE sw.reset_dependent_job_steps(IN _jobs text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
