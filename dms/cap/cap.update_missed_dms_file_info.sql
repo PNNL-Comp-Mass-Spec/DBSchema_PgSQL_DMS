@@ -31,10 +31,12 @@ CREATE OR REPLACE PROCEDURE cap.update_missed_dms_file_info(IN _deletefromtableo
 **                         - Ported to PostgreSQL
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **          01/15/2025 mem - Set _logErrorsToPublicLogTable to false when logging errors
+**          03/31/2025 mem - Show an update summary message
 **
 *****************************************************/
 DECLARE
     _matchCount int := 0;
+    _datasetsProcessed int := 0;
     _datasetID int;
     _logMsg text;
     _logMsgType text;
@@ -164,7 +166,6 @@ BEGIN
                     _infoOnly   => _infoOnly);
 
         If Coalesce(_returnCode, '') <> '' Then
-
             If _returnCode = 'U5360' Then
                 -- A duplicate dataset was detected
                 -- An error message will have already been logged in public.t_log_entries, so we can log a warning message here
@@ -184,10 +185,22 @@ BEGIN
             Else
                 CALL public.post_log_entry (_logMsgType, _logMsg, 'Update_Missed_DMS_File_Info', 'cap', _duplicateEntryHoldoffHours => 22, _logErrorsToPublicLogTable => false);
             End If;
-
         End If;
 
+        _datasetsProcessed := _datasetsProcessed + 1;
     END LOOP;
+
+    If _infoOnly Then
+        _message := format('Dataset info XML updates are pending for %s %s',
+                            _datasetsProcessed, public.check_plural(_datasetsProcessed, 'dataset', 'datasets'));
+    Else
+        _message := format('Processed dataset info XML for %s %s (_deleteFromTableOnSuccess = %s)',
+                            _datasetsProcessed, public.check_plural(_datasetsProcessed, 'dataset', 'datasets'),
+                            CASE WHEN _deleteFromTableOnSuccess THEN 'true' ELSE 'false' END);
+    End If;
+
+    RAISE INFO '';
+    RAISE INFO '%', _message;
 
     DROP TABLE Tmp_DatasetsToProcess;
 END
