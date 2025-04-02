@@ -10,7 +10,7 @@ CREATE OR REPLACE PROCEDURE public.rename_dataset(IN _datasetnameold text DEFAUL
 **  Desc:
 **      Rename a dataset in t_dataset
 **
-**      Also update associated jobs in cap.t_tasks and sw.t_jobs, and updates dpkg.t_data_package_datasets
+**      Also update t_requested_run, associated jobs in cap.t_tasks and sw.t_jobs, and datasets in dpkg.t_data_package_datasets
 **
 **  Arguments:
 **    _datasetNameOld                   Dataset name to change
@@ -58,6 +58,8 @@ CREATE OR REPLACE PROCEDURE public.rename_dataset(IN _datasetnameold text DEFAUL
 **          02/05/2025 mem - Change _requestedRunState to citext
 **                         - Add _showRenameCommands (only applicable if _infOnly is true)
 **          02/17/2025 mem - Add support for requested run state 'Holding'
+**          03/14/2025 mem - Query tables directly instead of using view V_Requested_Run_List_Report_2
+**                         - Include "echo" at the start of status lines to make copy/paste into a batch file easier
 **
 *****************************************************/
 DECLARE
@@ -336,11 +338,11 @@ BEGIN
             WHERE DS.dataset IN (_datasetNameOld::citext, _datasetNameNew::citext);
 
             RAISE INFO '';
-            RAISE INFO 'Renaming Dataset ID % (created %)', _datasetInfo.Dataset_ID, public.timestamp_text(_datasetInfo.Dataset_Created);
-            RAISE INFO 'Old name: %', _datasetInfo.Dataset_Name_Old;
-            RAISE INFO 'New name: %', _datasetInfo.Dataset_Name_New;
-            RAISE INFO 'Experiment ID:   %', _datasetInfo.Experiment_ID;
-            RAISE INFO 'Experiment Name: %', _datasetInfo.Experiment;
+            RAISE INFO 'echo Renaming Dataset ID % (created %)', _datasetInfo.Dataset_ID, public.timestamp_text(_datasetInfo.Dataset_Created);
+            RAISE INFO 'echo Old name: %', _datasetInfo.Dataset_Name_Old;
+            RAISE INFO 'echo New name: %', _datasetInfo.Dataset_Name_New;
+            RAISE INFO 'echo Experiment ID:   %', _datasetInfo.Experiment_ID;
+            RAISE INFO 'echo Experiment Name: %', _datasetInfo.Experiment;
 
             -- Rename the dataset and update the experiment ID (if changed)
             UPDATE t_dataset
@@ -350,7 +352,7 @@ BEGIN
             WHERE dataset_id = _datasetID AND
                   dataset = _datasetNameOld::citext;
 
-            _message := format('Renamed dataset ID %s from "%s" to "%s"', _datasetID, _datasetNameOld, _datasetNameNew);
+            _message := format('echo Renamed dataset ID %s from "%s" to "%s"', _datasetID, _datasetNameOld, _datasetNameNew);
             RAISE INFO '%', _message;
 
             CALL post_log_entry ('Normal', _message, 'Rename_Dataset');
@@ -404,12 +406,12 @@ BEGIN
         End If;
 
         RAISE INFO '';
-        RAISE INFO '%', _datasetInfo.Comment;
-        RAISE INFO 'Dataset ID % (created %)', _datasetInfo.Dataset_ID, public.timestamp_text(_datasetInfo.Dataset_Created);
-        RAISE INFO 'Old name: %', _datasetInfo.Dataset_Name_Old::text;
-        RAISE INFO 'New name: %', _datasetInfo.Dataset_Name_New;
-        RAISE INFO 'Experiment ID:   %', _datasetInfo.Experiment_ID;
-        RAISE INFO 'Experiment Name: %', _datasetInfo.Experiment;
+        RAISE INFO 'echo %', _datasetInfo.Comment;
+        RAISE INFO 'echo Dataset ID % (created %)', _datasetInfo.Dataset_ID, public.timestamp_text(_datasetInfo.Dataset_Created);
+        RAISE INFO 'echo Old name: %', _datasetInfo.Dataset_Name_Old::text;
+        RAISE INFO 'echo New name: %', _datasetInfo.Dataset_Name_New;
+        RAISE INFO 'echo Experiment ID:   %', _datasetInfo.Experiment_ID;
+        RAISE INFO 'echo Experiment Name: %', _datasetInfo.Experiment;
 
         If Exists (SELECT dataset_id FROM t_dataset_files WHERE dataset_id = _datasetID) Then
             RAISE INFO '';
@@ -500,31 +502,37 @@ BEGIN
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-            SELECT RL.Request,
-                   RL.Name,
-                   RL.Status,
-                   RL.Queue_State,
-                   RL.Origin,
-                   RL.Campaign,
-                   RL.Experiment,
-                   RL.Dataset,
-                   RL.Instrument,
+            SELECT RR.Request_ID,
+                   RR.Request_Name,
+                   RR.state_name AS Status,
+                   RR.Queue_State,
+                   RR.Origin,
+                   C.Campaign,
+                   E.Experiment,
+                   DS.Dataset,
+                   InstName.Instrument,
                    public.timestamp_text(RR.request_run_start)  AS Request_Run_Start,
                    public.timestamp_text(RR.request_run_finish) AS Request_Run_Finish
-            FROM V_Requested_Run_List_Report_2 RL
-                 INNER JOIN t_requested_run RR
-                   ON RL.Request = RR.request_id
-            WHERE RL.Dataset IN (_datasetNameOld::citext, _datasetNameNew::citext) OR
-                  _showRequestedRunsByExperiment And Coalesce(_experiment, '') <> '' AND RL.Name ILIKE _experiment || '%'
-            ORDER BY CASE WHEN RL.Dataset = _datasetNameOld::citext THEN '0'
-                          WHEN RL.Dataset = _datasetNameNew::citext THEN '1'
-                          ELSE '2_' || RL.Name
+            FROM t_requested_run RR
+                 INNER JOIN t_experiments E
+                   ON RR.exp_id = E.exp_id
+                 INNER JOIN t_campaign C
+                   ON E.campaign_id = E.campaign_id
+                 LEFT JOIN t_dataset DS
+                   ON RR.dataset_id = DS.dataset_id
+                 LEFT JOIN t_instrument_name InstName
+                   ON DS.instrument_id = InstName.instrument_id
+            WHERE Lower(DS.Dataset::text) IN (Lower(_datasetNameOld), Lower(_datasetNameNew))
+                  OR _showRequestedRunsByExperiment AND Coalesce(_experiment, '') <> '' AND Lower(RR.Request_Name::text) SIMILAR TO Lower(_experiment || '%')
+            ORDER BY CASE WHEN DS.Dataset = _datasetNameOld THEN '0'
+                          WHEN DS.Dataset = _datasetNameNew THEN '1'
+                          ELSE '2_' || RR.Request_Name
                      END
             LIMIT 100
         LOOP
             _infoData := format(_formatSpecifier,
-                                _previewData.Request,
-                                _previewData.Name,
+                                _previewData.Request_ID,
+                                _previewData.Request_Name,
                                 _previewData.Status,
                                 _previewData.Queue_State,
                                 _previewData.Origin,
@@ -570,8 +578,8 @@ BEGIN
         RAISE INFO '%', _infoHeadSeparator;
 
         FOR _previewData IN
-            SELECT RL.Request,
-                   RL.Name,
+            SELECT RL.Request AS Request_ID,
+                   RL.Name AS Request_Name,
                    RL.Status,
                    RL.Queue_State,
                    RL.Origin,
@@ -587,8 +595,8 @@ BEGIN
             WHERE RL.Request IN (_requestedRunInfo.OldRequestedRunID, _newRequestedRunID)
         LOOP
             _infoData := format(_formatSpecifier,
-                                _previewData.Request,
-                                _previewData.Name,
+                                _previewData.Request_ID,
+                                _previewData.Request_Name,
                                 _previewData.Status,
                                 _previewData.Queue_State,
                                 _previewData.Origin,
@@ -606,9 +614,8 @@ BEGIN
     End If;
 
     --------------------------------------------
-    -- Create a temporary table to first track
-    -- capture task jobs in cap.t_tasks, then later track
-    -- analysis jobs in sw.t_jobs
+    -- Create a temporary table to first track capture task jobs in cap.t_tasks,
+    -- then later track analysis jobs in sw.t_jobs
     --------------------------------------------
 
     CREATE TEMP TABLE Tmp_JobsToUpdate (
@@ -1024,7 +1031,7 @@ BEGIN
     RAISE INFO '';
 
     If _jobFileUpdateCount > 0 Then
-        _msg := format('See the console output for %s dataset/job file update %s',
+        _msg := format('echo See the console output for %s dataset/job file update %s',
                        _jobFileUpdateCount,
                        public.check_plural(_jobFileUpdateCount, 'command', 'commands'));
 
