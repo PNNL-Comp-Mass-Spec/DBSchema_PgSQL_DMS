@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
+-- Dumped from database version 17.4
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -342,6 +342,7 @@ COPY public.t_user_operations_permissions (user_id, operation_id) FROM stdin;
 3345	17
 3347	17
 3347	32
+3347	35
 3348	17
 3348	35
 3351	32
@@ -408,6 +409,7 @@ COPY public.t_user_operations_permissions (user_id, operation_id) FROM stdin;
 3480	32
 3483	16
 3483	17
+3483	35
 3487	34
 3487	36
 3488	16
@@ -468,6 +470,10 @@ COPY public.t_user_operations_permissions (user_id, operation_id) FROM stdin;
 3644	16
 3645	25
 3646	25
+3647	25
+3649	17
+3650	17
+3651	17
 \.
 
 

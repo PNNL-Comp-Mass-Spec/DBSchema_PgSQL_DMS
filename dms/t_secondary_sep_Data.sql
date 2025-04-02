@@ -123,6 +123,7 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 32	LC-PFGRC-Standard	Datasets acquired in the Pathogen Functional Genomics Resource Center at JCVI	0	Other	0	2010-08-16 18:21:54
 102	LC-Pentylammonium_highflow_High_pH	Waters constant high flow, ion pairing pentylamine plus HFIP, high pH	1	LC-IonPairing	0	2017-10-09 15:40:24
 101	LC-ReproSil-75um	75 um columns packed with 1.9 um Reprosil porous particles	1	LC-ReproSil-75um	1	2016-11-23 10:45:35
+149	LC-Ribose_2hr	Ribose peptide separation using a Neo	1	LC-Ribose_2hr	0	2025-03-17 14:37:48.897919
 133	LC-Rush-Standard	Datasets acquired at Rush University	0	Other	0	2023-08-23 13:07:28
 79	LC-UNC-Standard	Datasets acquired at the University of North Carolina	0	Other	0	2014-03-07 15:54:39
 55	LC-Unknown	Unknown LC separation	0	Other	0	2010-09-13 13:38:29

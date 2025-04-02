@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
+-- Dumped from database version 17.4
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -44,6 +44,7 @@ Exploris04	239	2023-12-07 01:37:49
 Exploris05	242	2024-01-12 21:37:48
 Exploris06	246	2024-03-01 21:37:49
 Exploris07	259	2024-08-28 09:38:15.69369
+ExplorisMX01	258	2025-03-28 17:38:32.942693
 External_Agilent_QQQ	175	2021-02-16 13:37:49
 External_Ascend	195	2023-07-18 17:37:49
 External_Astral	244	2024-02-05 17:37:48

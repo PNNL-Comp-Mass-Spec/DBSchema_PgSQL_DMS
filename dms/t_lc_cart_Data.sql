@@ -47,6 +47,7 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 131	Crater	2	Thermo Vanquish Flex with two column compartments and a quaternary pump.	2022-10-20 10:08:00
 12	Doc	10		2006-03-10 10:28:00
 13	Draco	10		2006-03-14 09:07:00
+146	Dragonfly	2	BSD NanoPOTS with Vanquish Neo Binary Pump	2025-03-20 17:43:49.137657
 35	Eagle	10	Dedicated to IMS capability development 3/9/2010. Configured for extended separations.	2006-09-18 17:01:00
 14	Earth	10		2006-03-13 07:36:00
 76	Einstein	10	ISCO pumps for Direct Infusion of DOM samples	2013-09-10 10:27:00
@@ -144,7 +145,7 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 -- Name: t_lc_cart_cart_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_lc_cart_cart_id_seq', 145, true);
+SELECT pg_catalog.setval('public.t_lc_cart_cart_id_seq', 146, true);
 
 
 --

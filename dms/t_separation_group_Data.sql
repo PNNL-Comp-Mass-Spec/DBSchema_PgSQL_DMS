@@ -92,6 +92,7 @@ LC-PCR-Tube		1	0	0
 LC-PRISM		1	0	0
 LC-Phospho		1	1	0
 LC-ReproSil-75um		1	1	0
+LC-Ribose_2hr		1	1	0
 LC-TFA_100minute		1	0	0
 LC-Ubiquitylome		1	1	0
 LC-Waters-NH4HCO2		1	0	0
