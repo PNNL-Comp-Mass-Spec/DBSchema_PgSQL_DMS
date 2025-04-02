@@ -26,7 +26,8 @@ CASE
     WHEN (container OPERATOR(public.~) similar_to_escape('MC-[0-9]%'::text)) THEN ("substring"((container)::text, 4, 1000))::integer
     WHEN (container OPERATOR(public.~~) 'Bin%'::public.citext) THEN char_length((container)::text)
     ELSE (ascii("substring"((container)::text, 1, 1)) * 10000000)
-END) STORED
+END) STORED,
+    CONSTRAINT ck_t_material_containers_status CHECK (((status OPERATOR(public.=) 'Active'::public.citext) OR (status OPERATOR(public.=) 'Inactive'::public.citext)))
 );
 
 
