@@ -16,6 +16,7 @@ CREATE VIEW public.v_analysis_job AS
     j.protein_options_list AS protein_options,
     o.organism_db_path AS organism_dbstorage_path,
     j.job_state_id AS state_id,
+    j.state_name_cached,
     j.priority,
     j.comment,
     instname.instrument_class AS inst_class,

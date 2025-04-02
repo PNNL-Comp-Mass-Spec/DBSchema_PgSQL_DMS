@@ -20,6 +20,7 @@ CREATE VIEW public.v_analysis_job_request_detail_report AS
     u.name AS requester_name,
     u.username AS requester,
     ars.request_state AS state,
+    ajr.max_active_jobs,
     public.get_job_request_instrument_list(ajr.request_id) AS instruments,
     public.get_job_request_existing_job_list(ajr.request_id) AS pre_existing_jobs,
     COALESCE(jobsq.jobs, (0)::bigint) AS jobs
