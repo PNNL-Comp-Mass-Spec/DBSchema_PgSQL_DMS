@@ -77,6 +77,7 @@ CREATE OR REPLACE PROCEDURE cap.retry_myemsl_upload(IN _jobs text, IN _infoonly 
 **          02/06/2018 mem - Exclude logging some try/catch errors
 **          06/25/2023 mem - Ported to PostgreSQL
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
+**          03/23/2025 mem - Add missing drop table statements
 **
 *****************************************************/
 DECLARE
@@ -170,6 +171,11 @@ BEGIN
         If Not Exists (SELECT Job FROM Tmp_Archive_Jobs_To_Reset) Then
             _message := 'None of the capture task job(s) has a failed ArchiveVerify step';
             RAISE INFO '%', _message;
+
+            DROP TABLE Tmp_Archive_Jobs;
+            DROP TABLE Tmp_Archive_Jobs_To_Skip;
+            DROP TABLE Tmp_Archive_Jobs_To_Reset;
+            DROP TABLE Tmp_Archive_JobStepsToReset;
 
             _returnCode := 'U5202';
             RETURN;
