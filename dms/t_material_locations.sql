@@ -19,7 +19,7 @@ CASE
     ELSE (((((((((freezer_tag)::text || '.'::text) || (shelf)::text) || '.'::text) || (rack)::text) || '.'::text) || ("row")::text) || '.'::text) || (col)::text)
 END) STORED,
     rfid_hex_id public.citext GENERATED ALWAYS AS ("left"(upper((encode((('ML'::text || (location_id)::text))::bytea, 'hex'::text) || '000000000000000000000000'::text)), 24)) STORED,
-    CONSTRAINT ck_t_material_locations_status CHECK (((status OPERATOR(public.=) 'Inactive'::public.citext) OR (status OPERATOR(public.=) 'active'::public.citext)))
+    CONSTRAINT ck_t_material_locations_status CHECK (((status OPERATOR(public.=) 'Active'::public.citext) OR (status OPERATOR(public.=) 'Inactive'::public.citext)))
 );
 
 
