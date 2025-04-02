@@ -9,7 +9,7 @@ CREATE VIEW public.v_requested_run_batch_export_rfid AS
     rrb.description,
     stats.requests,
     stats.active_requests,
-    (rbs.instrument_group_first)::public.citext AS inst_group,
+    rbs.instrument_group_first AS inst_group,
     rrb.created,
     rrb.rfid_hex_id AS hex_id
    FROM (((public.t_requested_run_batches rrb

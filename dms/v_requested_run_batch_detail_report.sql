@@ -17,13 +17,13 @@ CREATE VIEW public.v_requested_run_batch_detail_report AS
     rrb.justification_for_high_priority,
     public.get_batch_dataset_instrument_list(rrb.batch_id) AS instrument_used,
         CASE
-            WHEN (rbs.instrument_group_first = rbs.instrument_group_last) THEN rbs.instrument_group_first
-            ELSE ((rbs.instrument_group_first || ' - '::text) || rbs.instrument_group_last)
+            WHEN (rbs.instrument_group_first OPERATOR(public.=) rbs.instrument_group_last) THEN (rbs.instrument_group_first)::text
+            ELSE (((rbs.instrument_group_first)::text || ' - '::text) || (rbs.instrument_group_last)::text)
         END AS instrument_group,
     rrb.comment,
         CASE
-            WHEN (rbs.separation_group_first = rbs.separation_group_last) THEN rbs.separation_group_first
-            ELSE ((rbs.separation_group_first || ' - '::text) || rbs.separation_group_last)
+            WHEN (rbs.separation_group_first OPERATOR(public.=) rbs.separation_group_last) THEN (rbs.separation_group_first)::text
+            ELSE (((rbs.separation_group_first)::text || ' - '::text) || (rbs.separation_group_last)::text)
         END AS separation_group,
     rrb.batch_group_id AS batch_group,
     rrb.batch_group_order
