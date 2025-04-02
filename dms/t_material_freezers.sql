@@ -7,7 +7,9 @@ CREATE TABLE public.t_material_freezers (
     freezer public.citext NOT NULL,
     freezer_tag public.citext NOT NULL,
     comment public.citext,
-    CONSTRAINT ck_t_material_freezers_freezer_tag_whitespace CHECK ((public.has_whitespace_chars((freezer_tag)::text, false) = false))
+    status public.citext DEFAULT 'Active'::public.citext NOT NULL,
+    CONSTRAINT ck_t_material_freezers_freezer_tag_whitespace CHECK ((public.has_whitespace_chars((freezer_tag)::text, false) = false)),
+    CONSTRAINT ck_t_material_freezers_status CHECK (((status OPERATOR(public.=) 'Active'::public.citext) OR (status OPERATOR(public.=) 'Inactive'::public.citext)))
 );
 
 
