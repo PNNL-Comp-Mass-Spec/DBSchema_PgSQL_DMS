@@ -1,8 +1,8 @@
 --
--- Name: update_cached_requested_run_batch_stats(integer, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: update_cached_requested_run_batch_stats(integer, boolean, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.update_cached_requested_run_batch_stats(IN _batchid integer DEFAULT 0, IN _fullrefresh boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.update_cached_requested_run_batch_stats(IN _batchid integer DEFAULT 0, IN _fullrefresh boolean DEFAULT false, IN _showdebugmessages boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -14,10 +14,11 @@ CREATE OR REPLACE PROCEDURE public.update_cached_requested_run_batch_stats(IN _b
 **      to display information about the requested runs and datasets associated with a requested run batch
 **
 **  Arguments:
-**    _batchID      Specific requested run batch to update, or 0 to update all active requested run batches
-**    _fullRefresh  When false, only update batches where T_Requested_Run.Updated is later than T_Cached_Requested_Run_Batch_Stats.last_affected; when true, update all
-**    _message      Status message
-**    _returnCode   Return code
+**    _batchID              Specific requested run batch to update, or 0 to update all active requested run batches
+**    _fullRefresh          When false, only update batches where T_Requested_Run.Updated is later than T_Cached_Requested_Run_Batch_Stats.last_affected; when true, update all
+**    _showDebugMessages    When true, show debug messages
+**    _message              Status message
+**    _returnCode           Return code
 **
 **  Auth:   mem
 **  Date:   02/10/2023 mem - Initial Version
@@ -32,6 +33,8 @@ CREATE OR REPLACE PROCEDURE public.update_cached_requested_run_batch_stats(IN _b
 **          01/19/2024 mem - Fix bug that failed to populate column separation_group_last when adding a new batch to t_cached_requested_run_batch_stats
 **                           Populate columns instrument_group_first and instrument_group_last
 **          02/17/2025 mem - Add support for requested run state 'Holding'
+**          04/01/2025 mem - Populate columns work_package, eus_proposal_id, and proposal_type
+**                         - Add parameter _showDebugMessages
 **
 *****************************************************/
 DECLARE
@@ -47,6 +50,7 @@ DECLARE
     _runtimeMessage text;
 
     _startTime timestamp;
+    _rowCount int;
 
     _sqlState text;
     _exceptionMessage text;
@@ -56,8 +60,9 @@ BEGIN
     _message := '';
     _returnCode := '';
 
-    _batchID := Coalesce(_batchID, 0);
-    _fullRefresh := Coalesce(_fullRefresh, false);
+    _batchID           := Coalesce(_batchID, 0);
+    _fullRefresh       := Coalesce(_fullRefresh, false);
+    _showDebugMessages := Coalesce(_showDebugMessages, false);
 
     BEGIN
         _startTime := clock_timestamp();
@@ -78,6 +83,8 @@ BEGIN
             WHERE RRB.batch_id > 0 AND
                   RBS.batch_id IS NULL;
         Else
+            RAISE INFO 'Adding batch % to t_cached_requested_run_batch_stats if not yet present', _batchID;
+
             -- Assure that the batch exists in the cache table
             INSERT INTO t_cached_requested_run_batch_stats (batch_id, last_affected)
             SELECT RRB.batch_id, make_date(1970, 1, 1)
@@ -118,12 +125,20 @@ BEGIN
             End If;
         End If;
 
+        If _showDebugMessages Then
+            SELECT COUNT(*)
+            INTO _rowCount
+            FROM Tmp_BatchIDs;
+
+            RAISE INFO '';
+            RAISE INFO 'Updating cached info for % %', _rowCount, public.check_plural(_rowCount, 'batch', 'batches');
+        End If;
+
         ------------------------------------------------
         -- Step 1: Update cached active requested run stats
         ------------------------------------------------
 
         BEGIN
-
             MERGE INTO t_cached_requested_run_batch_stats AS t
             USING (
                     SELECT BatchQ.batch_id,
@@ -132,6 +147,9 @@ BEGIN
                            StatsQ.instrument_group_last,
                            StatsQ.separation_group_first,
                            StatsQ.separation_group_last,
+                           StatsQ.work_package,
+                           StatsQ.eus_proposal_id,
+                           StatsQ.proposal_type,
                            ActiveStatsQ.active_requests,
                            ActiveStatsQ.first_active_request,
                            ActiveStatsQ.last_active_request,
@@ -145,16 +163,38 @@ BEGIN
                           FROM Tmp_BatchIDs
                          ) BatchQ
                          LEFT OUTER JOIN
-                         (SELECT RR.batch_id AS batch_id,
-                                 MIN(RR.created) AS oldest_request_created,
-                                 MIN(RR.instrument_group) AS instrument_group_first,
-                                 MAX(RR.instrument_group) AS instrument_group_last,
-                                 MIN(RR.separation_group) AS separation_group_first,
-                                 MAX(RR.separation_group) AS separation_group_last
-                          FROM t_requested_run RR
-                               INNER JOIN Tmp_BatchIDs
-                                 ON RR.batch_id = Tmp_BatchIDs.batch_id
-                          GROUP BY RR.batch_id
+                         (SELECT GroupQ.batch_id,
+                                 string_agg(GroupQ.work_package,    ', ') AS work_package,
+                                 string_agg(GroupQ.eus_proposal_id, ', ') AS eus_proposal_id,
+                                 string_agg(GroupQ.proposal_type,   ', ') AS proposal_type,
+                                 MIN(GroupQ.oldest_request_created) AS oldest_request_created,
+                                 MIN(GroupQ.instrument_group_first) AS instrument_group_first,
+                                 MAX(GroupQ.instrument_group_last)  AS instrument_group_last,
+                                 MIN(GroupQ.separation_group_first) AS separation_group_first,
+                                 MAX(GroupQ.separation_group_last)  AS separation_group_last
+                          FROM (
+                                SELECT RR.batch_id,
+                                       Trim(Coalesce(RR.work_package, ''))    AS work_package,
+                                       Trim(Coalesce(RR.eus_proposal_id, '')) AS eus_proposal_id,
+                                       Trim(Coalesce(EPT.abbreviation, ''))   AS proposal_type,
+                                       MIN(RR.created)          AS oldest_request_created,
+                                       MIN(RR.instrument_group) AS instrument_group_first,
+                                       MAX(RR.instrument_group) AS instrument_group_last,
+                                       MIN(RR.separation_group) AS separation_group_first,
+                                       MAX(RR.separation_group) AS separation_group_last
+                                FROM t_requested_run RR
+                                     INNER JOIN Tmp_BatchIDs
+                                       ON RR.batch_id = Tmp_BatchIDs.batch_id
+                                     LEFT JOIN PUBLIC.t_eus_proposals eup
+                                       ON RR.eus_proposal_id = eup.proposal_id
+                                     LEFT JOIN public.t_eus_proposal_type ept
+                                       ON eup.proposal_type = ept.proposal_type
+                                GROUP BY RR.batch_id,
+                                         Trim(Coalesce(RR.work_package, '')),
+                                         Trim(Coalesce(RR.eus_proposal_id, '')),
+                                         Trim(Coalesce(EPT.abbreviation, ''))
+                               ) GroupQ
+                          GROUP BY GroupQ.batch_id
                          ) StatsQ ON BatchQ.batch_id = StatsQ.batch_id
                          LEFT OUTER JOIN
                          (SELECT RR.batch_id AS batch_id,
@@ -175,6 +215,9 @@ BEGIN
                   t.instrument_group_last         IS DISTINCT FROM s.instrument_group_last OR
                   t.separation_group_first        IS DISTINCT FROM s.separation_group_first OR
                   t.separation_group_last         IS DISTINCT FROM s.separation_group_last OR
+                  t.work_package                  IS DISTINCT FROM s.work_package OR
+                  t.eus_proposal_id               IS DISTINCT FROM s.eus_proposal_id OR
+                  t.proposal_type                 IS DISTINCT FROM s.proposal_type OR
                   t.active_requests               IS DISTINCT FROM s.active_requests OR
                   t.first_active_request          IS DISTINCT FROM s.first_active_request OR
                   t.last_active_request           IS DISTINCT FROM s.last_active_request OR
@@ -187,6 +230,9 @@ BEGIN
                     instrument_group_last         = s.instrument_group_last,
                     separation_group_first        = s.separation_group_first,
                     separation_group_last         = s.separation_group_last,
+                    work_package                  = s.work_package,
+                    eus_proposal_id               = s.eus_proposal_id,
+                    proposal_type                 = s.proposal_type,
                     active_requests               = s.active_requests,
                     first_active_request          = s.first_active_request,
                     last_active_request           = s.last_active_request,
@@ -198,20 +244,25 @@ BEGIN
                 INSERT (batch_id,
                         instrument_group_first, instrument_group_last,
                         separation_group_first, separation_group_last,
+                        work_package, eus_proposal_id, proposal_type,
                         active_requests, first_active_request, last_active_request,
                         oldest_active_request_created, oldest_request_created,
                         days_in_queue, last_affected)
                 VALUES (s.batch_id,
                         s.instrument_group_first, s.instrument_group_last,
                         s.separation_group_first, s.separation_group_last,
+                        s.work_package, s.eus_proposal_id, s.proposal_type,
                         s.active_requests, s.first_active_request, s.last_active_request,
                         s.oldest_active_request_created, s.oldest_request_created,
                         s.days_in_queue, statement_timestamp()
                        );
-
         END;
 
         _runtimeStep1 := (1000 * Extract(epoch from (clock_timestamp() - _startTime)))::int;
+
+        If _showDebugMessages Then
+            RAISE INFO 'Runtime for step 1: % msec', _runtimeStep1;
+        End If;
 
         ------------------------------------------------
         -- Step 2: Update completed requested run stats
@@ -258,7 +309,6 @@ BEGIN
                 ON BatchQ.batch_id = StatsQ.batch_id;
 
         BEGIN
-
             MERGE INTO t_cached_requested_run_batch_stats AS t
             USING (SELECT batch_id,
                           datasets,
@@ -293,12 +343,15 @@ BEGIN
                         s.instrument_first, s.instrument_last,
                         statement_timestamp()
                        );
-
         END;
 
-        Drop Table Tmp_RequestedRunStats;
+        DROP TABLE Tmp_RequestedRunStats;
 
         _runtimeStep2 := (1000 * Extract(epoch from (clock_timestamp() - _startTime)))::int - _runtimeStep1;
+
+        If _showDebugMessages Then
+            RAISE INFO 'Runtime for step 2: % msec', _runtimeStep2;
+        End If;
 
         ------------------------------------------------
         -- Step 3: Update requested run count and sample prep queue stats
@@ -353,7 +406,6 @@ BEGIN
                ON BatchQ.batch_id = StatsQ.batch_id;
 
         BEGIN
-
             MERGE INTO t_cached_requested_run_batch_stats AS t
             USING (SELECT batch_id,
                           requests,
@@ -383,12 +435,15 @@ BEGIN
                         s.blocked, s.block_missing,
                         statement_timestamp()
                        );
-
         END;
 
         DROP TABLE Tmp_RequestedRunExperimentStats;
 
         _runtimeStep3 := (1000 * Extract(epoch from (clock_timestamp() - _startTime)))::int - _runtimeStep1 - _runtimeStep2;
+
+        If _showDebugMessages Then
+            RAISE INFO 'Runtime for step 3: % msec', _runtimeStep3;
+        End If;
 
         -- Overall runtime, in seconds
         _runtimeSeconds := (Extract(epoch from (clock_timestamp() - _startTime)))::numeric;
@@ -427,11 +482,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.update_cached_requested_run_batch_stats(IN _batchid integer, IN _fullrefresh boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.update_cached_requested_run_batch_stats(IN _batchid integer, IN _fullrefresh boolean, IN _showdebugmessages boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE update_cached_requested_run_batch_stats(IN _batchid integer, IN _fullrefresh boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE update_cached_requested_run_batch_stats(IN _batchid integer, IN _fullrefresh boolean, IN _showdebugmessages boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.update_cached_requested_run_batch_stats(IN _batchid integer, IN _fullrefresh boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateCachedRequestedRunBatchStats';
+COMMENT ON PROCEDURE public.update_cached_requested_run_batch_stats(IN _batchid integer, IN _fullrefresh boolean, IN _showdebugmessages boolean, INOUT _message text, INOUT _returncode text) IS 'UpdateCachedRequestedRunBatchStats';
 
