@@ -13,22 +13,36 @@ CREATE OR REPLACE PROCEDURE public.move_material_containers(IN _freezertagold te
 **      Created in August 2016 to migrate samples from old freezer 1206A to new freezer 1206A, which has more shelves but fewer racks
 **
 **  Arguments:
-**    _freezerTagOld    Old freezer tag
-**    _shelfOld         Old shelf
-**    _rackOld          Old rack
-**    _freezerTagNew    New freezer tag
-**    _shelfNew         New shelf
-**    _rackNew          New rack
-**    _infoOnly         When true, re
-**    _message          Status message
-**    _returnCode       Return code
-**    _callingUser      Username of the calling user
+**    _freezerTagOld        Old freezer tag
+**    _shelfOld             Old shelf
+**    _rackOld              Old rack
+**    _freezerTagNew        New freezer tag
+**    _shelfNew             New shelf
+**    _rackNew              New rack
+**    _materialLogComment   Comment to store in t_material_log
+**    _infoOnly             When true, preview updates
+**    _message              Status message
+**    _returnCode           Return code
+**    _callingUser          Username of the calling user
+**
+**  Example usage:
+**      CALL move_material_containers (
+**               _freezerTagOld => '1206A',
+**               _shelfOld      => 1,
+**               _rackOld       => 1,
+**               _freezerTagNew => '1206D',
+**               _shelfNew      => 2,
+**               _rackNew       => 2,
+**               _materialLogComment => 'Move containers from 1206A to 1206D',
+**               _infoOnly           => true
+**           );
 **
 **  Auth:   mem
 **  Date:   08/03/2016 mem - Initial version
 **          08/27/2018 mem - Rename the view Material Location list report view
 **          06/21/2022 mem - Use new column name Container_Limit in view V_Material_Location_List_Report
 **          02/15/2024 mem - Ported to PostgreSQL
+**          04/02/2025 mem - Prevent moving a container to an inactive freezer
 **
 *****************************************************/
 DECLARE
@@ -38,7 +52,8 @@ DECLARE
     _numContainers int;
     _containterCount int;
     _containterCountLimit int;
-    _locStatus citext;
+    _locationStatus citext;
+    _freezerStatus citext;
     _moveStatus citext;
 
     _formatSpecifier text;
@@ -255,16 +270,17 @@ BEGIN
 
         SELECT ML.location_id,
                ML.status,
+               F.status,
                ML.container_limit,
                COUNT(MC.location_id) AS containers
-        INTO _locationIDNew, _locStatus, _containterCountLimit, _containterCount
+        INTO _locationIDNew, _locationStatus, _freezerStatus, _containterCountLimit, _containterCount
         FROM public.t_material_locations ML
              INNER JOIN public.t_material_freezers F
                ON ML.freezer_tag = F.freezer_tag
              LEFT OUTER JOIN public.t_material_containers MC
                ON ML.location_id = MC.location_id
         WHERE ML.location = _locationTagNew
-        GROUP BY ML.location_id, ML.status, ML.container_limit;
+        GROUP BY ML.location_id, ML.status, F.status, ML.container_limit;
 
         If Not FOUND Then
             _message := format('Destination location "%s" does not exist in t_material_locations', _locationTagNew);
@@ -277,8 +293,15 @@ BEGIN
         -- Is location suitable?
         ---------------------------------------------------
 
-        If _locStatus <> 'Active' Then
+        If _locationStatus <> 'Active' Then
             _message := format('Location "%s" is not in the "Active" state; see t_material_locations', _locationTagNew);
+            RAISE WARNING '%', _message;
+            ROLLBACK;
+            RETURN;
+        End If;
+
+        If _freezerStatus <> 'Active' Then
+            _message := format('Freezer "%s" is not in the "Active" state; see t_material_freezers', _freezerTagNew);
             RAISE WARNING '%', _message;
             ROLLBACK;
             RETURN;
