@@ -4,14 +4,14 @@
 
 CREATE VIEW public.v_material_locations_active_export_rfid AS
  SELECT ml.location,
-    t_material_freezers.freezer,
-    t_material_freezers.freezer_tag,
+    f.freezer,
+    f.freezer_tag,
     ml.shelf,
     ml.comment,
     ml.location_id AS id,
     ml.rfid_hex_id AS hex_id
    FROM (public.t_material_locations ml
-     JOIN public.t_material_freezers ON ((ml.freezer_tag OPERATOR(public.=) t_material_freezers.freezer_tag)))
+     JOIN public.t_material_freezers f ON ((ml.freezer_tag OPERATOR(public.=) f.freezer_tag)))
   WHERE (ml.status OPERATOR(public.=) 'active'::public.citext);
 
 
