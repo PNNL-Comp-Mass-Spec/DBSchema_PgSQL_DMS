@@ -31,11 +31,11 @@ ALTER TABLE cap.t_step_tools ALTER COLUMN step_tool_id ADD GENERATED ALWAYS AS I
 );
 
 --
--- Name: t_step_tools pk_t_step_tools_1; Type: CONSTRAINT; Schema: cap; Owner: d3l243
+-- Name: t_step_tools pk_t_step_tools; Type: CONSTRAINT; Schema: cap; Owner: d3l243
 --
 
 ALTER TABLE ONLY cap.t_step_tools
-    ADD CONSTRAINT pk_t_step_tools_1 PRIMARY KEY (step_tool_id);
+    ADD CONSTRAINT pk_t_step_tools PRIMARY KEY (step_tool_id);
 
 --
 -- Name: ix_t_step_tools_step_tool; Type: INDEX; Schema: cap; Owner: d3l243

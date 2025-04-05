@@ -11,11 +11,12 @@ CREATE TABLE sw.t_shared_results (
 ALTER TABLE sw.t_shared_results OWNER TO d3l243;
 
 --
--- Name: t_shared_results pk_t_shared_results_1; Type: CONSTRAINT; Schema: sw; Owner: d3l243
+-- Name: t_shared_results pk_t_shared_results; Type: CONSTRAINT; Schema: sw; Owner: d3l243
 --
 
 ALTER TABLE ONLY sw.t_shared_results
-    ADD CONSTRAINT pk_t_shared_results_1 PRIMARY KEY (results_name);
+    ADD CONSTRAINT pk_t_shared_results PRIMARY KEY (results_name);
+
 
 --
 -- Name: TABLE t_shared_results; Type: ACL; Schema: sw; Owner: d3l243

@@ -40,11 +40,12 @@ ALTER TABLE sw.t_step_tools ALTER COLUMN step_tool_id ADD GENERATED ALWAYS AS ID
 );
 
 --
--- Name: t_step_tools pk_t_step_tools_1; Type: CONSTRAINT; Schema: sw; Owner: d3l243
+-- Name: t_step_tools pk_t_step_tools; Type: CONSTRAINT; Schema: sw; Owner: d3l243
 --
 
 ALTER TABLE ONLY sw.t_step_tools
-    ADD CONSTRAINT pk_t_step_tools_1 PRIMARY KEY (step_tool_id);
+    ADD CONSTRAINT pk_t_step_tools PRIMARY KEY (step_tool_id);
+
 
 --
 -- Name: ix_t_step_tools_shared_result_version; Type: INDEX; Schema: sw; Owner: d3l243
