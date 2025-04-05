@@ -30,6 +30,8 @@ COMMENT ON TABLE public.t_cached_dataset_folder_paths IS 'dataset_row_version co
 ALTER TABLE ONLY public.t_cached_dataset_folder_paths
     ADD CONSTRAINT pk_t_cached_dataset_folder_paths PRIMARY KEY (dataset_id);
 
+ALTER TABLE public.t_cached_dataset_folder_paths CLUSTER ON pk_t_cached_dataset_folder_paths;
+
 --
 -- Name: ix_t_cached_dataset_folder_paths_update_required; Type: INDEX; Schema: public; Owner: d3l243
 --

@@ -17,6 +17,8 @@ ALTER TABLE public.t_dataset_rating_name OWNER TO d3l243;
 ALTER TABLE ONLY public.t_dataset_rating_name
     ADD CONSTRAINT pk_t_dataset_rating_name PRIMARY KEY (dataset_rating_id);
 
+ALTER TABLE public.t_dataset_rating_name CLUSTER ON pk_t_dataset_rating_name;
+
 --
 -- Name: TABLE t_dataset_rating_name; Type: ACL; Schema: public; Owner: d3l243
 --

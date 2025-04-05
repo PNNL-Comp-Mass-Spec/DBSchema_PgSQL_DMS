@@ -34,6 +34,8 @@ ALTER TABLE public.t_factor ALTER COLUMN factor_id ADD GENERATED ALWAYS AS IDENT
 ALTER TABLE ONLY public.t_factor
     ADD CONSTRAINT pk_t_factor PRIMARY KEY (factor_id);
 
+ALTER TABLE public.t_factor CLUSTER ON pk_t_factor;
+
 --
 -- Name: ix_t_factor_type_target_id_name; Type: INDEX; Schema: public; Owner: d3l243
 --

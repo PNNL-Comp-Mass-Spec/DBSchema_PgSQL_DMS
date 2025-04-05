@@ -17,6 +17,8 @@ ALTER TABLE public.t_experiment_plex_channel_type_name OWNER TO d3l243;
 ALTER TABLE ONLY public.t_experiment_plex_channel_type_name
     ADD CONSTRAINT pk_t_experiment_plex_channel_types PRIMARY KEY (channel_type_id);
 
+ALTER TABLE public.t_experiment_plex_channel_type_name CLUSTER ON pk_t_experiment_plex_channel_types;
+
 --
 -- Name: TABLE t_experiment_plex_channel_type_name; Type: ACL; Schema: public; Owner: d3l243
 --

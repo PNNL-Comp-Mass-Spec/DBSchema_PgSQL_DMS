@@ -21,6 +21,8 @@ ALTER TABLE public.t_analysis_job_processor_group_membership OWNER TO d3l243;
 ALTER TABLE ONLY public.t_analysis_job_processor_group_membership
     ADD CONSTRAINT pk_t_analysis_job_processor_group_membership PRIMARY KEY (processor_id, group_id);
 
+ALTER TABLE public.t_analysis_job_processor_group_membership CLUSTER ON pk_t_analysis_job_processor_group_membership;
+
 --
 -- Name: ix_t_analysis_job_processor_group_membership_group_id_enabled; Type: INDEX; Schema: public; Owner: d3l243
 --

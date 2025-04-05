@@ -34,6 +34,8 @@ ALTER TABLE public.t_log_entries ALTER COLUMN entry_id ADD GENERATED ALWAYS AS I
 ALTER TABLE ONLY public.t_log_entries
     ADD CONSTRAINT pk_t_log_entries PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_log_entries CLUSTER ON pk_t_log_entries;
+
 --
 -- Name: ix_t_log_entries_entered; Type: INDEX; Schema: public; Owner: d3l243
 --

@@ -33,6 +33,8 @@ ALTER TABLE pc.t_annotation_types ALTER COLUMN annotation_type_id ADD GENERATED 
 ALTER TABLE ONLY pc.t_annotation_types
     ADD CONSTRAINT pk_t_annotation_types PRIMARY KEY (annotation_type_id);
 
+ALTER TABLE pc.t_annotation_types CLUSTER ON pk_t_annotation_types;
+
 --
 -- Name: t_annotation_types fk_t_annotation_types_t_naming_authorities; Type: FK CONSTRAINT; Schema: pc; Owner: d3l243
 --

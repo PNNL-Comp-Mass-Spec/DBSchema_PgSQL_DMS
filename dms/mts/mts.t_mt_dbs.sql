@@ -27,6 +27,8 @@ ALTER TABLE mts.t_mt_dbs OWNER TO d3l243;
 ALTER TABLE ONLY mts.t_mt_dbs
     ADD CONSTRAINT pk_t_mt_dbs PRIMARY KEY (mt_db_id);
 
+ALTER TABLE mts.t_mt_dbs CLUSTER ON pk_t_mt_dbs;
+
 --
 -- Name: ix_t_mt_dbs_mt_db_name; Type: INDEX; Schema: mts; Owner: d3l243
 --

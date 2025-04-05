@@ -35,6 +35,8 @@ ALTER TABLE public.t_event_log ALTER COLUMN event_id ADD GENERATED ALWAYS AS IDE
 ALTER TABLE ONLY public.t_event_log
     ADD CONSTRAINT pk_t_event_log PRIMARY KEY (event_id);
 
+ALTER TABLE public.t_event_log CLUSTER ON pk_t_event_log;
+
 --
 -- Name: ix_t_event_log_entered; Type: INDEX; Schema: public; Owner: d3l243
 --

@@ -49,6 +49,8 @@ ALTER TABLE public.t_analysis_job_request ALTER COLUMN request_id ADD GENERATED 
 ALTER TABLE ONLY public.t_analysis_job_request
     ADD CONSTRAINT pk_t_analysis_job_request PRIMARY KEY (request_id);
 
+ALTER TABLE public.t_analysis_job_request CLUSTER ON pk_t_analysis_job_request;
+
 --
 -- Name: ix_t_analysis_job_request_max_active_jobs; Type: INDEX; Schema: public; Owner: d3l243
 --

@@ -46,6 +46,8 @@ ALTER TABLE ONLY public.t_organism_db_file
 ALTER TABLE ONLY public.t_organism_db_file
     ADD CONSTRAINT pk_t_organism_db_file PRIMARY KEY (org_db_file_id);
 
+ALTER TABLE public.t_organism_db_file CLUSTER ON pk_t_organism_db_file;
+
 --
 -- Name: t_organism_db_file fk_t_organism_db_file_t_organisms; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

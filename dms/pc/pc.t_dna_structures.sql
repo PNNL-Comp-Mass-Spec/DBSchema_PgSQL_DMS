@@ -34,6 +34,8 @@ ALTER TABLE pc.t_dna_structures ALTER COLUMN dna_structure_id ADD GENERATED ALWA
 ALTER TABLE ONLY pc.t_dna_structures
     ADD CONSTRAINT pk_t_dna_structures PRIMARY KEY (dna_structure_id);
 
+ALTER TABLE pc.t_dna_structures CLUSTER ON pk_t_dna_structures;
+
 --
 -- Name: t_dna_structures fk_t_dna_structures_t_dna_structure_types; Type: FK CONSTRAINT; Schema: pc; Owner: d3l243
 --

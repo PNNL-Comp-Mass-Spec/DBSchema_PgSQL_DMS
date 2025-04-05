@@ -25,6 +25,8 @@ ALTER TABLE public.t_eus_proposals OWNER TO d3l243;
 ALTER TABLE ONLY public.t_eus_proposals
     ADD CONSTRAINT pk_t_eus_proposals PRIMARY KEY (proposal_id);
 
+ALTER TABLE public.t_eus_proposals CLUSTER ON pk_t_eus_proposals;
+
 --
 -- Name: ix_t_eus_proposals; Type: INDEX; Schema: public; Owner: d3l243
 --

@@ -30,6 +30,8 @@ COMMENT ON TABLE sw.t_job_step_reset_stats IS 'Column disk_space_count tracks th
 ALTER TABLE ONLY sw.t_job_step_reset_stats
     ADD CONSTRAINT pk_t_job_step_reset_stats PRIMARY KEY (job, step);
 
+ALTER TABLE sw.t_job_step_reset_stats CLUSTER ON pk_t_job_step_reset_stats;
+
 --
 -- Name: t_job_step_reset_stats fk_t_job_step_reset_stats_t_step_tools; Type: FK CONSTRAINT; Schema: sw; Owner: d3l243
 --

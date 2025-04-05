@@ -20,6 +20,8 @@ ALTER TABLE public.t_eus_proposal_users OWNER TO d3l243;
 ALTER TABLE ONLY public.t_eus_proposal_users
     ADD CONSTRAINT pk_t_eus_proposal_users PRIMARY KEY (proposal_id, person_id);
 
+ALTER TABLE public.t_eus_proposal_users CLUSTER ON pk_t_eus_proposal_users;
+
 --
 -- Name: t_eus_proposal_users fk_t_eus_proposal_users_t_eus_proposals; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

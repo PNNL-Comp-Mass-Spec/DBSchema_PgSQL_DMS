@@ -34,6 +34,8 @@ ALTER TABLE public.t_analysis_job_priority_updates ALTER COLUMN entry_id ADD GEN
 ALTER TABLE ONLY public.t_analysis_job_priority_updates
     ADD CONSTRAINT pk_t_analysis_job_priority_updates PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_analysis_job_priority_updates CLUSTER ON pk_t_analysis_job_priority_updates;
+
 --
 -- Name: ix_t_analysis_job_priority_updates_job; Type: INDEX; Schema: public; Owner: d3l243
 --

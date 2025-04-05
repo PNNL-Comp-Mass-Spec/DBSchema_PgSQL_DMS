@@ -17,6 +17,8 @@ ALTER TABLE public.t_data_release_restrictions OWNER TO d3l243;
 ALTER TABLE ONLY public.t_data_release_restrictions
     ADD CONSTRAINT pk_t_data_release_restrictions PRIMARY KEY (release_restriction_id);
 
+ALTER TABLE public.t_data_release_restrictions CLUSTER ON pk_t_data_release_restrictions;
+
 --
 -- Name: TABLE t_data_release_restrictions; Type: ACL; Schema: public; Owner: d3l243
 --

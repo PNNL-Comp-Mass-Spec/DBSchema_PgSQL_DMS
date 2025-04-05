@@ -18,6 +18,8 @@ ALTER TABLE public.t_default_psm_job_types OWNER TO d3l243;
 ALTER TABLE ONLY public.t_default_psm_job_types
     ADD CONSTRAINT pk_t_default_psm_job_types PRIMARY KEY (job_type_id);
 
+ALTER TABLE public.t_default_psm_job_types CLUSTER ON pk_t_default_psm_job_types;
+
 --
 -- Name: ix_t_default_psm_job_types; Type: INDEX; Schema: public; Owner: d3l243
 --

@@ -45,6 +45,8 @@ ALTER TABLE public.t_param_file_mass_mods ALTER COLUMN mod_entry_id ADD GENERATE
 ALTER TABLE ONLY public.t_param_file_mass_mods
     ADD CONSTRAINT pk_t_peptide_mod_param_file_list_ex PRIMARY KEY (mod_entry_id);
 
+ALTER TABLE public.t_param_file_mass_mods CLUSTER ON pk_t_peptide_mod_param_file_list_ex;
+
 --
 -- Name: ix_t_param_file_mass_mods; Type: INDEX; Schema: public; Owner: d3l243
 --

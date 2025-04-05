@@ -43,6 +43,8 @@ ALTER TABLE pc.t_archived_output_files ALTER COLUMN archived_file_id ADD GENERAT
 ALTER TABLE ONLY pc.t_archived_output_files
     ADD CONSTRAINT pk_t_archived_output_files PRIMARY KEY (archived_file_id);
 
+ALTER TABLE pc.t_archived_output_files CLUSTER ON pk_t_archived_output_files;
+
 --
 -- Name: t_archived_output_files fk_t_archived_output_files_t_archived_file_states; Type: FK CONSTRAINT; Schema: pc; Owner: d3l243
 --

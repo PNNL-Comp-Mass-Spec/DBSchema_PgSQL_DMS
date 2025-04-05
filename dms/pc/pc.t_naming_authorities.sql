@@ -32,6 +32,8 @@ ALTER TABLE pc.t_naming_authorities ALTER COLUMN authority_id ADD GENERATED ALWA
 ALTER TABLE ONLY pc.t_naming_authorities
     ADD CONSTRAINT pk_t_naming_authorities PRIMARY KEY (authority_id);
 
+ALTER TABLE pc.t_naming_authorities CLUSTER ON pk_t_naming_authorities;
+
 --
 -- Name: TABLE t_naming_authorities; Type: ACL; Schema: pc; Owner: d3l243
 --

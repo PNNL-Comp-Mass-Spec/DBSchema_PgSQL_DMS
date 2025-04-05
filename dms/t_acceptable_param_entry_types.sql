@@ -32,6 +32,8 @@ ALTER TABLE public.t_acceptable_param_entry_types ALTER COLUMN param_entry_type_
 ALTER TABLE ONLY public.t_acceptable_param_entry_types
     ADD CONSTRAINT pk_t_acceptable_param_entry_types PRIMARY KEY (param_entry_type_id);
 
+ALTER TABLE public.t_acceptable_param_entry_types CLUSTER ON pk_t_acceptable_param_entry_types;
+
 --
 -- Name: TABLE t_acceptable_param_entry_types; Type: ACL; Schema: public; Owner: d3l243
 --

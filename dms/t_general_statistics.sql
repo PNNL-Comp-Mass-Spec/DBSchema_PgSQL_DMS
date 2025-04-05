@@ -33,6 +33,8 @@ ALTER TABLE public.t_general_statistics ALTER COLUMN entry_id ADD GENERATED ALWA
 ALTER TABLE ONLY public.t_general_statistics
     ADD CONSTRAINT pk_t_general_statistics PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_general_statistics CLUSTER ON pk_t_general_statistics;
+
 --
 -- Name: ix_t_general_statistics_category_label; Type: INDEX; Schema: public; Owner: d3l243
 --

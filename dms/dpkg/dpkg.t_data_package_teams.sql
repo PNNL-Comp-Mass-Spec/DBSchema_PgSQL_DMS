@@ -17,6 +17,8 @@ ALTER TABLE dpkg.t_data_package_teams OWNER TO d3l243;
 ALTER TABLE ONLY dpkg.t_data_package_teams
     ADD CONSTRAINT pk_t_data_package_teams_team_name PRIMARY KEY (team_name);
 
+ALTER TABLE dpkg.t_data_package_teams CLUSTER ON pk_t_data_package_teams_team_name;
+
 --
 -- Name: TABLE t_data_package_teams; Type: ACL; Schema: dpkg; Owner: d3l243
 --

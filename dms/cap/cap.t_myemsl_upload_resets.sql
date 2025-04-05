@@ -34,6 +34,8 @@ ALTER TABLE cap.t_myemsl_upload_resets ALTER COLUMN entry_id ADD GENERATED ALWAY
 ALTER TABLE ONLY cap.t_myemsl_upload_resets
     ADD CONSTRAINT pk_t_myemsl_upload_resets PRIMARY KEY (entry_id);
 
+ALTER TABLE cap.t_myemsl_upload_resets CLUSTER ON pk_t_myemsl_upload_resets;
+
 --
 -- Name: ix_t_myemsl_upload_resets_dataset_id; Type: INDEX; Schema: cap; Owner: d3l243
 --

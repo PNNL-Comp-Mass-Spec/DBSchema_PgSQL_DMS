@@ -34,6 +34,8 @@ ALTER TABLE cap.t_scripts ALTER COLUMN script_id ADD GENERATED ALWAYS AS IDENTIT
 ALTER TABLE ONLY cap.t_scripts
     ADD CONSTRAINT pk_t_scripts PRIMARY KEY (script_id);
 
+ALTER TABLE cap.t_scripts CLUSTER ON pk_t_scripts;
+
 --
 -- Name: ix_t_scripts_script; Type: INDEX; Schema: cap; Owner: d3l243
 --

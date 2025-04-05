@@ -30,6 +30,8 @@ ALTER TABLE dpkg.t_data_repository ALTER COLUMN repository_id ADD GENERATED ALWA
 ALTER TABLE ONLY dpkg.t_data_repository
     ADD CONSTRAINT pk_t_data_repository PRIMARY KEY (repository_id);
 
+ALTER TABLE dpkg.t_data_repository CLUSTER ON pk_t_data_repository;
+
 --
 -- Name: ix_t_data_repository_repository_name; Type: INDEX; Schema: dpkg; Owner: d3l243
 --

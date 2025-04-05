@@ -161,6 +161,8 @@ ALTER TABLE public.t_dataset ALTER COLUMN dataset_id ADD GENERATED ALWAYS AS IDE
 ALTER TABLE ONLY public.t_dataset
     ADD CONSTRAINT pk_t_dataset PRIMARY KEY (dataset_id);
 
+ALTER TABLE public.t_dataset CLUSTER ON pk_t_dataset;
+
 --
 -- Name: ix_t_dataset_acq_time_start; Type: INDEX; Schema: public; Owner: d3l243
 --

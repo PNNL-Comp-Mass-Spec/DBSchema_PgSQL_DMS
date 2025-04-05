@@ -25,6 +25,8 @@ ALTER TABLE ont.t_ontology OWNER TO d3l243;
 ALTER TABLE ONLY ont.t_ontology
     ADD CONSTRAINT pk_ontology PRIMARY KEY (ontology_id);
 
+ALTER TABLE ont.t_ontology CLUSTER ON pk_ontology;
+
 --
 -- Name: ix_t_ontology_short_name; Type: INDEX; Schema: ont; Owner: d3l243
 --

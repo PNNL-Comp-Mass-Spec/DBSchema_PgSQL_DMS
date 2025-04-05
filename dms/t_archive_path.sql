@@ -37,6 +37,8 @@ ALTER TABLE public.t_archive_path ALTER COLUMN archive_path_id ADD GENERATED ALW
 ALTER TABLE ONLY public.t_archive_path
     ADD CONSTRAINT pk_t_archive_path PRIMARY KEY (archive_path_id);
 
+ALTER TABLE public.t_archive_path CLUSTER ON pk_t_archive_path;
+
 --
 -- Name: ix_t_archive_path_archive_path_function; Type: INDEX; Schema: public; Owner: d3l243
 --

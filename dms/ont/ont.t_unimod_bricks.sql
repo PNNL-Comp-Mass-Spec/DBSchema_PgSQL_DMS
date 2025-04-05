@@ -20,6 +20,8 @@ ALTER TABLE ont.t_unimod_bricks OWNER TO d3l243;
 ALTER TABLE ONLY ont.t_unimod_bricks
     ADD CONSTRAINT pk_t_unimod_bricks PRIMARY KEY (name);
 
+ALTER TABLE ont.t_unimod_bricks CLUSTER ON pk_t_unimod_bricks;
+
 --
 -- Name: TABLE t_unimod_bricks; Type: ACL; Schema: ont; Owner: d3l243
 --

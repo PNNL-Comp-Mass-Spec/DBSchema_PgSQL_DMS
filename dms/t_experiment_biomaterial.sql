@@ -17,6 +17,8 @@ ALTER TABLE public.t_experiment_biomaterial OWNER TO d3l243;
 ALTER TABLE ONLY public.t_experiment_biomaterial
     ADD CONSTRAINT pk_t_experiment_biomaterial PRIMARY KEY (exp_id, biomaterial_id);
 
+ALTER TABLE public.t_experiment_biomaterial CLUSTER ON pk_t_experiment_biomaterial;
+
 --
 -- Name: t_experiment_biomaterial fk_t_experiment_biomaterial_t_biomaterial; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

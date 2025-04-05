@@ -58,6 +58,8 @@ COMMENT ON COLUMN public.t_analysis_job.param_file_name IS 'Parameter file name'
 ALTER TABLE ONLY public.t_analysis_job
     ADD CONSTRAINT pk_t_analysis_job PRIMARY KEY (job);
 
+ALTER TABLE public.t_analysis_job CLUSTER ON pk_t_analysis_job;
+
 --
 -- Name: ix_t_analysis_job_analysis_tool_cached; Type: INDEX; Schema: public; Owner: d3l243
 --

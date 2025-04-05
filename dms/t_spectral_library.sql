@@ -57,6 +57,8 @@ ALTER TABLE public.t_spectral_library ALTER COLUMN library_id ADD GENERATED ALWA
 ALTER TABLE ONLY public.t_spectral_library
     ADD CONSTRAINT pk_t_spectral_library PRIMARY KEY (library_id);
 
+ALTER TABLE public.t_spectral_library CLUSTER ON pk_t_spectral_library;
+
 --
 -- Name: ix_t_spectral_library_library_name; Type: INDEX; Schema: public; Owner: d3l243
 --

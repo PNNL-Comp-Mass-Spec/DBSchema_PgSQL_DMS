@@ -20,6 +20,8 @@ ALTER TABLE public.t_event_target OWNER TO d3l243;
 ALTER TABLE ONLY public.t_event_target
     ADD CONSTRAINT pk_t_event_target PRIMARY KEY (target_type_id);
 
+ALTER TABLE public.t_event_target CLUSTER ON pk_t_event_target;
+
 --
 -- Name: TABLE t_event_target; Type: ACL; Schema: public; Owner: d3l243
 --

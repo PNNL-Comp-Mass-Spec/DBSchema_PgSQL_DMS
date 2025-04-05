@@ -33,6 +33,8 @@ ALTER TABLE sw.t_step_tool_versions ALTER COLUMN tool_version_id ADD GENERATED A
 ALTER TABLE ONLY sw.t_step_tool_versions
     ADD CONSTRAINT pk_t_step_tool_versions PRIMARY KEY (tool_version_id);
 
+ALTER TABLE sw.t_step_tool_versions CLUSTER ON pk_t_step_tool_versions;
+
 --
 -- Name: ix_t_step_tool_versions; Type: INDEX; Schema: sw; Owner: d3l243
 --

@@ -31,6 +31,8 @@ ALTER TABLE timetable.t_cron_interval ALTER COLUMN interval_id ADD GENERATED ALW
 ALTER TABLE ONLY timetable.t_cron_interval
     ADD CONSTRAINT pk_t_cron_interval PRIMARY KEY (interval_id);
 
+ALTER TABLE timetable.t_cron_interval CLUSTER ON pk_t_cron_interval;
+
 --
 -- Name: ix_t_cron_interval_cron_interval; Type: INDEX; Schema: timetable; Owner: d3l243
 --

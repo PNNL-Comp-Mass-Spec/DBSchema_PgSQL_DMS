@@ -35,6 +35,8 @@ ALTER TABLE cap.t_task_step_events ALTER COLUMN event_id ADD GENERATED ALWAYS AS
 ALTER TABLE ONLY cap.t_task_step_events
     ADD CONSTRAINT pk_t_task_step_events PRIMARY KEY (event_id);
 
+ALTER TABLE cap.t_task_step_events CLUSTER ON pk_t_task_step_events;
+
 --
 -- Name: ix_t_task_step_events_current_state_job; Type: INDEX; Schema: cap; Owner: d3l243
 --

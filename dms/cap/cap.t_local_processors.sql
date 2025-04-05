@@ -20,6 +20,8 @@ ALTER TABLE cap.t_local_processors OWNER TO d3l243;
 ALTER TABLE ONLY cap.t_local_processors
     ADD CONSTRAINT pk_t_local_processors PRIMARY KEY (processor_name);
 
+ALTER TABLE cap.t_local_processors CLUSTER ON pk_t_local_processors;
+
 --
 -- Name: t_local_processors fk_t_local_processors_t_machines; Type: FK CONSTRAINT; Schema: cap; Owner: d3l243
 --

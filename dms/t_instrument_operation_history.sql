@@ -33,6 +33,8 @@ ALTER TABLE public.t_instrument_operation_history ALTER COLUMN entry_id ADD GENE
 ALTER TABLE ONLY public.t_instrument_operation_history
     ADD CONSTRAINT pk_t_instrument_operation_history PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_instrument_operation_history CLUSTER ON pk_t_instrument_operation_history;
+
 --
 -- Name: ix_t_instrument_operation_history_instrument_entered; Type: INDEX; Schema: public; Owner: d3l243
 --

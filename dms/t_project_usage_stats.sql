@@ -48,6 +48,8 @@ ALTER TABLE public.t_project_usage_stats ALTER COLUMN entry_id ADD GENERATED ALW
 ALTER TABLE ONLY public.t_project_usage_stats
     ADD CONSTRAINT pk_t_project_usage_stats PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_project_usage_stats CLUSTER ON pk_t_project_usage_stats;
+
 --
 -- Name: ix_t_project_usage_stats_year_and_week; Type: INDEX; Schema: public; Owner: d3l243
 --

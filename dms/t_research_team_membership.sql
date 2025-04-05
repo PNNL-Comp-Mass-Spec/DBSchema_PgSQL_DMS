@@ -18,6 +18,8 @@ ALTER TABLE public.t_research_team_membership OWNER TO d3l243;
 ALTER TABLE ONLY public.t_research_team_membership
     ADD CONSTRAINT pk_t_research_team_membership PRIMARY KEY (team_id, role_id, user_id);
 
+ALTER TABLE public.t_research_team_membership CLUSTER ON pk_t_research_team_membership;
+
 --
 -- Name: t_research_team_membership fk_t_research_team_membership_t_research_team; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

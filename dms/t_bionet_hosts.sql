@@ -24,6 +24,8 @@ ALTER TABLE public.t_bionet_hosts OWNER TO d3l243;
 ALTER TABLE ONLY public.t_bionet_hosts
     ADD CONSTRAINT pk_t_bionet_hosts PRIMARY KEY (host);
 
+ALTER TABLE public.t_bionet_hosts CLUSTER ON pk_t_bionet_hosts;
+
 --
 -- Name: TABLE t_bionet_hosts; Type: ACL; Schema: public; Owner: d3l243
 --

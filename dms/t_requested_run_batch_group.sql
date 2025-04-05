@@ -33,6 +33,8 @@ ALTER TABLE public.t_requested_run_batch_group ALTER COLUMN batch_group_id ADD G
 ALTER TABLE ONLY public.t_requested_run_batch_group
     ADD CONSTRAINT pk_t_requested_run_batch_group PRIMARY KEY (batch_group_id);
 
+ALTER TABLE public.t_requested_run_batch_group CLUSTER ON pk_t_requested_run_batch_group;
+
 --
 -- Name: ix_t_requested_run_batch_group; Type: INDEX; Schema: public; Owner: d3l243
 --

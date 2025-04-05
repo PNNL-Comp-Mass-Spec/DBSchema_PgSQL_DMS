@@ -67,6 +67,8 @@ ALTER TABLE public.t_predefined_analysis ALTER COLUMN predefine_id ADD GENERATED
 ALTER TABLE ONLY public.t_predefined_analysis
     ADD CONSTRAINT pk_t_predefined_analysis PRIMARY KEY (predefine_id);
 
+ALTER TABLE public.t_predefined_analysis CLUSTER ON pk_t_predefined_analysis;
+
 --
 -- Name: t_predefined_analysis trig_t_predefined_analysis_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --

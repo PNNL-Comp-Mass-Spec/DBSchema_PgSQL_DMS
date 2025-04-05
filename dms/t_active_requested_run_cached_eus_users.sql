@@ -17,6 +17,8 @@ ALTER TABLE public.t_active_requested_run_cached_eus_users OWNER TO d3l243;
 ALTER TABLE ONLY public.t_active_requested_run_cached_eus_users
     ADD CONSTRAINT pk_t_active_requested_run_cached_eus_users PRIMARY KEY (request_id);
 
+ALTER TABLE public.t_active_requested_run_cached_eus_users CLUSTER ON pk_t_active_requested_run_cached_eus_users;
+
 --
 -- Name: t_active_requested_run_cached_eus_users fk_t_active_requested_run_cached_eus_users_t_requested_run; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

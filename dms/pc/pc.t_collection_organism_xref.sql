@@ -31,6 +31,8 @@ ALTER TABLE pc.t_collection_organism_xref ALTER COLUMN id ADD GENERATED ALWAYS A
 ALTER TABLE ONLY pc.t_collection_organism_xref
     ADD CONSTRAINT pk_t_collection_organism_xref PRIMARY KEY (id);
 
+ALTER TABLE pc.t_collection_organism_xref CLUSTER ON pk_t_collection_organism_xref;
+
 --
 -- Name: ix_t_collection_organism_xref_prot_collection_id_organism_id; Type: INDEX; Schema: pc; Owner: d3l243
 --

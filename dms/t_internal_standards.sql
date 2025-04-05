@@ -36,6 +36,8 @@ ALTER TABLE public.t_internal_standards ALTER COLUMN internal_standard_id ADD GE
 ALTER TABLE ONLY public.t_internal_standards
     ADD CONSTRAINT pk_t_internal_standards PRIMARY KEY (internal_standard_id);
 
+ALTER TABLE public.t_internal_standards CLUSTER ON pk_t_internal_standards;
+
 --
 -- Name: ix_t_internal_standards; Type: INDEX; Schema: public; Owner: d3l243
 --

@@ -31,6 +31,8 @@ ALTER TABLE public.t_analysis_job_batches ALTER COLUMN batch_id ADD GENERATED AL
 ALTER TABLE ONLY public.t_analysis_job_batches
     ADD CONSTRAINT pk_t_analysis_job_batches PRIMARY KEY (batch_id);
 
+ALTER TABLE public.t_analysis_job_batches CLUSTER ON pk_t_analysis_job_batches;
+
 --
 -- Name: TABLE t_analysis_job_batches; Type: ACL; Schema: public; Owner: d3l243
 --

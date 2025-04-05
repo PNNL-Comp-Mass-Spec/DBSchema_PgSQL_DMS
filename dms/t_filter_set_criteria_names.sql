@@ -31,6 +31,8 @@ ALTER TABLE public.t_filter_set_criteria_names ALTER COLUMN criterion_id ADD GEN
 ALTER TABLE ONLY public.t_filter_set_criteria_names
     ADD CONSTRAINT pk_t_filter_set_criteria_names PRIMARY KEY (criterion_id);
 
+ALTER TABLE public.t_filter_set_criteria_names CLUSTER ON pk_t_filter_set_criteria_names;
+
 --
 -- Name: TABLE t_filter_set_criteria_names; Type: ACL; Schema: public; Owner: d3l243
 --

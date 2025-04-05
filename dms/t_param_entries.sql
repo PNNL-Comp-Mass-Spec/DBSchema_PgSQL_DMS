@@ -36,6 +36,8 @@ ALTER TABLE public.t_param_entries ALTER COLUMN param_entry_id ADD GENERATED ALW
 ALTER TABLE ONLY public.t_param_entries
     ADD CONSTRAINT pk_t_param_entries PRIMARY KEY (param_entry_id);
 
+ALTER TABLE public.t_param_entries CLUSTER ON pk_t_param_entries;
+
 --
 -- Name: t_param_entries trig_t_param_entries_after_insert; Type: TRIGGER; Schema: public; Owner: d3l243
 --

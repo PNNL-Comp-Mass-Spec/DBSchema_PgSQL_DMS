@@ -17,6 +17,8 @@ ALTER TABLE public.t_analysis_job_request_existing_jobs OWNER TO d3l243;
 ALTER TABLE ONLY public.t_analysis_job_request_existing_jobs
     ADD CONSTRAINT pk_t_analysis_job_request_existing_jobs PRIMARY KEY (request_id, job);
 
+ALTER TABLE public.t_analysis_job_request_existing_jobs CLUSTER ON pk_t_analysis_job_request_existing_jobs;
+
 --
 -- Name: TABLE t_analysis_job_request_existing_jobs; Type: ACL; Schema: public; Owner: d3l243
 --

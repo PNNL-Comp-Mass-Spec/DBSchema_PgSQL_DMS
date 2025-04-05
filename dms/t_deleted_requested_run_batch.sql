@@ -44,6 +44,8 @@ ALTER TABLE public.t_deleted_requested_run_batch ALTER COLUMN entry_id ADD GENER
 ALTER TABLE ONLY public.t_deleted_requested_run_batch
     ADD CONSTRAINT pk_t_deleted_requested_run_batch PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_deleted_requested_run_batch CLUSTER ON pk_t_deleted_requested_run_batch;
+
 --
 -- Name: TABLE t_deleted_requested_run_batch; Type: ACL; Schema: public; Owner: d3l243
 --

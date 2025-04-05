@@ -66,6 +66,8 @@ ALTER TABLE ONLY public.t_organisms
 ALTER TABLE ONLY public.t_organisms
     ADD CONSTRAINT pk_t_organisms PRIMARY KEY (organism_id);
 
+ALTER TABLE public.t_organisms CLUSTER ON pk_t_organisms;
+
 --
 -- Name: ix_t_organisms_created; Type: INDEX; Schema: public; Owner: d3l243
 --

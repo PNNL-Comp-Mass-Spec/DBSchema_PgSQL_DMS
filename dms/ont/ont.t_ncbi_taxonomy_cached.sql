@@ -21,6 +21,8 @@ ALTER TABLE ont.t_ncbi_taxonomy_cached OWNER TO d3l243;
 ALTER TABLE ONLY ont.t_ncbi_taxonomy_cached
     ADD CONSTRAINT pk_t_ncbi_taxonomy_cached PRIMARY KEY (tax_id);
 
+ALTER TABLE ont.t_ncbi_taxonomy_cached CLUSTER ON pk_t_ncbi_taxonomy_cached;
+
 --
 -- Name: ix_t_ncbi_taxonomy_cached_tax_id_include_name_and_synomyms; Type: INDEX; Schema: ont; Owner: d3l243
 --

@@ -32,6 +32,8 @@ ALTER TABLE pc.t_protein_collection_types ALTER COLUMN collection_type_id ADD GE
 ALTER TABLE ONLY pc.t_protein_collection_types
     ADD CONSTRAINT pk_t_protein_collection_types PRIMARY KEY (collection_type_id);
 
+ALTER TABLE pc.t_protein_collection_types CLUSTER ON pk_t_protein_collection_types;
+
 --
 -- Name: TABLE t_protein_collection_types; Type: ACL; Schema: pc; Owner: d3l243
 --

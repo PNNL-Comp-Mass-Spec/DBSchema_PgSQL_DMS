@@ -18,6 +18,8 @@ ALTER TABLE mts.t_mts_servers OWNER TO d3l243;
 ALTER TABLE ONLY mts.t_mts_servers
     ADD CONSTRAINT pk_t_mts_servers PRIMARY KEY (server_id);
 
+ALTER TABLE mts.t_mts_servers CLUSTER ON pk_t_mts_servers;
+
 --
 -- Name: ix_t_mts_servers_server_name; Type: INDEX; Schema: mts; Owner: d3l243
 --

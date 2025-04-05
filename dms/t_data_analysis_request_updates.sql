@@ -34,6 +34,8 @@ ALTER TABLE public.t_data_analysis_request_updates ALTER COLUMN id ADD GENERATED
 ALTER TABLE ONLY public.t_data_analysis_request_updates
     ADD CONSTRAINT pk_t_data_analysis_request_updates PRIMARY KEY (id);
 
+ALTER TABLE public.t_data_analysis_request_updates CLUSTER ON pk_t_data_analysis_request_updates;
+
 --
 -- Name: ix_t_data_analysis_request_updates_new_state_old_state_include; Type: INDEX; Schema: public; Owner: d3l243
 --

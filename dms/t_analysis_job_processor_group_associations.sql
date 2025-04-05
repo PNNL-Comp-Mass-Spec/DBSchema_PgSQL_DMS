@@ -19,6 +19,8 @@ ALTER TABLE public.t_analysis_job_processor_group_associations OWNER TO d3l243;
 ALTER TABLE ONLY public.t_analysis_job_processor_group_associations
     ADD CONSTRAINT pk_t_analysis_job_processor_group_associations PRIMARY KEY (job, group_id);
 
+ALTER TABLE public.t_analysis_job_processor_group_associations CLUSTER ON pk_t_analysis_job_processor_group_associations;
+
 --
 -- Name: ix_t_analysis_job_processor_group_associations_group_id_job; Type: INDEX; Schema: public; Owner: d3l243
 --

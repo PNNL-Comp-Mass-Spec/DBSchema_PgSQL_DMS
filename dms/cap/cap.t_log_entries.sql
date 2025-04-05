@@ -34,6 +34,8 @@ ALTER TABLE cap.t_log_entries ALTER COLUMN entry_id ADD GENERATED ALWAYS AS IDEN
 ALTER TABLE ONLY cap.t_log_entries
     ADD CONSTRAINT pk_t_log_entries PRIMARY KEY (entry_id);
 
+ALTER TABLE cap.t_log_entries CLUSTER ON pk_t_log_entries;
+
 --
 -- Name: ix_t_log_entries_entered; Type: INDEX; Schema: cap; Owner: d3l243
 --

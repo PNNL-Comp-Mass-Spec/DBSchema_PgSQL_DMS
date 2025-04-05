@@ -34,6 +34,8 @@ ALTER TABLE public.t_sp_authorization ALTER COLUMN entry_id ADD GENERATED ALWAYS
 ALTER TABLE ONLY public.t_sp_authorization
     ADD CONSTRAINT pk_t_sp_authorization PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_sp_authorization CLUSTER ON pk_t_sp_authorization;
+
 --
 -- Name: ix_t_sp_authorization_login_name; Type: INDEX; Schema: public; Owner: d3l243
 --

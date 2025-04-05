@@ -17,6 +17,8 @@ ALTER TABLE public.t_notification_entity_user OWNER TO d3l243;
 ALTER TABLE ONLY public.t_notification_entity_user
     ADD CONSTRAINT pk_t_notification_entity_user PRIMARY KEY (user_id, entity_type_id);
 
+ALTER TABLE public.t_notification_entity_user CLUSTER ON pk_t_notification_entity_user;
+
 --
 -- Name: t_notification_entity_user fk_t_notification_entity_user_t_notification_entity_type; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

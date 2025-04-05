@@ -41,6 +41,8 @@ ALTER TABLE public.t_lc_column ALTER COLUMN lc_column_id ADD GENERATED ALWAYS AS
 ALTER TABLE ONLY public.t_lc_column
     ADD CONSTRAINT pk_t_lc_column PRIMARY KEY (lc_column_id);
 
+ALTER TABLE public.t_lc_column CLUSTER ON pk_t_lc_column;
+
 --
 -- Name: ix_t_lc_column; Type: INDEX; Schema: public; Owner: d3l243
 --

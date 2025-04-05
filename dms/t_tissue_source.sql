@@ -17,6 +17,8 @@ ALTER TABLE public.t_tissue_source OWNER TO d3l243;
 ALTER TABLE ONLY public.t_tissue_source
     ADD CONSTRAINT pk_t_tissue_source PRIMARY KEY (tissue_source_id);
 
+ALTER TABLE public.t_tissue_source CLUSTER ON pk_t_tissue_source;
+
 --
 -- Name: TABLE t_tissue_source; Type: ACL; Schema: public; Owner: d3l243
 --

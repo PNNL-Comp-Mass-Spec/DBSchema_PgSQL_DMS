@@ -40,6 +40,8 @@ ALTER TABLE public.t_param_files ALTER COLUMN param_file_id ADD GENERATED ALWAYS
 ALTER TABLE ONLY public.t_param_files
     ADD CONSTRAINT pk_t_param_files PRIMARY KEY (param_file_id);
 
+ALTER TABLE public.t_param_files CLUSTER ON pk_t_param_files;
+
 --
 -- Name: ix_t_param_files_name; Type: INDEX; Schema: public; Owner: d3l243
 --

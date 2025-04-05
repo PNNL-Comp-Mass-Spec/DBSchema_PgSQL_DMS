@@ -33,6 +33,8 @@ ALTER TABLE public.t_cached_instrument_dataset_type_usage ALTER COLUMN entry_id 
 ALTER TABLE ONLY public.t_cached_instrument_dataset_type_usage
     ADD CONSTRAINT pk_t_cached_instrument_dataset_type_usage PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_cached_instrument_dataset_type_usage CLUSTER ON pk_t_cached_instrument_dataset_type_usage;
+
 --
 -- Name: ix_t_cached_instrument_dataset_type_usage_unique_inst_ds_type; Type: INDEX; Schema: public; Owner: d3l243
 --

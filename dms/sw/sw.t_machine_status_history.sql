@@ -33,6 +33,8 @@ ALTER TABLE sw.t_machine_status_history ALTER COLUMN entry_id ADD GENERATED ALWA
 ALTER TABLE ONLY sw.t_machine_status_history
     ADD CONSTRAINT pk_t_machine_status_history PRIMARY KEY (entry_id);
 
+ALTER TABLE sw.t_machine_status_history CLUSTER ON pk_t_machine_status_history;
+
 --
 -- Name: ix_t_machine_status_history; Type: INDEX; Schema: sw; Owner: d3l243
 --

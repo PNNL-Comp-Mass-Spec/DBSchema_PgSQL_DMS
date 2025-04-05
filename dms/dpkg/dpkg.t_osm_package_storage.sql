@@ -33,6 +33,8 @@ ALTER TABLE dpkg.t_osm_package_storage ALTER COLUMN path_id ADD GENERATED ALWAYS
 ALTER TABLE ONLY dpkg.t_osm_package_storage
     ADD CONSTRAINT pk_t_osm_package_storage PRIMARY KEY (path_id);
 
+ALTER TABLE dpkg.t_osm_package_storage CLUSTER ON pk_t_osm_package_storage;
+
 --
 -- Name: TABLE t_osm_package_storage; Type: ACL; Schema: dpkg; Owner: d3l243
 --

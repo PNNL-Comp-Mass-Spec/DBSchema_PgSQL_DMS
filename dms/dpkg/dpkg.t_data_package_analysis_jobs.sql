@@ -20,6 +20,8 @@ ALTER TABLE dpkg.t_data_package_analysis_jobs OWNER TO d3l243;
 ALTER TABLE ONLY dpkg.t_data_package_analysis_jobs
     ADD CONSTRAINT pk_t_data_package_analysis_jobs PRIMARY KEY (data_pkg_id, job);
 
+ALTER TABLE dpkg.t_data_package_analysis_jobs CLUSTER ON pk_t_data_package_analysis_jobs;
+
 --
 -- Name: ix_t_data_package_analysis_jobs_dataset_id_data_pkg_id_job; Type: INDEX; Schema: dpkg; Owner: d3l243
 --

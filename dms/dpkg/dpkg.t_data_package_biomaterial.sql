@@ -20,6 +20,8 @@ ALTER TABLE dpkg.t_data_package_biomaterial OWNER TO d3l243;
 ALTER TABLE ONLY dpkg.t_data_package_biomaterial
     ADD CONSTRAINT pk_t_data_package_biomaterial PRIMARY KEY (data_pkg_id, biomaterial_id);
 
+ALTER TABLE dpkg.t_data_package_biomaterial CLUSTER ON pk_t_data_package_biomaterial;
+
 --
 -- Name: t_data_package_biomaterial fk_t_data_package_biomaterial_t_data_package; Type: FK CONSTRAINT; Schema: dpkg; Owner: d3l243
 --

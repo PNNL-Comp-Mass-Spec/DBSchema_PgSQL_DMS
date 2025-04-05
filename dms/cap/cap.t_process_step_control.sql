@@ -19,6 +19,8 @@ ALTER TABLE cap.t_process_step_control OWNER TO d3l243;
 ALTER TABLE ONLY cap.t_process_step_control
     ADD CONSTRAINT pk_t_process_step_control PRIMARY KEY (processing_step_name);
 
+ALTER TABLE cap.t_process_step_control CLUSTER ON pk_t_process_step_control;
+
 --
 -- Name: t_process_step_control trig_t_process_step_control_after_update; Type: TRIGGER; Schema: cap; Owner: d3l243
 --

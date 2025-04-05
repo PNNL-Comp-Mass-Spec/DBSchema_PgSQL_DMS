@@ -34,6 +34,8 @@ ALTER TABLE sw.t_jobs_history OWNER TO d3l243;
 ALTER TABLE ONLY sw.t_jobs_history
     ADD CONSTRAINT pk_t_jobs_history PRIMARY KEY (job, saved);
 
+ALTER TABLE sw.t_jobs_history CLUSTER ON pk_t_jobs_history;
+
 --
 -- Name: ix_t_jobs_history_data_pkg_id; Type: INDEX; Schema: sw; Owner: d3l243
 --

@@ -28,6 +28,8 @@ ALTER TABLE public.t_cached_dataset_stats OWNER TO d3l243;
 ALTER TABLE ONLY public.t_cached_dataset_stats
     ADD CONSTRAINT pk_t_cached_dataset_stats PRIMARY KEY (dataset_id);
 
+ALTER TABLE public.t_cached_dataset_stats CLUSTER ON pk_t_cached_dataset_stats;
+
 --
 -- Name: ix_t_cached_dataset_stats_instrument_id_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
 --

@@ -22,6 +22,8 @@ ALTER TABLE public.t_secondary_sep OWNER TO d3l243;
 ALTER TABLE ONLY public.t_secondary_sep
     ADD CONSTRAINT pk_t_secondary_sep PRIMARY KEY (separation_type_id);
 
+ALTER TABLE public.t_secondary_sep CLUSTER ON pk_t_secondary_sep;
+
 --
 -- Name: ix_t_secondary_sep; Type: INDEX; Schema: public; Owner: d3l243
 --

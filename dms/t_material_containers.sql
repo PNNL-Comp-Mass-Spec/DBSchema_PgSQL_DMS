@@ -59,6 +59,8 @@ ALTER TABLE public.t_material_containers ALTER COLUMN container_id ADD GENERATED
 ALTER TABLE ONLY public.t_material_containers
     ADD CONSTRAINT pk_t_material_containers PRIMARY KEY (container_id);
 
+ALTER TABLE public.t_material_containers CLUSTER ON pk_t_material_containers;
+
 --
 -- Name: ix_t_material_containers; Type: INDEX; Schema: public; Owner: d3l243
 --

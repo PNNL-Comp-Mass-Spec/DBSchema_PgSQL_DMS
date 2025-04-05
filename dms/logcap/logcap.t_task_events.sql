@@ -42,6 +42,8 @@ ALTER TABLE ONLY logcap.t_task_events
 ALTER TABLE ONLY logcap.t_task_events
     ADD CONSTRAINT pk_t_task_events PRIMARY KEY (id);
 
+ALTER TABLE logcap.t_task_events CLUSTER ON pk_t_task_events;
+
 --
 -- Name: ix_t_task_events_current_state_job; Type: INDEX; Schema: logcap; Owner: d3l243
 --

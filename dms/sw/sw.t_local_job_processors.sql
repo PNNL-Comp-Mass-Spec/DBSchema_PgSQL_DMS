@@ -18,6 +18,8 @@ ALTER TABLE sw.t_local_job_processors OWNER TO d3l243;
 ALTER TABLE ONLY sw.t_local_job_processors
     ADD CONSTRAINT pk_t_local_job_processors PRIMARY KEY (job, processor);
 
+ALTER TABLE sw.t_local_job_processors CLUSTER ON pk_t_local_job_processors;
+
 --
 -- Name: ix_t_local_job_processors_job; Type: INDEX; Schema: sw; Owner: d3l243
 --

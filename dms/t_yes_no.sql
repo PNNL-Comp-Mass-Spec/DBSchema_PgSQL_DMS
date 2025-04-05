@@ -17,6 +17,8 @@ ALTER TABLE public.t_yes_no OWNER TO d3l243;
 ALTER TABLE ONLY public.t_yes_no
     ADD CONSTRAINT pk_t_yes_no_flag PRIMARY KEY (flag);
 
+ALTER TABLE public.t_yes_no CLUSTER ON pk_t_yes_no_flag;
+
 --
 -- Name: TABLE t_yes_no; Type: ACL; Schema: public; Owner: d3l243
 --

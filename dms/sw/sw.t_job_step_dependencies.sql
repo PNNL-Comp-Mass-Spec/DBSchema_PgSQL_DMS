@@ -23,6 +23,8 @@ ALTER TABLE sw.t_job_step_dependencies OWNER TO d3l243;
 ALTER TABLE ONLY sw.t_job_step_dependencies
     ADD CONSTRAINT pk_t_job_step_dependencies PRIMARY KEY (job, step, target_step);
 
+ALTER TABLE sw.t_job_step_dependencies CLUSTER ON pk_t_job_step_dependencies;
+
 --
 -- Name: ix_t_job_step_dependencies; Type: INDEX; Schema: sw; Owner: d3l243
 --

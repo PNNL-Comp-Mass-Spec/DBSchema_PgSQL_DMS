@@ -53,6 +53,8 @@ ALTER TABLE public.t_biomaterial ALTER COLUMN biomaterial_id ADD GENERATED ALWAY
 ALTER TABLE ONLY public.t_biomaterial
     ADD CONSTRAINT pk_t_biomaterial PRIMARY KEY (biomaterial_id);
 
+ALTER TABLE public.t_biomaterial CLUSTER ON pk_t_biomaterial;
+
 --
 -- Name: ix_t_biomaterial_biomaterial_name; Type: INDEX; Schema: public; Owner: d3l243
 --

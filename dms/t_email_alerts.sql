@@ -36,6 +36,8 @@ ALTER TABLE public.t_email_alerts ALTER COLUMN email_alert_id ADD GENERATED ALWA
 ALTER TABLE ONLY public.t_email_alerts
     ADD CONSTRAINT pk_t_email_alerts PRIMARY KEY (email_alert_id);
 
+ALTER TABLE public.t_email_alerts CLUSTER ON pk_t_email_alerts;
+
 --
 -- Name: t_email_alerts fk_t_email_alerts_t_email_alert_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

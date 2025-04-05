@@ -19,6 +19,8 @@ ALTER TABLE public.t_sample_labelling OWNER TO d3l243;
 ALTER TABLE ONLY public.t_sample_labelling
     ADD CONSTRAINT pk_t_sample_labelling PRIMARY KEY (label_id);
 
+ALTER TABLE public.t_sample_labelling CLUSTER ON pk_t_sample_labelling;
+
 --
 -- Name: ix_t_sample_labelling; Type: INDEX; Schema: public; Owner: d3l243
 --

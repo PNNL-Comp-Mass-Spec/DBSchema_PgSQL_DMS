@@ -32,6 +32,8 @@ ALTER TABLE public.t_query_row_count_default_refresh_interval ALTER COLUMN entry
 ALTER TABLE ONLY public.t_query_row_count_default_refresh_interval
     ADD CONSTRAINT pk_t_query_row_count_default_refresh_interval PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_query_row_count_default_refresh_interval CLUSTER ON pk_t_query_row_count_default_refresh_interval;
+
 --
 -- Name: ix_t_query_row_count_default_refresh_interval_object_name; Type: INDEX; Schema: public; Owner: d3l243
 --

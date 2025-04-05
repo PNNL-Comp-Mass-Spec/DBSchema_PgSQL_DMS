@@ -39,6 +39,8 @@ ALTER TABLE sw.t_job_step_processing_stats ALTER COLUMN entry_id ADD GENERATED A
 ALTER TABLE ONLY sw.t_job_step_processing_stats
     ADD CONSTRAINT pk_t_job_step_processing_stats PRIMARY KEY (entry_id);
 
+ALTER TABLE sw.t_job_step_processing_stats CLUSTER ON pk_t_job_step_processing_stats;
+
 --
 -- Name: TABLE t_job_step_processing_stats; Type: ACL; Schema: sw; Owner: d3l243
 --

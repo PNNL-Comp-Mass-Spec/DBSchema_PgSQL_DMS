@@ -38,6 +38,8 @@ ALTER TABLE public.t_predefined_analysis_scheduling_rules ALTER COLUMN rule_id A
 ALTER TABLE ONLY public.t_predefined_analysis_scheduling_rules
     ADD CONSTRAINT pk_t_predefined_analysis_scheduling_rules PRIMARY KEY (rule_id);
 
+ALTER TABLE public.t_predefined_analysis_scheduling_rules CLUSTER ON pk_t_predefined_analysis_scheduling_rules;
+
 --
 -- Name: t_predefined_analysis_scheduling_rules fk_t_predefined_analysis_scheduling_rules_t_analysis_job; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

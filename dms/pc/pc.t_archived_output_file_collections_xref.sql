@@ -31,6 +31,8 @@ ALTER TABLE pc.t_archived_output_file_collections_xref ALTER COLUMN entry_id ADD
 ALTER TABLE ONLY pc.t_archived_output_file_collections_xref
     ADD CONSTRAINT pk_t_archived_output_file_collections_xref PRIMARY KEY (entry_id);
 
+ALTER TABLE pc.t_archived_output_file_collections_xref CLUSTER ON pk_t_archived_output_file_collections_xref;
+
 --
 -- Name: TABLE t_archived_output_file_collections_xref; Type: ACL; Schema: pc; Owner: d3l243
 --

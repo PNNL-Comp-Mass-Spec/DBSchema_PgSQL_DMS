@@ -36,6 +36,8 @@ ALTER TABLE public.t_default_psm_job_parameters ALTER COLUMN entry_id ADD GENERA
 ALTER TABLE ONLY public.t_default_psm_job_parameters
     ADD CONSTRAINT pk_t_default_psm_job_parameters PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_default_psm_job_parameters CLUSTER ON pk_t_default_psm_job_parameters;
+
 --
 -- Name: ix_t_default_psm_job_parameters_uniq_type_tool_met_ox_cys_alk; Type: INDEX; Schema: public; Owner: d3l243
 --

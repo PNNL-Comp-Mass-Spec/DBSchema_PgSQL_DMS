@@ -34,6 +34,8 @@ ALTER TABLE dpkg.t_data_repository_uploads ALTER COLUMN upload_id ADD GENERATED 
 ALTER TABLE ONLY dpkg.t_data_repository_uploads
     ADD CONSTRAINT pk_t_data_repository_uploads PRIMARY KEY (upload_id);
 
+ALTER TABLE dpkg.t_data_repository_uploads CLUSTER ON pk_t_data_repository_uploads;
+
 --
 -- Name: ix_t_data_repository_uploads_accession; Type: INDEX; Schema: dpkg; Owner: d3l243
 --

@@ -18,6 +18,8 @@ ALTER TABLE public.t_analysis_tool_allowed_instrument_class OWNER TO d3l243;
 ALTER TABLE ONLY public.t_analysis_tool_allowed_instrument_class
     ADD CONSTRAINT pk_t_analysis_tool_allowed_instrument_class PRIMARY KEY (analysis_tool_id, instrument_class);
 
+ALTER TABLE public.t_analysis_tool_allowed_instrument_class CLUSTER ON pk_t_analysis_tool_allowed_instrument_class;
+
 --
 -- Name: t_analysis_tool_allowed_instrument_class fk_t_analysis_tool_allowed_instrument_class_t_analysis_tool; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

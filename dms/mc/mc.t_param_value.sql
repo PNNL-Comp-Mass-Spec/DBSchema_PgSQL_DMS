@@ -35,6 +35,8 @@ ALTER TABLE mc.t_param_value ALTER COLUMN entry_id ADD GENERATED ALWAYS AS IDENT
 ALTER TABLE ONLY mc.t_param_value
     ADD CONSTRAINT pk_t_param_value PRIMARY KEY (entry_id);
 
+ALTER TABLE mc.t_param_value CLUSTER ON pk_t_param_value;
+
 --
 -- Name: ix_t_param_value; Type: INDEX; Schema: mc; Owner: d3l243
 --

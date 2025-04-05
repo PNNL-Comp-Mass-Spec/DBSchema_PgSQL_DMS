@@ -20,6 +20,8 @@ ALTER TABLE ont.t_term_relationship OWNER TO d3l243;
 ALTER TABLE ONLY ont.t_term_relationship
     ADD CONSTRAINT pk_term_relationship PRIMARY KEY (term_relationship_id);
 
+ALTER TABLE ont.t_term_relationship CLUSTER ON pk_term_relationship;
+
 --
 -- Name: ix_t_term_relationship_object_term_pk; Type: INDEX; Schema: ont; Owner: d3l243
 --

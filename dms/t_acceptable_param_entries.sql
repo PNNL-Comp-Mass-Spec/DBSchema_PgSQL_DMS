@@ -41,6 +41,8 @@ ALTER TABLE public.t_acceptable_param_entries ALTER COLUMN entry_id ADD GENERATE
 ALTER TABLE ONLY public.t_acceptable_param_entries
     ADD CONSTRAINT pk_t_acceptable_param_entries PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_acceptable_param_entries CLUSTER ON pk_t_acceptable_param_entries;
+
 --
 -- Name: ix_t_acceptable_param_entries_entry_type_id; Type: INDEX; Schema: public; Owner: d3l243
 --

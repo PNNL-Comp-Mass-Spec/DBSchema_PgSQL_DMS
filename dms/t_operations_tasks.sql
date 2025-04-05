@@ -43,6 +43,8 @@ ALTER TABLE public.t_operations_tasks ALTER COLUMN task_id ADD GENERATED ALWAYS 
 ALTER TABLE ONLY public.t_operations_tasks
     ADD CONSTRAINT pk_t_operations_tasks PRIMARY KEY (task_id);
 
+ALTER TABLE public.t_operations_tasks CLUSTER ON pk_t_operations_tasks;
+
 --
 -- Name: t_operations_tasks fk_t_operations_tasks_t_lab_locations; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

@@ -42,6 +42,8 @@ ALTER TABLE ONLY logcap.t_task_step_processing_log
 ALTER TABLE ONLY logcap.t_task_step_processing_log
     ADD CONSTRAINT pk_t_task_step_processing_log PRIMARY KEY (id);
 
+ALTER TABLE logcap.t_task_step_processing_log CLUSTER ON pk_t_task_step_processing_log;
+
 --
 -- Name: ix_t_task_step_processing_log_job_step; Type: INDEX; Schema: logcap; Owner: d3l243
 --

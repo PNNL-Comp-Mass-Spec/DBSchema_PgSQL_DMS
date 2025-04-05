@@ -22,6 +22,8 @@ ALTER TABLE mc.t_param_value_old_managers OWNER TO d3l243;
 ALTER TABLE ONLY mc.t_param_value_old_managers
     ADD CONSTRAINT pk_t_param_value_old_managers PRIMARY KEY (entry_id);
 
+ALTER TABLE mc.t_param_value_old_managers CLUSTER ON pk_t_param_value_old_managers;
+
 --
 -- Name: TABLE t_param_value_old_managers; Type: ACL; Schema: mc; Owner: d3l243
 --

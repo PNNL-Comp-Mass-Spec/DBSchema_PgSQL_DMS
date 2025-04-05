@@ -37,6 +37,8 @@ ALTER TABLE public.t_settings_files_xml_history ALTER COLUMN event_id ADD GENERA
 ALTER TABLE ONLY public.t_settings_files_xml_history
     ADD CONSTRAINT pk_t_settings_files_xml_history PRIMARY KEY (event_id);
 
+ALTER TABLE public.t_settings_files_xml_history CLUSTER ON pk_t_settings_files_xml_history;
+
 --
 -- Name: ix_t_settings_files_xml_history_file_name; Type: INDEX; Schema: public; Owner: d3l243
 --

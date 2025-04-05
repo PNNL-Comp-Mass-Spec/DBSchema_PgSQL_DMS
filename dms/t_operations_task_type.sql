@@ -31,6 +31,8 @@ ALTER TABLE public.t_operations_task_type ALTER COLUMN task_type_id ADD GENERATE
 ALTER TABLE ONLY public.t_operations_task_type
     ADD CONSTRAINT pk_t_operations_task_type PRIMARY KEY (task_type_id);
 
+ALTER TABLE public.t_operations_task_type CLUSTER ON pk_t_operations_task_type;
+
 --
 -- Name: ix_t_operations_task_type_active; Type: INDEX; Schema: public; Owner: d3l243
 --

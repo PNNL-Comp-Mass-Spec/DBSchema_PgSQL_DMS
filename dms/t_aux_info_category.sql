@@ -32,6 +32,8 @@ ALTER TABLE public.t_aux_info_category ALTER COLUMN aux_category_id ADD GENERATE
 ALTER TABLE ONLY public.t_aux_info_category
     ADD CONSTRAINT pk_t_aux_info_category PRIMARY KEY (aux_category_id);
 
+ALTER TABLE public.t_aux_info_category CLUSTER ON pk_t_aux_info_category;
+
 --
 -- Name: t_aux_info_category fk_t_aux_info_category_t_aux_info_target; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

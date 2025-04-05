@@ -34,6 +34,8 @@ ALTER TABLE pc.t_position_info ALTER COLUMN position_id ADD GENERATED ALWAYS AS 
 ALTER TABLE ONLY pc.t_position_info
     ADD CONSTRAINT pk_t_position_info PRIMARY KEY (position_id);
 
+ALTER TABLE pc.t_position_info CLUSTER ON pk_t_position_info;
+
 --
 -- Name: t_position_info fk_t_position_info_t_dna_structures; Type: FK CONSTRAINT; Schema: pc; Owner: d3l243
 --

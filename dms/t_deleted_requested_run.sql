@@ -74,6 +74,8 @@ ALTER TABLE public.t_deleted_requested_run ALTER COLUMN entry_id ADD GENERATED A
 ALTER TABLE ONLY public.t_deleted_requested_run
     ADD CONSTRAINT pk_t_deleted_requested_run PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_deleted_requested_run CLUSTER ON pk_t_deleted_requested_run;
+
 --
 -- Name: ix_t_deleted_requested_run_batch_id; Type: INDEX; Schema: public; Owner: d3l243
 --

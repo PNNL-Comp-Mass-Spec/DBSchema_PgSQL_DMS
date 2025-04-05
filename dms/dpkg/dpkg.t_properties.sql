@@ -17,6 +17,8 @@ ALTER TABLE dpkg.t_properties OWNER TO d3l243;
 ALTER TABLE ONLY dpkg.t_properties
     ADD CONSTRAINT pk_t_properties PRIMARY KEY (property);
 
+ALTER TABLE dpkg.t_properties CLUSTER ON pk_t_properties;
+
 --
 -- Name: TABLE t_properties; Type: ACL; Schema: dpkg; Owner: d3l243
 --

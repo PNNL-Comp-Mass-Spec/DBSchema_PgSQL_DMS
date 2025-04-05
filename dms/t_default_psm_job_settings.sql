@@ -35,6 +35,8 @@ ALTER TABLE public.t_default_psm_job_settings ALTER COLUMN entry_id ADD GENERATE
 ALTER TABLE ONLY public.t_default_psm_job_settings
     ADD CONSTRAINT pk_t_default_psm_job_settings PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_default_psm_job_settings CLUSTER ON pk_t_default_psm_job_settings;
+
 --
 -- Name: ix_t_default_psm_job_settings_uniq_tool_jobtype_cysalk_styphos; Type: INDEX; Schema: public; Owner: d3l243
 --

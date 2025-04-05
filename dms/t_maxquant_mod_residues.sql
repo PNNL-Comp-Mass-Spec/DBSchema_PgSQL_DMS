@@ -17,6 +17,8 @@ ALTER TABLE public.t_maxquant_mod_residues OWNER TO d3l243;
 ALTER TABLE ONLY public.t_maxquant_mod_residues
     ADD CONSTRAINT pk_t_maxquant_mod_residues PRIMARY KEY (mod_id, residue_id);
 
+ALTER TABLE public.t_maxquant_mod_residues CLUSTER ON pk_t_maxquant_mod_residues;
+
 --
 -- Name: t_maxquant_mod_residues fk_t_maxquant_mod_residues_t_maxquant_mods; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

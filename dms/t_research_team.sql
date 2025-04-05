@@ -33,6 +33,8 @@ ALTER TABLE public.t_research_team ALTER COLUMN team_id ADD GENERATED ALWAYS AS 
 ALTER TABLE ONLY public.t_research_team
     ADD CONSTRAINT pk_t_research_team PRIMARY KEY (team_id);
 
+ALTER TABLE public.t_research_team CLUSTER ON pk_t_research_team;
+
 --
 -- Name: TABLE t_research_team; Type: ACL; Schema: public; Owner: d3l243
 --

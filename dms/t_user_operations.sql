@@ -31,6 +31,8 @@ ALTER TABLE public.t_user_operations ALTER COLUMN operation_id ADD GENERATED ALW
 ALTER TABLE ONLY public.t_user_operations
     ADD CONSTRAINT pk_t_user_operations PRIMARY KEY (operation_id);
 
+ALTER TABLE public.t_user_operations CLUSTER ON pk_t_user_operations;
+
 --
 -- Name: ix_t_user_operations_unique_operation; Type: INDEX; Schema: public; Owner: d3l243
 --

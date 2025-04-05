@@ -35,6 +35,8 @@ ALTER TABLE public.t_entity_rename_log ALTER COLUMN entry_id ADD GENERATED ALWAY
 ALTER TABLE ONLY public.t_entity_rename_log
     ADD CONSTRAINT pk_t_entity_rename_log PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_entity_rename_log CLUSTER ON pk_t_entity_rename_log;
+
 --
 -- Name: ix_t_entity_rename_log_target_id; Type: INDEX; Schema: public; Owner: d3l243
 --

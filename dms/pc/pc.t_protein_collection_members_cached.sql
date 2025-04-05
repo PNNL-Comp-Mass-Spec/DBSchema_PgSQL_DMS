@@ -22,6 +22,8 @@ ALTER TABLE pc.t_protein_collection_members_cached OWNER TO d3l243;
 ALTER TABLE ONLY pc.t_protein_collection_members_cached
     ADD CONSTRAINT pk_t_protein_collection_members_cached PRIMARY KEY (protein_collection_id, reference_id);
 
+ALTER TABLE pc.t_protein_collection_members_cached CLUSTER ON pk_t_protein_collection_members_cached;
+
 --
 -- Name: ix_t_protein_collection_members_cached_protein_id; Type: INDEX; Schema: pc; Owner: d3l243
 --

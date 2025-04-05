@@ -47,6 +47,8 @@ ALTER TABLE ONLY public.t_mass_correction_factors
 ALTER TABLE ONLY public.t_mass_correction_factors
     ADD CONSTRAINT pk_t_mass_correction_factors PRIMARY KEY (mass_correction_id);
 
+ALTER TABLE public.t_mass_correction_factors CLUSTER ON pk_t_mass_correction_factors;
+
 --
 -- Name: ix_t_mass_correction_factors_mass_correction_tag; Type: INDEX; Schema: public; Owner: d3l243
 --

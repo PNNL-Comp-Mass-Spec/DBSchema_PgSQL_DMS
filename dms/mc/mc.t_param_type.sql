@@ -32,6 +32,8 @@ ALTER TABLE mc.t_param_type ALTER COLUMN param_type_id ADD GENERATED ALWAYS AS I
 ALTER TABLE ONLY mc.t_param_type
     ADD CONSTRAINT pk_t_param_type PRIMARY KEY (param_type_id);
 
+ALTER TABLE mc.t_param_type CLUSTER ON pk_t_param_type;
+
 --
 -- Name: ix_t_param_type_param_name; Type: INDEX; Schema: mc; Owner: d3l243
 --

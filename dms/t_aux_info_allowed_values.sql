@@ -17,6 +17,8 @@ ALTER TABLE public.t_aux_info_allowed_values OWNER TO d3l243;
 ALTER TABLE ONLY public.t_aux_info_allowed_values
     ADD CONSTRAINT pk_t_aux_info_allowed_values PRIMARY KEY (aux_description_id, value);
 
+ALTER TABLE public.t_aux_info_allowed_values CLUSTER ON pk_t_aux_info_allowed_values;
+
 --
 -- Name: t_aux_info_allowed_values fk_t_aux_info_allowed_values_t_aux_info_description; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

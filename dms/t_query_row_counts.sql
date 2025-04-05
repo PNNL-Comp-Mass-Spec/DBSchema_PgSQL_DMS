@@ -37,6 +37,8 @@ ALTER TABLE public.t_query_row_counts ALTER COLUMN query_id ADD GENERATED ALWAYS
 ALTER TABLE ONLY public.t_query_row_counts
     ADD CONSTRAINT pk_t_query_row_counts PRIMARY KEY (query_id);
 
+ALTER TABLE public.t_query_row_counts CLUSTER ON pk_t_query_row_counts;
+
 --
 -- Name: ix_t_query_row_counts_object_name_include_where_clause_row_cnt; Type: INDEX; Schema: public; Owner: d3l243
 --

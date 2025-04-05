@@ -100,6 +100,8 @@ ALTER TABLE ONLY timetable.task ALTER COLUMN task_id SET DEFAULT nextval('timeta
 ALTER TABLE ONLY timetable.task
     ADD CONSTRAINT task_pkey PRIMARY KEY (task_id);
 
+ALTER TABLE timetable.task CLUSTER ON task_pkey;
+
 --
 -- Name: task task_chain_id_fkey; Type: FK CONSTRAINT; Schema: timetable; Owner: d3l243
 --

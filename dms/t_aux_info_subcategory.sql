@@ -32,6 +32,8 @@ ALTER TABLE public.t_aux_info_subcategory ALTER COLUMN aux_subcategory_id ADD GE
 ALTER TABLE ONLY public.t_aux_info_subcategory
     ADD CONSTRAINT pk_t_aux_info_subcategory PRIMARY KEY (aux_subcategory_id);
 
+ALTER TABLE public.t_aux_info_subcategory CLUSTER ON pk_t_aux_info_subcategory;
+
 --
 -- Name: t_aux_info_subcategory fk_t_aux_info_subcategory_t_aux_info_category; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

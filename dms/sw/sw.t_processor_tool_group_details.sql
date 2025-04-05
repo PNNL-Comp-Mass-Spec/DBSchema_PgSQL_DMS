@@ -24,6 +24,8 @@ ALTER TABLE sw.t_processor_tool_group_details OWNER TO d3l243;
 ALTER TABLE ONLY sw.t_processor_tool_group_details
     ADD CONSTRAINT pk_t_processor_tool_group_details PRIMARY KEY (group_id, mgr_id, tool_name);
 
+ALTER TABLE sw.t_processor_tool_group_details CLUSTER ON pk_t_processor_tool_group_details;
+
 --
 -- Name: t_processor_tool_group_details trig_t_processor_tool_group_details_after_update; Type: TRIGGER; Schema: sw; Owner: d3l243
 --

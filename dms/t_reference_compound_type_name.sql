@@ -30,6 +30,8 @@ ALTER TABLE public.t_reference_compound_type_name ALTER COLUMN compound_type_id 
 ALTER TABLE ONLY public.t_reference_compound_type_name
     ADD CONSTRAINT pk_t_reference_compound_type_name PRIMARY KEY (compound_type_id);
 
+ALTER TABLE public.t_reference_compound_type_name CLUSTER ON pk_t_reference_compound_type_name;
+
 --
 -- Name: ix_t_reference_compound_type_name; Type: INDEX; Schema: public; Owner: d3l243
 --

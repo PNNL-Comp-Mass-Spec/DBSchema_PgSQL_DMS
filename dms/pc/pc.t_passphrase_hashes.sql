@@ -32,6 +32,8 @@ ALTER TABLE pc.t_passphrase_hashes ALTER COLUMN passphrase_hash_id ADD GENERATED
 ALTER TABLE ONLY pc.t_passphrase_hashes
     ADD CONSTRAINT pk_t_passphrase_hashes PRIMARY KEY (passphrase_hash_id);
 
+ALTER TABLE pc.t_passphrase_hashes CLUSTER ON pk_t_passphrase_hashes;
+
 --
 -- Name: TABLE t_passphrase_hashes; Type: ACL; Schema: pc; Owner: d3l243
 --

@@ -170,6 +170,8 @@ ALTER TABLE public.t_requested_run ALTER COLUMN request_id ADD GENERATED ALWAYS 
 ALTER TABLE ONLY public.t_requested_run
     ADD CONSTRAINT pk_t_requested_run PRIMARY KEY (request_id);
 
+ALTER TABLE public.t_requested_run CLUSTER ON pk_t_requested_run;
+
 --
 -- Name: ix_t_requested_run_batch_id_include_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
 --

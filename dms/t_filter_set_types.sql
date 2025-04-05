@@ -30,6 +30,8 @@ ALTER TABLE public.t_filter_set_types ALTER COLUMN filter_type_id ADD GENERATED 
 ALTER TABLE ONLY public.t_filter_set_types
     ADD CONSTRAINT pk_t_filter_set_types PRIMARY KEY (filter_type_id);
 
+ALTER TABLE public.t_filter_set_types CLUSTER ON pk_t_filter_set_types;
+
 --
 -- Name: TABLE t_filter_set_types; Type: ACL; Schema: public; Owner: d3l243
 --

@@ -17,6 +17,8 @@ ALTER TABLE ont.t_ncbi_taxonomy_name_class OWNER TO d3l243;
 ALTER TABLE ONLY ont.t_ncbi_taxonomy_name_class
     ADD CONSTRAINT pk_t_ncbi_taxonomy_name_class PRIMARY KEY (name_class);
 
+ALTER TABLE ont.t_ncbi_taxonomy_name_class CLUSTER ON pk_t_ncbi_taxonomy_name_class;
+
 --
 -- Name: ix_t_ncbi_taxonomy_name_class_sort_weight; Type: INDEX; Schema: ont; Owner: d3l243
 --

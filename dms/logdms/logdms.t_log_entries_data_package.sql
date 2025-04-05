@@ -20,6 +20,8 @@ ALTER TABLE logdms.t_log_entries_data_package OWNER TO d3l243;
 ALTER TABLE ONLY logdms.t_log_entries_data_package
     ADD CONSTRAINT pk_t_log_entries_data_package PRIMARY KEY (entry_id);
 
+ALTER TABLE logdms.t_log_entries_data_package CLUSTER ON pk_t_log_entries_data_package;
+
 --
 -- Name: ix_t_log_entries_data_package_entered; Type: INDEX; Schema: logdms; Owner: d3l243
 --

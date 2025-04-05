@@ -35,6 +35,8 @@ ALTER TABLE public.t_archive_space_usage ALTER COLUMN entry_id ADD GENERATED ALW
 ALTER TABLE ONLY public.t_archive_space_usage
     ADD CONSTRAINT pk_t_archive_space_usage PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_archive_space_usage CLUSTER ON pk_t_archive_space_usage;
+
 --
 -- Name: TABLE t_archive_space_usage; Type: ACL; Schema: public; Owner: d3l243
 --

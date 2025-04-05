@@ -23,6 +23,8 @@ ALTER TABLE ont.t_unimod_specificity OWNER TO d3l243;
 ALTER TABLE ONLY ont.t_unimod_specificity
     ADD CONSTRAINT pk_t_unimod_specificity PRIMARY KEY (unimod_id, specificity_entry_id);
 
+ALTER TABLE ont.t_unimod_specificity CLUSTER ON pk_t_unimod_specificity;
+
 --
 -- Name: TABLE t_unimod_specificity; Type: ACL; Schema: ont; Owner: d3l243
 --

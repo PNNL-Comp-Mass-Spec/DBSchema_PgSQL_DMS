@@ -31,6 +31,8 @@ ALTER TABLE public.t_spectral_library_type ALTER COLUMN library_type_id ADD GENE
 ALTER TABLE ONLY public.t_spectral_library_type
     ADD CONSTRAINT pk_t_spectral_library_type PRIMARY KEY (library_type_id);
 
+ALTER TABLE public.t_spectral_library_type CLUSTER ON pk_t_spectral_library_type;
+
 --
 -- Name: ix_t_spectral_library_type_library_type; Type: INDEX; Schema: public; Owner: d3l243
 --

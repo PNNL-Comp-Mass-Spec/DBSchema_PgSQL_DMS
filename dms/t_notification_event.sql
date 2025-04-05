@@ -32,6 +32,8 @@ ALTER TABLE public.t_notification_event ALTER COLUMN entry_id ADD GENERATED ALWA
 ALTER TABLE ONLY public.t_notification_event
     ADD CONSTRAINT pk_t_notification_event PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_notification_event CLUSTER ON pk_t_notification_event;
+
 --
 -- Name: ix_t_notification_event_event_type_id; Type: INDEX; Schema: public; Owner: d3l243
 --

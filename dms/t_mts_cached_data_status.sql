@@ -23,6 +23,8 @@ ALTER TABLE public.t_mts_cached_data_status OWNER TO d3l243;
 ALTER TABLE ONLY public.t_mts_cached_data_status
     ADD CONSTRAINT pk_t_mts_cached_data_status PRIMARY KEY (table_name);
 
+ALTER TABLE public.t_mts_cached_data_status CLUSTER ON pk_t_mts_cached_data_status;
+
 --
 -- Name: TABLE t_mts_cached_data_status; Type: ACL; Schema: public; Owner: d3l243
 --

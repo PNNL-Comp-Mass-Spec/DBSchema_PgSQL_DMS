@@ -32,6 +32,8 @@ ALTER TABLE public.t_campaign_tracking OWNER TO d3l243;
 ALTER TABLE ONLY public.t_campaign_tracking
     ADD CONSTRAINT pk_t_campaign_tracking PRIMARY KEY (campaign_id);
 
+ALTER TABLE public.t_campaign_tracking CLUSTER ON pk_t_campaign_tracking;
+
 --
 -- Name: TABLE t_campaign_tracking; Type: ACL; Schema: public; Owner: d3l243
 --

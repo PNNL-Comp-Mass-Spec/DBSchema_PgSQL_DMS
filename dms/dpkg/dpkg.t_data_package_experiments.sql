@@ -20,6 +20,8 @@ ALTER TABLE dpkg.t_data_package_experiments OWNER TO d3l243;
 ALTER TABLE ONLY dpkg.t_data_package_experiments
     ADD CONSTRAINT pk_t_data_package_experiments PRIMARY KEY (data_pkg_id, experiment_id);
 
+ALTER TABLE dpkg.t_data_package_experiments CLUSTER ON pk_t_data_package_experiments;
+
 --
 -- Name: ix_t_data_package_experiments_experiment; Type: INDEX; Schema: dpkg; Owner: d3l243
 --

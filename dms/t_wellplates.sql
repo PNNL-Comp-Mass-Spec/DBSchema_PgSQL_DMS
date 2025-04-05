@@ -40,6 +40,8 @@ ALTER TABLE ONLY public.t_wellplates
 ALTER TABLE ONLY public.t_wellplates
     ADD CONSTRAINT pk_t_wellplates PRIMARY KEY (wellplate_id);
 
+ALTER TABLE public.t_wellplates CLUSTER ON pk_t_wellplates;
+
 --
 -- Name: TABLE t_wellplates; Type: ACL; Schema: public; Owner: d3l243
 --

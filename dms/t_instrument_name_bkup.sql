@@ -26,6 +26,8 @@ ALTER TABLE public.t_instrument_name_bkup OWNER TO d3l243;
 ALTER TABLE ONLY public.t_instrument_name_bkup
     ADD CONSTRAINT pk_t_instrument_name_bkup PRIMARY KEY (instrument_id);
 
+ALTER TABLE public.t_instrument_name_bkup CLUSTER ON pk_t_instrument_name_bkup;
+
 --
 -- Name: TABLE t_instrument_name_bkup; Type: ACL; Schema: public; Owner: d3l243
 --

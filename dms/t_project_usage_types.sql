@@ -17,6 +17,8 @@ ALTER TABLE public.t_project_usage_types OWNER TO d3l243;
 ALTER TABLE ONLY public.t_project_usage_types
     ADD CONSTRAINT pk_t_project_usage_types PRIMARY KEY (project_type_id);
 
+ALTER TABLE public.t_project_usage_types CLUSTER ON pk_t_project_usage_types;
+
 --
 -- Name: TABLE t_project_usage_types; Type: ACL; Schema: public; Owner: d3l243
 --

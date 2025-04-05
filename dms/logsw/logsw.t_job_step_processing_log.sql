@@ -21,6 +21,8 @@ ALTER TABLE logsw.t_job_step_processing_log OWNER TO d3l243;
 ALTER TABLE ONLY logsw.t_job_step_processing_log
     ADD CONSTRAINT pk_t_job_step_processing_log PRIMARY KEY (event_id);
 
+ALTER TABLE logsw.t_job_step_processing_log CLUSTER ON pk_t_job_step_processing_log;
+
 --
 -- Name: ix_t_job_step_processing_log_job_step; Type: INDEX; Schema: logsw; Owner: d3l243
 --

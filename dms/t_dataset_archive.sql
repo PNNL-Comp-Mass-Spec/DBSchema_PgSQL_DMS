@@ -35,6 +35,8 @@ ALTER TABLE public.t_dataset_archive OWNER TO d3l243;
 ALTER TABLE ONLY public.t_dataset_archive
     ADD CONSTRAINT pk_t_dataset_archive PRIMARY KEY (dataset_id);
 
+ALTER TABLE public.t_dataset_archive CLUSTER ON pk_t_dataset_archive;
+
 --
 -- Name: ix_dataset_archive_dataset_id_state_id; Type: INDEX; Schema: public; Owner: d3l243
 --

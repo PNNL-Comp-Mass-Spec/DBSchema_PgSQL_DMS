@@ -17,6 +17,8 @@ ALTER TABLE public.t_analysis_job_request_datasets OWNER TO d3l243;
 ALTER TABLE ONLY public.t_analysis_job_request_datasets
     ADD CONSTRAINT pk_t_analysis_job_request_datasets PRIMARY KEY (request_id, dataset_id);
 
+ALTER TABLE public.t_analysis_job_request_datasets CLUSTER ON pk_t_analysis_job_request_datasets;
+
 --
 -- Name: ix_t_analysis_job_request_datasets_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
 --

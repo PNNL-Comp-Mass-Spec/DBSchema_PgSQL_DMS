@@ -20,6 +20,8 @@ ALTER TABLE public.t_notification_event_type OWNER TO d3l243;
 ALTER TABLE ONLY public.t_notification_event_type
     ADD CONSTRAINT pk_t_notification_event_type PRIMARY KEY (event_type_id);
 
+ALTER TABLE public.t_notification_event_type CLUSTER ON pk_t_notification_event_type;
+
 --
 -- Name: t_notification_event_type fk_t_notification_event_type_t_notification_entity_type; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

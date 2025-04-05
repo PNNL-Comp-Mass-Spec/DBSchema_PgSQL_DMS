@@ -17,6 +17,8 @@ ALTER TABLE public.t_data_analysis_request_batch_ids OWNER TO d3l243;
 ALTER TABLE ONLY public.t_data_analysis_request_batch_ids
     ADD CONSTRAINT pk_t_data_analysis_request_request_batch_id PRIMARY KEY (request_id, batch_id);
 
+ALTER TABLE public.t_data_analysis_request_batch_ids CLUSTER ON pk_t_data_analysis_request_request_batch_id;
+
 --
 -- Name: ix_t_data_analysis_request_batch_ids; Type: INDEX; Schema: public; Owner: d3l243
 --

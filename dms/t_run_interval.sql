@@ -30,6 +30,8 @@ COMMENT ON TABLE public.t_run_interval IS 'Tracks long intervals that follow the
 ALTER TABLE ONLY public.t_run_interval
     ADD CONSTRAINT pk_t_run_interval PRIMARY KEY (dataset_id);
 
+ALTER TABLE public.t_run_interval CLUSTER ON pk_t_run_interval;
+
 --
 -- Name: TABLE t_run_interval; Type: ACL; Schema: public; Owner: d3l243
 --

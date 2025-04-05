@@ -31,6 +31,8 @@ ALTER TABLE dpkg.t_uri_paths ALTER COLUMN uri_path_id ADD GENERATED ALWAYS AS ID
 ALTER TABLE ONLY dpkg.t_uri_paths
     ADD CONSTRAINT pk_t_uri_paths PRIMARY KEY (uri_path_id);
 
+ALTER TABLE dpkg.t_uri_paths CLUSTER ON pk_t_uri_paths;
+
 --
 -- Name: TABLE t_uri_paths; Type: ACL; Schema: dpkg; Owner: d3l243
 --

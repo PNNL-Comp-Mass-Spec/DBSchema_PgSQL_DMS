@@ -41,6 +41,8 @@ ALTER TABLE ont.t_cv_envo ALTER COLUMN entry_id ADD GENERATED ALWAYS AS IDENTITY
 ALTER TABLE ONLY ont.t_cv_envo
     ADD CONSTRAINT pk_t_cv_envo PRIMARY KEY (entry_id);
 
+ALTER TABLE ont.t_cv_envo CLUSTER ON pk_t_cv_envo;
+
 --
 -- Name: ix_t_cv_envo_cached_names_term_name; Type: INDEX; Schema: ont; Owner: d3l243
 --

@@ -33,6 +33,8 @@ ALTER TABLE sw.t_job_step_status_history ALTER COLUMN entry_id ADD GENERATED ALW
 ALTER TABLE ONLY sw.t_job_step_status_history
     ADD CONSTRAINT pk_t_job_step_status_history PRIMARY KEY (entry_id);
 
+ALTER TABLE sw.t_job_step_status_history CLUSTER ON pk_t_job_step_status_history;
+
 --
 -- Name: ix_t_job_step_status_history_state; Type: INDEX; Schema: sw; Owner: d3l243
 --

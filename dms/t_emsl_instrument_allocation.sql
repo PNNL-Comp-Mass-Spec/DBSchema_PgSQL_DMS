@@ -22,6 +22,8 @@ ALTER TABLE public.t_emsl_instrument_allocation OWNER TO d3l243;
 ALTER TABLE ONLY public.t_emsl_instrument_allocation
     ADD CONSTRAINT pk_t_emsl_instrument_allocation PRIMARY KEY (eus_instrument_id, proposal_id, fy);
 
+ALTER TABLE public.t_emsl_instrument_allocation CLUSTER ON pk_t_emsl_instrument_allocation;
+
 --
 -- Name: TABLE t_emsl_instrument_allocation; Type: ACL; Schema: public; Owner: d3l243
 --

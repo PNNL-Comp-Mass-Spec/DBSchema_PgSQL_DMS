@@ -36,6 +36,8 @@ ALTER TABLE public.t_dataset_device ALTER COLUMN device_id ADD GENERATED ALWAYS 
 ALTER TABLE ONLY public.t_dataset_device
     ADD CONSTRAINT pk_t_dataset_device PRIMARY KEY (device_id);
 
+ALTER TABLE public.t_dataset_device CLUSTER ON pk_t_dataset_device;
+
 --
 -- Name: ix_t_dataset_device_type_name_model_serial_software; Type: INDEX; Schema: public; Owner: d3l243
 --

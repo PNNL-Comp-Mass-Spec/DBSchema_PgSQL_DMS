@@ -159,6 +159,8 @@ ALTER TABLE public.t_experiments ALTER COLUMN exp_id ADD GENERATED ALWAYS AS IDE
 ALTER TABLE ONLY public.t_experiments
     ADD CONSTRAINT pk_t_experiments PRIMARY KEY (exp_id);
 
+ALTER TABLE public.t_experiments CLUSTER ON pk_t_experiments;
+
 --
 -- Name: ix_t_experiments_campaign_id; Type: INDEX; Schema: public; Owner: d3l243
 --

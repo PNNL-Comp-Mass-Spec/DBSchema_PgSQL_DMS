@@ -41,6 +41,8 @@ ALTER TABLE ONLY public.t_lc_cart
 ALTER TABLE ONLY public.t_lc_cart
     ADD CONSTRAINT pk_t_lc_cart PRIMARY KEY (cart_id);
 
+ALTER TABLE public.t_lc_cart CLUSTER ON pk_t_lc_cart;
+
 --
 -- Name: t_lc_cart fk_t_lc_cart_t_lc_cart_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

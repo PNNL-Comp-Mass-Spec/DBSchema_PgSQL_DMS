@@ -33,6 +33,8 @@ ALTER TABLE public.t_instrument_data_type_name ALTER COLUMN raw_data_type_id ADD
 ALTER TABLE ONLY public.t_instrument_data_type_name
     ADD CONSTRAINT pk_t_instrument_data_type_name PRIMARY KEY (raw_data_type_id);
 
+ALTER TABLE public.t_instrument_data_type_name CLUSTER ON pk_t_instrument_data_type_name;
+
 --
 -- Name: ix_t_instrument_data_type_name; Type: INDEX; Schema: public; Owner: d3l243
 --

@@ -26,6 +26,8 @@ ALTER TABLE sw.t_scripts OWNER TO d3l243;
 ALTER TABLE ONLY sw.t_scripts
     ADD CONSTRAINT pk_t_scripts PRIMARY KEY (script_id);
 
+ALTER TABLE sw.t_scripts CLUSTER ON pk_t_scripts;
+
 --
 -- Name: ix_t_scripts_script; Type: INDEX; Schema: sw; Owner: d3l243
 --

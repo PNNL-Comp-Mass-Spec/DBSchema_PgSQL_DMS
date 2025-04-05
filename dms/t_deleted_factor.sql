@@ -38,6 +38,8 @@ ALTER TABLE public.t_deleted_factor ALTER COLUMN entry_id ADD GENERATED ALWAYS A
 ALTER TABLE ONLY public.t_deleted_factor
     ADD CONSTRAINT pk_t_deleted_factor PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_deleted_factor CLUSTER ON pk_t_deleted_factor;
+
 --
 -- Name: ix_t_deleted_factor_type_target_id_name; Type: INDEX; Schema: public; Owner: d3l243
 --

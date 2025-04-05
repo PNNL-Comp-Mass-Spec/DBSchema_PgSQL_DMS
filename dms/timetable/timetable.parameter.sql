@@ -25,6 +25,8 @@ COMMENT ON TABLE timetable.parameter IS 'Stores parameters passed as arguments t
 ALTER TABLE ONLY timetable.parameter
     ADD CONSTRAINT parameter_pkey PRIMARY KEY (task_id, order_id);
 
+ALTER TABLE timetable.parameter CLUSTER ON parameter_pkey;
+
 --
 -- Name: parameter parameter_task_id_fkey; Type: FK CONSTRAINT; Schema: timetable; Owner: d3l243
 --

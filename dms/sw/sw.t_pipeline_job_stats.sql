@@ -19,6 +19,8 @@ ALTER TABLE sw.t_pipeline_job_stats OWNER TO d3l243;
 ALTER TABLE ONLY sw.t_pipeline_job_stats
     ADD CONSTRAINT pk_t_pipeline_job_stats PRIMARY KEY (script, instrument_group, year);
 
+ALTER TABLE sw.t_pipeline_job_stats CLUSTER ON pk_t_pipeline_job_stats;
+
 --
 -- Name: TABLE t_pipeline_job_stats; Type: ACL; Schema: sw; Owner: d3l243
 --

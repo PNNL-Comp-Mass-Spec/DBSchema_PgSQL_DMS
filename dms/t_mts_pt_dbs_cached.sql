@@ -25,6 +25,8 @@ ALTER TABLE public.t_mts_pt_dbs_cached OWNER TO d3l243;
 ALTER TABLE ONLY public.t_mts_pt_dbs_cached
     ADD CONSTRAINT pk_t_mts_pt_dbs_cached_dbid PRIMARY KEY (peptide_db_id);
 
+ALTER TABLE public.t_mts_pt_dbs_cached CLUSTER ON pk_t_mts_pt_dbs_cached_dbid;
+
 --
 -- Name: ix_t_mts_pt_dbs_cached_dbname; Type: INDEX; Schema: public; Owner: d3l243
 --

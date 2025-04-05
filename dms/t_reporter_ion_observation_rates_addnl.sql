@@ -54,6 +54,8 @@ ALTER TABLE public.t_reporter_ion_observation_rates_addnl OWNER TO d3l243;
 ALTER TABLE ONLY public.t_reporter_ion_observation_rates_addnl
     ADD CONSTRAINT pk_t_reporter_ion_observation_rates_addnl PRIMARY KEY (job);
 
+ALTER TABLE public.t_reporter_ion_observation_rates_addnl CLUSTER ON pk_t_reporter_ion_observation_rates_addnl;
+
 --
 -- Name: t_reporter_ion_observation_rates_addnl fk_t_reporter_ion_observation_rates_addnl_t_analysis_job; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

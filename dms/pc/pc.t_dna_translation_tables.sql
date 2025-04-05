@@ -31,6 +31,8 @@ ALTER TABLE pc.t_dna_translation_tables ALTER COLUMN translation_table_name_id A
 ALTER TABLE ONLY pc.t_dna_translation_tables
     ADD CONSTRAINT pk_t_dna_translation_tables PRIMARY KEY (translation_table_name_id);
 
+ALTER TABLE pc.t_dna_translation_tables CLUSTER ON pk_t_dna_translation_tables;
+
 --
 -- Name: t_dna_translation_tables fk_t_dna_translation_tables_t_dna_translation_table_map; Type: FK CONSTRAINT; Schema: pc; Owner: d3l243
 --

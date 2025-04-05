@@ -38,6 +38,8 @@ ALTER TABLE public.t_analysis_job_psm_stats OWNER TO d3l243;
 ALTER TABLE ONLY public.t_analysis_job_psm_stats
     ADD CONSTRAINT pk_t_analysis_job_psm_stats PRIMARY KEY (job);
 
+ALTER TABLE public.t_analysis_job_psm_stats CLUSTER ON pk_t_analysis_job_psm_stats;
+
 --
 -- Name: ix_t_analysis_job_psm_stats_last_affected; Type: INDEX; Schema: public; Owner: d3l243
 --

@@ -37,6 +37,8 @@ ALTER TABLE public.t_experiment_groups ALTER COLUMN group_id ADD GENERATED ALWAY
 ALTER TABLE ONLY public.t_experiment_groups
     ADD CONSTRAINT pk_t_experiment_groups PRIMARY KEY (group_id);
 
+ALTER TABLE public.t_experiment_groups CLUSTER ON pk_t_experiment_groups;
+
 --
 -- Name: ix_t_experiment_groups_parent_exp_id_group_id_include_type; Type: INDEX; Schema: public; Owner: d3l243
 --

@@ -33,6 +33,8 @@ ALTER TABLE public.t_dataset_scan_types ALTER COLUMN entry_id ADD GENERATED ALWA
 ALTER TABLE ONLY public.t_dataset_scan_types
     ADD CONSTRAINT pk_t_dataset_scan_types PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_dataset_scan_types CLUSTER ON pk_t_dataset_scan_types;
+
 --
 -- Name: ix_t_dataset_scan_types_dataset_id_scan_type; Type: INDEX; Schema: public; Owner: d3l243
 --

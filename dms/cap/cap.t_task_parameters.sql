@@ -17,6 +17,8 @@ ALTER TABLE cap.t_task_parameters OWNER TO d3l243;
 ALTER TABLE ONLY cap.t_task_parameters
     ADD CONSTRAINT pk_t_task_parameters PRIMARY KEY (job);
 
+ALTER TABLE cap.t_task_parameters CLUSTER ON pk_t_task_parameters;
+
 --
 -- Name: t_task_parameters fk_t_task_parameters_t_tasks; Type: FK CONSTRAINT; Schema: cap; Owner: d3l243
 --

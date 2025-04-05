@@ -20,6 +20,8 @@ ALTER TABLE mc.t_mgr_type_param_type_map OWNER TO d3l243;
 ALTER TABLE ONLY mc.t_mgr_type_param_type_map
     ADD CONSTRAINT pk_t_mgr_type_param_type_map PRIMARY KEY (mgr_type_id, param_type_id);
 
+ALTER TABLE mc.t_mgr_type_param_type_map CLUSTER ON pk_t_mgr_type_param_type_map;
+
 --
 -- Name: t_mgr_type_param_type_map trig_t_mgr_type_param_type_map_after_update; Type: TRIGGER; Schema: mc; Owner: d3l243
 --

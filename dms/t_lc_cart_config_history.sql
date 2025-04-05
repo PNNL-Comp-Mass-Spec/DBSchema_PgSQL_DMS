@@ -35,6 +35,8 @@ ALTER TABLE public.t_lc_cart_config_history ALTER COLUMN entry_id ADD GENERATED 
 ALTER TABLE ONLY public.t_lc_cart_config_history
     ADD CONSTRAINT pk_t_lc_cart_config_history PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_lc_cart_config_history CLUSTER ON pk_t_lc_cart_config_history;
+
 --
 -- Name: t_lc_cart_config_history fk_t_lc_cart_config_history_t_lc_cart; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

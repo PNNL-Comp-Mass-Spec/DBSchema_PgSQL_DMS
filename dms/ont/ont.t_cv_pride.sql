@@ -38,6 +38,8 @@ ALTER TABLE ont.t_cv_pride ALTER COLUMN entry_id ADD GENERATED ALWAYS AS IDENTIT
 ALTER TABLE ONLY ont.t_cv_pride
     ADD CONSTRAINT pk_t_cv_pride PRIMARY KEY (entry_id);
 
+ALTER TABLE ont.t_cv_pride CLUSTER ON pk_t_cv_pride;
+
 --
 -- Name: ix_t_cv_pride_grandparent_term_name; Type: INDEX; Schema: ont; Owner: d3l243
 --

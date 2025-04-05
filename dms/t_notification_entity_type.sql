@@ -17,6 +17,8 @@ ALTER TABLE public.t_notification_entity_type OWNER TO d3l243;
 ALTER TABLE ONLY public.t_notification_entity_type
     ADD CONSTRAINT pk_t_notification_entity_type PRIMARY KEY (entity_type_id);
 
+ALTER TABLE public.t_notification_entity_type CLUSTER ON pk_t_notification_entity_type;
+
 --
 -- Name: TABLE t_notification_entity_type; Type: ACL; Schema: public; Owner: d3l243
 --

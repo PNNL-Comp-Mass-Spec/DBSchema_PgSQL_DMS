@@ -18,6 +18,8 @@ ALTER TABLE cap.t_automatic_jobs OWNER TO d3l243;
 ALTER TABLE ONLY cap.t_automatic_jobs
     ADD CONSTRAINT pk_t_automatic_jobs PRIMARY KEY (script_for_completed_job, script_for_new_job);
 
+ALTER TABLE cap.t_automatic_jobs CLUSTER ON pk_t_automatic_jobs;
+
 --
 -- Name: t_automatic_jobs fk_t_automatic_jobs_t_scripts; Type: FK CONSTRAINT; Schema: cap; Owner: d3l243
 --

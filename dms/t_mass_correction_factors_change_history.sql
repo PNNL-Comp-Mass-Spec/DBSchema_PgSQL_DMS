@@ -43,6 +43,8 @@ ALTER TABLE public.t_mass_correction_factors_change_history ALTER COLUMN event_i
 ALTER TABLE ONLY public.t_mass_correction_factors_change_history
     ADD CONSTRAINT pk_t_mass_correction_factors_change_history PRIMARY KEY (event_id);
 
+ALTER TABLE public.t_mass_correction_factors_change_history CLUSTER ON pk_t_mass_correction_factors_change_history;
+
 --
 -- Name: TABLE t_mass_correction_factors_change_history; Type: ACL; Schema: public; Owner: d3l243
 --

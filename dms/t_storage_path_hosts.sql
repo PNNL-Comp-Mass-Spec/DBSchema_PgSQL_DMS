@@ -19,6 +19,8 @@ ALTER TABLE public.t_storage_path_hosts OWNER TO d3l243;
 ALTER TABLE ONLY public.t_storage_path_hosts
     ADD CONSTRAINT pk_t_storage_path_hosts PRIMARY KEY (machine_name);
 
+ALTER TABLE public.t_storage_path_hosts CLUSTER ON pk_t_storage_path_hosts;
+
 --
 -- Name: TABLE t_storage_path_hosts; Type: ACL; Schema: public; Owner: d3l243
 --

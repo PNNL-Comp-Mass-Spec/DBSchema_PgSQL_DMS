@@ -19,6 +19,8 @@ ALTER TABLE sw.t_processor_tool_groups OWNER TO d3l243;
 ALTER TABLE ONLY sw.t_processor_tool_groups
     ADD CONSTRAINT pk_t_processor_tool_groups PRIMARY KEY (group_id);
 
+ALTER TABLE sw.t_processor_tool_groups CLUSTER ON pk_t_processor_tool_groups;
+
 --
 -- Name: TABLE t_processor_tool_groups; Type: ACL; Schema: sw; Owner: d3l243
 --

@@ -32,6 +32,8 @@ ALTER TABLE public.t_aux_info_value ALTER COLUMN entry_id ADD GENERATED ALWAYS A
 ALTER TABLE ONLY public.t_aux_info_value
     ADD CONSTRAINT pk_t_aux_info_value PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_aux_info_value CLUSTER ON pk_t_aux_info_value;
+
 --
 -- Name: ix_t_aux_info_value_target_id; Type: INDEX; Schema: public; Owner: d3l243
 --

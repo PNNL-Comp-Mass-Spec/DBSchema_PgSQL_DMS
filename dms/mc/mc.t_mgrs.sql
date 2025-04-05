@@ -34,6 +34,8 @@ ALTER TABLE mc.t_mgrs ALTER COLUMN mgr_id ADD GENERATED ALWAYS AS IDENTITY (
 ALTER TABLE ONLY mc.t_mgrs
     ADD CONSTRAINT pk_t_mgrs PRIMARY KEY (mgr_id);
 
+ALTER TABLE mc.t_mgrs CLUSTER ON pk_t_mgrs;
+
 --
 -- Name: ix_t_mgrs_m_name; Type: INDEX; Schema: mc; Owner: d3l243
 --

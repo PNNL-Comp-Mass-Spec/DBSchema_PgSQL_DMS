@@ -90,6 +90,8 @@ ALTER TABLE public.t_sample_prep_request ALTER COLUMN prep_request_id ADD GENERA
 ALTER TABLE ONLY public.t_sample_prep_request
     ADD CONSTRAINT pk_t_sample_prep_request PRIMARY KEY (prep_request_id);
 
+ALTER TABLE public.t_sample_prep_request CLUSTER ON pk_t_sample_prep_request;
+
 --
 -- Name: ix_t_sample_prep_request; Type: INDEX; Schema: public; Owner: d3l243
 --

@@ -33,6 +33,8 @@ ALTER TABLE public.t_predefined_analysis_scheduling_queue_history ALTER COLUMN e
 ALTER TABLE ONLY public.t_predefined_analysis_scheduling_queue_history
     ADD CONSTRAINT pk_t_predefined_analysis_scheduling_queue_history PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_predefined_analysis_scheduling_queue_history CLUSTER ON pk_t_predefined_analysis_scheduling_queue_history;
+
 --
 -- Name: ix_t_predefined_analysis_scheduling_queue_history_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
 --

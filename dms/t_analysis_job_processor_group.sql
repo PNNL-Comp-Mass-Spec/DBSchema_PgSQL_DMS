@@ -42,6 +42,8 @@ ALTER TABLE ONLY public.t_analysis_job_processor_group
 ALTER TABLE ONLY public.t_analysis_job_processor_group
     ADD CONSTRAINT pk_t_analysis_job_processor_group PRIMARY KEY (group_id);
 
+ALTER TABLE public.t_analysis_job_processor_group CLUSTER ON pk_t_analysis_job_processor_group;
+
 --
 -- Name: t_analysis_job_processor_group trig_t_analysis_job_processor_group_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
 --

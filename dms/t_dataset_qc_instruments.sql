@@ -18,6 +18,8 @@ ALTER TABLE public.t_dataset_qc_instruments OWNER TO d3l243;
 ALTER TABLE ONLY public.t_dataset_qc_instruments
     ADD CONSTRAINT pk_t_dataset_qc_instruments PRIMARY KEY (instrument);
 
+ALTER TABLE public.t_dataset_qc_instruments CLUSTER ON pk_t_dataset_qc_instruments;
+
 --
 -- Name: TABLE t_dataset_qc_instruments; Type: ACL; Schema: public; Owner: d3l243
 --

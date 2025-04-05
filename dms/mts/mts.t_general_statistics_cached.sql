@@ -22,6 +22,8 @@ ALTER TABLE mts.t_general_statistics_cached OWNER TO d3l243;
 ALTER TABLE ONLY mts.t_general_statistics_cached
     ADD CONSTRAINT pk_t_general_statistics_cached PRIMARY KEY (server_name, db_name, entry_id);
 
+ALTER TABLE mts.t_general_statistics_cached CLUSTER ON pk_t_general_statistics_cached;
+
 --
 -- Name: TABLE t_general_statistics_cached; Type: ACL; Schema: mts; Owner: d3l243
 --

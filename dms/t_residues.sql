@@ -41,6 +41,8 @@ ALTER TABLE public.t_residues ALTER COLUMN residue_id ADD GENERATED ALWAYS AS ID
 ALTER TABLE ONLY public.t_residues
     ADD CONSTRAINT pk_t_residues PRIMARY KEY (residue_id);
 
+ALTER TABLE public.t_residues CLUSTER ON pk_t_residues;
+
 --
 -- Name: ix_t_residues_symbol; Type: INDEX; Schema: public; Owner: d3l243
 --

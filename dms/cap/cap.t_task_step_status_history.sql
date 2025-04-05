@@ -33,6 +33,8 @@ ALTER TABLE cap.t_task_step_status_history ALTER COLUMN entry_id ADD GENERATED A
 ALTER TABLE ONLY cap.t_task_step_status_history
     ADD CONSTRAINT pk_t_task_step_status_history PRIMARY KEY (entry_id);
 
+ALTER TABLE cap.t_task_step_status_history CLUSTER ON pk_t_task_step_status_history;
+
 --
 -- Name: ix_t_task_step_status_history_state; Type: INDEX; Schema: cap; Owner: d3l243
 --

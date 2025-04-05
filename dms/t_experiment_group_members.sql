@@ -17,6 +17,8 @@ ALTER TABLE public.t_experiment_group_members OWNER TO d3l243;
 ALTER TABLE ONLY public.t_experiment_group_members
     ADD CONSTRAINT pk_t_experiment_group_members PRIMARY KEY (group_id, exp_id);
 
+ALTER TABLE public.t_experiment_group_members CLUSTER ON pk_t_experiment_group_members;
+
 --
 -- Name: ix_t_experiment_group_members_exp_id; Type: INDEX; Schema: public; Owner: d3l243
 --

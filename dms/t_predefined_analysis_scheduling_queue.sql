@@ -40,6 +40,8 @@ ALTER TABLE public.t_predefined_analysis_scheduling_queue ALTER COLUMN item ADD 
 ALTER TABLE ONLY public.t_predefined_analysis_scheduling_queue
     ADD CONSTRAINT pk_t_predefined_analysis_scheduling_queue PRIMARY KEY (item);
 
+ALTER TABLE public.t_predefined_analysis_scheduling_queue CLUSTER ON pk_t_predefined_analysis_scheduling_queue;
+
 --
 -- Name: ix_t_predefined_analysis_scheduling_queue_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
 --

@@ -20,6 +20,8 @@ ALTER TABLE cap.t_machines OWNER TO d3l243;
 ALTER TABLE ONLY cap.t_machines
     ADD CONSTRAINT pk_t_machines PRIMARY KEY (machine);
 
+ALTER TABLE cap.t_machines CLUSTER ON pk_t_machines;
+
 --
 -- Name: TABLE t_machines; Type: ACL; Schema: cap; Owner: d3l243
 --

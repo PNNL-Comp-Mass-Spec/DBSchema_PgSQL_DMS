@@ -58,6 +58,8 @@ ALTER TABLE public.t_dataset_create_queue ALTER COLUMN entry_id ADD GENERATED AL
 ALTER TABLE ONLY public.t_dataset_create_queue
     ADD CONSTRAINT pk_dataset_create_queue PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_dataset_create_queue CLUSTER ON pk_dataset_create_queue;
+
 --
 -- Name: ix_t_dataset_create_queue_dataset; Type: INDEX; Schema: public; Owner: d3l243
 --

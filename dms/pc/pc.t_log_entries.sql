@@ -34,6 +34,8 @@ ALTER TABLE pc.t_log_entries ALTER COLUMN entry_id ADD GENERATED ALWAYS AS IDENT
 ALTER TABLE ONLY pc.t_log_entries
     ADD CONSTRAINT pk_t_log_entries PRIMARY KEY (entry_id);
 
+ALTER TABLE pc.t_log_entries CLUSTER ON pk_t_log_entries;
+
 --
 -- Name: t_log_entries trig_t_log_entries_after_update; Type: TRIGGER; Schema: pc; Owner: d3l243
 --

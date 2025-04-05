@@ -46,6 +46,7 @@ ALTER TABLE sw.t_step_tools ALTER COLUMN step_tool_id ADD GENERATED ALWAYS AS ID
 ALTER TABLE ONLY sw.t_step_tools
     ADD CONSTRAINT pk_t_step_tools PRIMARY KEY (step_tool_id);
 
+ALTER TABLE sw.t_step_tools CLUSTER ON pk_t_step_tools;
 
 --
 -- Name: ix_t_step_tools_shared_result_version; Type: INDEX; Schema: sw; Owner: d3l243

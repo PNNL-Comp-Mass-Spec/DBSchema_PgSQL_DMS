@@ -19,6 +19,8 @@ ALTER TABLE cap.t_task_parameters_history OWNER TO d3l243;
 ALTER TABLE ONLY cap.t_task_parameters_history
     ADD CONSTRAINT pk_t_task_parameters_history PRIMARY KEY (job, saved);
 
+ALTER TABLE cap.t_task_parameters_history CLUSTER ON pk_t_task_parameters_history;
+
 --
 -- Name: ix_t_task_parameters_history_most_recent_entry; Type: INDEX; Schema: cap; Owner: d3l243
 --

@@ -34,6 +34,8 @@ ALTER TABLE dpkg.t_log_entries ALTER COLUMN entry_id ADD GENERATED ALWAYS AS IDE
 ALTER TABLE ONLY dpkg.t_log_entries
     ADD CONSTRAINT pk_t_log_entries PRIMARY KEY (entry_id);
 
+ALTER TABLE dpkg.t_log_entries CLUSTER ON pk_t_log_entries;
+
 --
 -- Name: ix_t_log_entries_entered; Type: INDEX; Schema: dpkg; Owner: d3l243
 --

@@ -17,6 +17,8 @@ ALTER TABLE public.t_data_analysis_request_data_package_ids OWNER TO d3l243;
 ALTER TABLE ONLY public.t_data_analysis_request_data_package_ids
     ADD CONSTRAINT pk_t_data_analysis_request_request_data_pkg_id PRIMARY KEY (request_id, data_pkg_id);
 
+ALTER TABLE public.t_data_analysis_request_data_package_ids CLUSTER ON pk_t_data_analysis_request_request_data_pkg_id;
+
 --
 -- Name: ix_t_data_analysis_request_data_package_ids; Type: INDEX; Schema: public; Owner: d3l243
 --

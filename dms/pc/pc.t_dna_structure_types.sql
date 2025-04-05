@@ -31,6 +31,8 @@ ALTER TABLE pc.t_dna_structure_types ALTER COLUMN dna_structure_type_id ADD GENE
 ALTER TABLE ONLY pc.t_dna_structure_types
     ADD CONSTRAINT pk_t_dna_structure_types PRIMARY KEY (dna_structure_type_id);
 
+ALTER TABLE pc.t_dna_structure_types CLUSTER ON pk_t_dna_structure_types;
+
 --
 -- Name: TABLE t_dna_structure_types; Type: ACL; Schema: pc; Owner: d3l243
 --

@@ -33,6 +33,8 @@ ALTER TABLE sw.t_signatures ALTER COLUMN reference ADD GENERATED ALWAYS AS IDENT
 ALTER TABLE ONLY sw.t_signatures
     ADD CONSTRAINT pk_t_signatures PRIMARY KEY (reference);
 
+ALTER TABLE sw.t_signatures CLUSTER ON pk_t_signatures;
+
 --
 -- Name: ix_t_signatures; Type: INDEX; Schema: sw; Owner: d3l243
 --

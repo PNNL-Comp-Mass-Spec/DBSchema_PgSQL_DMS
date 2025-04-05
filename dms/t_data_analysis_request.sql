@@ -53,6 +53,8 @@ ALTER TABLE public.t_data_analysis_request ALTER COLUMN request_id ADD GENERATED
 ALTER TABLE ONLY public.t_data_analysis_request
     ADD CONSTRAINT pk_t_data_analysis_request PRIMARY KEY (request_id);
 
+ALTER TABLE public.t_data_analysis_request CLUSTER ON pk_t_data_analysis_request;
+
 --
 -- Name: t_data_analysis_request trig_t_data_analysis_request_after_delete; Type: TRIGGER; Schema: public; Owner: d3l243
 --

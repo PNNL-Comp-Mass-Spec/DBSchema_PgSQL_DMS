@@ -32,6 +32,8 @@ ALTER TABLE public.t_analysis_tool OWNER TO d3l243;
 ALTER TABLE ONLY public.t_analysis_tool
     ADD CONSTRAINT pk_t_analysis_tool PRIMARY KEY (analysis_tool_id);
 
+ALTER TABLE public.t_analysis_tool CLUSTER ON pk_t_analysis_tool;
+
 --
 -- Name: ix_t_analysis_tool_name; Type: INDEX; Schema: public; Owner: d3l243
 --

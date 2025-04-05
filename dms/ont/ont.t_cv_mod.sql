@@ -38,6 +38,8 @@ ALTER TABLE ont.t_cv_mod ALTER COLUMN entry_id ADD GENERATED ALWAYS AS IDENTITY 
 ALTER TABLE ONLY ont.t_cv_mod
     ADD CONSTRAINT pk_t_cv_mod PRIMARY KEY (entry_id);
 
+ALTER TABLE ont.t_cv_mod CLUSTER ON pk_t_cv_mod;
+
 --
 -- Name: ix_t_cv_mod_grandparent_term_name; Type: INDEX; Schema: ont; Owner: d3l243
 --

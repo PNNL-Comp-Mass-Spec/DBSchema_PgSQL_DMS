@@ -48,6 +48,8 @@ ALTER TABLE public.t_organisms_change_history ALTER COLUMN event_id ADD GENERATE
 ALTER TABLE ONLY public.t_organisms_change_history
     ADD CONSTRAINT pk_t_organisms_change_history PRIMARY KEY (event_id);
 
+ALTER TABLE public.t_organisms_change_history CLUSTER ON pk_t_organisms_change_history;
+
 --
 -- Name: ix_t_organisms_change_history; Type: INDEX; Schema: public; Owner: d3l243
 --

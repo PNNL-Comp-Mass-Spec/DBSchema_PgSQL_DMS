@@ -34,6 +34,8 @@ ALTER TABLE sw.t_jobs OWNER TO d3l243;
 ALTER TABLE ONLY sw.t_jobs
     ADD CONSTRAINT pk_t_jobs PRIMARY KEY (job);
 
+ALTER TABLE sw.t_jobs CLUSTER ON pk_t_jobs;
+
 --
 -- Name: ix_t_jobs_dataset; Type: INDEX; Schema: sw; Owner: d3l243
 --

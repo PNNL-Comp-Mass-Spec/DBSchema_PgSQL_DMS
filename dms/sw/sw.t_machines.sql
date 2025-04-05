@@ -23,6 +23,8 @@ ALTER TABLE sw.t_machines OWNER TO d3l243;
 ALTER TABLE ONLY sw.t_machines
     ADD CONSTRAINT pk_t_machines PRIMARY KEY (machine);
 
+ALTER TABLE sw.t_machines CLUSTER ON pk_t_machines;
+
 --
 -- Name: t_machines fk_t_machines_t_processor_tool_groups; Type: FK CONSTRAINT; Schema: sw; Owner: d3l243
 --

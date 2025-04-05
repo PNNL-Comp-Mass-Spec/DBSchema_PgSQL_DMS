@@ -31,6 +31,8 @@ ALTER TABLE public.t_cached_protein_collection_list_map ALTER COLUMN protein_col
 ALTER TABLE ONLY public.t_cached_protein_collection_list_map
     ADD CONSTRAINT pk_t_cached_protein_collection_list_map PRIMARY KEY (protein_collection_list_id);
 
+ALTER TABLE public.t_cached_protein_collection_list_map CLUSTER ON pk_t_cached_protein_collection_list_map;
+
 --
 -- Name: TABLE t_cached_protein_collection_list_map; Type: ACL; Schema: public; Owner: d3l243
 --

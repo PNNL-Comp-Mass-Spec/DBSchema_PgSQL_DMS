@@ -32,6 +32,8 @@ ALTER TABLE pc.t_annotation_groups ALTER COLUMN annotation_group_id ADD GENERATE
 ALTER TABLE ONLY pc.t_annotation_groups
     ADD CONSTRAINT pk_t_annotation_groups PRIMARY KEY (annotation_group_id);
 
+ALTER TABLE pc.t_annotation_groups CLUSTER ON pk_t_annotation_groups;
+
 --
 -- Name: t_annotation_groups fk_t_annotation_groups_t_annotation_types; Type: FK CONSTRAINT; Schema: pc; Owner: d3l243
 --

@@ -18,6 +18,8 @@ ALTER TABLE public.t_param_file_types OWNER TO d3l243;
 ALTER TABLE ONLY public.t_param_file_types
     ADD CONSTRAINT pk_t_param_file_types PRIMARY KEY (param_file_type_id);
 
+ALTER TABLE public.t_param_file_types CLUSTER ON pk_t_param_file_types;
+
 --
 -- Name: t_param_file_types fk_t_param_file_types_t_analysis_tool; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

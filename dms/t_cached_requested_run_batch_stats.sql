@@ -39,6 +39,8 @@ ALTER TABLE public.t_cached_requested_run_batch_stats OWNER TO d3l243;
 ALTER TABLE ONLY public.t_cached_requested_run_batch_stats
     ADD CONSTRAINT pk_t_cached_requested_run_batch_stats PRIMARY KEY (batch_id);
 
+ALTER TABLE public.t_cached_requested_run_batch_stats CLUSTER ON pk_t_cached_requested_run_batch_stats;
+
 --
 -- Name: t_cached_requested_run_batch_stats fk_t_cached_requested_run_batch_stats_t_requested_run_batches; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

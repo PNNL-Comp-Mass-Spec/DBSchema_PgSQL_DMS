@@ -17,6 +17,8 @@ ALTER TABLE public.t_emsl_dms_instrument_mapping OWNER TO d3l243;
 ALTER TABLE ONLY public.t_emsl_dms_instrument_mapping
     ADD CONSTRAINT pk_t_emsl_dms_instrument_mapping PRIMARY KEY (eus_instrument_id, dms_instrument_id);
 
+ALTER TABLE public.t_emsl_dms_instrument_mapping CLUSTER ON pk_t_emsl_dms_instrument_mapping;
+
 --
 -- Name: ix_t_emsl_dms_instrument_mapping_dms_inst_id; Type: INDEX; Schema: public; Owner: d3l243
 --

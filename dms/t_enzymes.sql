@@ -40,6 +40,8 @@ ALTER TABLE public.t_enzymes ALTER COLUMN enzyme_id ADD GENERATED ALWAYS AS IDEN
 ALTER TABLE ONLY public.t_enzymes
     ADD CONSTRAINT pk_t_enzymes PRIMARY KEY (enzyme_id);
 
+ALTER TABLE public.t_enzymes CLUSTER ON pk_t_enzymes;
+
 --
 -- Name: TABLE t_enzymes; Type: ACL; Schema: public; Owner: d3l243
 --

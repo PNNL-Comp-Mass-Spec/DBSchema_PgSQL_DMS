@@ -21,6 +21,8 @@ ALTER TABLE logsw.t_log_entries OWNER TO d3l243;
 ALTER TABLE ONLY logsw.t_log_entries
     ADD CONSTRAINT pk_t_log_entries PRIMARY KEY (entry_id);
 
+ALTER TABLE logsw.t_log_entries CLUSTER ON pk_t_log_entries;
+
 --
 -- Name: ix_t_log_entries_entered; Type: INDEX; Schema: logsw; Owner: d3l243
 --

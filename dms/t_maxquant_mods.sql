@@ -34,6 +34,8 @@ ALTER TABLE public.t_maxquant_mods ALTER COLUMN mod_id ADD GENERATED ALWAYS AS I
 ALTER TABLE ONLY public.t_maxquant_mods
     ADD CONSTRAINT pk_t_maxquant_mods PRIMARY KEY (mod_id);
 
+ALTER TABLE public.t_maxquant_mods CLUSTER ON pk_t_maxquant_mods;
+
 --
 -- Name: t_maxquant_mods fk_t_maxquant_mods_t_mass_correction_factors; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

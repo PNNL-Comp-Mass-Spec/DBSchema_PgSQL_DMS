@@ -18,6 +18,8 @@ ALTER TABLE public.t_analysis_tool_allowed_dataset_type OWNER TO d3l243;
 ALTER TABLE ONLY public.t_analysis_tool_allowed_dataset_type
     ADD CONSTRAINT pk_t_analysis_tool_allowed_dataset_type PRIMARY KEY (analysis_tool_id, dataset_type);
 
+ALTER TABLE public.t_analysis_tool_allowed_dataset_type CLUSTER ON pk_t_analysis_tool_allowed_dataset_type;
+
 --
 -- Name: t_analysis_tool_allowed_dataset_type fk_t_analysis_tool_allowed_dataset_type_t_analysis_tool; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

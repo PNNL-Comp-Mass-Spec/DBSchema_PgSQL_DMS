@@ -34,6 +34,8 @@ ALTER TABLE pc.t_creation_option_keywords ALTER COLUMN keyword_id ADD GENERATED 
 ALTER TABLE ONLY pc.t_creation_option_keywords
     ADD CONSTRAINT pk_t_creation_option_keywords PRIMARY KEY (keyword_id);
 
+ALTER TABLE pc.t_creation_option_keywords CLUSTER ON pk_t_creation_option_keywords;
+
 --
 -- Name: TABLE t_creation_option_keywords; Type: ACL; Schema: pc; Owner: d3l243
 --

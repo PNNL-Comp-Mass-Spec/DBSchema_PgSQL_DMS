@@ -27,6 +27,8 @@ ALTER TABLE cap.t_tasks_history OWNER TO d3l243;
 ALTER TABLE ONLY cap.t_tasks_history
     ADD CONSTRAINT pk_t_tasks_history PRIMARY KEY (job, saved);
 
+ALTER TABLE cap.t_tasks_history CLUSTER ON pk_t_tasks_history;
+
 --
 -- Name: ix_t_tasks_history_dataset; Type: INDEX; Schema: cap; Owner: d3l243
 --

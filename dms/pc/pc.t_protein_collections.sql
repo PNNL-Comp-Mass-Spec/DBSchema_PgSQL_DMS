@@ -44,6 +44,8 @@ ALTER TABLE pc.t_protein_collections ALTER COLUMN protein_collection_id ADD GENE
 ALTER TABLE ONLY pc.t_protein_collections
     ADD CONSTRAINT pk_t_protein_collections PRIMARY KEY (protein_collection_id);
 
+ALTER TABLE pc.t_protein_collections CLUSTER ON pk_t_protein_collections;
+
 --
 -- Name: ix_t_protein_collections_protein_collection; Type: INDEX; Schema: pc; Owner: d3l243
 --

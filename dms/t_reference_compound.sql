@@ -51,6 +51,8 @@ ALTER TABLE public.t_reference_compound ALTER COLUMN compound_id ADD GENERATED A
 ALTER TABLE ONLY public.t_reference_compound
     ADD CONSTRAINT pk_t_reference_compound PRIMARY KEY (compound_id);
 
+ALTER TABLE public.t_reference_compound CLUSTER ON pk_t_reference_compound;
+
 --
 -- Name: ix_t_reference_compound_campaign_id; Type: INDEX; Schema: public; Owner: d3l243
 --

@@ -37,6 +37,8 @@ ALTER TABLE cap.t_processor_status OWNER TO d3l243;
 ALTER TABLE ONLY cap.t_processor_status
     ADD CONSTRAINT pk_t_processor_status PRIMARY KEY (processor_name);
 
+ALTER TABLE cap.t_processor_status CLUSTER ON pk_t_processor_status;
+
 --
 -- Name: ix_t_processor_status_monitor_processor; Type: INDEX; Schema: cap; Owner: d3l243
 --

@@ -18,6 +18,8 @@ ALTER TABLE public.t_dataset_scan_type_glossary OWNER TO d3l243;
 ALTER TABLE ONLY public.t_dataset_scan_type_glossary
     ADD CONSTRAINT pk_t_dataset_scan_type_glossary PRIMARY KEY (scan_type);
 
+ALTER TABLE public.t_dataset_scan_type_glossary CLUSTER ON pk_t_dataset_scan_type_glossary;
+
 --
 -- Name: TABLE t_dataset_scan_type_glossary; Type: ACL; Schema: public; Owner: d3l243
 --

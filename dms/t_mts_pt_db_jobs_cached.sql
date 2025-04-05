@@ -36,6 +36,8 @@ ALTER TABLE public.t_mts_pt_db_jobs_cached ALTER COLUMN cached_info_id ADD GENER
 ALTER TABLE ONLY public.t_mts_pt_db_jobs_cached
     ADD CONSTRAINT pk_t_mts_pt_db_jobs_cached PRIMARY KEY (cached_info_id);
 
+ALTER TABLE public.t_mts_pt_db_jobs_cached CLUSTER ON pk_t_mts_pt_db_jobs_cached;
+
 --
 -- Name: ix_t_mts_pt_db_jobs_cached_dbname_job; Type: INDEX; Schema: public; Owner: d3l243
 --

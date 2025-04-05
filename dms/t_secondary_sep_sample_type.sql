@@ -17,6 +17,8 @@ ALTER TABLE public.t_secondary_sep_sample_type OWNER TO d3l243;
 ALTER TABLE ONLY public.t_secondary_sep_sample_type
     ADD CONSTRAINT pk_t_secondary_sep_sample_type_id PRIMARY KEY (sample_type_id);
 
+ALTER TABLE public.t_secondary_sep_sample_type CLUSTER ON pk_t_secondary_sep_sample_type_id;
+
 --
 -- Name: TABLE t_secondary_sep_sample_type; Type: ACL; Schema: public; Owner: d3l243
 --

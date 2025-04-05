@@ -34,6 +34,8 @@ ALTER TABLE public.t_filter_set_criteria ALTER COLUMN filter_set_criteria_id ADD
 ALTER TABLE ONLY public.t_filter_set_criteria
     ADD CONSTRAINT pk_t_filter_set_criteria PRIMARY KEY (filter_set_criteria_id);
 
+ALTER TABLE public.t_filter_set_criteria CLUSTER ON pk_t_filter_set_criteria;
+
 --
 -- Name: ix_t_filter_set_criteria_criterion_id; Type: INDEX; Schema: public; Owner: d3l243
 --

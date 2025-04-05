@@ -36,6 +36,8 @@ ALTER TABLE public.t_prep_file_storage ALTER COLUMN storage_id ADD GENERATED ALW
 ALTER TABLE ONLY public.t_prep_file_storage
     ADD CONSTRAINT pk_t_prep_file_storage PRIMARY KEY (storage_id);
 
+ALTER TABLE public.t_prep_file_storage CLUSTER ON pk_t_prep_file_storage;
+
 --
 -- Name: TABLE t_prep_file_storage; Type: ACL; Schema: public; Owner: d3l243
 --

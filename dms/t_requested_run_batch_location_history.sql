@@ -33,6 +33,8 @@ ALTER TABLE public.t_requested_run_batch_location_history ALTER COLUMN entry_id 
 ALTER TABLE ONLY public.t_requested_run_batch_location_history
     ADD CONSTRAINT pk_t_requested_run_batch_location_history PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_requested_run_batch_location_history CLUSTER ON pk_t_requested_run_batch_location_history;
+
 --
 -- Name: ix_t_requested_run_batch_location_history_batch_id; Type: INDEX; Schema: public; Owner: d3l243
 --

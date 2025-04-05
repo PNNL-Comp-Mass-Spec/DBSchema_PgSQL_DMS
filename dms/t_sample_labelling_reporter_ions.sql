@@ -20,6 +20,8 @@ ALTER TABLE public.t_sample_labelling_reporter_ions OWNER TO d3l243;
 ALTER TABLE ONLY public.t_sample_labelling_reporter_ions
     ADD CONSTRAINT pk_t_sample_labelling_reporter_ions PRIMARY KEY (label, channel);
 
+ALTER TABLE public.t_sample_labelling_reporter_ions CLUSTER ON pk_t_sample_labelling_reporter_ions;
+
 --
 -- Name: t_sample_labelling_reporter_ions fk_t_sample_labelling_reporter_ions_t_sample_labelling; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

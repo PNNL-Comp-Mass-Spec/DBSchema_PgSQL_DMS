@@ -37,6 +37,8 @@ ALTER TABLE cap.t_step_tools ALTER COLUMN step_tool_id ADD GENERATED ALWAYS AS I
 ALTER TABLE ONLY cap.t_step_tools
     ADD CONSTRAINT pk_t_step_tools PRIMARY KEY (step_tool_id);
 
+ALTER TABLE cap.t_step_tools CLUSTER ON pk_t_step_tools;
+
 --
 -- Name: ix_t_step_tools_step_tool; Type: INDEX; Schema: cap; Owner: d3l243
 --

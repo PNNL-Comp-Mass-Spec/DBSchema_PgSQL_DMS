@@ -34,6 +34,8 @@ ALTER TABLE public.t_usage_log ALTER COLUMN entry_id ADD GENERATED ALWAYS AS IDE
 ALTER TABLE ONLY public.t_usage_log
     ADD CONSTRAINT pk_t_usage_log PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_usage_log CLUSTER ON pk_t_usage_log;
+
 --
 -- Name: ix_t_usage_log_calling_user; Type: INDEX; Schema: public; Owner: d3l243
 --

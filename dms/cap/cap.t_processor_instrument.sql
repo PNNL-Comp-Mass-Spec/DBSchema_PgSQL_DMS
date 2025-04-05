@@ -19,6 +19,8 @@ ALTER TABLE cap.t_processor_instrument OWNER TO d3l243;
 ALTER TABLE ONLY cap.t_processor_instrument
     ADD CONSTRAINT pk_processor_instrument PRIMARY KEY (processor_name, instrument_name);
 
+ALTER TABLE cap.t_processor_instrument CLUSTER ON pk_processor_instrument;
+
 --
 -- Name: TABLE t_processor_instrument; Type: ACL; Schema: cap; Owner: d3l243
 --

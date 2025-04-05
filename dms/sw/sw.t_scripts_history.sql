@@ -38,6 +38,8 @@ ALTER TABLE sw.t_scripts_history ALTER COLUMN entry_id ADD GENERATED ALWAYS AS I
 ALTER TABLE ONLY sw.t_scripts_history
     ADD CONSTRAINT pk_t_scripts_history PRIMARY KEY (entry_id);
 
+ALTER TABLE sw.t_scripts_history CLUSTER ON pk_t_scripts_history;
+
 --
 -- Name: TABLE t_scripts_history; Type: ACL; Schema: sw; Owner: d3l243
 --

@@ -42,6 +42,8 @@ ALTER TABLE dpkg.t_osm_package ALTER COLUMN osm_pkg_id ADD GENERATED ALWAYS AS I
 ALTER TABLE ONLY dpkg.t_osm_package
     ADD CONSTRAINT pk_t_osm_package PRIMARY KEY (osm_pkg_id);
 
+ALTER TABLE dpkg.t_osm_package CLUSTER ON pk_t_osm_package;
+
 --
 -- Name: t_osm_package fk_t_osm_package_t_osm_package_state; Type: FK CONSTRAINT; Schema: dpkg; Owner: d3l243
 --

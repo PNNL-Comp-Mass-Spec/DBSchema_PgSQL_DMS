@@ -47,6 +47,8 @@ ALTER TABLE public.t_prep_lc_run ALTER COLUMN prep_run_id ADD GENERATED ALWAYS A
 ALTER TABLE ONLY public.t_prep_lc_run
     ADD CONSTRAINT pk_t_prep_lc_run PRIMARY KEY (prep_run_id);
 
+ALTER TABLE public.t_prep_lc_run CLUSTER ON pk_t_prep_lc_run;
+
 --
 -- Name: t_prep_lc_run fk_t_prep_lc_run_t_instrument_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

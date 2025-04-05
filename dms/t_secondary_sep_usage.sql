@@ -19,6 +19,8 @@ ALTER TABLE public.t_secondary_sep_usage OWNER TO d3l243;
 ALTER TABLE ONLY public.t_secondary_sep_usage
     ADD CONSTRAINT pk_t_secondary_sep_usage PRIMARY KEY (separation_type_id);
 
+ALTER TABLE public.t_secondary_sep_usage CLUSTER ON pk_t_secondary_sep_usage;
+
 --
 -- Name: TABLE t_secondary_sep_usage; Type: ACL; Schema: public; Owner: d3l243
 --

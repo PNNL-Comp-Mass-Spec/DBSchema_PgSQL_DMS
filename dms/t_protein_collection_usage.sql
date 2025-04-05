@@ -20,6 +20,8 @@ ALTER TABLE public.t_protein_collection_usage OWNER TO d3l243;
 ALTER TABLE ONLY public.t_protein_collection_usage
     ADD CONSTRAINT pk_t_protein_collection_usage PRIMARY KEY (protein_collection_id);
 
+ALTER TABLE public.t_protein_collection_usage CLUSTER ON pk_t_protein_collection_usage;
+
 --
 -- Name: ix_t_protein_collection_usage_name; Type: INDEX; Schema: public; Owner: d3l243
 --

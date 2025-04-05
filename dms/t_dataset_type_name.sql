@@ -19,6 +19,8 @@ ALTER TABLE public.t_dataset_type_name OWNER TO d3l243;
 ALTER TABLE ONLY public.t_dataset_type_name
     ADD CONSTRAINT pk_t_dataset_type_name PRIMARY KEY (dataset_type_id);
 
+ALTER TABLE public.t_dataset_type_name CLUSTER ON pk_t_dataset_type_name;
+
 --
 -- Name: ix_t_dataset_type_name_name; Type: INDEX; Schema: public; Owner: d3l243
 --

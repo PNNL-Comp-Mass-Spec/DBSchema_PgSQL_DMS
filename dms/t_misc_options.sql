@@ -32,6 +32,8 @@ ALTER TABLE public.t_misc_options ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTI
 ALTER TABLE ONLY public.t_misc_options
     ADD CONSTRAINT pk_t_misc_options PRIMARY KEY (id);
 
+ALTER TABLE public.t_misc_options CLUSTER ON pk_t_misc_options;
+
 --
 -- Name: ix_t_misc_options_name_include_value; Type: INDEX; Schema: public; Owner: d3l243
 --

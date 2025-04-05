@@ -24,6 +24,8 @@ ALTER TABLE public.t_eus_users OWNER TO d3l243;
 ALTER TABLE ONLY public.t_eus_users
     ADD CONSTRAINT pk_t_eus_users PRIMARY KEY (person_id);
 
+ALTER TABLE public.t_eus_users CLUSTER ON pk_t_eus_users;
+
 --
 -- Name: ix_t_eus_users_site_status_include_person_id_name_fm_hid; Type: INDEX; Schema: public; Owner: d3l243
 --

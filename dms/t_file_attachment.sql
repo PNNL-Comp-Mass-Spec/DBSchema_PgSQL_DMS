@@ -41,6 +41,8 @@ ALTER TABLE public.t_file_attachment ALTER COLUMN attachment_id ADD GENERATED AL
 ALTER TABLE ONLY public.t_file_attachment
     ADD CONSTRAINT pk_t_file_attachment PRIMARY KEY (attachment_id);
 
+ALTER TABLE public.t_file_attachment CLUSTER ON pk_t_file_attachment;
+
 --
 -- Name: ix_t_file_attachment_entity_type_active_entity_id_value; Type: INDEX; Schema: public; Owner: d3l243
 --

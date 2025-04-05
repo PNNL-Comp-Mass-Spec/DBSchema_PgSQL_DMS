@@ -20,6 +20,8 @@ ALTER TABLE dpkg.t_data_package_datasets OWNER TO d3l243;
 ALTER TABLE ONLY dpkg.t_data_package_datasets
     ADD CONSTRAINT pk_t_data_package_datasets PRIMARY KEY (data_pkg_id, dataset_id);
 
+ALTER TABLE dpkg.t_data_package_datasets CLUSTER ON pk_t_data_package_datasets;
+
 --
 -- Name: ix_t_data_package_datasets_dataset; Type: INDEX; Schema: dpkg; Owner: d3l243
 --

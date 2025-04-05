@@ -33,6 +33,8 @@ ALTER TABLE pc.t_creation_option_values ALTER COLUMN value_id ADD GENERATED ALWA
 ALTER TABLE ONLY pc.t_creation_option_values
     ADD CONSTRAINT pk_t_creation_option_values PRIMARY KEY (value_id);
 
+ALTER TABLE pc.t_creation_option_values CLUSTER ON pk_t_creation_option_values;
+
 --
 -- Name: TABLE t_creation_option_values; Type: ACL; Schema: pc; Owner: d3l243
 --

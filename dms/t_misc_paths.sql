@@ -33,6 +33,8 @@ ALTER TABLE public.t_misc_paths ALTER COLUMN path_id ADD GENERATED ALWAYS AS IDE
 ALTER TABLE ONLY public.t_misc_paths
     ADD CONSTRAINT pk_t_misc_paths PRIMARY KEY (path_id);
 
+ALTER TABLE public.t_misc_paths CLUSTER ON pk_t_misc_paths;
+
 --
 -- Name: ix_t_misc_paths_path_function; Type: INDEX; Schema: public; Owner: d3l243
 --

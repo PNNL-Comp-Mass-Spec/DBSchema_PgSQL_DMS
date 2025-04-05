@@ -17,6 +17,8 @@ ALTER TABLE timetable.migration OWNER TO d3l243;
 ALTER TABLE ONLY timetable.migration
     ADD CONSTRAINT migration_pkey PRIMARY KEY (id);
 
+ALTER TABLE timetable.migration CLUSTER ON migration_pkey;
+
 --
 -- Name: TABLE migration; Type: ACL; Schema: timetable; Owner: d3l243
 --

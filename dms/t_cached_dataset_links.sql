@@ -33,6 +33,8 @@ COMMENT ON TABLE public.t_cached_dataset_links IS 'dataset_row_version comes fro
 ALTER TABLE ONLY public.t_cached_dataset_links
     ADD CONSTRAINT pk_t_cached_dataset_links PRIMARY KEY (dataset_id);
 
+ALTER TABLE public.t_cached_dataset_links CLUSTER ON pk_t_cached_dataset_links;
+
 --
 -- Name: ix_t_cached_dataset_links_update_required; Type: INDEX; Schema: public; Owner: d3l243
 --

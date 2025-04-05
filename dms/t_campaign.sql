@@ -49,6 +49,8 @@ ALTER TABLE public.t_campaign ALTER COLUMN campaign_id ADD GENERATED ALWAYS AS I
 ALTER TABLE ONLY public.t_campaign
     ADD CONSTRAINT pk_t_campaign PRIMARY KEY (campaign_id);
 
+ALTER TABLE public.t_campaign CLUSTER ON pk_t_campaign;
+
 --
 -- Name: ix_t_campaign_campaign; Type: INDEX; Schema: public; Owner: d3l243
 --

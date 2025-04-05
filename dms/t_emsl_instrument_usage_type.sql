@@ -32,6 +32,8 @@ ALTER TABLE public.t_emsl_instrument_usage_type ALTER COLUMN usage_type_id ADD G
 ALTER TABLE ONLY public.t_emsl_instrument_usage_type
     ADD CONSTRAINT pk_t_emsl_instrument_usage_type PRIMARY KEY (usage_type_id);
 
+ALTER TABLE public.t_emsl_instrument_usage_type CLUSTER ON pk_t_emsl_instrument_usage_type;
+
 --
 -- Name: ix_t_emsl_instrument_usage_type_usage_type; Type: INDEX; Schema: public; Owner: d3l243
 --

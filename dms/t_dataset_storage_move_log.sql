@@ -36,6 +36,8 @@ ALTER TABLE public.t_dataset_storage_move_log ALTER COLUMN entry_id ADD GENERATE
 ALTER TABLE ONLY public.t_dataset_storage_move_log
     ADD CONSTRAINT pk_t_dataset_storage_move_log PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_dataset_storage_move_log CLUSTER ON pk_t_dataset_storage_move_log;
+
 --
 -- Name: ix_t_dataset_storage_move_log_dataset_id; Type: INDEX; Schema: public; Owner: d3l243
 --

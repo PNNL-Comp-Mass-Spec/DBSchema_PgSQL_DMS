@@ -17,6 +17,8 @@ ALTER TABLE public.t_user_status OWNER TO d3l243;
 ALTER TABLE ONLY public.t_user_status
     ADD CONSTRAINT pk_t_user_status PRIMARY KEY (status);
 
+ALTER TABLE public.t_user_status CLUSTER ON pk_t_user_status;
+
 --
 -- Name: TABLE t_user_status; Type: ACL; Schema: public; Owner: d3l243
 --

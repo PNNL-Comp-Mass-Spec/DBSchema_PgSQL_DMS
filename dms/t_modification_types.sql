@@ -18,6 +18,8 @@ ALTER TABLE public.t_modification_types OWNER TO d3l243;
 ALTER TABLE ONLY public.t_modification_types
     ADD CONSTRAINT pk_t_modification_types PRIMARY KEY (mod_type_symbol);
 
+ALTER TABLE public.t_modification_types CLUSTER ON pk_t_modification_types;
+
 --
 -- Name: TABLE t_modification_types; Type: ACL; Schema: public; Owner: d3l243
 --

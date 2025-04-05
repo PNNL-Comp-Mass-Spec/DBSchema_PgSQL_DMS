@@ -17,6 +17,8 @@ ALTER TABLE public.t_requested_run_eus_users OWNER TO d3l243;
 ALTER TABLE ONLY public.t_requested_run_eus_users
     ADD CONSTRAINT pk_t_requested_run_eus_users PRIMARY KEY (eus_person_id, request_id);
 
+ALTER TABLE public.t_requested_run_eus_users CLUSTER ON pk_t_requested_run_eus_users;
+
 --
 -- Name: ix_t_requested_run_eus_users_request_id; Type: INDEX; Schema: public; Owner: d3l243
 --

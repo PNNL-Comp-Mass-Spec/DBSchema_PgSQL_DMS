@@ -19,6 +19,8 @@ ALTER TABLE public.t_eus_proposal_type OWNER TO d3l243;
 ALTER TABLE ONLY public.t_eus_proposal_type
     ADD CONSTRAINT pk_t_eus_proposal_type PRIMARY KEY (proposal_type);
 
+ALTER TABLE public.t_eus_proposal_type CLUSTER ON pk_t_eus_proposal_type;
+
 --
 -- Name: TABLE t_eus_proposal_type; Type: ACL; Schema: public; Owner: d3l243
 --

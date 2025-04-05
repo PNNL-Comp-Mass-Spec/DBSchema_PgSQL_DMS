@@ -20,6 +20,8 @@ ALTER TABLE public.t_instrument_group_allowed_ds_type OWNER TO d3l243;
 ALTER TABLE ONLY public.t_instrument_group_allowed_ds_type
     ADD CONSTRAINT pk_t_instrument_group_allowed_ds_type PRIMARY KEY (instrument_group, dataset_type);
 
+ALTER TABLE public.t_instrument_group_allowed_ds_type CLUSTER ON pk_t_instrument_group_allowed_ds_type;
+
 --
 -- Name: t_instrument_group_allowed_ds_type fk_t_instrument_group_allowed_ds_type_t_dataset_type_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

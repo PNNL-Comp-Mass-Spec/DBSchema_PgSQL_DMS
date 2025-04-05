@@ -33,6 +33,8 @@ ALTER TABLE public.t_aux_info_target ALTER COLUMN target_type_id ADD GENERATED A
 ALTER TABLE ONLY public.t_aux_info_target
     ADD CONSTRAINT pk_t_aux_info_target PRIMARY KEY (target_type_id);
 
+ALTER TABLE public.t_aux_info_target CLUSTER ON pk_t_aux_info_target;
+
 --
 -- Name: TABLE t_aux_info_target; Type: ACL; Schema: public; Owner: d3l243
 --

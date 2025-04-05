@@ -18,6 +18,8 @@ ALTER TABLE ont.t_permissions_test_table OWNER TO d3l243;
 ALTER TABLE ONLY ont.t_permissions_test_table
     ADD CONSTRAINT pk_t_permissions_test_table PRIMARY KEY (id);
 
+ALTER TABLE ont.t_permissions_test_table CLUSTER ON pk_t_permissions_test_table;
+
 --
 -- Name: TABLE t_permissions_test_table; Type: ACL; Schema: ont; Owner: d3l243
 --

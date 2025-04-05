@@ -35,6 +35,8 @@ ALTER TABLE public.t_sample_submission ALTER COLUMN submission_id ADD GENERATED 
 ALTER TABLE ONLY public.t_sample_submission
     ADD CONSTRAINT pk_t_sample_submission PRIMARY KEY (submission_id);
 
+ALTER TABLE public.t_sample_submission CLUSTER ON pk_t_sample_submission;
+
 --
 -- Name: t_sample_submission fk_t_sample_submission_t_campaign; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

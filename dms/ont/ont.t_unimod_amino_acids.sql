@@ -21,6 +21,8 @@ ALTER TABLE ont.t_unimod_amino_acids OWNER TO d3l243;
 ALTER TABLE ONLY ont.t_unimod_amino_acids
     ADD CONSTRAINT pk_t_unimod_amino_acids PRIMARY KEY (name);
 
+ALTER TABLE ont.t_unimod_amino_acids CLUSTER ON pk_t_unimod_amino_acids;
+
 --
 -- Name: TABLE t_unimod_amino_acids; Type: ACL; Schema: ont; Owner: d3l243
 --

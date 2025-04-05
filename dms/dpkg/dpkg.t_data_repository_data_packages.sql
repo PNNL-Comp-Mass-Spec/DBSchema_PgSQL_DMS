@@ -17,6 +17,8 @@ ALTER TABLE dpkg.t_data_repository_data_packages OWNER TO d3l243;
 ALTER TABLE ONLY dpkg.t_data_repository_data_packages
     ADD CONSTRAINT pk_t_data_repository_data_packages PRIMARY KEY (upload_id, data_pkg_id);
 
+ALTER TABLE dpkg.t_data_repository_data_packages CLUSTER ON pk_t_data_repository_data_packages;
+
 --
 -- Name: t_data_repository_data_packages fk_t_data_repository_data_packages_t_data_package; Type: FK CONSTRAINT; Schema: dpkg; Owner: d3l243
 --

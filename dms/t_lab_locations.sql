@@ -33,6 +33,8 @@ ALTER TABLE public.t_lab_locations ALTER COLUMN lab_id ADD GENERATED ALWAYS AS I
 ALTER TABLE ONLY public.t_lab_locations
     ADD CONSTRAINT pk_t_lab_locations PRIMARY KEY (lab_id);
 
+ALTER TABLE public.t_lab_locations CLUSTER ON pk_t_lab_locations;
+
 --
 -- Name: ix_t_lab_locations_active; Type: INDEX; Schema: public; Owner: d3l243
 --

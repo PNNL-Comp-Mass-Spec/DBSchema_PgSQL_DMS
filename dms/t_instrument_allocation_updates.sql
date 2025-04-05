@@ -37,6 +37,8 @@ ALTER TABLE public.t_instrument_allocation_updates ALTER COLUMN entry_id ADD GEN
 ALTER TABLE ONLY public.t_instrument_allocation_updates
     ADD CONSTRAINT pk_t_instrument_allocation_updates PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_instrument_allocation_updates CLUSTER ON pk_t_instrument_allocation_updates;
+
 --
 -- Name: ix_t_instrument_allocation_updates_entered; Type: INDEX; Schema: public; Owner: d3l243
 --

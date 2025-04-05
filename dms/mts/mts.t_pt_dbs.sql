@@ -26,6 +26,8 @@ ALTER TABLE mts.t_pt_dbs OWNER TO d3l243;
 ALTER TABLE ONLY mts.t_pt_dbs
     ADD CONSTRAINT pk_t_pt_dbs PRIMARY KEY (peptide_db_id);
 
+ALTER TABLE mts.t_pt_dbs CLUSTER ON pk_t_pt_dbs;
+
 --
 -- Name: ix_t_pt_dbs_peptide_db_name; Type: INDEX; Schema: mts; Owner: d3l243
 --

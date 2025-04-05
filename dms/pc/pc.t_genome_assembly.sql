@@ -32,6 +32,8 @@ ALTER TABLE pc.t_genome_assembly ALTER COLUMN assembly_id ADD GENERATED ALWAYS A
 ALTER TABLE ONLY pc.t_genome_assembly
     ADD CONSTRAINT pk_t_genome_assembly PRIMARY KEY (assembly_id);
 
+ALTER TABLE pc.t_genome_assembly CLUSTER ON pk_t_genome_assembly;
+
 --
 -- Name: t_genome_assembly fk_t_genome_assembly_t_naming_authorities; Type: FK CONSTRAINT; Schema: pc; Owner: d3l243
 --

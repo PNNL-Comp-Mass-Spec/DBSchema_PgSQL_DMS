@@ -56,6 +56,8 @@ ALTER TABLE dpkg.t_data_package ALTER COLUMN data_pkg_id ADD GENERATED ALWAYS AS
 ALTER TABLE ONLY dpkg.t_data_package
     ADD CONSTRAINT pk_t_data_package PRIMARY KEY (data_pkg_id);
 
+ALTER TABLE dpkg.t_data_package CLUSTER ON pk_t_data_package;
+
 --
 -- Name: ix_t_data_package_package_folder; Type: INDEX; Schema: dpkg; Owner: d3l243
 --

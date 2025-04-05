@@ -19,6 +19,8 @@ ALTER TABLE cap.t_capture_task_stats OWNER TO d3l243;
 ALTER TABLE ONLY cap.t_capture_task_stats
     ADD CONSTRAINT pk_t_capture_task_stats PRIMARY KEY (script, instrument, year);
 
+ALTER TABLE cap.t_capture_task_stats CLUSTER ON pk_t_capture_task_stats;
+
 --
 -- Name: TABLE t_capture_task_stats; Type: ACL; Schema: cap; Owner: d3l243
 --

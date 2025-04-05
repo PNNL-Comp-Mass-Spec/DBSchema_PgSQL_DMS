@@ -17,6 +17,8 @@ ALTER TABLE sw.t_local_processor_job_step_exclusion OWNER TO d3l243;
 ALTER TABLE ONLY sw.t_local_processor_job_step_exclusion
     ADD CONSTRAINT pk_t_local_processor_job_step_exclusion PRIMARY KEY (processor_id, step);
 
+ALTER TABLE sw.t_local_processor_job_step_exclusion CLUSTER ON pk_t_local_processor_job_step_exclusion;
+
 --
 -- Name: TABLE t_local_processor_job_step_exclusion; Type: ACL; Schema: sw; Owner: d3l243
 --

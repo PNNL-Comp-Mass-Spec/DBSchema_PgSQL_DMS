@@ -43,6 +43,8 @@ ALTER TABLE public.t_requested_run_batches ALTER COLUMN batch_id ADD GENERATED A
 ALTER TABLE ONLY public.t_requested_run_batches
     ADD CONSTRAINT pk_t_requested_run_batches PRIMARY KEY (batch_id);
 
+ALTER TABLE public.t_requested_run_batches CLUSTER ON pk_t_requested_run_batches;
+
 --
 -- Name: ix_t_requested_run_batches; Type: INDEX; Schema: public; Owner: d3l243
 --

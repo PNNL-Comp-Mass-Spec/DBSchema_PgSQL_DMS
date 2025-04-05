@@ -42,6 +42,8 @@ ALTER TABLE public.t_settings_files ALTER COLUMN settings_file_id ADD GENERATED 
 ALTER TABLE ONLY public.t_settings_files
     ADD CONSTRAINT pk_t_settings_files PRIMARY KEY (settings_file_id);
 
+ALTER TABLE public.t_settings_files CLUSTER ON pk_t_settings_files;
+
 --
 -- Name: ix_t_settings_files_analysis_tool_file_name; Type: INDEX; Schema: public; Owner: d3l243
 --

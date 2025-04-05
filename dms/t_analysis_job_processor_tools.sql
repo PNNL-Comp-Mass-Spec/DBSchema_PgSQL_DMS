@@ -19,6 +19,8 @@ ALTER TABLE public.t_analysis_job_processor_tools OWNER TO d3l243;
 ALTER TABLE ONLY public.t_analysis_job_processor_tools
     ADD CONSTRAINT pk_t_analysis_job_processor_tools PRIMARY KEY (tool_id, processor_id);
 
+ALTER TABLE public.t_analysis_job_processor_tools CLUSTER ON pk_t_analysis_job_processor_tools;
+
 --
 -- Name: t_analysis_job_processor_tools fk_t_analysis_job_processor_tools_t_analysis_job_processors; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

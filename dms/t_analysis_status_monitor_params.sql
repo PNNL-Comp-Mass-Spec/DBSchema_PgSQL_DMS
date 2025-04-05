@@ -19,6 +19,8 @@ ALTER TABLE public.t_analysis_status_monitor_params OWNER TO d3l243;
 ALTER TABLE ONLY public.t_analysis_status_monitor_params
     ADD CONSTRAINT pk_t_analysis_status_monitor_params PRIMARY KEY (processor_id);
 
+ALTER TABLE public.t_analysis_status_monitor_params CLUSTER ON pk_t_analysis_status_monitor_params;
+
 --
 -- Name: t_analysis_status_monitor_params fk_t_analysis_status_monitor_params_t_analysis_job_processors; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

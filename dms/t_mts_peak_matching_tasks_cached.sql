@@ -55,6 +55,8 @@ ALTER TABLE public.t_mts_peak_matching_tasks_cached ALTER COLUMN cached_info_id 
 ALTER TABLE ONLY public.t_mts_peak_matching_tasks_cached
     ADD CONSTRAINT pk_t_mts_peak_matching_tasks_cached PRIMARY KEY (cached_info_id);
 
+ALTER TABLE public.t_mts_peak_matching_tasks_cached CLUSTER ON pk_t_mts_peak_matching_tasks_cached;
+
 --
 -- Name: ix_t_mts_peak_matching_tasks_cached_dmsjob; Type: INDEX; Schema: public; Owner: d3l243
 --

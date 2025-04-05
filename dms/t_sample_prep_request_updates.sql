@@ -34,6 +34,8 @@ ALTER TABLE public.t_sample_prep_request_updates ALTER COLUMN entry_id ADD GENER
 ALTER TABLE ONLY public.t_sample_prep_request_updates
     ADD CONSTRAINT pk_t_sample_prep_request_updates PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_sample_prep_request_updates CLUSTER ON pk_t_sample_prep_request_updates;
+
 --
 -- Name: ix_t_sample_prep_request_updates_end_state_id_begin_state_id; Type: INDEX; Schema: public; Owner: d3l243
 --

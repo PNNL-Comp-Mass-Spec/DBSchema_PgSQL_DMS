@@ -32,6 +32,8 @@ ALTER TABLE public.t_factor_log ALTER COLUMN event_id ADD GENERATED ALWAYS AS ID
 ALTER TABLE ONLY public.t_factor_log
     ADD CONSTRAINT pk_t_factor_log PRIMARY KEY (event_id);
 
+ALTER TABLE public.t_factor_log CLUSTER ON pk_t_factor_log;
+
 --
 -- Name: TABLE t_factor_log; Type: ACL; Schema: public; Owner: d3l243
 --

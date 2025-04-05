@@ -19,6 +19,8 @@ ALTER TABLE ont.t_term_synonym OWNER TO d3l243;
 ALTER TABLE ONLY ont.t_term_synonym
     ADD CONSTRAINT pk_term_synonym PRIMARY KEY (synonym_pk);
 
+ALTER TABLE ont.t_term_synonym CLUSTER ON pk_term_synonym;
+
 --
 -- Name: t_term_synonym fk_term_synonym_term; Type: FK CONSTRAINT; Schema: ont; Owner: d3l243
 --

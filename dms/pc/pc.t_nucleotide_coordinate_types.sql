@@ -18,6 +18,8 @@ ALTER TABLE pc.t_nucleotide_coordinate_types OWNER TO d3l243;
 ALTER TABLE ONLY pc.t_nucleotide_coordinate_types
     ADD CONSTRAINT pk_t_nucleotide_coordinate_types PRIMARY KEY (coordinate_type_id);
 
+ALTER TABLE pc.t_nucleotide_coordinate_types CLUSTER ON pk_t_nucleotide_coordinate_types;
+
 --
 -- Name: TABLE t_nucleotide_coordinate_types; Type: ACL; Schema: pc; Owner: d3l243
 --

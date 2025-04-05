@@ -42,6 +42,8 @@ ALTER TABLE public.t_charge_code OWNER TO d3l243;
 ALTER TABLE ONLY public.t_charge_code
     ADD CONSTRAINT pk_t_charge_code PRIMARY KEY (charge_code);
 
+ALTER TABLE public.t_charge_code CLUSTER ON pk_t_charge_code;
+
 --
 -- Name: ix_t_charge_code_resp_username; Type: INDEX; Schema: public; Owner: d3l243
 --

@@ -45,6 +45,8 @@ ALTER TABLE public.t_material_locations ALTER COLUMN location_id ADD GENERATED A
 ALTER TABLE ONLY public.t_material_locations
     ADD CONSTRAINT pk_t_material_locations PRIMARY KEY (location_id);
 
+ALTER TABLE public.t_material_locations CLUSTER ON pk_t_material_locations;
+
 --
 -- Name: ix_t_material_locations_freezer_tag; Type: INDEX; Schema: public; Owner: d3l243
 --

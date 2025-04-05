@@ -16,6 +16,8 @@ ALTER TABLE public.t_data_analysis_request_type_name OWNER TO d3l243;
 ALTER TABLE ONLY public.t_data_analysis_request_type_name
     ADD CONSTRAINT pk_t_data_analysis_request_type PRIMARY KEY (analysis_type);
 
+ALTER TABLE public.t_data_analysis_request_type_name CLUSTER ON pk_t_data_analysis_request_type;
+
 --
 -- Name: TABLE t_data_analysis_request_type_name; Type: ACL; Schema: public; Owner: d3l243
 --

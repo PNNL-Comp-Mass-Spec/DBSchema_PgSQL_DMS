@@ -38,6 +38,8 @@ ALTER TABLE ont.t_cv_doid ALTER COLUMN entry_id ADD GENERATED ALWAYS AS IDENTITY
 ALTER TABLE ONLY ont.t_cv_doid
     ADD CONSTRAINT pk_t_cv_doid PRIMARY KEY (entry_id);
 
+ALTER TABLE ont.t_cv_doid CLUSTER ON pk_t_cv_doid;
+
 --
 -- Name: ix_t_cv_doid_grandparent_term_name; Type: INDEX; Schema: ont; Owner: d3l243
 --

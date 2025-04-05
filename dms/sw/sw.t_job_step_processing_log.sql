@@ -35,6 +35,8 @@ ALTER TABLE sw.t_job_step_processing_log ALTER COLUMN event_id ADD GENERATED ALW
 ALTER TABLE ONLY sw.t_job_step_processing_log
     ADD CONSTRAINT pk_t_job_step_processing_log PRIMARY KEY (event_id);
 
+ALTER TABLE sw.t_job_step_processing_log CLUSTER ON pk_t_job_step_processing_log;
+
 --
 -- Name: ix_t_job_step_processing_log_job_step; Type: INDEX; Schema: sw; Owner: d3l243
 --

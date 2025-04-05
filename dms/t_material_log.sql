@@ -58,6 +58,8 @@ ALTER TABLE public.t_material_log ALTER COLUMN entry_id ADD GENERATED ALWAYS AS 
 ALTER TABLE ONLY public.t_material_log
     ADD CONSTRAINT pk_t_material_log PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_material_log CLUSTER ON pk_t_material_log;
+
 --
 -- Name: ix_t_material_log_item_type_entered; Type: INDEX; Schema: public; Owner: d3l243
 --

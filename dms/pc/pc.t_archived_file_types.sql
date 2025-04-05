@@ -31,6 +31,8 @@ ALTER TABLE pc.t_archived_file_types ALTER COLUMN archived_file_type_id ADD GENE
 ALTER TABLE ONLY pc.t_archived_file_types
     ADD CONSTRAINT pk_t_archived_file_types PRIMARY KEY (archived_file_type_id);
 
+ALTER TABLE pc.t_archived_file_types CLUSTER ON pk_t_archived_file_types;
+
 --
 -- Name: TABLE t_archived_file_types; Type: ACL; Schema: pc; Owner: d3l243
 --

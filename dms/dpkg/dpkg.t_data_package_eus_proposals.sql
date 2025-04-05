@@ -19,6 +19,8 @@ ALTER TABLE dpkg.t_data_package_eus_proposals OWNER TO d3l243;
 ALTER TABLE ONLY dpkg.t_data_package_eus_proposals
     ADD CONSTRAINT pk_t_data_package_eus_proposals PRIMARY KEY (data_pkg_id, proposal_id);
 
+ALTER TABLE dpkg.t_data_package_eus_proposals CLUSTER ON pk_t_data_package_eus_proposals;
+
 --
 -- Name: t_data_package_eus_proposals fk_t_data_package_eus_proposals_t_data_package; Type: FK CONSTRAINT; Schema: dpkg; Owner: d3l243
 --

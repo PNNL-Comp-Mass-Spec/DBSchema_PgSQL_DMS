@@ -19,6 +19,8 @@ ALTER TABLE cap.t_default_sp_params OWNER TO d3l243;
 ALTER TABLE ONLY cap.t_default_sp_params
     ADD CONSTRAINT pk_t_default_sp_params PRIMARY KEY (sp_name, param_name);
 
+ALTER TABLE cap.t_default_sp_params CLUSTER ON pk_t_default_sp_params;
+
 --
 -- Name: TABLE t_default_sp_params; Type: ACL; Schema: cap; Owner: d3l243
 --

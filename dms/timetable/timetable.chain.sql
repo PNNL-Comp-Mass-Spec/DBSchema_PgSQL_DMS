@@ -106,6 +106,8 @@ ALTER TABLE ONLY timetable.chain
 ALTER TABLE ONLY timetable.chain
     ADD CONSTRAINT chain_pkey PRIMARY KEY (chain_id);
 
+ALTER TABLE timetable.chain CLUSTER ON chain_pkey;
+
 --
 -- Name: TABLE chain; Type: ACL; Schema: timetable; Owner: d3l243
 --

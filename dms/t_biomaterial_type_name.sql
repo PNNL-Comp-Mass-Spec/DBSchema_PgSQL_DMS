@@ -30,6 +30,8 @@ ALTER TABLE public.t_biomaterial_type_name ALTER COLUMN biomaterial_type_id ADD 
 ALTER TABLE ONLY public.t_biomaterial_type_name
     ADD CONSTRAINT pk_t_biomaterial_type_name PRIMARY KEY (biomaterial_type_id);
 
+ALTER TABLE public.t_biomaterial_type_name CLUSTER ON pk_t_biomaterial_type_name;
+
 --
 -- Name: ix_t_biomaterial_type_name; Type: INDEX; Schema: public; Owner: d3l243
 --

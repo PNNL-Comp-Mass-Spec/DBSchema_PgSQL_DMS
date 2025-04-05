@@ -22,6 +22,8 @@ ALTER TABLE public.t_database_backups OWNER TO d3l243;
 ALTER TABLE ONLY public.t_database_backups
     ADD CONSTRAINT pk_t_database_backups PRIMARY KEY (name, backup_folder);
 
+ALTER TABLE public.t_database_backups CLUSTER ON pk_t_database_backups;
+
 --
 -- Name: TABLE t_database_backups; Type: ACL; Schema: public; Owner: d3l243
 --

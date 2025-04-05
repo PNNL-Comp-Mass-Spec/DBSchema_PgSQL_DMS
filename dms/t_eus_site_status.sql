@@ -18,6 +18,8 @@ ALTER TABLE public.t_eus_site_status OWNER TO d3l243;
 ALTER TABLE ONLY public.t_eus_site_status
     ADD CONSTRAINT pk_t_eus_site_status PRIMARY KEY (eus_site_status_id);
 
+ALTER TABLE public.t_eus_site_status CLUSTER ON pk_t_eus_site_status;
+
 --
 -- Name: TABLE t_eus_site_status; Type: ACL; Schema: public; Owner: d3l243
 --

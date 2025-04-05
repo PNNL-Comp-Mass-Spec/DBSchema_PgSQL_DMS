@@ -17,6 +17,8 @@ ALTER TABLE public.t_experiment_reference_compounds OWNER TO d3l243;
 ALTER TABLE ONLY public.t_experiment_reference_compounds
     ADD CONSTRAINT pk_t_experiment_reference_compounds PRIMARY KEY (exp_id, compound_id);
 
+ALTER TABLE public.t_experiment_reference_compounds CLUSTER ON pk_t_experiment_reference_compounds;
+
 --
 -- Name: t_experiment_reference_compounds fk_t_experiment_reference_compounds_t_experiments; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

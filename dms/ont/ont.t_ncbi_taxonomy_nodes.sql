@@ -28,6 +28,8 @@ ALTER TABLE ont.t_ncbi_taxonomy_nodes OWNER TO d3l243;
 ALTER TABLE ONLY ont.t_ncbi_taxonomy_nodes
     ADD CONSTRAINT pk_t_ncbi_taxonomy_nodes PRIMARY KEY (tax_id);
 
+ALTER TABLE ont.t_ncbi_taxonomy_nodes CLUSTER ON pk_t_ncbi_taxonomy_nodes;
+
 --
 -- Name: ix_t_ncbi_taxonomy_nodes_parent_tax_id; Type: INDEX; Schema: ont; Owner: d3l243
 --

@@ -31,6 +31,8 @@ ALTER TABLE public.t_research_team_roles ALTER COLUMN role_id ADD GENERATED ALWA
 ALTER TABLE ONLY public.t_research_team_roles
     ADD CONSTRAINT pk_t_research_team_roles PRIMARY KEY (role_id);
 
+ALTER TABLE public.t_research_team_roles CLUSTER ON pk_t_research_team_roles;
+
 --
 -- Name: TABLE t_research_team_roles; Type: ACL; Schema: public; Owner: d3l243
 --

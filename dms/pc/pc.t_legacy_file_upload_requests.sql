@@ -35,6 +35,8 @@ ALTER TABLE pc.t_legacy_file_upload_requests ALTER COLUMN upload_request_id ADD 
 ALTER TABLE ONLY pc.t_legacy_file_upload_requests
     ADD CONSTRAINT pk_t_legacy_file_upload_requests PRIMARY KEY (upload_request_id);
 
+ALTER TABLE pc.t_legacy_file_upload_requests CLUSTER ON pk_t_legacy_file_upload_requests;
+
 --
 -- Name: TABLE t_legacy_file_upload_requests; Type: ACL; Schema: pc; Owner: d3l243
 --

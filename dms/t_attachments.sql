@@ -37,6 +37,8 @@ ALTER TABLE public.t_attachments ALTER COLUMN attachment_id ADD GENERATED ALWAYS
 ALTER TABLE ONLY public.t_attachments
     ADD CONSTRAINT pk_t_attachments PRIMARY KEY (attachment_id);
 
+ALTER TABLE public.t_attachments CLUSTER ON pk_t_attachments;
+
 --
 -- Name: ix_t_attachments; Type: INDEX; Schema: public; Owner: d3l243
 --

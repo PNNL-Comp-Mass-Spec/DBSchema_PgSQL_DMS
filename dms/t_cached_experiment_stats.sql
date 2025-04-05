@@ -21,6 +21,8 @@ ALTER TABLE public.t_cached_experiment_stats OWNER TO d3l243;
 ALTER TABLE ONLY public.t_cached_experiment_stats
     ADD CONSTRAINT pk_t_cached_experiment_stats PRIMARY KEY (exp_id);
 
+ALTER TABLE public.t_cached_experiment_stats CLUSTER ON pk_t_cached_experiment_stats;
+
 --
 -- Name: ix_t_cached_experiment_stats_update_required; Type: INDEX; Schema: public; Owner: d3l243
 --

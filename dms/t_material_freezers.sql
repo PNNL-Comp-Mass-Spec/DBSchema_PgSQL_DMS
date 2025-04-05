@@ -35,6 +35,8 @@ ALTER TABLE public.t_material_freezers ALTER COLUMN freezer_id ADD GENERATED ALW
 ALTER TABLE ONLY public.t_material_freezers
     ADD CONSTRAINT pk_t_material_freezers PRIMARY KEY (freezer_id);
 
+ALTER TABLE public.t_material_freezers CLUSTER ON pk_t_material_freezers;
+
 --
 -- Name: ix_t_material_freezers_name; Type: INDEX; Schema: public; Owner: d3l243
 --

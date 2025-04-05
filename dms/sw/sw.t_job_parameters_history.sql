@@ -19,6 +19,8 @@ ALTER TABLE sw.t_job_parameters_history OWNER TO d3l243;
 ALTER TABLE ONLY sw.t_job_parameters_history
     ADD CONSTRAINT pk_t_job_parameters_history PRIMARY KEY (job, saved);
 
+ALTER TABLE sw.t_job_parameters_history CLUSTER ON pk_t_job_parameters_history;
+
 --
 -- Name: ix_t_job_parameters_history_most_recent_entry; Type: INDEX; Schema: sw; Owner: d3l243
 --

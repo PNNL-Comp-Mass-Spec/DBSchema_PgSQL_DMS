@@ -17,6 +17,8 @@ ALTER TABLE public.t_filter_set_criteria_groups OWNER TO d3l243;
 ALTER TABLE ONLY public.t_filter_set_criteria_groups
     ADD CONSTRAINT pk_t_filter_set_criteria_groups PRIMARY KEY (filter_criteria_group_id);
 
+ALTER TABLE public.t_filter_set_criteria_groups CLUSTER ON pk_t_filter_set_criteria_groups;
+
 --
 -- Name: t_filter_set_criteria_groups fk_t_filter_set_criteria_groups_t_filter_sets; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

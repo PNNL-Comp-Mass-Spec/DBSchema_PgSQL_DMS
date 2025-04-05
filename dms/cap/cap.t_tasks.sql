@@ -46,6 +46,8 @@ ALTER TABLE cap.t_tasks ALTER COLUMN job ADD GENERATED ALWAYS AS IDENTITY (
 ALTER TABLE ONLY cap.t_tasks
     ADD CONSTRAINT pk_t_tasks PRIMARY KEY (job);
 
+ALTER TABLE cap.t_tasks CLUSTER ON pk_t_tasks;
+
 --
 -- Name: ix_t_tasks_dataset; Type: INDEX; Schema: cap; Owner: d3l243
 --

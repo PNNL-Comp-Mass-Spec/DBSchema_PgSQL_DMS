@@ -39,6 +39,8 @@ ALTER TABLE sw.t_job_steps_history OWNER TO d3l243;
 ALTER TABLE ONLY sw.t_job_steps_history
     ADD CONSTRAINT pk_t_job_steps_history PRIMARY KEY (job, step, saved);
 
+ALTER TABLE sw.t_job_steps_history CLUSTER ON pk_t_job_steps_history;
+
 --
 -- Name: ix_t_job_steps_history_finish; Type: INDEX; Schema: sw; Owner: d3l243
 --

@@ -20,6 +20,8 @@ ALTER TABLE public.t_cached_experiment_components OWNER TO d3l243;
 ALTER TABLE ONLY public.t_cached_experiment_components
     ADD CONSTRAINT pk_t_cached_experiment_components PRIMARY KEY (exp_id);
 
+ALTER TABLE public.t_cached_experiment_components CLUSTER ON pk_t_cached_experiment_components;
+
 --
 -- Name: TABLE t_cached_experiment_components; Type: ACL; Schema: public; Owner: d3l243
 --

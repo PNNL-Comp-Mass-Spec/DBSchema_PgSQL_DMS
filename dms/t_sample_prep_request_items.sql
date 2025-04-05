@@ -22,6 +22,8 @@ ALTER TABLE public.t_sample_prep_request_items OWNER TO d3l243;
 ALTER TABLE ONLY public.t_sample_prep_request_items
     ADD CONSTRAINT pk_t_sample_prep_request_items PRIMARY KEY (prep_request_id, item_id, item_type);
 
+ALTER TABLE public.t_sample_prep_request_items CLUSTER ON pk_t_sample_prep_request_items;
+
 --
 -- Name: t_sample_prep_request_items fk_t_sample_prep_request_items_t_sample_prep_request; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

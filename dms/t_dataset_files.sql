@@ -36,6 +36,8 @@ ALTER TABLE public.t_dataset_files ALTER COLUMN dataset_file_id ADD GENERATED AL
 ALTER TABLE ONLY public.t_dataset_files
     ADD CONSTRAINT pk_t_dataset_files PRIMARY KEY (dataset_file_id);
 
+ALTER TABLE public.t_dataset_files CLUSTER ON pk_t_dataset_files;
+
 --
 -- Name: ix_t_dataset_files_dataset_id_file_path; Type: INDEX; Schema: public; Owner: d3l243
 --

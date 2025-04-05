@@ -39,6 +39,8 @@ ALTER TABLE ont.t_cv_pato ALTER COLUMN entry_id ADD GENERATED ALWAYS AS IDENTITY
 ALTER TABLE ONLY ont.t_cv_pato
     ADD CONSTRAINT pk_t_cv_pato PRIMARY KEY (entry_id);
 
+ALTER TABLE ont.t_cv_pato CLUSTER ON pk_t_cv_pato;
+
 --
 -- Name: TABLE t_cv_pato; Type: ACL; Schema: ont; Owner: d3l243
 --

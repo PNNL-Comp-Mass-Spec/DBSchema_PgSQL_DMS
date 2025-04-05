@@ -17,6 +17,7 @@ ALTER TABLE sw.t_shared_results OWNER TO d3l243;
 ALTER TABLE ONLY sw.t_shared_results
     ADD CONSTRAINT pk_t_shared_results PRIMARY KEY (results_name);
 
+ALTER TABLE sw.t_shared_results CLUSTER ON pk_t_shared_results;
 
 --
 -- Name: TABLE t_shared_results; Type: ACL; Schema: sw; Owner: d3l243

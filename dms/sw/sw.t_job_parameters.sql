@@ -17,6 +17,8 @@ ALTER TABLE sw.t_job_parameters OWNER TO d3l243;
 ALTER TABLE ONLY sw.t_job_parameters
     ADD CONSTRAINT pk_t_job_parameters PRIMARY KEY (job);
 
+ALTER TABLE sw.t_job_parameters CLUSTER ON pk_t_job_parameters;
+
 --
 -- Name: t_job_parameters fk_t_job_parameters_t_jobs; Type: FK CONSTRAINT; Schema: sw; Owner: d3l243
 --

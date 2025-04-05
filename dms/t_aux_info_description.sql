@@ -36,6 +36,8 @@ ALTER TABLE public.t_aux_info_description ALTER COLUMN aux_description_id ADD GE
 ALTER TABLE ONLY public.t_aux_info_description
     ADD CONSTRAINT pk_t_aux_info_description PRIMARY KEY (aux_description_id);
 
+ALTER TABLE public.t_aux_info_description CLUSTER ON pk_t_aux_info_description;
+
 --
 -- Name: t_aux_info_description fk_t_aux_info_description_t_aux_info_subcategory; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

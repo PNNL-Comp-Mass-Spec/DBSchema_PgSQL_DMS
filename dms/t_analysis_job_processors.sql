@@ -43,6 +43,8 @@ ALTER TABLE ONLY public.t_analysis_job_processors
 ALTER TABLE ONLY public.t_analysis_job_processors
     ADD CONSTRAINT pk_t_analysis_job_processors PRIMARY KEY (processor_id);
 
+ALTER TABLE public.t_analysis_job_processors CLUSTER ON pk_t_analysis_job_processors;
+
 --
 -- Name: ix_t_analysis_job_processors_id_name_state_machine; Type: INDEX; Schema: public; Owner: d3l243
 --

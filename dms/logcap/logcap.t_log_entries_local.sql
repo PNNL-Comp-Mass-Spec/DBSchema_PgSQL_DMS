@@ -34,6 +34,8 @@ ALTER TABLE logcap.t_log_entries_local ALTER COLUMN entry_id ADD GENERATED ALWAY
 ALTER TABLE ONLY logcap.t_log_entries_local
     ADD CONSTRAINT pk_t_log_entries_local PRIMARY KEY (entry_id);
 
+ALTER TABLE logcap.t_log_entries_local CLUSTER ON pk_t_log_entries_local;
+
 --
 -- Name: ix_t_log_entries_local_entered; Type: INDEX; Schema: logcap; Owner: d3l243
 --

@@ -35,6 +35,8 @@ ALTER TABLE public.t_experiment_plex_members_history ALTER COLUMN entry_id ADD G
 ALTER TABLE ONLY public.t_experiment_plex_members_history
     ADD CONSTRAINT pk_t_experiment_plex_members_history PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_experiment_plex_members_history CLUSTER ON pk_t_experiment_plex_members_history;
+
 --
 -- Name: TABLE t_experiment_plex_members_history; Type: ACL; Schema: public; Owner: d3l243
 --

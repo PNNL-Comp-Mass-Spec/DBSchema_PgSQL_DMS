@@ -21,6 +21,8 @@ ALTER TABLE cap.t_processor_tool OWNER TO d3l243;
 ALTER TABLE ONLY cap.t_processor_tool
     ADD CONSTRAINT pk_t_processor_tool PRIMARY KEY (processor_name, tool_name);
 
+ALTER TABLE cap.t_processor_tool CLUSTER ON pk_t_processor_tool;
+
 --
 -- Name: t_processor_tool trig_t_processor_tool_after_update; Type: TRIGGER; Schema: cap; Owner: d3l243
 --

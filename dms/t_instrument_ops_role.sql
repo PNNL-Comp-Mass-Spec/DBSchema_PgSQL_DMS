@@ -17,6 +17,8 @@ ALTER TABLE public.t_instrument_ops_role OWNER TO d3l243;
 ALTER TABLE ONLY public.t_instrument_ops_role
     ADD CONSTRAINT pk_t_instrument_ops_role PRIMARY KEY (role);
 
+ALTER TABLE public.t_instrument_ops_role CLUSTER ON pk_t_instrument_ops_role;
+
 --
 -- Name: TABLE t_instrument_ops_role; Type: ACL; Schema: public; Owner: d3l243
 --

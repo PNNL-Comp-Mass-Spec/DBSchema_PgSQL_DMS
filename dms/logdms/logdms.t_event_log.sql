@@ -22,6 +22,8 @@ ALTER TABLE logdms.t_event_log OWNER TO d3l243;
 ALTER TABLE ONLY logdms.t_event_log
     ADD CONSTRAINT pk_t_event_log PRIMARY KEY (event_id);
 
+ALTER TABLE logdms.t_event_log CLUSTER ON pk_t_event_log;
+
 --
 -- Name: ix_t_event_log_entered; Type: INDEX; Schema: logdms; Owner: d3l243
 --

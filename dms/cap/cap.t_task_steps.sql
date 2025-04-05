@@ -35,6 +35,8 @@ ALTER TABLE cap.t_task_steps OWNER TO d3l243;
 ALTER TABLE ONLY cap.t_task_steps
     ADD CONSTRAINT pk_t_task_steps PRIMARY KEY (job, step);
 
+ALTER TABLE cap.t_task_steps CLUSTER ON pk_t_task_steps;
+
 --
 -- Name: ix_t_task_steps; Type: INDEX; Schema: cap; Owner: d3l243
 --

@@ -18,6 +18,8 @@ ALTER TABLE public.t_seq_local_symbols_list OWNER TO d3l243;
 ALTER TABLE ONLY public.t_seq_local_symbols_list
     ADD CONSTRAINT pk_t_seq_local_symbols_list PRIMARY KEY (local_symbol_id);
 
+ALTER TABLE public.t_seq_local_symbols_list CLUSTER ON pk_t_seq_local_symbols_list;
+
 --
 -- Name: TABLE t_seq_local_symbols_list; Type: ACL; Schema: public; Owner: d3l243
 --

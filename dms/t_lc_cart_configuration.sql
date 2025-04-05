@@ -63,6 +63,8 @@ ALTER TABLE public.t_lc_cart_configuration ALTER COLUMN cart_config_id ADD GENER
 ALTER TABLE ONLY public.t_lc_cart_configuration
     ADD CONSTRAINT pk_t_lc_cart_configuration PRIMARY KEY (cart_config_id);
 
+ALTER TABLE public.t_lc_cart_configuration CLUSTER ON pk_t_lc_cart_configuration;
+
 --
 -- Name: ix_t_lc_cart_configuration; Type: INDEX; Schema: public; Owner: d3l243
 --

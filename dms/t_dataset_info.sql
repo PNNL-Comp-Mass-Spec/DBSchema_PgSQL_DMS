@@ -34,6 +34,8 @@ ALTER TABLE public.t_dataset_info OWNER TO d3l243;
 ALTER TABLE ONLY public.t_dataset_info
     ADD CONSTRAINT pk_t_dataset_info PRIMARY KEY (dataset_id);
 
+ALTER TABLE public.t_dataset_info CLUSTER ON pk_t_dataset_info;
+
 --
 -- Name: t_dataset_info fk_t_dataset_info_t_dataset; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

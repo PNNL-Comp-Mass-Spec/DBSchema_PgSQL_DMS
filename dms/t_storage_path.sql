@@ -53,6 +53,8 @@ ALTER TABLE public.t_storage_path ALTER COLUMN storage_path_id ADD GENERATED ALW
 ALTER TABLE ONLY public.t_storage_path
     ADD CONSTRAINT pk_t_storage_path PRIMARY KEY (storage_path_id);
 
+ALTER TABLE public.t_storage_path CLUSTER ON pk_t_storage_path;
+
 --
 -- Name: ix_t_storage_path_machine_name_path_id; Type: INDEX; Schema: public; Owner: d3l243
 --

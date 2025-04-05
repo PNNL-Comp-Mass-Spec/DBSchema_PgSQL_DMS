@@ -34,6 +34,8 @@ ALTER TABLE public.t_filter_sets ALTER COLUMN filter_set_id ADD GENERATED ALWAYS
 ALTER TABLE ONLY public.t_filter_sets
     ADD CONSTRAINT pk_t_filter_sets PRIMARY KEY (filter_set_id);
 
+ALTER TABLE public.t_filter_sets CLUSTER ON pk_t_filter_sets;
+
 --
 -- Name: t_filter_sets fk_t_filter_sets_t_filter_set_types; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --

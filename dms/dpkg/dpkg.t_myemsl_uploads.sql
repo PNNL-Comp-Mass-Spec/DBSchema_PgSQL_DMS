@@ -41,6 +41,8 @@ ALTER TABLE dpkg.t_myemsl_uploads ALTER COLUMN entry_id ADD GENERATED ALWAYS AS 
 ALTER TABLE ONLY dpkg.t_myemsl_uploads
     ADD CONSTRAINT pk_t_myemsl_uploads PRIMARY KEY (entry_id);
 
+ALTER TABLE dpkg.t_myemsl_uploads CLUSTER ON pk_t_myemsl_uploads;
+
 --
 -- Name: ix_t_myemsl_uploads_data_pkg_id; Type: INDEX; Schema: dpkg; Owner: d3l243
 --

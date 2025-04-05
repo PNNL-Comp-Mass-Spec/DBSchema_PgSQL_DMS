@@ -27,6 +27,8 @@ ALTER TABLE public.t_dataset_qc_metric_names OWNER TO d3l243;
 ALTER TABLE ONLY public.t_dataset_qc_metric_names
     ADD CONSTRAINT pk_t_dataset_qc_metrics PRIMARY KEY (metric);
 
+ALTER TABLE public.t_dataset_qc_metric_names CLUSTER ON pk_t_dataset_qc_metrics;
+
 --
 -- Name: ix_t_dataset_qc_metric_names_sort_key; Type: INDEX; Schema: public; Owner: d3l243
 --

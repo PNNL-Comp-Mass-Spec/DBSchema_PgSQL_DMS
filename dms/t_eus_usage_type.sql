@@ -34,6 +34,8 @@ ALTER TABLE public.t_eus_usage_type ALTER COLUMN eus_usage_type_id ADD GENERATED
 ALTER TABLE ONLY public.t_eus_usage_type
     ADD CONSTRAINT pk_t_eus_usage_type PRIMARY KEY (eus_usage_type_id);
 
+ALTER TABLE public.t_eus_usage_type CLUSTER ON pk_t_eus_usage_type;
+
 --
 -- Name: ix_t_eus_usage_type_eus_usage_type; Type: INDEX; Schema: public; Owner: d3l243
 --

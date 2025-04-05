@@ -17,6 +17,8 @@ ALTER TABLE public.t_dim_error_solution OWNER TO d3l243;
 ALTER TABLE ONLY public.t_dim_error_solution
     ADD CONSTRAINT pk_error_text PRIMARY KEY (error_text);
 
+ALTER TABLE public.t_dim_error_solution CLUSTER ON pk_error_text;
+
 --
 -- Name: TABLE t_dim_error_solution; Type: ACL; Schema: public; Owner: d3l243
 --

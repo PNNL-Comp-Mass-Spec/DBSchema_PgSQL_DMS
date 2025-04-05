@@ -19,6 +19,8 @@ ALTER TABLE public.t_dataset_qc_ions OWNER TO d3l243;
 ALTER TABLE ONLY public.t_dataset_qc_ions
     ADD CONSTRAINT pk_t_dataset_qc_ions_dataset_id PRIMARY KEY (dataset_id, mz);
 
+ALTER TABLE public.t_dataset_qc_ions CLUSTER ON pk_t_dataset_qc_ions_dataset_id;
+
 --
 -- Name: TABLE t_dataset_qc_ions; Type: ACL; Schema: public; Owner: d3l243
 --

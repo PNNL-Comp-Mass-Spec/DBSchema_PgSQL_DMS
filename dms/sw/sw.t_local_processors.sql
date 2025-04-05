@@ -25,6 +25,8 @@ ALTER TABLE sw.t_local_processors OWNER TO d3l243;
 ALTER TABLE ONLY sw.t_local_processors
     ADD CONSTRAINT pk_t_local_processors PRIMARY KEY (processor_name);
 
+ALTER TABLE sw.t_local_processors CLUSTER ON pk_t_local_processors;
+
 --
 -- Name: ix_t_local_processors_machine; Type: INDEX; Schema: sw; Owner: d3l243
 --

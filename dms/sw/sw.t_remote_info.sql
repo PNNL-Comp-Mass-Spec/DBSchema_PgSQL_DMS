@@ -34,6 +34,8 @@ ALTER TABLE sw.t_remote_info ALTER COLUMN remote_info_id ADD GENERATED ALWAYS AS
 ALTER TABLE ONLY sw.t_remote_info
     ADD CONSTRAINT pk_t_remote_info PRIMARY KEY (remote_info_id);
 
+ALTER TABLE sw.t_remote_info CLUSTER ON pk_t_remote_info;
+
 --
 -- Name: ix_t_remote_info; Type: INDEX; Schema: sw; Owner: d3l243
 --

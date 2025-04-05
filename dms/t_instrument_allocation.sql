@@ -23,6 +23,8 @@ ALTER TABLE public.t_instrument_allocation OWNER TO d3l243;
 ALTER TABLE ONLY public.t_instrument_allocation
     ADD CONSTRAINT pk_t_instrument_allocation PRIMARY KEY (allocation_tag, proposal_id, fiscal_year);
 
+ALTER TABLE public.t_instrument_allocation CLUSTER ON pk_t_instrument_allocation;
+
 --
 -- Name: t_instrument_allocation trig_t_instrument_allocation_after_delete; Type: TRIGGER; Schema: public; Owner: d3l243
 --

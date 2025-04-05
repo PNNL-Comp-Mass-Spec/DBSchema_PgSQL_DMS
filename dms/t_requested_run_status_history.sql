@@ -39,6 +39,8 @@ ALTER TABLE public.t_requested_run_status_history ALTER COLUMN entry_id ADD GENE
 ALTER TABLE ONLY public.t_requested_run_status_history
     ADD CONSTRAINT pk_t_requested_run_status_history PRIMARY KEY (entry_id);
 
+ALTER TABLE public.t_requested_run_status_history CLUSTER ON pk_t_requested_run_status_history;
+
 --
 -- Name: ix_t_requested_run_status_history_state_id; Type: INDEX; Schema: public; Owner: d3l243
 --

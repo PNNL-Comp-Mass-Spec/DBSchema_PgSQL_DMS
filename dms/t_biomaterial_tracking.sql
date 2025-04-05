@@ -19,6 +19,8 @@ ALTER TABLE public.t_biomaterial_tracking OWNER TO d3l243;
 ALTER TABLE ONLY public.t_biomaterial_tracking
     ADD CONSTRAINT pk_t_biomaterial_tracking PRIMARY KEY (biomaterial_id);
 
+ALTER TABLE public.t_biomaterial_tracking CLUSTER ON pk_t_biomaterial_tracking;
+
 --
 -- Name: TABLE t_biomaterial_tracking; Type: ACL; Schema: public; Owner: d3l243
 --

@@ -21,6 +21,8 @@ ALTER TABLE public.t_experiment_plex_members OWNER TO d3l243;
 ALTER TABLE ONLY public.t_experiment_plex_members
     ADD CONSTRAINT pk_t_experiment_plex_members PRIMARY KEY (plex_exp_id, channel);
 
+ALTER TABLE public.t_experiment_plex_members CLUSTER ON pk_t_experiment_plex_members;
+
 --
 -- Name: ix_t_experiment_plex_members_exp_id; Type: INDEX; Schema: public; Owner: d3l243
 --

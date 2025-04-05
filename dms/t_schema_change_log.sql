@@ -38,6 +38,8 @@ ALTER TABLE public.t_schema_change_log ALTER COLUMN schema_change_log_id ADD GEN
 ALTER TABLE ONLY public.t_schema_change_log
     ADD CONSTRAINT pk_t_schema_change_log PRIMARY KEY (schema_change_log_id);
 
+ALTER TABLE public.t_schema_change_log CLUSTER ON pk_t_schema_change_log;
+
 --
 -- Name: ix_t_schema_change_log_object_name_object_type; Type: INDEX; Schema: public; Owner: d3l243
 --
