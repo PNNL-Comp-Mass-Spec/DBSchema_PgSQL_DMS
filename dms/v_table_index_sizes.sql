@@ -29,8 +29,9 @@ CREATE VIEW public.v_table_index_sizes AS
             lookupq.number_of_scans,
             lookupq.tuples_read,
             lookupq.tuples_fetched
-           FROM ((pg_tables t
-             LEFT JOIN pg_class c ON ((t.tablename = c.relname)))
+           FROM (((pg_tables t
+             LEFT JOIN pg_namespace ns ON ((t.schemaname = ns.nspname)))
+             LEFT JOIN pg_class c ON (((t.tablename = c.relname) AND (ns.oid = c.relnamespace))))
              LEFT JOIN ( SELECT c_1.relname AS ctablename,
                     ipg.relname AS indexname,
                     x.indnatts AS number_of_columns,
