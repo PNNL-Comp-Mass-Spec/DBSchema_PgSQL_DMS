@@ -41,6 +41,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_material_container(INOUT _containe
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          05/07/2025 mem - Prevent creating a new container if a recently created container has the same campaign name and comment
+**                         - Prevent creating a new container if the target location has already reached its container limit
 **
 *****************************************************/
 DECLARE
@@ -62,8 +64,9 @@ DECLARE
     _curType text := '';
     _curStatus text := '';
     _locationID int := 0;
-    _limit int := 0;
-    _cnt int := 0;
+    _existingContainer text;
+    _maxContainersInLocation int := 0;
+    _containerCountInLocation int := 0;
     _curLocationName text := '';
 
     _sqlState text;
@@ -123,7 +126,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-
             SELECT MAX(container_id) + 1
             INTO _nextContainerID
             FROM t_material_containers;
@@ -243,10 +245,30 @@ BEGIN
             RETURN;
         End If;
 
-        If _mode In ('update', 'preview') And _containerID = 0 Then
+        If _mode In ('update', 'preview') And Coalesce(_containerID, 0) = 0 Then
             _message := format('Cannot update: container "%s" does not exist', _container);
             _returnCode := 'U5209';
             RETURN;
+        End If;
+
+        ---------------------------------------------------
+        -- Prevent creating two containers with the same campaign and comment within the span of five minutes
+        ---------------------------------------------------
+
+        If _mode = 'add' Then
+            SELECT container
+            INTO _existingContainer
+            FROM t_material_containers
+            WHERE Coalesce(campaign_id, 0) = Coalesce(_campaignID, 0) AND
+                  comment = _comment::citext AND
+                  created >= CURRENT_TIMESTAMP - Interval '5 minutes';
+
+            If FOUND Then
+                _message := format('Container %s was created within the last 5 minutes, and it has the same campaign and comment as the new container; ' ||
+                                   'preventing the addition of the new container since this is likely not intended', _existingContainer);
+                _returnCode := 'U5210';
+                RETURN;
+            End If;
         End If;
 
         ---------------------------------------------------
@@ -257,33 +279,39 @@ BEGIN
 
         SELECT location_id,
                container_limit
-        INTO _locationID, _limit
+        INTO _locationID, _maxContainersInLocation
         FROM t_material_locations
         WHERE location = _location::citext;
 
         If Not FOUND Then
             _message := format('Invalid location: %s (for container %s)', _location, _container);
-            _returnCode := 'U5210';
+            _returnCode := 'U5211';
             RETURN;
         End If;
 
         ---------------------------------------------------
-        -- If moving a container, verify that there is room in destination location
+        -- If creating a new container or moving a container, verify that there is room in the destination location
         ---------------------------------------------------
 
-        If _curLocationID <> _locationID Then
-
+        If _mode = 'add' Or _curLocationID <> _locationID Then
             _currentLocation := 'Verify that destination location has room for the container';
 
             SELECT COUNT(container_id)
-            INTO _cnt
+            INTO _containerCountInLocation
             FROM t_material_containers
             WHERE location_id = _locationID;
 
-            If _limit <= _cnt Then
-                _message := format('Destination location does not have room for another container (moving %s to %s)',
-                                   _container, _location);
-                _returnCode := 'U5211';
+            If _containerCountInLocation >= _maxContainersInLocation Then
+                If _mode = 'add' Then
+                    _message := format('Cannot use location %s for the new container since it already has the maximum allowed container count (%s)',
+                                       _location, _containerCountInLocation, _maxContainersInLocation);
+                    _returnCode := 'U5212';
+                Else
+                    _message := format('Destination location does not have room for another container (moving %s to %s)',
+                                       _container, _location);
+                    _returnCode := 'U5213';
+                End If;
+
                 RETURN;
             End If;
         End If;
@@ -304,7 +332,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-
             _currentLocation := 'Add new row to t_material_containers';
 
             INSERT INTO t_material_containers (
@@ -336,7 +363,6 @@ BEGIN
                             _finalState   => _location,             -- Final State:   New location
                             _callingUser  => _callingUser,
                             _comment      => '');
-
         End If;
 
         ---------------------------------------------------
@@ -344,7 +370,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-
             _currentLocation := 'Update row in t_material_containers';
 
             UPDATE t_material_containers
@@ -370,7 +395,6 @@ BEGIN
                                 _callingUser  => _callingUser,
                                 _comment      => '');
             End If;
-
         End If;
 
     EXCEPTION
