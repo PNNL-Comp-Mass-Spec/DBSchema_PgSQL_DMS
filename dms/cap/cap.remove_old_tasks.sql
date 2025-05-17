@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE cap.remove_old_tasks(IN _intervaldaysforsuccess inte
 **          11/02/2023 mem - Also remove capture task jobs with state 15 = Skipped
 **                         - Add argument _returnCode when calling copy_task_to_history
 **          03/31/2024 mem - Assure that the newest 50 capture tasks with state Complete, Inactive, Skipped, or Ignore are not deleted
+**          05/16/2025 mem - When finding old tasks, use the Imported date if Start and Finish are null
 **
 *****************************************************/
 DECLARE
@@ -94,11 +95,10 @@ BEGIN
                 _message           => _message);    -- Output
 
     ---------------------------------------------------
-    -- Add old, successful capture task jobs to the temp table
+    -- Add old, successful, inactive, skipped, or ignored capture task jobs to the temp table
     ---------------------------------------------------
 
     If _intervalDaysForSuccess > 0 Then
-
         _cutoffDateTimeForSuccess := CURRENT_TIMESTAMP - make_interval(days => _intervalDaysForSuccess);
 
         If _infoOnly Then
@@ -110,7 +110,7 @@ BEGIN
         SELECT Job, State
         FROM cap.t_tasks
         WHERE State IN (3, 4, 15, 101) AND    -- Complete, Inactive, Skipped, or Ignore
-              Coalesce(Finish, Start) < _cutoffDateTimeForSuccess AND
+              Coalesce(Finish, Start, Imported) < _cutoffDateTimeForSuccess AND
               NOT job IN (SELECT T.job
                           FROM cap.t_tasks T
                           WHERE T.State IN (3, 4, 15, 101)
@@ -182,13 +182,12 @@ BEGIN
     WHERE JH.Job IS NULL;
 
     If Exists (SELECT Job FROM Tmp_JobsNotInHistory) Then
-
         If _infoOnly Then
             RAISE INFO '';
         End If;
 
         UPDATE Tmp_JobsNotInHistory Target
-        SET JobFinish = Coalesce(T.Finish, T.Start, CURRENT_TIMESTAMP)
+        SET JobFinish = Coalesce(T.Finish, T.Start, T.Imported, CURRENT_TIMESTAMP)
         FROM cap.t_tasks T
         WHERE Target.Job = T.Job;
 
@@ -200,7 +199,7 @@ BEGIN
             ORDER BY Job
         LOOP
             If _infoOnly Then
-                RAISE INFO 'Call copy_task_to_history for capture task job % with date %', _jobInfo.JobToAdd, _jobInfo.SaveTimeOverride;
+                RAISE INFO 'Call copy_task_to_history for capture task job % with state % and date %', _jobInfo.JobToAdd, _jobInfo.State, _jobInfo.SaveTimeOverride;
             Else
                 CALL cap.copy_task_to_history (
                             _jobInfo.JobToAdd,
