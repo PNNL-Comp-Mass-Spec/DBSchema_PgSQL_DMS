@@ -18,6 +18,10 @@ CREATE OR REPLACE PROCEDURE cap.copy_task_to_history(IN _job integer, IN _jobsta
 **    _message              Status message
 **    _returnCode           Return code
 **
+**  Example usage:
+**    Call remove_old_tasks(_intervalDaysForSuccess => 60, _intervalDaysForFail => 135, _logDeletions => false, _maxTasksToRemove => 5, _validateJobStepSuccess => false, _infoOnly => true);
+**    Call remove_old_tasks(_intervalDaysForSuccess => 60, _intervalDaysForFail => 135, _logDeletions => false, _maxTasksToRemove => 5, _validateJobStepSuccess => false, _infoOnly => false);
+**
 **  Auth:   grk
 **  Date:   09/12/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          05/25/2011 mem - Removed priority column from t_task_steps
@@ -28,6 +32,7 @@ CREATE OR REPLACE PROCEDURE cap.copy_task_to_history(IN _job integer, IN _jobsta
 **          10/10/2022 mem - Ported to PostgreSQL
 **          03/07/2023 mem - Use new column name
 **          11/02/2023 mem - Move _message to the end of the argument list and add _returnCode
+**          05/16/2025 mem - Copy capture task jobs with state 3, 4, 5, 14, 15, 101 to the history tables
 **
 *****************************************************/
 DECLARE
@@ -52,8 +57,8 @@ BEGIN
     -- Bail if not a state we save for
     ---------------------------------------------------
 
-    If Not _jobState In (3, 5) Then
-        _message := 'Capture task job state must be 3 or 5 to be copied to t_tasks_history (this is not an error)';
+    If Not _jobState In (3, 4, 5, 14, 15, 101) Then
+        _message := 'Capture task job state must be 3, 4, 5, 14, 15, 101 to be copied to t_tasks_history (this is not an error)';
         RETURN;
     End If;
 
