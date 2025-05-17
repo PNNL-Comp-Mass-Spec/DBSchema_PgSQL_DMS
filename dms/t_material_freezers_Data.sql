@@ -39,7 +39,7 @@ COPY public.t_material_freezers (freezer_id, freezer, freezer_tag, comment, stat
 13	-80 BSF1206A	1206A	Stirling Ultracold, model SU780UE, property WD56563	Active
 14	-80 BSF1206B	1206B	Stirling Ultracold, model SU780XLE, property WD85655, serial 18111-12653	Active
 40	-80 BSF1206B Revco	1206B_Revco	Thermo Scientific / REVCO, model ULT 2586-5-D34, contents transferred to 1206B (Stirling) in December 2018	Active
-15	-80 BSF1206C	1206C	Thermo Scientific / REVCO, model ULT 2586-4-A46, property PT15127	Active
+15	-80 BSF1206C	1206C	Thermo Scientific / REVCO, model ULT 2586-4-A46, property PT15127; compressor failed 2025-05-13	Active
 16	-80 BSF1208A	1208A	Stirling Ultracold, model SU780XLE, property WD83575, serial 19080-10442	Active
 43	-80 BSF1208A_Old	1208A_Old	Revco Model ULT2586-5-A39	Active
 17	-80 BSF1208B	1208B	Eppendorf / New Brunswick U700, model U9280-0000, property WD56280	Active
@@ -59,6 +59,13 @@ COPY public.t_material_freezers (freezer_id, freezer, freezer_tag, comment, stat
 28	-80 BSF2240B	2240B	Stirling Ultracold, model SU780UE, property WD56562, serial 1602.01948	Active
 33	-80 BSF2240C	2240C	Eppendorf / New Brunswick U700, model U101 -86 Innova, serial F101EN030856	Active
 50	-80 EMSL1310A	1310A	Thermo Scientific TSX ULT, model TSX40086A, property TBD, serial 1125683801220420	Active
+69	-80 EMSL1350Antarctica	1350A	USDA -80C freezer in 1350 service corridor (locked)	Active
+70	-80 EMSL1350Belarus	1350B	-80C freezer in 1350 service corridor for long term storage	Active
+73	-80 EMSL1350Estonia	1350E	-80C freezer in 1350 service corridor for long term storage	Active
+74	-80 EMSL1350Finland	1350F	-80C freezer in 1350 service corridor for long term storage	Active
+75	-80 EMSL1350Greenland	1350G	-80C freezer in 1350 service corridor left empty (locked) as a back-up in case others break down	Active
+71	-80 EMSL1413Canada	1413C	-80C freezer inside the lab	Active
+72	-80 EMSL1413Denmark	1413D	-80C freezer inside the lab	Active
 22	-80 EMSL1450A	1450A	Eppendorf / New Brunswick U700, model U9280-0000, property WD76704, serial F700BP800266	Active
 23	-80 EMSL1450B	1450B	Stirling Ultracold, model SU780UE, property WD81837, serial 150601104	Active
 24	-80 EMSL1450C	1450C	Thermo Scientific / REVCO, model ULT 2586-4-A46, property WD37819, serial 12855310109090	Active
@@ -76,7 +83,7 @@ COPY public.t_material_freezers (freezer_id, freezer, freezer_tag, comment, stat
 -- Name: t_material_freezers_freezer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_material_freezers_freezer_id_seq', 68, true);
+SELECT pg_catalog.setval('public.t_material_freezers_freezer_id_seq', 75, true);
 
 
 --

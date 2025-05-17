@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
+-- Dumped from database version 17.4
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -35,10 +35,10 @@ Mash-05_CTM	SourceFileRename	3	0	Decommissioned	2014-02-21 09:46:32
 Mash-06_CTM	DatasetInfo	4	0	Decommissioned	2017-09-22 16:34:20
 Mash-06_CTM	SourceFileRename	3	0	Decommissioned	2014-02-21 09:46:32
 Monroe_CTM	ArchiveStatusCheck	3	0		2018-01-26 14:53:48
-Monroe_CTM	ArchiveUpdate	4	1		2025-02-06 20:20:19.825243
+Monroe_CTM	ArchiveUpdate	4	0		2025-04-19 08:21:46.452337
 Monroe_CTM	ArchiveUpdateTest	4	-1		2013-09-10 17:32:58
 Monroe_CTM	ArchiveVerify	3	0	MyEMSL is offline	2024-10-09 18:37:42.211466
-Monroe_CTM	DatasetArchive	2	1		2025-02-06 20:20:19.825243
+Monroe_CTM	DatasetArchive	2	0		2025-04-19 08:21:52.033939
 Monroe_CTM	DatasetCapture	2	0		2024-09-28 19:34:26.936392
 Monroe_CTM	DatasetInfo	3	0	Runs MSFileInfoScanner	2024-10-18 11:37:50.754207
 Monroe_CTM	DatasetIntegrity	3	0	Runs simple file/folder checks	2022-02-28 07:21:20

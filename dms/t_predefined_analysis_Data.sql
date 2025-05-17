@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
+-- Dumped from database version 17.4
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -854,10 +854,10 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 1861	89	23	LTQ_FT	Astral%		QC_Mammalian						QC[_]Mam%	%[_]DIA[_]%	%HMSn%		DIA%				0	0	MSGFPlus_MzML_NoRefine	MSGFPlus_Tryp_MetOx_StatCysAlk_20ppmParTol.txt	IonTrapDefSettings_MzML_16GB.xml	24	na	M_musculus_UniProt_SPROT_2013_09_2013-09-18,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		0	Similar to 1857, but limited to Astral datasets and excludes datasets with DIA in the name; superseded by predefine 1876	2024-11-05 15:49:15.246747	D3L243	90	1	0	2025-02-24 09:34:23.273405
 1862	98	14	LTQ_FT	Astral%		QC_Mammalian						QC[_]Mam%	%[_]DIA[_]%	%HMSn%		DIA%				0	0	SMAQC_MSMS	SMAQC_2014-01-08.xml	na	24	na	na	na	2	SourceJob:Auto{Tool = "MSGFPlus_MzML_NoRefine" AND Settings_File = "IonTrapDefSettings_MzML_16GB.xml" AND Param_File = "MSGFPlus_Tryp_MetOx_StatCysAlk_20ppmParTol.txt"}, Job2:Auto{Tool = "MASIC_Finnigan"}	0	Corresponds to predefine 1861; similar to 1859, but limited to Astral datasets and excludes datasets with DIA in the name; superseded by predefine 1877	2024-11-12 15:52:21.95089	D3L243	99	1	0	2025-02-24 09:35:40.714124
 1863	85	35	LTQ_FT	Exploris%		Cancer Moonshot%		MNST[_]F3[_]SEER%												0	0	DiaNN	DiaNN_Tryp_Stat_CysAlk_Precursor400-1000_PrecursorCharge1-4_Max1MissedCleavage.txt	DiaNN_Standard.xml	8	na	H_sapiens_UniProt_SPROT_2024-09-12	seq_direction=forward,filetype=fasta	3		1		2024-12-02 21:09:20.452684	D3L243	86	1	0	2024-12-02 21:09:20.452684
-1864	89	57	LTQ_FT	Ascend%		CPTAC%		CPTAC4[_]LIHC[_]W[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_PartTryp_DynMetOx_Stat_CysAlk_TMT_16Plex_20ppmParTol.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2024-12-04 15:29:40.461703	D3L243	90	1	0	2024-12-04 15:37:31.954829
-1865	89	57	LTQ_FT	Ascend%		CPTAC%		CPTAC4[_]LIHC[_]U[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynMetOx_TMTExclusive_K_Ubiq_Stat_CysAlk_TMT_16Plex_20ppmParTol_PlusOne_IsotopeError.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2024-12-04 15:29:43.4428	D3L243	90	1	0	2024-12-04 15:37:31.961783
-1866	89	57	LTQ_FT	Ascend%		CPTAC%		CPTAC4[_]LIHC[_]P[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynSTYPhos_Stat_CysAlk_TMT_16Plex_Protocol1_20ppmParTol.txt	MzML_StatCysAlk_S_Phospho_Dyn_TY_Phospho_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2024-12-04 15:29:46.868585	D3L243	90	1	0	2024-12-04 15:37:31.974744
-1867	89	57	LTQ_FT	Ascend%		CPTAC%		CPTAC4[_]LIHC[_]A[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynMetOx_TMTExclusive_K_Acetyl_K_Carbamyl_N_Deamid_Stat_CysAlk_TMT_16Plex_20ppmParTol_PlusOne_IsotopeError.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2024-12-04 15:29:51.116179	D3L243	90	1	0	2024-12-04 15:37:31.977944
+1864	89	57	LTQ_FT	Ascend%		CPTAC%		%CPTAC4[_]LIHC[_]W[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_PartTryp_DynMetOx_Stat_CysAlk_TMT_16Plex_20ppmParTol.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2024-12-04 15:29:40.461703	D3L243	90	1	0	2025-05-14 15:48:43.95285
+1865	89	57	LTQ_FT	Ascend%		CPTAC%		%CPTAC4[_]LIHC[_]U[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynMetOx_TMTExclusive_K_Ubiq_Stat_CysAlk_TMT_16Plex_20ppmParTol_PlusOne_IsotopeError.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2024-12-04 15:29:43.4428	D3L243	90	1	0	2025-05-14 15:48:32.525575
+1866	89	57	LTQ_FT	Ascend%		CPTAC%		%CPTAC4[_]LIHC[_]P[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynSTYPhos_Stat_CysAlk_TMT_16Plex_Protocol1_20ppmParTol.txt	MzML_StatCysAlk_S_Phospho_Dyn_TY_Phospho_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2024-12-04 15:29:46.868585	D3L243	90	1	0	2025-05-14 15:47:09.351288
+1867	89	57	LTQ_FT	Ascend%		CPTAC%		%CPTAC4[_]LIHC[_]A[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynMetOx_TMTExclusive_K_Acetyl_K_Carbamyl_N_Deamid_Stat_CysAlk_TMT_16Plex_20ppmParTol_PlusOne_IsotopeError.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2024-12-04 15:29:51.116179	D3L243	90	1	0	2025-05-14 15:46:59.701082
 1868	85	50	LTQ_FT	Ascend%		CPTAC%		CPTAC4[_]LIHC[_]Pooled_QC%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_Stat_CysAlk_Precursor380-1000.txt	DiaNN_Standard.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01,iRT_Fusion	seq_direction=forward,filetype=fasta	3		1		2024-12-16 11:11:38.457384	D3L243	86	1	0	2024-12-16 11:11:38.457384
 1869	85	50	LTQ_FT	Ascend%		CPTAC%		CPTAC4[_]LIHC[_]NCI7%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_Stat_CysAlk_Precursor380-1000.txt	DiaNN_Standard.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01,iRT_Fusion	seq_direction=forward,filetype=fasta	3		1		2024-12-16 11:11:50.321773	D3L243	86	1	0	2024-12-16 11:11:50.321773
 1870	85	50	LTQ_FT	Ascend%		CPTAC%		CPTAC4[_]LIHC[_]C3%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_Stat_CysAlk_Precursor380-1000.txt	DiaNN_Standard.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01,iRT_Fusion	seq_direction=forward,filetype=fasta	3		1		2024-12-16 11:12:04.255965	D3L243	86	1	0	2024-12-16 11:12:04.255965
@@ -870,6 +870,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 1877	98	14	LTQ_FT	Astral%		QC_Mammalian						QC[_]Mam%	%[_]DIA[_]%	%HMSn%		DIA%				0	0	SMAQC_MSMS	SMAQC_2014-01-08.xml	na	24	na	na	na	2	SourceJob:Auto{Tool = "MSGFPlus_MzML_NoRefine" AND Settings_File = "IonTrapDefSettings_MzML_48GB.xml" AND Param_File = "MSGFPlus_Tryp_MetOx_StatCysAlk_20ppmParTol.txt"}, Job2:Auto{Tool = "MASIC_Finnigan"}	1	Corresponds to predefine 1876; similar to 1862, but limited to Astral datasets and excludes datasets with DIA in the name	2025-02-24 09:35:18.864189	D3L243	99	1	0	2025-02-24 09:35:18.864189
 1878	85	13	LTQ_FT	Exploris%		QC-Standard		QC[_]PP[_]MCF-7%				%QC%			DIA%					0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_STY_Phos_NTermAcet_Stat_CysAlk_Precursor400-1000.txt	DiaNN_Standard.xml	8	na	H_sapiens_UniProt_SPROT_2016-04-13_QC_PP_proteins,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		1	Label-free, enriched human QC for phosphopeptide samples	2025-02-28 10:10:40.843382	D3L243	86	1	0	2025-02-28 10:10:40.843382
 1879	90	59	LTQ_FT	%		MoTrPAC		MoTrPAC[_]T[0-9][_]HM[_]%[_]G[_]%						%HCD%			TMT18			0	0	MSGFPlus_MzML	MSGFPlus_PartTryp_DynMetOx_Stat_CysAlk_TMT_16Plex_20ppmParTol.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_UniProt_SPROT_2021-06-20,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	3		1	For MoTrPAC human muscle (HM) and human adipose (HA) samples, global	2025-03-11 15:21:26.228774	D3L243	91	1	0	2025-03-11 15:23:04.120564
+1880	85	13	LTQ_FT	Astral%		QC-Shew-Standard							%[_]DDA[_]%		%DIA-HCD-HMSn%					0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx.txt	DiaNN_Standard.xml	4	na	Shewanella_oneidensis_MR1_2010-04-22,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		1		2025-04-30 16:44:18.690228	GIBB166	86	1	0	2025-04-30 16:57:45.318133
 \.
 
 
@@ -877,7 +878,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 -- Name: t_predefined_analysis_predefine_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1879, true);
+SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1880, true);
 
 
 --

@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
+-- Dumped from database version 17.4
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -72,6 +72,7 @@ LC-Metabolomics_Sonnenburg		1	1	0
 LC-Metabolomics_WaterSoluble		1	1	0
 LC-MicroHpH-12	Use for placeholder requested runs that can be converted into requested run fractions	1	0	12
 LC-MicroHpH-24	Use for placeholder requested runs that can be converted into requested run fractions	1	0	24
+LC-MicroHpH-3	Use for placeholder requested runs that can be converted into requested run fractions	1	0	3
 LC-MicroHpH-4	Use for placeholder requested runs that can be converted into requested run fractions	1	0	4
 LC-MicroHpH-6	Use for placeholder requested runs that can be converted into requested run fractions	1	0	6
 LC-MicroHpH-96	Use for placeholder requested runs that can be converted into requested run fractions	1	0	96
