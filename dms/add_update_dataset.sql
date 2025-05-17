@@ -160,6 +160,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset(IN _datasetname text, IN _
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          07/31/2024 mem - Remove the leading semicolon when removing the requested run comment from the dataset comment
 **          01/22/2025 mem - Include the dataset age in the error message if the dataset already exists and it was created within the last two hours
+**          05/16/2025 mem - Use new procedure name in exception message
 **
 *****************************************************/
 DECLARE
@@ -480,7 +481,7 @@ BEGIN
             -- Do not allow a rating change from 'Unreviewed' to any other rating within this procedure
 
             If _existingDatasetRatingID = -10 And _rating::citext <> 'Unreviewed' Then
-                RAISE EXCEPTION 'Cannot change dataset rating from Unreviewed with this mechanism; use the Dataset Disposition process instead ("https://dms2.pnl.gov/dataset_disposition/search" or SP UpdateDatasetDispositions)';
+                RAISE EXCEPTION 'Cannot change dataset rating from Unreviewed with this mechanism; use the Dataset Disposition process instead ("https://dms2.pnl.gov/dataset_disposition/search" or procedure update_dataset_dispositions)';
             End If;
         End If;
 
