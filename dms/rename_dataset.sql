@@ -60,6 +60,7 @@ CREATE OR REPLACE PROCEDURE public.rename_dataset(IN _datasetnameold text DEFAUL
 **          02/17/2025 mem - Add support for requested run state 'Holding'
 **          03/14/2025 mem - Query tables directly instead of using view V_Requested_Run_List_Report_2
 **                         - Include "echo" at the start of status lines to make copy/paste into a batch file easier
+**          05/16/2025 mem - Replace ">" with "-to-" in echo statements to prevent the text from being redirected to a file
 **
 *****************************************************/
 DECLARE
@@ -325,11 +326,11 @@ BEGIN
                    DS.Created AS Dataset_Created,
                    CASE WHEN DS.Exp_ID = _newExperimentID
                         THEN format('%s (Unchanged)', DS.Exp_ID)
-                        ELSE format('%s -> %s', DS.Exp_ID, _newExperimentID)
+                        ELSE format('%s -to- %s', DS.Exp_ID, _newExperimentID)
                    END AS Experiment_ID,
                    CASE WHEN E.Experiment = _newExperiment
                         THEN format('%s (Unchanged)', E.Experiment)
-                        ELSE format('%s -> %s', E.Experiment, _newExperiment)
+                        ELSE format('%s -to- %s', E.Experiment, _newExperiment)
                    END AS Experiment
             INTO _datasetInfo
             FROM t_dataset DS
@@ -392,11 +393,11 @@ BEGIN
                    DS.Created      AS Dataset_Created,
                    CASE WHEN DS.Exp_ID = _newExperimentID
                         THEN format('%s (Unchanged)', DS.Exp_ID)
-                        ELSE format('%s -> %s', DS.Exp_ID, _newExperimentID)
+                        ELSE format('%s -to- %s', DS.Exp_ID, _newExperimentID)
                    END AS Experiment_ID,
                    CASE WHEN E.Experiment = _newExperiment
                         THEN format('%s (Unchanged)', E.Experiment)
-                        ELSE format('%s -> %s', E.Experiment, _newExperiment)
+                        ELSE format('%s -to- %s', E.Experiment, _newExperiment)
                    END AS Experiment
             INTO _datasetInfo
             FROM t_dataset DS
