@@ -224,7 +224,6 @@ BEGIN
         SET Request_ID = public.try_cast(RequestIDText, null::int);
 
         If Exists (SELECT RequestIDText FROM Tmp_RequestedRuns WHERE Request_ID IS NULL) Then
-
             SELECT RequestIDText
             INTO _firstInvalid
             FROM Tmp_RequestedRuns
@@ -256,7 +255,6 @@ BEGIN
         WHERE NOT request_id IN (SELECT request_id FROM t_requested_run);
 
         If _countInvalid > 0 Then
-
             SELECT string_agg(RequestIDText, ', ' ORDER BY RequestIDText)
             INTO _invalidIDs
             FROM Tmp_RequestedRuns
@@ -288,7 +286,6 @@ BEGIN
         WHERE (RR.state_name = 'Active' AND _mode LIKE '%update%') OR _mode LIKE 'add%';
 
         If _instrumentGroupCount > 1 Then
-
             SELECT string_agg(InstGroup, ', ' ORDER BY InstGroup)
             INTO _instrumentGroups
             FROM (SELECT DISTINCT RR.instrument_group AS InstGroup
@@ -319,7 +316,6 @@ BEGIN
                 DROP TABLE Tmp_RequestedRuns;
                 RETURN;
             End If;
-
         End If;
 
         ---------------------------------------------------
@@ -362,7 +358,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-
             INSERT INTO t_requested_run_batches (
                 batch,
                 description,
@@ -409,7 +404,6 @@ BEGIN
 
                 _id := _batchIDConfirm;
             End If;
-
         End If;
 
         ---------------------------------------------------
@@ -417,7 +411,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-
             -- Check whether this batch is currently a member of a batch group
             SELECT Batch_Group_ID
             INTO _existingBatchGroupID
@@ -441,7 +434,6 @@ BEGIN
                 batch_group_id                  = _batchGroupID,
                 batch_group_order               = _batchGroupOrder
             WHERE batch_id = _id;
-
         End If;
 
         ---------------------------------------------------
@@ -503,7 +495,6 @@ BEGIN
                     _message := append_to_text(_message, _duplicateMessage);
                 End If;
             End If;
-
         End If;
 
         ---------------------------------------------------

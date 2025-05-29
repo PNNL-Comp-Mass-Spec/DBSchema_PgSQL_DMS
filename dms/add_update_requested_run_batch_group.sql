@@ -173,7 +173,6 @@ BEGIN
                 _returnCode := 'U5207';
                 RAISE EXCEPTION '%', _message;
             End If;
-
         End If;
 
         ---------------------------------------------------
@@ -206,7 +205,6 @@ BEGIN
         SET Batch_ID = public.try_cast(Batch_ID_Text, null::int);
 
         If Exists (SELECT Entry_ID FROM Tmp_BatchIDs WHERE Batch_ID IS NULL) Then
-
             SELECT Batch_ID_Text
             INTO _firstInvalid
             FROM Tmp_BatchIDs
@@ -233,7 +231,6 @@ BEGIN
         );
 
         If _matchCount <> 0 Then
-
             SELECT string_agg(Batch_ID_Text, ', ' ORDER BY Batch_ID_Text)
             INTO _invalidIDs
             FROM Tmp_BatchIDs
@@ -275,7 +272,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-
             INSERT INTO t_requested_run_batch_group (
                 Batch_Group,
                 Description,
@@ -303,7 +299,6 @@ BEGIN
 
                 _id := _batchIDConfirm;
             End If;
-
         End If;
 
         ---------------------------------------------------
@@ -311,13 +306,11 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-
             UPDATE t_requested_run_batch_group
             SET Batch_Group   = _name,
                 Description   = _description,
                 Owner_User_ID = _userID
             WHERE Batch_Group_ID = _id;
-
         End If;
 
         ---------------------------------------------------
@@ -343,7 +336,6 @@ BEGIN
                 Batch_Group_Order = Src.Batch_Group_Order
             FROM Tmp_BatchIDs Src
             WHERE t_requested_run_batches.batch_id = Src.Batch_ID;
-
         End If;
 
     EXCEPTION

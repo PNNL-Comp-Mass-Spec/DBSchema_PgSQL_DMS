@@ -168,10 +168,8 @@ BEGIN
         If _matchCount = 1 Then
             -- Single match found; update _receivedBy to be only the username, e.g. 'D3P704'
             _receivedBy := _receivedByUserName;
-
         Else
             -- Single match not found
-
             _message := 'Received by person must be a valid DMS user';
 
             If _matchCount = 0 Then
@@ -211,7 +209,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-
             ---------------------------------------------------
             -- Verify container list
             ---------------------------------------------------
@@ -307,7 +304,6 @@ BEGIN
                 WHERE submission_id = _id;
 
             END;
-
         End If;
 
         ---------------------------------------------------
@@ -323,7 +319,6 @@ BEGIN
                 container_list      = _containerList,
                 description         = _description
             WHERE submission_id = _id;
-
         End If;
 
     EXCEPTION
@@ -346,7 +341,6 @@ BEGIN
             _returnCode := _sqlState;
         End If;
     END;
-
 END
 $$;
 
