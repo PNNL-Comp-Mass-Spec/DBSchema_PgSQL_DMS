@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
+-- Dumped from database version 17.4
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -214,6 +214,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1429	H6GlNAc2	Man6-GlcNac2	1378.4756	\N	-	PNNL	Hex(6)HexNAc(2)	Hex(6) HexNAc(2)	C(36) H(60) O(30)
 1386	HHN	Hex HexNAc NeuAc	656.2276	\N	-	UniMod	Hex(1)HexNAc(1)NeuAc(1)	HHN	\N
 1161	HMOSERLC	Homoserine Lactone from Methionine	-48.003372	-48.1075	-	UniMod	Dethiomethyl	Homoserine Lacton	H(-4) C(-1) S(-1)
+1579	HNAcNeuAc	HexNAc NeuAc	494.174789	494.4471	-	UniMod	HexNAc(1)NeuAc(1)	HexNAc NeuAc	\N
 1513	HPE-IAM	Cysteine plus N-Iodoacetyltyramine (https://pubchem.ncbi.nlm.nih.gov/compound/193901)	177.0789746	177.19988	-	PNNL	N-Iodoacetyltyramine	ß-(4-Hydroxyphenyl)ethyl iodoacetamide	H(11) C(10) N O(2)
 1515	HPE-IAMS	Cysteine plus N-Iodoacetyltyramine and S	209.0510466	\N	-	PNNL	N-Iodoacetyltyramine_S	\N	H(11) C(10) N O(2) S
 1516	HPE-IASS	Cysteine plus N-Iodoacetyltyramine and S2	241.02311	\N	-	PNNL	N-Iodoacetylthramine_S2	\N	H(11) C(10) N O(2) S(2)
@@ -472,7 +473,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 -- Name: t_mass_correction_factors_mass_correction_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1578, true);
+SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1579, true);
 
 
 --

@@ -281,6 +281,7 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 1856	EMSL_60447_Blazewicz_Metagenomes		2025-02-13 20:05:04.099172	EMSL_60447_Blazewicz_Metagenomes	Blazewicz_Metagenomes	\\\\proto-4\\DMS_Organism_Files\\EMSL_60447_Blazewicz_Metagenomes\\	https://proto-4/DMS_Organism_Files/EMSL_60447_Blazewicz_Metagenomes/							na	na	na	0	0	1		\N	0
 1798	EMSL_60578_Bohutsky_Metagenomes		2023-10-28 12:55:03	EMSL 60578 Bohutsky Metagenomes	Bohutsky_Metagenomes	\\\\proto-4\\DMS_Organism_Files\\Bohutsky_Metagenomes\\	http://proto-4/DMS_Organism_Files/Bohutsky_Metagenomes/							na	na	na	0	0	1		\N	0
 1849	EMSL_60964_Ellenbogen_Metagenomes		2024-12-11 20:56:58.616442	EMSL_60964_Ellenbogen_Metagenomes	Ellenbogen_Metagenomes	\\\\proto-4\\DMS_Organism_Files\\EMSL_60964_Ellenbogen_Metagenomes\\	https://proto-4/DMS_Organism_Files/EMSL_60964_Ellenbogen_Metagenomes/							na	na	na	0	0	1		\N	0
+1858	EMSL_61133_Doty		2025-05-27 11:32:36.391546	EMSL proposal 61133 meta efforts	51536_Doty	\\\\proto-4\\DMS_Organism_Files\\EMSL_61133_Doty\\	https://proto-4/DMS_Organism_Files/EMSL_61133_Doty/							na	na	na	0	0	1		\N	1
 1632	E_Fork_Poplar_Creek_EMSL_50513		2018-11-20 12:11:32	Sediment microbial community from East Fork Poplar Creek at ORNL	EForkPop	\\\\proto-4\\DMS_Organism_Files\\E_Fork_Poplar_Creek_EMSL_50513\\	http://gigasax/DMS_Organism_Files/E_Fork_Poplar_Creek_EMSL_50513/							na	na	na	0	0	1		\N	0
 1677	Ebola_virus		2020-04-14 13:45:57	Ebola virus	Ebola_virus	\\\\gigasax\\DMS_Organism_Files\\Ebola_virus\\	http://gigasax/DMS_Organism_Files/Ebola_virus/	Viruses				Mononegavirales	Filoviridae	Ebolavirus	Zaire	Ebola virus	0	0	1	227984	1570291	1
 1041	Ehrlichia_chaffeensis	Ehrlichia_chaffeensis_Arkansas_RefSeq_uid57933_2014-10-14	2006-03-31 16:24:18	Ehrlichia chaffeensis	E_chaffeensis	\\\\gigasax\\DMS_Organism_Files\\Ehrlichia_chaffeensis\\	http://gigasax/DMS_Organism_Files/Ehrlichia_chaffeensis/	Bacteria	Prokaryote	Proteobacteria	Alphaproteobacteria	Rickettsiales	Anaplasmataceae	Ehrlichia	chaffeensis	\N	11	0	1	945	945	1
@@ -870,7 +871,7 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 -- Name: t_organisms_organism_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organisms_organism_id_seq', 1857, true);
+SELECT pg_catalog.setval('public.t_organisms_organism_id_seq', 1858, true);
 
 
 --
