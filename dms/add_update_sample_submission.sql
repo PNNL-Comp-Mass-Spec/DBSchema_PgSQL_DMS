@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_sample_submission(INOUT _id intege
 **          01/11/2024 mem - Show a custom message when _mode is 'update' but _id is null
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          05/28/2025 mem - Fix bug showing the error message returned by procedure assure_material_containers_exist
 **
 *****************************************************/
 DECLARE
@@ -229,7 +230,8 @@ BEGIN
                             _callingUser   => '');
 
             If _returnCode <> '' Then
-                RAISE EXCEPTION '%', _msg;
+                _message := _msg;
+                RAISE EXCEPTION '%', _message;
             End If;
 
             ---------------------------------------------------
@@ -292,6 +294,7 @@ BEGIN
                                 _callingUser   => _callingUser);
 
                 If _returnCode <> '' Then
+                    _message := _msg;
                     RAISE EXCEPTION '%', _message;
                 End If;
 
