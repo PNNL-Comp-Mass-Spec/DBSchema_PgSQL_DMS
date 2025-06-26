@@ -2,7 +2,7 @@
 -- Name: schedule_predefined_analysis_jobs(text, text, text, boolean, boolean, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.schedule_predefined_analysis_jobs(IN _datasetname text, IN _callinguser text DEFAULT ''::text, IN _analysistoolnamefilter text DEFAULT ''::text, IN _excludedatasetsnotreleased boolean DEFAULT true, IN _preventduplicatejobs boolean DEFAULT true, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.schedule_predefined_analysis_jobs(IN _datasetnamesorids text, IN _callinguser text DEFAULT ''::text, IN _analysistoolnamefilter text DEFAULT ''::text, IN _excludedatasetsnotreleased boolean DEFAULT true, IN _preventduplicatejobs boolean DEFAULT true, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -11,7 +11,7 @@ CREATE OR REPLACE PROCEDURE public.schedule_predefined_analysis_jobs(IN _dataset
 **      Schedule analysis jobs for dataset according to defaults
 **
 **  Arguments:
-**    _datasetName                  Dataset name
+**    _datasetNamesOrIDs            Comma separated list of dataset names or dataset IDs
 **    _callingUser                  Calling user
 **    _analysisToolNameFilter       Optional: if not blank, only considers predefines that match the given tool name (can contain wildcards)
 **    _excludeDatasetsNotReleased   When true, excludes datasets with a rating of -5 or -6 (we always exclude datasets with a rating < 2 but <> -10)
@@ -42,11 +42,16 @@ CREATE OR REPLACE PROCEDURE public.schedule_predefined_analysis_jobs(IN _dataset
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          01/20/2024 mem - Ignore case when resolving dataset name to ID
+**          06/25/2025 mem - Add support for a list of dataset names and/or IDs
+**                         - Rename parameter _datasetName to _datasetNamesOrIDs
 **
 *****************************************************/
 DECLARE
     _state text := 'New';
-    _datasetID int := 0;
+    _datasetCount int;
+    _datasetInfo record;
+    _invalidNames citext;
+    _msg citext;
 
     _sqlState text;
     _exceptionMessage text;
@@ -71,57 +76,162 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Lookup dataset ID
+        -- Resolve dataset names to IDs, storing in a temporary table
         ---------------------------------------------------
 
-        SELECT dataset_id
-        INTO _datasetID
-        FROM t_dataset
-        WHERE dataset = _datasetName::citext;
+        CREATE TEMP TABLE Tmp_DatasetInfo (
+            Entry_ID int NOT NULL GENERATED ALWAYS AS IDENTITY,
+            Dataset_Name_Or_ID citext,
+            Dataset_Name citext NULL,
+            Dataset_ID int NULL,
+            Ignore bool NOT NULL default false,
+            Processed bool NOT NULL default false,
+            Skipped bool NOT NULL default false
+        );
 
-        If Not FOUND Then
-            _message := format('Could not find ID for dataset %s', _datasetName);
+        INSERT INTO Tmp_DatasetInfo (Dataset_Name_Or_ID)
+        SELECT value
+        FROM public.parse_delimited_list(_datasetNamesOrIDs)
+        ORDER BY value;
+
+        SELECT COUNT(*)
+        INTO _datasetCount
+        FROM Tmp_DatasetInfo;
+
+        -- Check for matching dataset names
+        UPDATE Tmp_DatasetInfo
+        SET dataset_name = DS.dataset, dataset_id = DS.dataset_id
+        FROM T_Dataset DS
+        WHERE Tmp_DatasetInfo.Dataset_Name_Or_ID = DS.dataset;
+
+        -- Check for matching dataset IDs
+        UPDATE Tmp_DatasetInfo
+        SET dataset_name = DS.dataset, dataset_id = DS.dataset_id
+        FROM T_Dataset DS
+        WHERE Tmp_DatasetInfo.Dataset_Name Is Null AND
+              public.try_cast(Tmp_DatasetInfo.Dataset_Name_Or_ID, null::int) = DS.dataset_id;
+
+        ---------------------------------------------------
+        -- Raise a warning for items that did not resolve
+        ---------------------------------------------------
+
+        SELECT String_Agg(dataset_name_or_id, ', ' ORDER BY dataset_name_or_id)
+        INTO _invalidNames
+        FROM Tmp_DatasetInfo
+        WHERE dataset_id IS NULL;
+
+        If Coalesce(_invalidNames, '') <> '' Then
+            _message := format('Could not resolve dataset name or ID for %s %s',
+                public.check_plural(_invalidNames, 'dataset', 'datasets'),
+                _invalidNames);
             RAISE WARNING '%', _message;
 
             -- Leave _returnCode as ''
+            DROP TABLE Tmp_DatasetInfo;
             RETURN;
         End If;
 
         ---------------------------------------------------
-        -- Add a new row to t_predefined_analysis_scheduling_queue
-        -- However, if the dataset already exists and has state 'New', don't add another row
+        -- Find datasets that are already in t_predefined_analysis_scheduling_queue with state 'New'
+        -- For any matches, set Ignore to true in the temporary table
         ---------------------------------------------------
 
-        If Exists (SELECT dataset_id FROM t_predefined_analysis_scheduling_queue WHERE dataset_id = _datasetID AND state = 'New') Then
-            If _infoOnly Then
-                RAISE INFO '';
-                RAISE INFO 'Skip dataset since it already has a "New" entry in t_predefined_analysis_scheduling_queue: %', _datasetName;
-            End If;
-            RETURN;
-        End If;
+        UPDATE Tmp_DatasetInfo
+        SET Ignore = true
+        FROM t_predefined_analysis_scheduling_queue PASQ
+        WHERE Tmp_DatasetInfo.dataset_id = PASQ.dataset_id AND
+              PASQ.State = 'New';
+
+        ---------------------------------------------------
+        -- Process each dataset in Tmp_DatasetInfo
+        ---------------------------------------------------
 
         If _infoOnly Then
             RAISE INFO '';
-            RAISE INFO 'Would add a new row to t_predefined_analysis_scheduling_queue for %', _datasetName;
-            RETURN;
         End If;
 
-        INSERT INTO t_predefined_analysis_scheduling_queue (
-            dataset_id,
-            calling_user,
-            analysis_tool_name_filter,
-            exclude_datasets_not_released,
-            prevent_duplicate_jobs,
-            state,
-            message
-        )
-        VALUES (_datasetID,
-                _callingUser,
-                _analysisToolNameFilter,
-                CASE WHEN _excludeDatasetsNotReleased THEN 1 ELSE 0 End,
-                CASE WHEN _preventDuplicateJobs       THEN 1 ELSE 0 End,
-                _state,
-                _message);
+        FOR _datasetInfo IN
+            SELECT dataset_name, dataset_id, ignore, MIN(entry_id) AS entry_id
+            FROM Tmp_DatasetInfo
+            GROUP BY dataset_name, dataset_id, ignore
+            ORDER BY dataset_id
+        LOOP
+            If _datasetInfo.ignore Then
+                If _infoOnly Then
+                    RAISE INFO 'Skip Dataset ID % since it already has a "New" entry in t_predefined_analysis_scheduling_queue: %',
+                               _datasetInfo.dataset_id, _datasetInfo.dataset_name;
+                End If;
+
+                UPDATE Tmp_DatasetInfo
+                SET Skipped = true
+                WHERE entry_id = _datasetInfo.entry_id;
+
+                CONTINUE;
+            End If;
+
+            If _infoOnly Then
+                RAISE INFO 'Would add a new row to t_predefined_analysis_scheduling_queue for Dataset ID % (%)',
+                           _datasetInfo.dataset_id,
+                           _datasetInfo.dataset_name;
+
+                UPDATE Tmp_DatasetInfo
+                SET Processed = true
+                WHERE entry_id = _datasetInfo.entry_id;
+
+                CONTINUE;
+            End If;
+
+            INSERT INTO t_predefined_analysis_scheduling_queue (
+                dataset_id,
+                calling_user,
+                analysis_tool_name_filter,
+                exclude_datasets_not_released,
+                prevent_duplicate_jobs,
+                state,
+                message
+            )
+            VALUES (_datasetInfo.dataset_id,
+                    _callingUser,
+                    _analysisToolNameFilter,
+                    CASE WHEN _excludeDatasetsNotReleased THEN 1 ELSE 0 End,
+                    CASE WHEN _preventDuplicateJobs       THEN 1 ELSE 0 End,
+                    _state,
+                    _message);
+
+            UPDATE Tmp_DatasetInfo
+            SET Processed = true
+            WHERE entry_id = _datasetInfo.entry_id;
+        END LOOP;
+
+        If _datasetCount > 0 Then
+            RAISE INFO '';
+
+            _msg := '';
+
+            SELECT String_Agg(dataset_name, ', ' ORDER BY dataset_name)
+            INTO _msg
+            FROM Tmp_DatasetInfo
+            WHERE Processed;
+
+            If Coalesce(_msg, '') <> '' Then
+                If _infoOnly Then
+                    RAISE INFO 'Would process % %', check_plural(_msg, 'dataset', 'datasets'), _msg;
+                Else
+                    RAISE INFO 'Processed % %', check_plural(_msg, 'dataset', 'datasets'), _msg;
+                End If;
+            End If;
+
+            _msg := '';
+
+            SELECT String_Agg(dataset_name, ', ' ORDER BY dataset_name)
+            INTO _msg
+            FROM Tmp_DatasetInfo
+            WHERE Skipped;
+
+            If Coalesce(_msg, '') <> '' Then
+                RAISE INFO 'Skipped % %', check_plural(_msg, 'dataset', 'datasets'), _msg;
+            End If;
+        End If;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -140,15 +250,16 @@ BEGIN
         End If;
     END;
 
+    DROP TABLE Tmp_DatasetInfo;
 END
 $$;
 
 
-ALTER PROCEDURE public.schedule_predefined_analysis_jobs(IN _datasetname text, IN _callinguser text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _preventduplicatejobs boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.schedule_predefined_analysis_jobs(IN _datasetnamesorids text, IN _callinguser text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _preventduplicatejobs boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE schedule_predefined_analysis_jobs(IN _datasetname text, IN _callinguser text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _preventduplicatejobs boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE schedule_predefined_analysis_jobs(IN _datasetnamesorids text, IN _callinguser text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _preventduplicatejobs boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.schedule_predefined_analysis_jobs(IN _datasetname text, IN _callinguser text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _preventduplicatejobs boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'SchedulePredefinedAnalyses or SchedulePredefinedAnalysisJobs';
+COMMENT ON PROCEDURE public.schedule_predefined_analysis_jobs(IN _datasetnamesorids text, IN _callinguser text, IN _analysistoolnamefilter text, IN _excludedatasetsnotreleased boolean, IN _preventduplicatejobs boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'SchedulePredefinedAnalyses or SchedulePredefinedAnalysisJobs';
 
