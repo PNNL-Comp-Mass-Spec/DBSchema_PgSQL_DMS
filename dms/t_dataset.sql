@@ -33,6 +33,8 @@ CREATE TABLE public.t_dataset (
     decontools_job_for_qc integer,
     capture_subfolder public.citext,
     cart_config_id integer,
+    service_type_id smallint DEFAULT 0 NOT NULL,
+    cc_report_state_id smallint DEFAULT 0 NOT NULL,
     CONSTRAINT ck_t_dataset_dataset_name_not_empty CHECK ((COALESCE(dataset, ''::public.citext) OPERATOR(public.<>) ''::public.citext)),
     CONSTRAINT ck_t_dataset_dataset_name_whitespace CHECK ((public.has_whitespace_chars((dataset)::text, false) = false)),
     CONSTRAINT ck_t_dataset_ds_folder_name_not_empty CHECK ((COALESCE(folder_name, ''::public.citext) OPERATOR(public.<>) ''::public.citext))
@@ -326,6 +328,13 @@ CREATE TRIGGER trig_t_dataset_after_update_all AFTER UPDATE ON public.t_dataset 
 CREATE TRIGGER trig_t_dataset_after_update_row AFTER UPDATE ON public.t_dataset FOR EACH ROW WHEN (((old.dataset_state_id <> new.dataset_state_id) OR (old.dataset_rating_id <> new.dataset_rating_id) OR (old.dataset OPERATOR(public.<>) new.dataset) OR (old.exp_id <> new.exp_id) OR (old.created <> new.created) OR ((old.folder_name)::text IS DISTINCT FROM (new.folder_name)::text) OR (old.acq_time_start IS DISTINCT FROM new.acq_time_start))) EXECUTE FUNCTION public.trigfn_t_dataset_after_update();
 
 --
+-- Name: t_dataset fk_t_dataset_t_dataset_cc_report_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset
+    ADD CONSTRAINT fk_t_dataset_t_dataset_cc_report_state FOREIGN KEY (cc_report_state_id) REFERENCES public.t_dataset_cc_report_state(cc_report_state_id);
+
+--
 -- Name: t_dataset fk_t_dataset_t_dataset_rating_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 
@@ -387,6 +396,13 @@ ALTER TABLE ONLY public.t_dataset
 
 ALTER TABLE ONLY public.t_dataset
     ADD CONSTRAINT fk_t_dataset_t_secondary_sep FOREIGN KEY (separation_type) REFERENCES public.t_secondary_sep(separation_type) ON UPDATE CASCADE;
+
+--
+-- Name: t_dataset fk_t_dataset_t_service_type; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset
+    ADD CONSTRAINT fk_t_dataset_t_service_type FOREIGN KEY (service_type_id) REFERENCES cc.t_service_type(service_type_id);
 
 --
 -- Name: t_dataset fk_t_dataset_t_storage_path; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

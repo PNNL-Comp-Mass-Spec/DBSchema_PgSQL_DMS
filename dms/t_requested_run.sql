@@ -46,6 +46,7 @@ CREATE TABLE public.t_requested_run (
     entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     updated timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     updated_by public.citext,
+    service_type_id smallint DEFAULT 0 NOT NULL,
     CONSTRAINT ck_t_requested_run_request_name_whitespace CHECK ((public.has_whitespace_chars((request_name)::text, false) = false))
 );
 
@@ -413,6 +414,13 @@ ALTER TABLE ONLY public.t_requested_run
 
 ALTER TABLE ONLY public.t_requested_run
     ADD CONSTRAINT fk_t_requested_run_t_separation_group FOREIGN KEY (separation_group) REFERENCES public.t_separation_group(separation_group) ON UPDATE CASCADE;
+
+--
+-- Name: t_requested_run fk_t_requested_run_t_service_type; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_requested_run
+    ADD CONSTRAINT fk_t_requested_run_t_service_type FOREIGN KEY (service_type_id) REFERENCES cc.t_service_type(service_type_id);
 
 --
 -- Name: t_requested_run fk_t_requested_run_t_users; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
