@@ -50,6 +50,8 @@ CREATE OR REPLACE PROCEDURE public.auto_reset_failed_jobs(IN _windowhours intege
 **          10/13/2021 mem - Now using Try_Parse to convert from text to int, since Try_Convert('') gives 0
 **          10/05/2023 mem - Switch the archive server path from \\adms to \\agate
 **          01/27/2024 mem - Ported to PostgreSQL
+**          06/13/2025 mem - Use new parameter name when calling procedure mc.set_manager_error_cleanup_mode()
+**                         - Reset failed jobs with error 'cyclic redundancy check'
 **
 *****************************************************/
 DECLARE
@@ -280,7 +282,11 @@ BEGIN
                     _retryJob := true;
                 End If;
 
-                If Not _retryJob And _jobInfo.StepTool In ('Sequest', 'MSGFPlus', 'XTandem', 'MSAlign') And _jobInfo.Comment ILike '%Exception generating OrgDb file%' And _retryCount < 2 Then
+                If Not _retryJob And _jobInfo.StepTool In ('Sequest', 'MSGFPlus', 'XTandem', 'MSAlign', 'Mz_Refinery') And _jobInfo.Comment ILike '%Exception generating OrgDb file%' And _retryCount < 2 Then
+                    _retryJob := true;
+                End If;
+
+                If Not _retryJob And _jobInfo.StepTool In ('Sequest', 'MSGFPlus', 'XTandem', 'MSAlign', 'Mz_Refinery') And _jobInfo.Comment ILike '%cyclic redundancy check%' And _retryCount < 2 Then
                     _retryJob := true;
                 End If;
 
@@ -472,9 +478,9 @@ BEGIN
 
                     CALL post_log_entry ('Warning', _logMessage, 'Auto_Reset_Failed_Jobs');
 
-                    CALL mc.set_manager_error_cleanup_mode (_managerList => _jobInfo.Processor, _cleanupMode => 1);
+                    CALL mc.set_manager_error_cleanup_mode (_mgrlist => _jobInfo.Processor, _cleanupMode => 1);
                 Else
-                    RAISE INFO 'Call mc.set_manager_error_cleanup_mode (_managerList => %, _cleanupMode => 1)', _jobInfo.Processor;
+                    RAISE INFO 'Call mc.set_manager_error_cleanup_mode (_mgrlist => %, _cleanupMode => 1)', _jobInfo.Processor;
                 End If;
             End If;
 
