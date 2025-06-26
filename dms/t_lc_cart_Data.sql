@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
+-- Dumped from database version 17.5
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -73,6 +73,7 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 64	Iris	10	Manual LC in BSF 1208 for sample prep use	2012-12-10 15:56:00
 97	IronMan	2	Dionex Ultimate 3000 nano RSLC for metallomics	2017-08-30 09:18:00
 60	Jaguar	10	3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2011-04-13 09:55:00
+147	Jolene	2	Waters high flow LC, was in 1215 on benchtop with old instrument, now in use for lipid and metabolite work.	2025-06-11 13:19:25.82875
 109	Juniper	10	Thermo/Dionex pump (800 bar). Long armed pal. LCMSnet controlled. Small form factor cart, laptop computer	2018-03-02 17:53:00
 36	Kestrel	10	20,000 psi mixers	2008-03-18 16:40:00
 82	Kite	10	Formerly called IMAC.  Renamed to reflect style of cart.  Auto version of 2D_online. Fractions from 1st D RPLC are transferred online w/ UV monitoring to 2nd D WCX-HILIC which has 4 SPEs and 4 columns.	2015-01-11 11:29:00
@@ -145,7 +146,7 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 -- Name: t_lc_cart_cart_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_lc_cart_cart_id_seq', 146, true);
+SELECT pg_catalog.setval('public.t_lc_cart_cart_id_seq', 147, true);
 
 
 --

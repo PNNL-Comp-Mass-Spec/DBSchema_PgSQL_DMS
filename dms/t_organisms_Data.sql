@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.4
+-- Dumped from database version 17.5
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -280,8 +280,10 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 1840	EMSL_60427_Bhatnagar_Metagenomes		2024-05-01 16:13:03	EMSL 60427 Bhatnagar Metagenomes	Bhatnagar_Metagenomes	\\\\proto-4\\DMS_Organism_Files\\EMSL_60427_Bhatnagar_Metagenomes\\	https://proto-4/DMS_Organism_Files/EMSL_60427_Bhatnagar_Metagenomes/							na	na	na	0	0	1		\N	0
 1856	EMSL_60447_Blazewicz_Metagenomes		2025-02-13 20:05:04.099172	EMSL_60447_Blazewicz_Metagenomes	Blazewicz_Metagenomes	\\\\proto-4\\DMS_Organism_Files\\EMSL_60447_Blazewicz_Metagenomes\\	https://proto-4/DMS_Organism_Files/EMSL_60447_Blazewicz_Metagenomes/							na	na	na	0	0	1		\N	0
 1798	EMSL_60578_Bohutsky_Metagenomes		2023-10-28 12:55:03	EMSL 60578 Bohutsky Metagenomes	Bohutsky_Metagenomes	\\\\proto-4\\DMS_Organism_Files\\Bohutsky_Metagenomes\\	http://proto-4/DMS_Organism_Files/Bohutsky_Metagenomes/							na	na	na	0	0	1		\N	0
-1849	EMSL_60964_Ellenbogen_Metagenomes		2024-12-11 20:56:58.616442	EMSL_60964_Ellenbogen_Metagenomes	Ellenbogen_Metagenomes	\\\\proto-4\\DMS_Organism_Files\\EMSL_60964_Ellenbogen_Metagenomes\\	https://proto-4/DMS_Organism_Files/EMSL_60964_Ellenbogen_Metagenomes/							na	na	na	0	0	1		\N	0
+1849	EMSL_60964_Ellenbogen_Metagenomes		2024-12-11 20:56:58.616442	EMSL 60964 Ellenbogen metagenomes	Ellenbogen_Metagenomes	\\\\proto-4\\DMS_Organism_Files\\EMSL_60964_Ellenbogen_Metagenomes\\	https://proto-4/DMS_Organism_Files/EMSL_60964_Ellenbogen_Metagenomes/							na	na	na	0	0	1		\N	0
+1859	EMSL_60979_Ziels_Metagenomes		2025-05-30 18:31:09.780879	EMSL 60979 Ziels metagenomes	Ziels_Metagenomes	\\\\proto-4\\DMS_Organism_Files\\EMSL_60979_Ziels_Metagenomes\\	https://proto-4/DMS_Organism_Files/EMSL_60979_Ziels_Metagenomes/							na	na	na	0	0	1		\N	0
 1858	EMSL_61133_Doty		2025-05-27 11:32:36.391546	EMSL proposal 61133 meta efforts	51536_Doty	\\\\proto-4\\DMS_Organism_Files\\EMSL_61133_Doty\\	https://proto-4/DMS_Organism_Files/EMSL_61133_Doty/							na	na	na	0	0	1		\N	1
+1860	EMSL_61290_Hultman_Metagenomes		2025-06-09 12:09:13.543392	EMSL 61290 Hultman metagenomes	Ziels_Metagenomes	\\\\proto-4\\DMS_Organism_Files\\EMSL_61290_Hultman_Metagenomes\\	https://proto-4/DMS_Organism_Files/EMSL_61290_Hultman_Metagenomes/							na	na	na	0	0	1		\N	0
 1632	E_Fork_Poplar_Creek_EMSL_50513		2018-11-20 12:11:32	Sediment microbial community from East Fork Poplar Creek at ORNL	EForkPop	\\\\proto-4\\DMS_Organism_Files\\E_Fork_Poplar_Creek_EMSL_50513\\	http://gigasax/DMS_Organism_Files/E_Fork_Poplar_Creek_EMSL_50513/							na	na	na	0	0	1		\N	0
 1677	Ebola_virus		2020-04-14 13:45:57	Ebola virus	Ebola_virus	\\\\gigasax\\DMS_Organism_Files\\Ebola_virus\\	http://gigasax/DMS_Organism_Files/Ebola_virus/	Viruses				Mononegavirales	Filoviridae	Ebolavirus	Zaire	Ebola virus	0	0	1	227984	1570291	1
 1041	Ehrlichia_chaffeensis	Ehrlichia_chaffeensis_Arkansas_RefSeq_uid57933_2014-10-14	2006-03-31 16:24:18	Ehrlichia chaffeensis	E_chaffeensis	\\\\gigasax\\DMS_Organism_Files\\Ehrlichia_chaffeensis\\	http://gigasax/DMS_Organism_Files/Ehrlichia_chaffeensis/	Bacteria	Prokaryote	Proteobacteria	Alphaproteobacteria	Rickettsiales	Anaplasmataceae	Ehrlichia	chaffeensis	\N	11	0	1	945	945	1
@@ -663,9 +665,11 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 1857	Pseudotsuga_menziesii		2025-04-08 14:48:04.523406	Pseudotsuga menziesii (Douglas-fir)	P_menziesii	\\\\gigasax\\DMS_Organism_Files\\Pseudotsuga_menziesii\\	https://gigasax/DMS_Organism_Files/Pseudotsuga_menziesii/	Eukaryota	Viridiplantae	Streptophyta	Pinopsida	Pinales	Pinaceae	Pseudotsuga	menziesii	na	0	0	1	3357	3357	1
 1300	Pyrobaculum_yellowstonensis	\N	2012-10-19 18:18:59	Sulfur and arsenic reducing, thermophilic archaeon isolated from Yellowstone National Park	P_yellowstonsis	\\\\gigasax\\DMS_Organism_Files\\Pyrobaculum_yellowstonensis\\	http://gigasax/DMS_Organism_Files/Pyrobaculum_yellowstonensis/	Viruses	Archaea	Crenarchaeota	Thermoprotei	Thermoproteales	Globuloviridae	Globulovirus	Pyrobaculum spherical virus	(isolate Yellowstone)	11	0	1	654907	654907	1
 1001	QC_Test	Shewanella_oneidensis_MR1_2010-04-22	2004-07-29 17:15:39	Not an actual organism. Supports process QC activ	QC_Test	\\\\gigasax\\DMS_Organism_Files\\QC_Test\\	http://gigasax/DMS_Organism_Files/QC_Test/	\N	\N	\N	\N	\N	\N	\N	\N	\N	0	0	1	\N	\N	1
+1862	Quercus_agrifolia		2025-06-11 12:37:55.548705	California live oak	Q_agrifolia	\\\\gigasax\\DMS_Organism_Files\\Quercus_agrifolia\\		Eukaryota	Viridiplantae	Streptophyta	Magnoliopsida	Fagales	Fagaceae	Quercus	agrifolia	na	0	0	1	97693	97693	1
 1472	Ralstonia_eutropha_H16		2016-01-29 16:46:16	\N	R_eutropha_H16	\\\\gigasax\\DMS_Organism_Files\\Ralstonia_eutropha_H16\\	http://gigasax/DMS_Organism_Files/Ralstonia_eutropha_H16/	Bacteria	Prokaryote	Proteobacteria	Betaproteobacteria	Burkholderiales	Burkholderiaceae	Cupriavidus	necator	Ralstonia eutropha H16	0	0	1	381666	381666	1
 1037	Ralstonia_pickettii	Ralstonia_solanacearum_GMI1000_RefSeq_uid57593_2014-10-20	2006-01-17 14:13:12	Ralstonia pickettii	R_pickettii	\\\\gigasax\\DMS_Organism_Files\\Ralstonia_pickettii\\	http://gigasax/DMS_Organism_Files/Ralstonia_pickettii/	Bacteria	Prokaryote	Proteobacteria	Betaproteobacteria	Burkholderiales	Burkholderiaceae	Ralstonia	pickettii	\N	11	0	1	329	329	1
 36	Rattus_norvegicus	Rattus_norvegicus_UniProt_2020-06-29	2003-09-02 00:00:00	Rattus Norvegicus (Norway rat)	R_norvegicus	\\\\gigasax\\DMS_Organism_Files\\Rattus_norvegicus\\	https://gigasax/DMS_Organism_Files/Rattus_norvegicus/	Eukaryota	Metazoa	Chordata	Mammalia	Rodentia	Muridae	Rattus	norvegicus	na	1	2	1	10116	10116	1
+1861	Rhanella_sp.		2025-06-09 16:52:54.700024	strain WP5		\\\\gigasax\\DMS_Organism_Files\\Rhanella_sp.\\		Bacteria	Prokaryote	Pseudomonadota	Gammaproteobacteria	Enterobacterales	Yersiniaceae	Rahnella	na	na	0	0	1	34037	34037	1
 1786	Rhizophagus_irregularis		2023-05-09 14:00:46	Rhizophagus irregularis	R_irregularis	\\\\gigasax\\DMS_Organism_Files\\Rhizophagus_irregularis\\		Eukaryota	Fungi	Mucoromycota	Glomeromycetes	Glomerales	Glomeraceae	Rhizophagus	irregularis	na	0	0	1	588596	588596	1
 1346	Rhizosphere_Community		2013-10-10 11:16:17	Rhizosphere community	Rhizosphere_community	\\\\gigasax\\DMS_Organism_Files\\Rhizosphere_community\\	http://gigasax/DMS_Organism_Files/Rhizosphere_community/	Bacteria	Prokaryote	Community	na	na	na	na	na	na	0	0	1	48479	48479	1
 1073	Rhodobacter_capsulatus_SB1003	Rhodobacter_capsulatus_SB_1003_RefSeq_uid47509_2014-8-11	2008-02-12 09:42:54	Rhodobacter capsulatus	R_capsulatus	\\\\gigasax\\DMS_Organism_Files\\Rhodobacter_capsulatus_SB1003\\	http://gigasax/DMS_Organism_Files/Rhodobacter_capsulatus_SB1003/	Bacteria	Prokaryote	Proteobacteria	Alphaproteobacteria	Rhodobacterales	Rhodobacteraceae	Rhodobacter	capsulatus	SB 1003	11	0	1	272942	272942	1
@@ -871,7 +875,7 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 -- Name: t_organisms_organism_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organisms_organism_id_seq', 1858, true);
+SELECT pg_catalog.setval('public.t_organisms_organism_id_seq', 1862, true);
 
 
 --

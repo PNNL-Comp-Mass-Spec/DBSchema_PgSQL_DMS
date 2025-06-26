@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.4
+-- Dumped from database version 17.5
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -72,7 +72,7 @@ COPY public.t_instrument_name (instrument_id, instrument, instrument_class, inst
 234	Aragorn	Waters_Acquity_LC	Waters_Acquity_LC	4585	4928	secfso	Active	EMSL 1142	Waters nanoAcquity LC		LC	0	100	1	11	2023-11-03 13:15:38	1	\\\\proto-5\\	G:\\	Aragorn\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Aragorn	\\\\agate.emsl.pnl.gov\\dmsarch\\Aragorn	0	0	1	3	1
 225	Arwen	Waters_Acquity_LC	Waters_Acquity_LC	4576	4919	secfso	Active	EMSL 1314	Waters Acquity M-Class LC		LC	0	67	1	11	2023-11-02 17:25:10	1	\\\\proto-5\\	G:\\	Arwen\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Arwen	\\\\agate.emsl.pnl.gov\\dmsarch\\Arwen	0	0	1	3	1
 192	Ascend01	LTQ_FT	Ascend	4440	5080	secfso	Active	BSF 1229	Orbitrap Ascend Tribrid, MS:1003356; Purchased by Leidos	CPTAC	Production	0	0	1	11	2023-04-18 12:19:15	1	\\\\proto-9\\	E:\\	Ascend01\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Ascend01	\\\\adms.emsl.pnl.gov\\dmsarch\\Ascend01	0	0	1	3	1
-254	Astral01	LTQ_FT	Astral	4839	5074	secfso	Active	BSF 2235	Thermo Astral instrument, 50% BSD, 50% NSD		Production	0	0	1	11	2024-05-28 18:03:42	1	\\\\proto-7\\	F:\\	Astral01\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Astral01	\\\\agate.emsl.pnl.gov\\dmsarch\\Astral01	0	0	1	3	1
+254	Astral01	LTQ_FT	Astral	4839	5074	secfso	Active	BSF 2235	Orbitrap Astral, MS:1003378; 50% BSD, 50% NSD		Production	0	0	1	11	2024-05-28 18:03:42	1	\\\\proto-7\\	F:\\	Astral01\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/Astral01	\\\\agate.emsl.pnl.gov\\dmsarch\\Astral01	0	0	1	3	1
 131	BSF_GC01	Agilent_Ion_Trap	Agilent_GC	1754	2	secfso	Offline	BSF 1229	GC with FID		Research	0	0	1	11	2015-07-06 16:23:30	1	\\\\proto-4\\	I:\\	BSF_GC01\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/BSF_GC01	\\\\agate.emsl.pnl.gov\\dmsarch\\BSF_GC01	0	0	1	3	1
 139	BSF_GC02	Agilent_Ion_Trap	Agilent_GC	1991	2	secfso	Offline	BSF 1215	GC with FID		Research	0	0	1	11	2016-01-27 11:33:06	1	\\\\proto-4\\	I:\\	BSF_GC02\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/BSF_GC02	\\\\agate.emsl.pnl.gov\\dmsarch\\BSF_GC02	0	0	1	3	1
 132	BSF_GCMS01	Agilent_Ion_Trap	Agilent_GC_MS	1755	2	secfso	Offline	BSF 1229	GC-MS		Research	0	0	1	11	2015-07-06 16:24:23	1	\\\\proto-4\\	I:\\	BSF_GCMS01\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/BSF_GCMS01	\\\\agate.emsl.pnl.gov\\dmsarch\\BSF_GCMS01	0	0	1	3	1

@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.4
+-- Dumped from database version 17.5
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -2661,6 +2661,12 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 8778	EMSL_60964_Ellenbogen_Methanogen_TrypPigBov_2024-12-12_5x_4.fasta	1849	Auto-created	0	201596	59819236	1	84316	2024-12-16 20:11:30.811451	f
 8779	EMSL_60964_Ellenbogen_Methanogen_TrypPigBov_2024-12-12_5x_5.fasta	1849	Auto-created	0	202566	59819319	1	84412	2024-12-16 20:11:30.815404	f
 8774	EMSL_60964_Ellenbogen_Methanogen_TrypPigBov_2024-12-12_decoy.fasta	1849	Decoy version of EMSL_60964_Ellenbogen_Methanogen_TrypPigBov_2024-12-12.fasta (auto-created)	1	2020418	598193296	1	847403	2024-12-16 10:58:56.478984	t
+9129	EMSL_60979_Ziels_Marine_Waters_MAGs_TrypPigBov_2025-05-30.fasta	1859	Metaproteome compilation of Prodigal annotated collection of medium and high-quality genomes from marine waters for EMSL project # 60979 provided by Nicole Howes (nhowes01@student.ubc.ca) from The University of British Columbia.	1	834618	254795452	1	314680	2025-05-30 18:35:43.885407	f
+9130	EMSL_60979_Ziels_Marine_Waters_MAGs_TrypPigBov_2025-05-30_5x_1.fasta	1859	Auto-created	0	166966	50959171	1	62939	2025-06-03 10:23:21.8074	f
+9131	EMSL_60979_Ziels_Marine_Waters_MAGs_TrypPigBov_2025-05-30_5x_2.fasta	1859	Auto-created	0	166844	50958332	1	62931	2025-06-03 10:23:21.817501	f
+9132	EMSL_60979_Ziels_Marine_Waters_MAGs_TrypPigBov_2025-05-30_5x_3.fasta	1859	Auto-created	0	166903	50959387	1	62935	2025-06-03 10:23:21.822335	f
+9133	EMSL_60979_Ziels_Marine_Waters_MAGs_TrypPigBov_2025-05-30_5x_4.fasta	1859	Auto-created	0	167303	50959449	1	62961	2025-06-03 10:23:21.826843	f
+9134	EMSL_60979_Ziels_Marine_Waters_MAGs_TrypPigBov_2025-05-30_5x_5.fasta	1859	Auto-created	0	166602	50959113	1	62913	2025-06-03 10:23:21.831447	f
 7732	EUP_60009_Metagenomes_ABBY_Ga0586920_TrypPigBov_2023-06-21.fasta	1788	Metagenome ABBY_070-M-17.5-2-20190702-ga2, sequenced at JGI, provided by Thea Whitman (twhitman@wisc.edu) on FICUS EUP # 60009	1	5614914	979873724	1	1.976302e+06	2023-06-27 12:19:00	f
 7929	EUP_60009_Metagenomes_ABBY_Ga0586920_TrypPigBov_2023-06-21_15x_01.fasta	1788	Auto-created	0	374890	65324637	1	131808	2023-10-19 09:55:00	f
 7930	EUP_60009_Metagenomes_ABBY_Ga0586920_TrypPigBov_2023-06-21_15x_02.fasta	1788	Auto-created	0	374543	65324804	1	131742	2023-10-19 09:55:00	f
@@ -4661,6 +4667,12 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 7767	KDP_N_cycling_genes_RAST_TrypPigBov_2023-06-28.fasta	1733	N-cycling genes called by RAST, provided by BK Song (songb@vims.edu)\r\n	1	24484	6852578	1	11220	2023-06-28 17:54:00	f
 7529	KDP_N_cycling_genes_TrypPigBov_2022-04-04.fasta	1733	N-cycling genes from all Nakdong river sediment metagenomes, compiled by Bongkeun Song (songb@vims.edu)	1	5846	1598532	1	1957	2022-04-04 18:04:00	f
 8770	KDP_N_cycling_genes_TrypPigBov_2022-04-04_decoy.fasta	1733	Decoy version of KDP_N_cycling_genes_TrypPigBov_2022-04-04.fasta (auto-created)	1	11692	3197064	1	3935	2024-11-22 21:14:09.930223	t
+9135	KILPIS_MAGs_TrypPigBov_2025-06-04.fasta	1860	Metaproteome compilation for Kilpisjärvi tundra and peatland (Finland) for EMSL project 61290 provided by Välikangas Tommi (tommi.valikangas@luke.fi) from Finland Natural Resources Institute	1	1978211	590807676	1	640000	2025-06-09 12:13:45.232235	f
+9137	KILPIS_MAGs_TrypPigBov_2025-06-04_5x_1.fasta	1860	Auto-created	0	394921	118161550	1	135449	2025-06-09 14:02:07.754905	f
+9138	KILPIS_MAGs_TrypPigBov_2025-06-04_5x_2.fasta	1860	Auto-created	0	395705	118161924	1	135484	2025-06-09 14:02:07.764086	f
+9139	KILPIS_MAGs_TrypPigBov_2025-06-04_5x_3.fasta	1860	Auto-created	0	395383	118161560	1	135470	2025-06-09 14:02:07.768448	f
+9140	KILPIS_MAGs_TrypPigBov_2025-06-04_5x_4.fasta	1860	Auto-created	0	395676	118161322	1	135484	2025-06-09 14:02:07.772478	f
+9141	KILPIS_MAGs_TrypPigBov_2025-06-04_5x_5.fasta	1860	Auto-created	0	396526	118161320	1	135516	2025-06-09 14:02:07.776492	f
 1972	KNP_Hybrid_contigs_prodigal_TrypPigBov_2016-11-04.fasta	16	Rick White generated community files	1	845546	236882186	1	363503	2016-11-04 14:59:00	f
 1982	KNP_Hybrid_contigs_prodigal_TrypPigBov_2016-11-04_15x_01.fasta	16	Auto-created	0	56300	15792654	1	23998	2016-11-04 18:25:00	f
 1983	KNP_Hybrid_contigs_prodigal_TrypPigBov_2016-11-04_15x_02.fasta	16	Auto-created	0	56627	15791825	1	24040	2016-11-04 18:25:00	f
@@ -6624,6 +6636,12 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 4026	P6037_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-05 09:32:00	f
 3984	P6038_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00	f
 4027	P6038_RefGenomesMetagenes_90_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-04.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	2171837	369811672	1	428023	2018-09-05 09:32:00	f
+9136	PALLAS_MAGs_TrypPigBov_2025-06-04.fasta	1860	Metaproteome compilation for Pallas forest and peatland (Finland) for EMSL project 61290 provided by Välikangas Tommi (tommi.valikangas@luke.fi) from Finland Natural Resources Institute	1	596117	171454881	1	195584	2025-06-09 12:13:45.232235	f
+9142	PALLAS_MAGs_TrypPigBov_2025-06-04_5x_1.fasta	1860	Auto-created	0	119179	34290770	1	40741	2025-06-09 14:29:32.410821	f
+9143	PALLAS_MAGs_TrypPigBov_2025-06-04_5x_2.fasta	1860	Auto-created	0	119038	34290912	1	40719	2025-06-09 14:29:32.420155	f
+9144	PALLAS_MAGs_TrypPigBov_2025-06-04_5x_3.fasta	1860	Auto-created	0	119191	34291023	1	40733	2025-06-09 14:29:32.424805	f
+9145	PALLAS_MAGs_TrypPigBov_2025-06-04_5x_4.fasta	1860	Auto-created	0	119256	34290849	1	40742	2025-06-09 14:29:32.42902	f
+9146	PALLAS_MAGs_TrypPigBov_2025-06-04_5x_5.fasta	1860	Auto-created	0	119453	34291327	1	40747	2025-06-09 14:29:32.43327	f
 200	PCQ_ETJ_2004-01-21.fasta	16		0	65	11845	1	16	2004-02-04 17:09:00	f
 686	PTLD33-35-48-49_fastq_trim_clean_DNA_2013-04-18.fasta	16	Combination of PTLD33, 35, 38 and 49 DNA sequences from P Moore lab	1	30258	10086	1	5438	2013-04-18 16:03:00	f
 153	P_Aeruginosa_Memb_Prot_2001-12-04.fasta	11		0	686	267028	1	317	2001-12-17 19:40:00	f
@@ -8803,7 +8821,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 -- Name: t_organism_db_file_org_db_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9128, true);
+SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9146, true);
 
 
 --

@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.4
+-- Dumped from database version 17.5
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -26,6 +26,7 @@ DMS	archiver	2024-04-17 15:08:40.763509-07
 DMS	backends	2024-04-17 15:08:40.768362-07
 DMS	backup_age_pgbackrest	2024-04-17 15:08:40.780148-07
 DMS	bgwriter	2024-04-17 15:08:40.777678-07
+DMS	configuration_changes	2025-05-29 19:56:33.219719-07
 DMS	configured_dbs	2024-04-18 16:21:42.034525-07
 DMS	cpu_load	2024-04-17 15:08:40.774023-07
 DMS	db_size	2024-04-17 15:08:40.781115-07
@@ -37,6 +38,7 @@ DMS	kpi	2024-04-17 15:08:40.764507-07
 DMS	locks	2024-04-17 15:08:40.761212-07
 DMS	locks_mode	2024-04-17 15:08:40.766247-07
 DMS	object_changes	2024-04-18 16:30:42.082101-07
+DMS	privilege_changes	2025-06-19 12:17:01.749051-07
 DMS	psutil_cpu	2024-04-17 15:08:40.77959-07
 DMS	psutil_disk	2024-04-17 15:08:40.774694-07
 DMS	psutil_disk_io_total	2024-04-17 15:08:40.767207-07
@@ -62,6 +64,7 @@ DMSDev	archiver	2024-04-17 15:08:51.112197-07
 DMSDev	backends	2024-04-17 15:08:40.828173-07
 DMSDev	backup_age_pgbackrest	2024-04-17 15:08:43.802272-07
 DMSDev	bgwriter	2024-04-17 15:08:43.523348-07
+DMSDev	configuration_changes	2025-05-29 19:56:33.219719-07
 DMSDev	configured_dbs	2024-04-18 16:21:42.034525-07
 DMSDev	cpu_load	2024-04-17 15:08:42.041528-07
 DMSDev	db_size	2024-04-17 15:08:41.094857-07
