@@ -12,19 +12,6 @@ CREATE TABLE cc.t_service_type (
 ALTER TABLE cc.t_service_type OWNER TO d3l243;
 
 --
--- Name: t_service_type_service_type_id_seq; Type: SEQUENCE; Schema: cc; Owner: d3l243
---
-
-ALTER TABLE cc.t_service_type ALTER COLUMN service_type_id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME cc.t_service_type_service_type_id_seq
-    START WITH 0
-    INCREMENT BY 1
-    MINVALUE 0
-    NO MAXVALUE
-    CACHE 1
-);
-
---
 -- Name: t_service_type pk_t_service_type; Type: CONSTRAINT; Schema: cc; Owner: d3l243
 --
 
