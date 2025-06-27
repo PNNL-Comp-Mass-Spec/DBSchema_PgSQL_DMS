@@ -161,6 +161,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset(IN _datasetname text, IN _
 **          07/31/2024 mem - Remove the leading semicolon when removing the requested run comment from the dataset comment
 **          01/22/2025 mem - Include the dataset age in the error message if the dataset already exists and it was created within the last two hours
 **          05/16/2025 mem - Use new procedure name in exception message
+**          06/27/2025 mem - Specify parameter name when calling schedule_predefined_analysis_jobs
 **
 *****************************************************/
 DECLARE
@@ -1551,10 +1552,10 @@ BEGIN
             If _ratingID >= 2 And Coalesce(_existingDatasetRatingID, -1000) In (-5, -6, -7) Then
                 If Not Exists (SELECT dataset_id FROM t_analysis_job WHERE dataset_id = _datasetID AND dataset_unreviewed = 0) Then
                     CALL public.schedule_predefined_analysis_jobs (
-                                    _datasetName,
-                                    _callingUser => _callingUser,
-                                    _message     => _message,       -- Output
-                                    _returnCode  => _returnCode);   -- Output
+                                    _datasetNamesOrIDs => _datasetName,
+                                    _callingUser       => _callingUser,
+                                    _message           => _message,       -- Output
+                                    _returnCode        => _returnCode);   -- Output
 
                     -- If _callingUser is defined, call public.alter_event_log_entry_user to alter the entered_by field
                     -- in t_event_log for any newly created jobs for this dataset

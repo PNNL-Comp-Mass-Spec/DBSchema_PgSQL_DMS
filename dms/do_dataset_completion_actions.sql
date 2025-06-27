@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE public.do_dataset_completion_actions(IN _datasetname
 **          01/20/2024 mem - Ignore case when resolving dataset name to ID
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          06/27/2025 mem - Specify parameter name when calling schedule_predefined_analysis_jobs
 **
 *****************************************************/
 DECLARE
@@ -169,7 +170,7 @@ BEGIN
     ---------------------------------------------------
 
     CALL public.schedule_predefined_analysis_jobs (
-                    _datasetName,
+                    _datasetNamesOrIDs          => _datasetName,
                     _excludeDatasetsNotReleased => true,
                     _preventDuplicateJobs       => true,
                     _message                    => _message,        -- Output
@@ -178,7 +179,6 @@ BEGIN
     If _message <> '' Then
         RAISE WARNING '%', _message;
     End If;
-
 END
 $$;
 
