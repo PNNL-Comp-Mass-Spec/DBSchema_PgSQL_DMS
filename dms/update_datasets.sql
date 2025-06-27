@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE public.update_datasets(IN _datasetlist text, IN _sta
 **          03/01/2024 mem - Ported to PostgreSQL
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          06/27/2025 mem - Use new parameter name when calling schedule_predefined_analysis_jobs
 **
 *****************************************************/
 DECLARE
@@ -369,7 +370,7 @@ BEGIN
                     LOOP
 
                         CALL public.schedule_predefined_analysis_jobs (
-                                        _datasetName                =>_currentDataset,
+                                        _datasetNamesOrIDs          => _currentDataset,
                                         _callingUser                => _callingUser,
                                         _analysisToolNameFilter     => '',
                                         _excludeDatasetsNotReleased => true,
