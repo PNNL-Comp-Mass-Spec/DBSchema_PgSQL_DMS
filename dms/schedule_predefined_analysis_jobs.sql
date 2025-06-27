@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE public.schedule_predefined_analysis_jobs(IN _dataset
 **          01/20/2024 mem - Ignore case when resolving dataset name to ID
 **          06/25/2025 mem - Add support for a list of dataset names and/or IDs
 **                         - Rename parameter _datasetName to _datasetNamesOrIDs
+**          06/27/2025 mem - Rename temp table to avoid a naming conflict with calling procedures
 **
 *****************************************************/
 DECLARE
@@ -79,7 +80,7 @@ BEGIN
         -- Resolve dataset names to IDs, storing in a temporary table
         ---------------------------------------------------
 
-        CREATE TEMP TABLE Tmp_DatasetInfo (
+        CREATE TEMP TABLE Tmp_Datasets_to_Schedule (
             Entry_ID int NOT NULL GENERATED ALWAYS AS IDENTITY,
             Dataset_Name_Or_ID citext,
             Dataset_Name citext NULL,
@@ -89,27 +90,27 @@ BEGIN
             Skipped bool NOT NULL default false
         );
 
-        INSERT INTO Tmp_DatasetInfo (Dataset_Name_Or_ID)
+        INSERT INTO Tmp_Datasets_to_Schedule (Dataset_Name_Or_ID)
         SELECT value
         FROM public.parse_delimited_list(_datasetNamesOrIDs)
         ORDER BY value;
 
         SELECT COUNT(*)
         INTO _datasetCount
-        FROM Tmp_DatasetInfo;
+        FROM Tmp_Datasets_to_Schedule;
 
         -- Check for matching dataset names
-        UPDATE Tmp_DatasetInfo
+        UPDATE Tmp_Datasets_to_Schedule
         SET dataset_name = DS.dataset, dataset_id = DS.dataset_id
         FROM T_Dataset DS
-        WHERE Tmp_DatasetInfo.Dataset_Name_Or_ID = DS.dataset;
+        WHERE Tmp_Datasets_to_Schedule.Dataset_Name_Or_ID = DS.dataset;
 
         -- Check for matching dataset IDs
-        UPDATE Tmp_DatasetInfo
+        UPDATE Tmp_Datasets_to_Schedule
         SET dataset_name = DS.dataset, dataset_id = DS.dataset_id
         FROM T_Dataset DS
-        WHERE Tmp_DatasetInfo.Dataset_Name Is Null AND
-              public.try_cast(Tmp_DatasetInfo.Dataset_Name_Or_ID, null::int) = DS.dataset_id;
+        WHERE Tmp_Datasets_to_Schedule.Dataset_Name Is Null AND
+              public.try_cast(Tmp_Datasets_to_Schedule.Dataset_Name_Or_ID, null::int) = DS.dataset_id;
 
         ---------------------------------------------------
         -- Raise a warning for items that did not resolve
@@ -117,7 +118,7 @@ BEGIN
 
         SELECT String_Agg(dataset_name_or_id, ', ' ORDER BY dataset_name_or_id)
         INTO _invalidNames
-        FROM Tmp_DatasetInfo
+        FROM Tmp_Datasets_to_Schedule
         WHERE dataset_id IS NULL;
 
         If Coalesce(_invalidNames, '') <> '' Then
@@ -127,7 +128,7 @@ BEGIN
             RAISE WARNING '%', _message;
 
             -- Leave _returnCode as ''
-            DROP TABLE Tmp_DatasetInfo;
+            DROP TABLE Tmp_Datasets_to_Schedule;
             RETURN;
         End If;
 
@@ -136,14 +137,14 @@ BEGIN
         -- For any matches, set Ignore to true in the temporary table
         ---------------------------------------------------
 
-        UPDATE Tmp_DatasetInfo
+        UPDATE Tmp_Datasets_to_Schedule
         SET Ignore = true
         FROM t_predefined_analysis_scheduling_queue PASQ
-        WHERE Tmp_DatasetInfo.dataset_id = PASQ.dataset_id AND
+        WHERE Tmp_Datasets_to_Schedule.dataset_id = PASQ.dataset_id AND
               PASQ.State = 'New';
 
         ---------------------------------------------------
-        -- Process each dataset in Tmp_DatasetInfo
+        -- Process each dataset in Tmp_Datasets_to_Schedule
         ---------------------------------------------------
 
         If _infoOnly Then
@@ -152,7 +153,7 @@ BEGIN
 
         FOR _datasetInfo IN
             SELECT dataset_name, dataset_id, ignore, MIN(entry_id) AS entry_id
-            FROM Tmp_DatasetInfo
+            FROM Tmp_Datasets_to_Schedule
             GROUP BY dataset_name, dataset_id, ignore
             ORDER BY dataset_id
         LOOP
@@ -162,7 +163,7 @@ BEGIN
                                _datasetInfo.dataset_id, _datasetInfo.dataset_name;
                 End If;
 
-                UPDATE Tmp_DatasetInfo
+                UPDATE Tmp_Datasets_to_Schedule
                 SET Skipped = true
                 WHERE entry_id = _datasetInfo.entry_id;
 
@@ -174,7 +175,7 @@ BEGIN
                            _datasetInfo.dataset_id,
                            _datasetInfo.dataset_name;
 
-                UPDATE Tmp_DatasetInfo
+                UPDATE Tmp_Datasets_to_Schedule
                 SET Processed = true
                 WHERE entry_id = _datasetInfo.entry_id;
 
@@ -198,7 +199,7 @@ BEGIN
                     _state,
                     _message);
 
-            UPDATE Tmp_DatasetInfo
+            UPDATE Tmp_Datasets_to_Schedule
             SET Processed = true
             WHERE entry_id = _datasetInfo.entry_id;
         END LOOP;
@@ -210,7 +211,7 @@ BEGIN
 
             SELECT String_Agg(dataset_name, ', ' ORDER BY dataset_name)
             INTO _msg
-            FROM Tmp_DatasetInfo
+            FROM Tmp_Datasets_to_Schedule
             WHERE Processed;
 
             If Coalesce(_msg, '') <> '' Then
@@ -225,7 +226,7 @@ BEGIN
 
             SELECT String_Agg(dataset_name, ', ' ORDER BY dataset_name)
             INTO _msg
-            FROM Tmp_DatasetInfo
+            FROM Tmp_Datasets_to_Schedule
             WHERE Skipped;
 
             If Coalesce(_msg, '') <> '' Then
@@ -250,7 +251,7 @@ BEGIN
         End If;
     END;
 
-    DROP TABLE Tmp_DatasetInfo;
+    DROP TABLE IF EXISTS Tmp_Datasets_to_Schedule;
 END
 $$;
 
