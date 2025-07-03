@@ -4773,6 +4773,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 5103	Kansas_2pt5KBup_Annotated_TrypPigBov_2019-04-08_15x_13.fasta	31	Auto-created	0	92653	25204640	1	40688	2019-04-08 14:50:00	f
 5104	Kansas_2pt5KBup_Annotated_TrypPigBov_2019-04-08_15x_14.fasta	31	Auto-created	0	92424	25203921	1	40636	2019-04-08 14:50:00	f
 5105	Kansas_2pt5KBup_Annotated_TrypPigBov_2019-04-08_15x_15.fasta	31	Auto-created	0	92689	25204470	1	40698	2019-04-08 14:50:00	f
+9148	Kansas_Corn_Soil_JGI_TrypPigBov_2025-06-27.fasta	31	Metaproteome for soil microbial communities from Great Prairies - Kansas Corn soil v3 annotated at JGI (taxon_id=3300000953)	1	5335868	407565166	1	978369	2025-06-27 17:41:00.353396	f
 1800	Kansas_Hybrid_db-1k_qced_TrypPigBov_2016-06-30.fasta	31	From Rick White	1	763125	223422438	1	269866	2016-07-01 09:13:00	f
 1866	Kansas_Hybrid_db-1k_qced_TrypPigBov_2016-06-30_25x_01.fasta	31	Auto-created	0	30516	8937099	1	10541	2016-07-02 17:34:00	f
 1867	Kansas_Hybrid_db-1k_qced_TrypPigBov_2016-06-30_25x_02.fasta	31	Auto-created	0	30489	8936832	1	10540	2016-07-02 17:34:00	f
@@ -5343,6 +5344,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 8759	Kostka_JGI_VCR_P3_sed_TrypPigBov_2024-09-19_5x_3.fasta	1846	Auto-created	0	767153	138756200	1	286050	2024-10-17 15:02:06.027297	f
 8760	Kostka_JGI_VCR_P3_sed_TrypPigBov_2024-09-19_5x_4.fasta	1846	Auto-created	0	766716	138755790	1	285923	2024-10-17 15:02:06.030702	f
 8761	Kostka_JGI_VCR_P3_sed_TrypPigBov_2024-09-19_5x_5.fasta	1846	Auto-created	0	766741	138756561	1	285932	2024-10-17 15:02:06.034176	f
+9147	Kwame_PNNL_Sequencing_2024-09-09.fasta	31	Combination of 46 FASTAs from PerCon SFA who made the various strains for EMSL DIA pipeline development project. Duplicate proteins with the same header and sequence were removed.	1	251273	78325140	1	103095	2025-06-26 16:46:19.155198	f
 7006	LCA_ACODB_2040502000_JGI.fasta	1135	Leafcutter ant proteins from JGI	1	1275863	132388602	1	151793	2021-05-28 15:04:00	f
 7007	LCA_ACODT_2038011000_JGI.fasta	1135	Leafcutter ant proteins from JGI	1	1285907	119879259	1	139453	2021-05-28 15:04:00	f
 7008	LCA_ATEDB_2032320007_JGI.fasta	1135	Leafcutter ant proteins from JGI	1	524534	55351914	1	63010	2021-05-28 15:04:00	f
@@ -8821,7 +8823,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 -- Name: t_organism_db_file_org_db_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9146, true);
+SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9148, true);
 
 
 --

@@ -24,10 +24,10 @@ SET row_security = off;
 COPY cc.t_service_type (service_type_id, service_type, service_description) FROM stdin;
 0	Undefined	Undefined
 1	None	Not a cost center tracked requested run or dataset
-2	Peptides: Short advanced MS	Astral, nanoPOTS, separation time < 60 minutes
-3	Peptides: Short standard MS	HFX, Lumos, Eclipse, Exploris, SRM, separation time < 60 minutes
-4	Peptides: Long advanced MS	Astral, separation time >= 60 minutes
-5	Peptides: Long standard MS	HFX, Lumos, Eclipse, Exploris, nanoPOTS, separation time >= 60 minutes
+2	Peptides: Short advanced MS	Astral, nanoPOTS, timsTOF SCP, separation time < 60 minutes
+3	Peptides: Short standard MS	HFX, Lumos, Eclipse, Exploris, SRM, MRM, separation time < 60 minutes
+4	Peptides: Long advanced MS	Astral, nanoPOTS, timsTOF SCP, separation time >= 60 minutes
+5	Peptides: Long standard MS	HFX, Lumos, Eclipse, Exploris, separation time >= 60 minutes
 6	Peptides: Screening MS (Ulta Fast)	All Orbitraps, separation time < 5 minutes, or infusion
 7	Lipids and Metabolites	Lipids and Metabolites
 8	GC-MS	GC-MS

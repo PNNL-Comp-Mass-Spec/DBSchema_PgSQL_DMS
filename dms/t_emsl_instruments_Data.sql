@@ -126,7 +126,7 @@ COPY public.t_emsl_instruments (eus_instrument_id, eus_display_name, eus_instrum
 34254	Metabolomic Liquid State Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q Exactive LC-MS 6 (2020)	24	\N	\N	2024-08-06 06:15:53	1	1
 34255	Targeted (SRM) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Altis Triple Quad LC-MS 1 (2017)	24	\N	\N	2024-08-06 06:15:53	1	0
 34256	Top-down (Intact) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q Exactive HF UHMR 5 (2015)	10	\N	\N	2024-08-06 06:15:53	1	0
-34258	Liquid Chromatography - Ion Mobility Spectrometry - Mass Spectrometry (LC-IMS-MS)	Mass Spectrometer: Q-ToF LC-IMS 5 (2013)	24	\N	\N	2025-06-14 06:16:50.71039	1	0
+34258	Liquid Chromatography - Ion Mobility Spectrometry - Mass Spectrometry (LC-IMS-MS)	Mass Spectrometer: Q-ToF LC-IMS 5 (2013)	24	\N	\N	2025-06-26 06:16:10.244553	0	0
 34259	Liquid Chromatography - Ion Mobility Spectrometry - Mass Spectrometry (LC-IMS-MS)	Mass Spectrometer: Q-ToF LC-IMS 6 (2015)	24	\N	\N	2025-06-14 06:16:50.71039	1	0
 34260	Metabolomic Gas Chromatography-Mass Spectrometry (GC-MS)	Mass Spectrometer: Agilent GC-MS 4 (2012)	10	\N	\N	2024-12-05 06:16:46.760634	0	0
 34264	Metabolomic Liquid State Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: ToF LC-MS 8 (2017)	10	\N	\N	2024-08-06 06:15:53	1	0
