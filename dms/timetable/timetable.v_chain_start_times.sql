@@ -3,20 +3,22 @@
 --
 
 CREATE VIEW timetable.v_chain_start_times AS
- SELECT leadq.chain,
+ SELECT leadq.chain_id,
     leadq.start_time,
     leadq.next_start_time,
     ((leadq.next_start_time - leadq.start_time))::interval minute AS start_delta,
     c.run_at,
     i.interval_description
-   FROM ((( SELECT filterq.start_time,
-            filterq.chain,
-            lead(filterq.start_time, 1) OVER (PARTITION BY filterq.chain ORDER BY filterq.start_time) AS next_start_time
-           FROM ( SELECT log.ts AS start_time,
-                    ((log.message_data -> 'chain'::text))::integer AS chain
-                   FROM timetable.log
-                  WHERE (log.message = 'Starting chain'::text)) filterq) leadq
-     JOIN timetable.chain c ON ((leadq.chain = c.chain_id)))
+   FROM ((( SELECT el.last_run AS start_time,
+            el.chain_id,
+            el.task_id,
+            lead(el.last_run, 1) OVER (PARTITION BY el.chain_id ORDER BY el.last_run) AS next_start_time
+           FROM (timetable.execution_log el
+             JOIN ( SELECT el_1.chain_id,
+                    min(el_1.task_id) AS task_id_min
+                   FROM timetable.execution_log el_1
+                  GROUP BY el_1.chain_id) groupq ON (((el.chain_id = groupq.chain_id) AND (el.task_id = groupq.task_id_min))))) leadq
+     JOIN timetable.chain c ON ((leadq.chain_id = c.chain_id)))
      LEFT JOIN timetable.t_cron_interval i ON (((c.run_at)::text = (i.cron_interval)::text)));
 
 
