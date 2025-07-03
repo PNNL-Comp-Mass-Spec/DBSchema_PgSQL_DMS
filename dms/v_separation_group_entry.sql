@@ -7,7 +7,8 @@ CREATE VIEW public.v_separation_group_entry AS
     comment,
     active,
     sample_prep_visible,
-    fraction_count
+    fraction_count,
+    acq_length_minutes
    FROM public.t_separation_group sg;
 
 

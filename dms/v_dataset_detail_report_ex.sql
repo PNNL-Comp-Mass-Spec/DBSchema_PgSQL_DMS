@@ -68,8 +68,11 @@ CREATE VIEW public.v_dataset_detail_report_ex AS
     public.get_requested_run_eus_users_list(rr.request_id, 'V'::text) AS eus_user,
     tispre.name AS predigest_int_std,
     tispost.name AS postdigest_int_std,
+    ds.service_type_id AS cost_center_service_type_id,
+    ccst.service_type AS cost_center_service_type,
+    ccrs.cc_report_state AS cost_center_report_state,
     t_myemsl_state.myemsl_state_name AS myemsl_state
-   FROM ((((((((((((((ont.t_cv_bto_cached_names bto
+   FROM ((((((((((((((((ont.t_cv_bto_cached_names bto
      RIGHT JOIN ((((((((((public.t_dataset ds
      JOIN public.t_dataset_state_name tdsn ON ((ds.dataset_state_id = tdsn.dataset_state_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
@@ -81,6 +84,8 @@ CREATE VIEW public.v_dataset_detail_report_ex AS
      JOIN public.t_internal_standards tispre ON ((e.internal_standard_id = tispre.internal_standard_id)))
      JOIN public.t_internal_standards tispost ON ((e.post_digest_internal_std_id = tispost.internal_standard_id)))
      JOIN public.t_organisms og ON ((e.organism_id = og.organism_id))) ON ((bto.identifier OPERATOR(public.=) e.tissue_id)))
+     JOIN cc.t_service_type ccst ON ((ds.service_type_id = ccst.service_type_id)))
+     JOIN public.t_dataset_cc_report_state ccrs ON ((ds.cc_report_state_id = ccrs.cc_report_state_id)))
      LEFT JOIN public.t_storage_path spath ON ((ds.storage_path_id = spath.storage_path_id)))
      LEFT JOIN public.t_cached_dataset_folder_paths dfp ON ((ds.dataset_id = dfp.dataset_id)))
      LEFT JOIN public.t_cached_dataset_links dl ON ((ds.dataset_id = dl.dataset_id)))
