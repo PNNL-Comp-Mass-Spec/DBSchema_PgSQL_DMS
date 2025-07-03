@@ -7,7 +7,8 @@ CREATE TABLE public.t_separation_group (
     comment public.citext DEFAULT ''::public.citext,
     active smallint DEFAULT 1 NOT NULL,
     sample_prep_visible smallint DEFAULT 1 NOT NULL,
-    fraction_count smallint DEFAULT 0 NOT NULL
+    fraction_count smallint DEFAULT 0 NOT NULL,
+    acq_length_minutes integer DEFAULT 0 NOT NULL
 );
 
 
