@@ -1,8 +1,8 @@
 --
--- Name: add_update_separation_group(text, text, integer, integer, integer, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: add_update_separation_group(text, text, integer, integer, integer, integer, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.add_update_separation_group(IN _separationgroup text, IN _comment text, IN _active integer, IN _sampleprepvisible integer, IN _fractioncount integer, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.add_update_separation_group(IN _separationgroup text, IN _comment text, IN _active integer, IN _sampleprepvisible integer, IN _fractioncount integer, IN _acqlengthminutes integer, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -16,6 +16,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_separation_group(IN _separationgro
 **    _active               Active: 1 means active, 0 means inactive
 **    _samplePrepVisible    When 1, include in the DMS website chooser used when editing a sample prep request
 **    _fractionCount        For separation groups used when fractionating samples, the number of fractions to be generated, e.g. 'LC-MicroHpH-12' has a fraction count of 12
+**    _acqLengthMinutes     Typical acquisition time for datasets associated with this separation group
 **    _mode                 Mode: 'add' or 'update'
 **    _message              Status message
 **    _returnCode           Return code
@@ -29,6 +30,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_separation_group(IN _separationgro
 **          01/17/2024 mem - Ported to PostgreSQL
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          07/01/2025 mem - Add _acqLengthMinutes
 **
 *****************************************************/
 DECLARE
@@ -88,6 +90,7 @@ BEGIN
         _active            := Coalesce(_active, 0);
         _samplePrepVisible := Coalesce(_samplePrepVisible, 0);
         _fractionCount     := Coalesce(_fractionCount, 0);
+        _acqLengthMinutes  := Coalesce(_acqLengthMinutes, 0);
         _mode              := Trim(Lower(Coalesce(_mode, '')));
 
         If _separationGroup = '' Then
@@ -125,13 +128,15 @@ BEGIN
                 comment,
                 active,
                 sample_prep_visible,
-                fraction_count
+                fraction_count,
+                acq_length_minutes
             ) VALUES (
                 _separationGroup,
                 _comment,
                 _active,
                 _samplePrepVisible,
-                _fractionCount
+                _fractionCount,
+                _acqLengthMinutes
             );
 
         End If;
@@ -146,7 +151,8 @@ BEGIN
             SET comment             = _comment,
                 active              = _active,
                 sample_prep_visible = _samplePrepVisible,
-                fraction_count      = _fractionCount
+                fraction_count      = _fractionCount,
+                acq_length_minutes  = _acqLengthMinutes
             WHERE separation_group = _separationGroup::citext;
 
         End If;
@@ -172,11 +178,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.add_update_separation_group(IN _separationgroup text, IN _comment text, IN _active integer, IN _sampleprepvisible integer, IN _fractioncount integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+ALTER PROCEDURE public.add_update_separation_group(IN _separationgroup text, IN _comment text, IN _active integer, IN _sampleprepvisible integer, IN _fractioncount integer, IN _acqlengthminutes integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE add_update_separation_group(IN _separationgroup text, IN _comment text, IN _active integer, IN _sampleprepvisible integer, IN _fractioncount integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE add_update_separation_group(IN _separationgroup text, IN _comment text, IN _active integer, IN _sampleprepvisible integer, IN _fractioncount integer, IN _acqlengthminutes integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.add_update_separation_group(IN _separationgroup text, IN _comment text, IN _active integer, IN _sampleprepvisible integer, IN _fractioncount integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateSeparationGroup';
+COMMENT ON PROCEDURE public.add_update_separation_group(IN _separationgroup text, IN _comment text, IN _active integer, IN _sampleprepvisible integer, IN _fractioncount integer, IN _acqlengthminutes integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateSeparationGroup';
 
