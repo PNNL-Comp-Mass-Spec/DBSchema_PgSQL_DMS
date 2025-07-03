@@ -7,7 +7,7 @@ CREATE TABLE cc.t_service_use (
     report_id integer NOT NULL,
     ticket_number public.citext NOT NULL,
     charge_code public.citext DEFAULT ''::public.citext NOT NULL,
-    service_type_id integer DEFAULT 0 NOT NULL,
+    service_type_id smallint DEFAULT 0 NOT NULL,
     transaction_date timestamp without time zone,
     transaction_units real,
     is_held public.citext DEFAULT 'N'::public.citext NOT NULL,

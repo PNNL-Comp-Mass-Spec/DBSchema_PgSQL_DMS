@@ -12,19 +12,6 @@ CREATE TABLE public.t_dataset_cc_report_state (
 ALTER TABLE public.t_dataset_cc_report_state OWNER TO d3l243;
 
 --
--- Name: t_dataset_cc_report_state_cc_report_state_id_seq; Type: SEQUENCE; Schema: public; Owner: d3l243
---
-
-ALTER TABLE public.t_dataset_cc_report_state ALTER COLUMN cc_report_state_id ADD GENERATED ALWAYS AS IDENTITY (
-    SEQUENCE NAME public.t_dataset_cc_report_state_cc_report_state_id_seq
-    START WITH 0
-    INCREMENT BY 1
-    MINVALUE 0
-    NO MAXVALUE
-    CACHE 1
-);
-
---
 -- Name: t_dataset_cc_report_state pk_t_dataset_cc_report_state; Type: CONSTRAINT; Schema: public; Owner: d3l243
 --
 

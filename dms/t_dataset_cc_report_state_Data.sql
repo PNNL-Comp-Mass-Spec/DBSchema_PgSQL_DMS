@@ -32,13 +32,6 @@ COPY public.t_dataset_cc_report_state (cc_report_state_id, cc_report_state, desc
 
 
 --
--- Name: t_dataset_cc_report_state_cc_report_state_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
---
-
-SELECT pg_catalog.setval('public.t_dataset_cc_report_state_cc_report_state_id_seq', 5, true);
-
-
---
 -- PostgreSQL database dump complete
 --
 
