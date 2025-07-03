@@ -38,7 +38,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset(IN _datasetname text, IN _
 **    _aggregationJobDataset    Set to true when creating an in-silico dataset to associate with an aggregation job
 **    _captureSubfolder         Only used when _mode is 'add' or 'bad'
 **    _lcCartConfig             LC cart config
-**    _logDebugMessages         When true, log debug messages
+**    _logDebugMessages         When true, log debug messages; will also show additional messages using RAISE INFO
 **    _message                  Status message
 **    _returnCode               Return code
 **
@@ -162,6 +162,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset(IN _datasetname text, IN _
 **          01/22/2025 mem - Include the dataset age in the error message if the dataset already exists and it was created within the last two hours
 **          05/16/2025 mem - Use new procedure name in exception message
 **          06/27/2025 mem - Specify parameter name when calling schedule_predefined_analysis_jobs
+**          07/02/2025 mem - Update cost center service type ID
 **
 *****************************************************/
 DECLARE
@@ -233,6 +234,8 @@ DECLARE
     _logErrors boolean := false;
     _targetType int;
     _alterEnteredByMessage text;
+    _currentServiceTypeID smallint;
+    _autoDefinedServiceTypeID smallint;
 
     _sqlState text;
     _exceptionMessage text;
@@ -1589,6 +1592,39 @@ BEGIN
                             _message        => _message,        -- Output
                             _returnCode     => _returnCode);    -- Output
 
+        End If;
+
+        ---------------------------------------------------
+        -- If adding or updating a dataset, update service_type_id if required
+        ---------------------------------------------------
+
+        If _mode IN ('update', 'add') Then
+            SELECT service_type_id
+            INTO _currentServiceTypeID
+            FROM t_dataset
+            WHERE dataset_id = _datasetID;
+
+            _autoDefinedServiceTypeID := public.get_dataset_cc_service_type(_datasetID);
+
+            If _currentServiceTypeID <> _autoDefinedServiceTypeID Then
+                If _autoDefinedServiceTypeID = 25 And _currentServiceTypeID <> 0 Then
+                    -- Leave the current service type ID as-is, since it has already been manually defined
+                    If _logDebugMessages Then
+                        RAISE INFO 'Leaving service type ID as % for dataset ID %', _currentServiceTypeID, _datasetID;
+                    End If;
+                Else
+                    UPDATE t_dataset
+                    SET service_type_id = _autoDefinedServiceTypeID
+                    WHERE dataset_id = _datasetID;
+
+                    If _currentServiceTypeID <> 0 Or _logDebugMessages Then
+                        _debugMsg := format('Changed cost center service type ID for dataset ID %s: %s -> %s',
+                                            _datasetID, _currentServiceTypeID, _autoDefinedServiceTypeID);
+
+                        CALL post_log_entry ('Normal', _debugMsg, 'Add_Update_Dataset');
+                    End If;
+                End If;
+            End If;
         End If;
 
         -- Update _message if _warning is not empty
