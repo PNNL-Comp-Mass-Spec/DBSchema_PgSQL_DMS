@@ -46,6 +46,8 @@ CREATE VIEW public.v_requested_run_detail_report AS
     (eup.proposal_end_date)::date AS eus_proposal_end_date,
     psn.state_name AS eus_proposal_state,
     public.get_requested_run_eus_users_list(rr.request_id, 'V'::text) AS eus_user,
+    rr.service_type_id AS cost_center_service_type_id,
+    ccst.service_type AS cost_center_service_type,
     t_attachments.attachment_name AS mrm_transition_list,
     rr.note,
     rr.special_instructions,
@@ -53,7 +55,7 @@ CREATE VIEW public.v_requested_run_detail_report AS
             WHEN ((rr.state_name OPERATOR(public.=) ANY (ARRAY['Active'::public.citext, 'Holding'::public.citext])) AND (cc.activation_state >= 3)) THEN 10
             ELSE (cc.activation_state)::integer
         END AS wp_activation_state
-   FROM (((((((((((((((((((public.t_dataset_type_name dtn
+   FROM ((((((((((((((((((((public.t_dataset_type_name dtn
      JOIN (public.t_requested_run rr
      JOIN public.t_experiments e ON ((rr.exp_id = e.exp_id))) ON ((dtn.dataset_type_id = rr.request_type_id)))
      JOIN public.t_users u ON ((rr.requester_username OPERATOR(public.=) u.username)))
@@ -62,6 +64,7 @@ CREATE VIEW public.v_requested_run_detail_report AS
      JOIN public.t_requested_run_queue_state qs ON ((rr.queue_state = qs.queue_state)))
      JOIN public.t_requested_run_batches rrb ON ((rr.batch_id = rrb.batch_id)))
      JOIN public.t_eus_usage_type eut ON ((rr.eus_usage_type_id = eut.eus_usage_type_id)))
+     JOIN cc.t_service_type ccst ON ((rr.service_type_id = ccst.service_type_id)))
      LEFT JOIN public.t_attachments ON ((rr.mrm_attachment = t_attachments.attachment_id)))
      LEFT JOIN public.t_dataset ds ON ((rr.dataset_id = ds.dataset_id)))
      LEFT JOIN public.t_lc_cart_configuration cartconfig ON ((rr.cart_config_id = cartconfig.cart_config_id)))

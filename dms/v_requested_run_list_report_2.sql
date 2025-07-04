@@ -38,6 +38,7 @@ CREATE VIEW public.v_requested_run_list_report_2 AS
     lc.cart_name AS cart,
     cartconfig.cart_config_name AS cart_config,
     ds.comment AS dataset_comment,
+    rr.service_type_id AS cc_service_type,
     rr.request_name_code,
         CASE
             WHEN (NOT (rr.state_name OPERATOR(public.=) ANY (ARRAY['Active'::public.citext, 'Holding'::public.citext]))) THEN 0
@@ -50,7 +51,7 @@ CREATE VIEW public.v_requested_run_list_report_2 AS
             WHEN ((rr.state_name OPERATOR(public.=) ANY (ARRAY['Active'::public.citext, 'Holding'::public.citext])) AND (rr.cached_wp_activation_state >= 3)) THEN 10
             ELSE (rr.cached_wp_activation_state)::integer
         END AS wp_activation_state
-   FROM (((((((((((((((((public.t_requested_run rr
+   FROM ((((((((((((((((((public.t_requested_run rr
      JOIN public.t_dataset_type_name dtn ON ((dtn.dataset_type_id = rr.request_type_id)))
      JOIN public.t_users u ON ((rr.requester_username OPERATOR(public.=) u.username)))
      JOIN public.t_experiments e ON ((rr.exp_id = e.exp_id)))
@@ -59,6 +60,7 @@ CREATE VIEW public.v_requested_run_list_report_2 AS
      JOIN public.t_lc_cart lc ON ((rr.cart_id = lc.cart_id)))
      JOIN public.t_requested_run_queue_state qs ON ((rr.queue_state = qs.queue_state)))
      JOIN public.t_charge_code_activation_state cca ON ((rr.cached_wp_activation_state = cca.activation_state)))
+     JOIN cc.t_service_type ccst ON ((rr.service_type_id = ccst.service_type_id)))
      LEFT JOIN public.t_dataset ds ON ((rr.dataset_id = ds.dataset_id)))
      LEFT JOIN public.t_lc_cart_configuration cartconfig ON ((rr.cart_config_id = cartconfig.cart_config_id)))
      LEFT JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
