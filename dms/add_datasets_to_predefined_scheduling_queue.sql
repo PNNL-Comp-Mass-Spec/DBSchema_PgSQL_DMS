@@ -9,8 +9,10 @@ CREATE OR REPLACE PROCEDURE public.add_datasets_to_predefined_scheduling_queue(I
 **
 **  Desc:
 **      Add datasets to public.t_predefined_analysis_scheduling_queue so that they can be checked against the predefined analysis job rules
-**
 **      Useful for processing a set of datasets after creating a new predefine
+**
+**      The added rows will have ExcludeDatasetsNotReleased=1 and PreventDuplicateJobs=1
+**      Alternatively, use procedure schedule_predefined_analysis_jobs to add a list of datasets by name or dataset ID, and to optionally override default options that this procedure assumes
 **
 **  Arguments:
 **    _datasetIDs       List of dataset IDs (comma, tab, or newline separated)
@@ -19,12 +21,27 @@ CREATE OR REPLACE PROCEDURE public.add_datasets_to_predefined_scheduling_queue(I
 **    _returnCode       Return code
 **    _callingUser      Username of the calling user
 **
+**  Example Usage:
+**      call add_datasets_to_predefined_scheduling_queue('1401188, 1401186, 1400776, 1400771, 1400750, 1400749', _infoOnly => true);
+**
+**      call schedule_predefined_analysis_jobs(
+**               '1401188, 1401186, 1400776, 1400771, 1400750, 1400749',
+**               _analysisToolNameFilter => '',
+**               _excludeDatasetsNotReleased => true,
+**               _preventDuplicateJobs => true,
+**               _infoOnly => true);
+**
+**      call schedule_predefined_analysis_jobs(
+**               'QC_Mam_23_01_R06_03July25_Monty_ES906_1602_70SPD, QC_Mam_23_01_R02_03July25_Ned_BEHCoA-25-04-29, QC_Mam_23_01_4xdilu_WV_R3_04Jul25_Barney_BEHCoA-Tu-24-12-12',
+**               _infoOnly => true);
+**
 **  Auth:   mem
 **  Date:   03/31/2016 mem - Initial Version
 **          09/05/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
-**          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
+**          10/02/2023 mem - Do not include comma delimiter when ting parse_delimited_integer_list for a comma-separated list
+**          07/07/2025 mem - Replace 'Yes' with 1 when adding a row to t_predefined_analysis_scheduling_queue
 **
 *****************************************************/
 DECLARE
@@ -83,7 +100,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Look for Datasets already present in t_predefined_analysis_scheduling_queue
+    -- Look for datasets already present in t_predefined_analysis_scheduling_queue
     -- with state 'New'
     ---------------------------------------------------
 
@@ -174,8 +191,8 @@ BEGIN
     SELECT dataset_id,
            _callingUser,
            '' AS AnalysisToolNameFilter,
-           'Yes' AS ExcludeDatasetsNotReleased,
-           'Yes' AS PreventDuplicateJobs,
+           1 AS ExcludeDatasetsNotReleased,
+           1 AS PreventDuplicateJobs,
            'New' AS State,
            '' AS Message
     FROM Tmp_DatasetsToProcess
