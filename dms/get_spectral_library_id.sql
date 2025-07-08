@@ -72,6 +72,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          09/01/2024 mem - Ignore spectrum libaries with state 5 (Inactive)
 **          09/03/2024 mem - Add argument _programVersion
+**          07/07/2025 mem - Use new column names in query
 **
 *****************************************************/
 DECLARE
@@ -250,12 +251,12 @@ BEGIN
 
             -- Lookup the organism for _organismDbFile
 
-            SELECT Org.OG_name
+            SELECT Org.organism
             INTO _organism
             FROM T_Organism_DB_File OrgFile
                  INNER JOIN T_Organisms Org
-                   ON OrgFile.Organism_ID = Org.Organism_ID
-            WHERE OrgFile.FileName = _organismDbFile::citext;
+                   ON OrgFile.organism_id = Org.organism_id
+            WHERE OrgFile.file_name = _organismDbFile::citext;
 
             If Not FOUND Then
                 _logMessage := format('Legacy FASTA file not found in T_Organism_DB_File; cannot determine the organism for %s', _organismDbFile);
