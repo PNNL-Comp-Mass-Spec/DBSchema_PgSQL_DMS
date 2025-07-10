@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE public.validate_dataset_type(IN _datasetid integer, 
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          01/10/2024 mem - Add support for DIA datasets
 **          01/30/2024 mem - Auto-switch from HMS-CID-HMSn to HMS-HMSn
+**          07/10/2025 bcg - Auto-switch from DIA-* to * when there are no DIA scans
 **
 *****************************************************/
 DECLARE
@@ -392,6 +393,22 @@ BEGIN
 
         Else
             _warnMessage := format('Warning: Dataset type is %s but no HMS scans are present', _currentDatasetType);
+        End If;
+
+        _requiredAction := 'AutoDefineDSType';
+    End If;
+
+    If _requiredAction = '' And _scanCounts.ActualCountDIA = 0 And _currentDatasetType Like 'DIA%' Then
+        -- Dataset does not have DIA scans, but current dataset type says it does
+        If Not _currentDatasetType Like 'IMS%' Then
+            _autoDefineDSType := true;
+
+            If _infoOnly Then
+                RAISE INFO 'Set _autoDefineDSType to true because ActualCountDIA = 0 And _currentDatasetType Like ''DIA%%''';
+            End If;
+
+        Else
+            _warnMessage := format('Warning: Dataset type is %s but no DIA scans are present', _currentDatasetType);
         End If;
 
         _requiredAction := 'AutoDefineDSType';
