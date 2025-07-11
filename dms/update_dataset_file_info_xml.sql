@@ -122,6 +122,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid in
 **          03/07/2024 mem - Add support for Extracted Ion Chromatogram (EIC) data
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          07/10/2025 mem - Call procedure update_dataset_service_type_if_required
 **
 *****************************************************/
 DECLARE
@@ -1112,6 +1113,17 @@ BEGIN
             RAISE INFO '%', _message;
         End If;
 
+        -----------------------------------------------
+        -- Update service_type_id in t_dataset if required
+        -----------------------------------------------
+
+        _currentLocation := 'Call update_dataset_service_type_if_required';
+
+        CALL update_dataset_service_type_if_required (
+                _datasetID        => _datasetID,
+                _infoOnly         => _infoOnly,
+                _logDebugMessages => false);
+
         ---------------------------------------------------
         -- Log SP usage
         ---------------------------------------------------
@@ -1156,7 +1168,6 @@ BEGIN
         DROP TABLE IF EXISTS Tmp_Duplicate_Datasets;
         DROP TABLE IF EXISTS Tmp_EIC_Values;
     END;
-
 END
 $$;
 
