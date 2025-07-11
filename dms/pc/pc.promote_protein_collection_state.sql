@@ -27,6 +27,7 @@ CREATE OR REPLACE PROCEDURE pc.promote_protein_collection_state(IN _addnewprotei
 **          08/22/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          05/09/2024 mem - Cache protein collection lists in a temporary table, removing the need to re-query t_analysis_job for each protein collection
+**          07/10/2025 mem - Use ElsIf for else if
 **
 *****************************************************/
 DECLARE
@@ -119,7 +120,7 @@ BEGIN
                 If _infoOnly Then
                     RAISE INFO '';
                     RAISE INFO '%', _currentLocation;
-                ElseIf Extract(epoch from (clock_timestamp() - _lastStatusTime)) > 4 Then
+                ElsIf Extract(epoch from (clock_timestamp() - _lastStatusTime)) > 4 Then
                     -- Show a status message since four seconds have elapsed
                     RAISE INFO ' ... processed % / % protein collections', _countProcessed, _countTotal;
                     _lastStatusTime := clock_timestamp();
