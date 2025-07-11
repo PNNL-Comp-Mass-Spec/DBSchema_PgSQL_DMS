@@ -21,12 +21,14 @@ CREATE OR REPLACE FUNCTION public.get_dataset_cc_service_type(_datasetid integer
 **
 **  Auth:   mem
 **  Date:   06/29/2025 mem - Initial release
+**          07/10/2025 mem - Use requested run start and finish times when the dataset acquisition start/end times are null
 **
 *****************************************************/
 DECLARE
     _logErrors boolean := false;
     _datasetInfo record;
-    _serviceTypeID int;
+    _acqLengthMinutes int;
+    _serviceTypeID smallint;
 
     _sqlState text;
     _exceptionMessage text;
@@ -54,7 +56,9 @@ BEGIN
            DS.dataset_rating_id,
            InstName.instrument,
            InstName.instrument_group,
+           DS.acq_time_start,
            DS.acq_length_minutes,
+           Round(extract(epoch FROM RR.request_run_finish - RR.request_run_start) / 60.0, 0)::int AS req_run_acq_length_minutes,
            DS.separation_type,
            SS.separation_group,
            SampType.name AS sampleTypeName
@@ -72,7 +76,24 @@ BEGIN
            ON DS.separation_type = SS.separation_type
          INNER JOIN t_secondary_sep_sample_type SampType
            ON SS.sample_type_id = SampType.sample_type_id
-    WHERE dataset_id = _datasetID;
+         LEFT OUTER JOIN t_requested_run RR
+           ON DS.dataset_id = RR.dataset_id
+    WHERE DS.dataset_id = _datasetID;
+
+    ---------------------------------------------------
+    -- Determine the value to use for acquisition length
+    --
+    -- New datasets will have null values for acq_time_start and acq_time_end, and thus acq_length_minutes will be 0
+    -- When this is the case, use the requested run start and finish times to determine the acquisition length
+    --
+    -- After dataset capture finishes, this procedure is called again, since the MSFileInfoScanner
+    -- should have more accurately determined the start and end acquisition times
+    ---------------------------------------------------
+
+    _acqLengthMinutes := CASE WHEN _datasetInfo.acq_time_start IS NULL OR _datasetInfo.acq_length_minutes <= 0
+                              THEN Coalesce(_datasetInfo.req_run_acq_length_minutes, 0)
+                              ELSE _datasetInfo.acq_length_minutes
+                         END;
 
     ---------------------------------------------------
     -- Determine the service type
@@ -86,7 +107,7 @@ BEGIN
              _datasetRatingID     => _datasetInfo.dataset_rating_id,
              _instrumentName      => _datasetInfo.instrument,
              _instrumentGroupName => _datasetInfo.instrument_group,
-             _acqLengthMinutes    => _datasetInfo.acq_length_minutes,
+             _acqLengthMinutes    => _acqLengthMinutes,
              _separationTypeName  => _datasetInfo.separation_type,
              _separationGroupName => _datasetInfo.separation_group,
              _sampleTypeName      => _datasetInfo.sampleTypeName
