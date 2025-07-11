@@ -163,6 +163,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset(IN _datasetname text, IN _
 **          05/16/2025 mem - Use new procedure name in exception message
 **          06/27/2025 mem - Specify parameter name when calling schedule_predefined_analysis_jobs
 **          07/02/2025 mem - Update cost center service type ID
+**          07/10/2025 mem - Refactor code into procedure update_dataset_service_type_if_required
 **
 *****************************************************/
 DECLARE
@@ -234,8 +235,6 @@ DECLARE
     _logErrors boolean := false;
     _targetType int;
     _alterEnteredByMessage text;
-    _currentServiceTypeID smallint;
-    _autoDefinedServiceTypeID smallint;
 
     _sqlState text;
     _exceptionMessage text;
@@ -1599,32 +1598,10 @@ BEGIN
         ---------------------------------------------------
 
         If _mode IN ('update', 'add') Then
-            SELECT service_type_id
-            INTO _currentServiceTypeID
-            FROM t_dataset
-            WHERE dataset_id = _datasetID;
-
-            _autoDefinedServiceTypeID := public.get_dataset_cc_service_type(_datasetID);
-
-            If _currentServiceTypeID <> _autoDefinedServiceTypeID Then
-                If _autoDefinedServiceTypeID = 25 And _currentServiceTypeID <> 0 Then
-                    -- Leave the current service type ID as-is, since it has already been manually defined
-                    If _logDebugMessages Then
-                        RAISE INFO 'Leaving service type ID as % for dataset ID %', _currentServiceTypeID, _datasetID;
-                    End If;
-                Else
-                    UPDATE t_dataset
-                    SET service_type_id = _autoDefinedServiceTypeID
-                    WHERE dataset_id = _datasetID;
-
-                    If _currentServiceTypeID <> 0 Or _logDebugMessages Then
-                        _debugMsg := format('Changed cost center service type ID for dataset ID %s: %s -> %s',
-                                            _datasetID, _currentServiceTypeID, _autoDefinedServiceTypeID);
-
-                        CALL post_log_entry ('Normal', _debugMsg, 'Add_Update_Dataset');
-                    End If;
-                End If;
-            End If;
+            CALL update_dataset_service_type_if_required (
+                    _datasetID        => _datasetID,
+                    _infoOnly         => false,
+                    _logDebugMessages => _logDebugMessages);
         End If;
 
         -- Update _message if _warning is not empty
