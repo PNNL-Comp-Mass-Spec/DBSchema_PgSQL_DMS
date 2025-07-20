@@ -30,6 +30,8 @@ COMMENT ON TABLE cc.t_service_cost_rate IS 'Column "base_rate_per_hour_adj" is c
 ALTER TABLE ONLY cc.t_service_cost_rate
     ADD CONSTRAINT pk_t_service_cost_rate PRIMARY KEY (cost_group_id, service_type_id);
 
+ALTER TABLE cc.t_service_cost_rate CLUSTER ON pk_t_service_cost_rate;
+
 --
 -- Name: t_service_cost_rate fk_t_service_cost_rate_t_service_cost_group; Type: FK CONSTRAINT; Schema: cc; Owner: d3l243
 --
