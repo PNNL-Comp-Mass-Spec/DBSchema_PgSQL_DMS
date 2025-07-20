@@ -53,6 +53,7 @@ CREATE OR REPLACE PROCEDURE public.delete_dataset(IN _datasetname text, IN _info
 **          05/08/2024 mem - Delete rows from t_cached_dataset_stats instead of t_cached_dataset_instruments
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          01/23/2025 mem - Delete dataset file info from cap.t_dataset_info_xml
+**          07/16/2025 mem - Delete rows from t_dataset_qc_ions
 **
 *****************************************************/
 DECLARE
@@ -239,6 +240,15 @@ BEGIN
                format('Quameter job %s, SMAQC job %s', Coalesce(quameter_job, 0), Coalesce(smaqc_job, 0)),
                ''
         FROM t_dataset_qc
+        WHERE dataset_id = _datasetID;
+
+        INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
+        SELECT 'To be deleted' AS ACTION,
+               'Dataset QC Ions',
+               Dataset_ID,
+               format('Ion %s', Coalesce(mz, 0)),
+               ''
+        FROM t_dataset_qc_ions
         WHERE dataset_id = _datasetID;
 
         INSERT INTO T_Tmp_Target_Items (Action, Item_Type, Item_ID, Item_Name, Comment)
@@ -531,6 +541,17 @@ BEGIN
     End If;
 
     DELETE FROM t_dataset_qc
+    WHERE dataset_id = _datasetID;
+
+    ---------------------------------------------------
+    -- Delete any entries in t_dataset_qc_ions
+    ---------------------------------------------------
+
+    If _showDebug Then
+        RAISE INFO 'Delete dataset ID % from t_dataset_qc_ions', _datasetID;
+    End If;
+
+    DELETE FROM t_dataset_qc_ions
     WHERE dataset_id = _datasetID;
 
     ---------------------------------------------------
