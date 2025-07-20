@@ -6,7 +6,8 @@ CREATE TABLE cc.t_service_use_report (
     report_id integer NOT NULL,
     start_time timestamp without time zone DEFAULT '2025-01-03 00:00:00'::timestamp without time zone NOT NULL,
     end_time timestamp without time zone DEFAULT '2025-01-09 23:59:59.999'::timestamp without time zone NOT NULL,
-    requestor_employee_id public.citext DEFAULT ''::public.citext NOT NULL
+    requestor_employee_id public.citext DEFAULT ''::public.citext NOT NULL,
+    report_state_id integer DEFAULT 1 NOT NULL
 );
 
 
