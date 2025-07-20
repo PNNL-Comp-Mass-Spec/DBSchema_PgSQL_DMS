@@ -10,6 +10,8 @@ CREATE OR REPLACE FUNCTION public.get_cc_service_type(_datasetname text, _experi
 **  Desc:
 **      Determines the cost center service type for the given set of metadata
 **
+**      Service types are tracked via table cc.t_service_type
+**
 **  Arguments:
 **    _datasetName              Dataset name (ignored if an empty string)
 **    _experimentName           Experiment name
@@ -79,6 +81,7 @@ CREATE OR REPLACE FUNCTION public.get_cc_service_type(_datasetname text, _experi
 **
 **  Auth:   mem
 **  Date:   06/28/2025 mem - Initial release
+**          07/19/2025 mem - Return service type ID 1 (None) when the dataset type is "DataFiles", as is the case for data package datasets
 **
 *****************************************************/
 DECLARE
@@ -200,8 +203,12 @@ BEGIN
        _dataset    LIKE 'QC_Shew%'  OR
        _experiment LIKE 'QC_Shew%'  OR
        _dataset    LIKE 'QC_BTLE%'  OR
-       _experiment LIKE 'QC_BTLE%'
+       _experiment LIKE 'QC_BTLE%'  OR
     Then
+        RETURN 1;       -- Service type: None
+    End If;
+
+    If _datasetType = 'DataFiles' Then
         RETURN 1;       -- Service type: None
     End If;
 
