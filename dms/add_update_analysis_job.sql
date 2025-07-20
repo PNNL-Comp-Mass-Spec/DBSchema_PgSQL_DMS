@@ -114,6 +114,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job(IN _datasetname text,
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          10/24/2024 mem - Prevent copying data package based jobs
 **          02/15/2025 mem - Set update_required to 1 in t_cached_dataset_stats
+**          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
 **
 *****************************************************/
 DECLARE
@@ -214,7 +215,13 @@ BEGIN
             RAISE INFO '';
         End If;
 
-        If _mode IN ('add', 'preview', 'previewadd') And _datasetName SIMILAR TO 'DataPackage_[0-9]%' Then
+        If _mode = '' Then
+            RAISE EXCEPTION 'Empty string specified for parameter _mode';
+        ElsIf Not _mode IN ('add', 'update', 'check_add', 'check_update', 'preview', Lower('PreviewAdd'), Lower('PreviewUpdate'), 'reset') Then
+            RAISE EXCEPTION 'Unsupported value for parameter _mode: %', _mode;
+        End If;
+
+        If _mode IN ('add', 'preview', Lower('PreviewAdd')) And _datasetName SIMILAR TO 'DataPackage_[0-9]%' Then
             _msg := 'Cannot copy data package based jobs using this mechanism; instead, copy the analysis job request';
 
             If _infoOnly Then

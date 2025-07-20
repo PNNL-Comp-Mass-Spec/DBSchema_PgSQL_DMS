@@ -45,6 +45,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_sample_submission(INOUT _id intege
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          05/28/2025 mem - Fix bug showing the error message returned by procedure assure_material_containers_exist
+**          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
 **
 *****************************************************/
 DECLARE
@@ -105,6 +106,14 @@ BEGIN
         ---------------------------------------------------
         -- Validate the inputs
         ---------------------------------------------------
+
+        _mode := Trim(Lower(Coalesce(_mode, '')));
+
+        If _mode = '' Then
+            RAISE EXCEPTION 'Empty string specified for parameter _mode';
+        ElsIf Not _mode IN ('add', 'update', 'check_add', 'check_update') Then
+            RAISE EXCEPTION 'Unsupported value for parameter _mode: %', _mode;
+        End If;
 
         _campaign := Trim(Coalesce(_campaign, ''));
 
@@ -181,8 +190,6 @@ BEGIN
             _returnCode := 'U5202';
             RETURN;
         End If;
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
 
         ---------------------------------------------------
         -- Is entry already in database? (only applies to updates)

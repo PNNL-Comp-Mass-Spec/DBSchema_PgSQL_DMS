@@ -164,6 +164,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset(IN _datasetname text, IN _
 **          06/27/2025 mem - Specify parameter name when calling schedule_predefined_analysis_jobs
 **          07/02/2025 mem - Update cost center service type ID
 **          07/10/2025 mem - Refactor code into procedure update_dataset_service_type_if_required
+**          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
 **
 *****************************************************/
 DECLARE
@@ -293,12 +294,14 @@ BEGIN
 
         _internalStandards := Trim(Coalesce(_internalStandards, ''));
 
-        If _internalStandards = '' Or _internalStandards = 'na' Then
-            _internalStandards := 'none';
+        If _mode = '' Then
+            RAISE EXCEPTION 'Empty string specified for parameter _mode';
+        ElsIf Not _mode IN ('add', 'update', 'check_add', 'check_update', 'add_dataset_create_task', 'add_trigger', 'bad') Then
+            RAISE EXCEPTION 'Unsupported value for parameter _mode: %', _mode;
         End If;
 
-        If Coalesce(_mode, '') = '' Then
-            RAISE EXCEPTION 'Mode must be specified';
+        If _internalStandards = '' Or _internalStandards = 'na' Then
+            _internalStandards := 'none';
         End If;
 
         If Coalesce(_secSep, '') = '' Then
@@ -1072,7 +1075,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-
             ---------------------------------------------------
             -- Lookup storage path ID
             ---------------------------------------------------
@@ -1218,39 +1220,39 @@ BEGIN
                     -- Make a new requested run for the new dataset
 
                     CALL public.add_update_requested_run (
-                                            _requestName => _requestName,
-                                            _experimentName => _experimentName,
-                                            _requesterUsername => _operatorUsername,
-                                            _instrumentGroup => _instrumentGroup,
-                                            _workPackage => _workPackage,
-                                            _msType => _msType,
-                                            _instrumentSettings => 'na',
-                                            _wellplateName => null,
-                                            _wellNumber => null,
-                                            _internalStandard => 'na',
-                                            _comment => 'Automatically created by Dataset entry',
-                                            _batch => 0,
-                                            _block => 0,
-                                            _runOrder => 0,
-                                            _eusProposalID => _eusProposalID,
-                                            _eusUsageType => _eusUsageType,
-                                            _eusUsersList => _eusUsersList,
-                                            _mode => 'add-auto',
-                                            _secSep => _secSep,
-                                            _mrmAttachment => '',
-                                            _status => 'Completed',
-                                            _skipTransactionRollback => true,
+                                            _requestName                 => _requestName,
+                                            _experimentName              => _experimentName,
+                                            _requesterUsername           => _operatorUsername,
+                                            _instrumentGroup             => _instrumentGroup,
+                                            _workPackage                 => _workPackage,
+                                            _msType                      => _msType,
+                                            _instrumentSettings          => 'na',
+                                            _wellplateName               => null,
+                                            _wellNumber                  => null,
+                                            _internalStandard            => 'na',
+                                            _comment                     => 'Automatically created by Dataset entry',
+                                            _batch                       => 0,
+                                            _block                       => 0,
+                                            _runOrder                    => 0,
+                                            _eusProposalID               => _eusProposalID,
+                                            _eusUsageType                => _eusUsageType,
+                                            _eusUsersList                => _eusUsersList,
+                                            _mode                        => 'add-auto',
+                                            _secSep                      => _secSep,
+                                            _mrmAttachment               => '',
+                                            _status                      => 'Completed',
+                                            _skipTransactionRollback     => true,
                                             _autoPopulateUserListIfBlank => true,        -- Auto populate _eusUsersList if blank since this is an Auto-Request
-                                            _callingUser => _callingUser,
-                                            _vialingConc => null,
-                                            _vialingVol => null,
-                                            _stagingLocation => null,
-                                            _requestIDForUpdate => null,
-                                            _logDebugMessages => _logDebugMessages,
-                                            _request => _requestID,                                 -- Output
-                                            _resolvedInstrumentInfo => _resolvedInstrumentInfo,     -- Output
-                                            _message => _message,                                   -- Output
-                                            _returnCode => _returnCode);                            -- Output
+                                            _callingUser                 => _callingUser,
+                                            _vialingConc                 => null,
+                                            _vialingVol                  => null,
+                                            _stagingLocation             => null,
+                                            _requestIDForUpdate          => null,
+                                            _logDebugMessages            => _logDebugMessages,
+                                            _request                     => _requestID,                  -- Output
+                                            _resolvedInstrumentInfo      => _resolvedInstrumentInfo,     -- Output
+                                            _message                     => _message,                    -- Output
+                                            _returnCode                  => _returnCode);                -- Output
 
                     If _returnCode <> '' Then
                         If _eusProposalID = '' And _eusUsageType = '' And _eusUsersList = '' Then

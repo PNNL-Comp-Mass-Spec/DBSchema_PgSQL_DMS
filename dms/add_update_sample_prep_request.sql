@@ -143,6 +143,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_sample_prep_request(IN _requestnam
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          01/24/2025 mem - Set _estimatedMSRuns to '0' if an empty string, 'None', or 'na'
+**          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
 **
 *****************************************************/
 DECLARE
@@ -215,7 +216,6 @@ BEGIN
     End If;
 
     BEGIN
-
         ---------------------------------------------------
         -- Validate the inputs
         ---------------------------------------------------
@@ -252,8 +252,13 @@ BEGIN
         _reasonForHighPriority    := Trim(Coalesce(_reasonForHighPriority, ''));
         _tissue                   := Trim(Coalesce(_tissue, ''));
         _callingUser              := Trim(Coalesce(_callingUser, ''));
-
         _mode                     := Trim(Lower(Coalesce(_mode, '')));
+
+        If _mode = '' Then
+            RAISE EXCEPTION 'Empty string specified for parameter _mode';
+        ElsIf Not _mode IN ('add', 'update', 'check_add', 'check_update') Then
+            RAISE EXCEPTION 'Unsupported value for parameter _mode: %', _mode;
+        End If;
 
         If Coalesce(_eusUserID, 0) <= 0 Then
             _eusUserID := Null;
@@ -701,7 +706,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-
             INSERT INTO t_sample_prep_request (
                 request_name,
                 requester_username,
@@ -779,7 +783,6 @@ BEGIN
                 CALL public.alter_entered_by_user ('public', 't_sample_prep_request_updates', 'request_id', _id, _callingUser,
                                                    _entryDateColumnName => 'date_of_change', _enteredByColumnName => 'system_account', _message => _alterEnteredByMessage);
             End If;
-
         End If;
 
         ---------------------------------------------------
@@ -787,7 +790,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-
             SELECT estimated_prep_time_days
             INTO _currentEstimatedPrepTimeDays
             FROM t_sample_prep_request
@@ -840,7 +842,6 @@ BEGIN
                 _msg := 'Not updating estimated prep time since user is not a sample prep request staff member';
                 _message := public.append_to_text(_message, _msg);
             End If;
-
         End If;
 
         DROP TABLE Tmp_MaterialContainers;

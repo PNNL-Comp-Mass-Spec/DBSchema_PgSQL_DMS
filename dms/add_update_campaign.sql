@@ -72,6 +72,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_campaign(IN _campaignname text, IN
 **          01/04/2024 mem - Ported to PostgreSQL
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
 **
 *****************************************************/
 DECLARE
@@ -150,6 +151,12 @@ BEGIN
         _eusProposalList := Trim(Coalesce(_eusProposalList, ''));
         _mode            := Trim(Lower(Coalesce(_mode, '')));
 
+        If _mode = '' Then
+            RAISE EXCEPTION 'Empty string specified for parameter _mode';
+        ElsIf Not _mode IN ('add', 'update', 'check_add', 'check_update') Then
+            RAISE EXCEPTION 'Unsupported value for parameter _mode: %', _mode;
+        End If;
+
         If _campaignName = '' Then
             RAISE EXCEPTION 'Campaign name must be specified';
         End If;
@@ -186,13 +193,13 @@ BEGIN
 
         -- Cannot create an entry that already exists
 
-        If FOUND And _mode = 'add' Then
+        If FOUND And _mode IN ('add', 'check_add') Then
             RAISE EXCEPTION 'Cannot add: campaign "%" already exists', _campaignName;
         End If;
 
         -- Cannot update a non-existent entry
 
-        If Not FOUND And _mode = 'update' Then
+        If Not FOUND And _mode IN ('update', 'check_update') Then
             RAISE EXCEPTION 'Cannot update: campaign "%" does not exist', _campaignName;
         End If;
 
@@ -242,7 +249,7 @@ BEGIN
         -- Validate campaign name
         ---------------------------------------------------
 
-        If _mode = 'add' Then
+        If _mode IN ('add', 'check_add') Then
             _badCh := public.validate_chars(_campaignName, '');
 
             -- Campaign names can have spaces, so remove '[space]' from _badCh if present
@@ -308,7 +315,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-
             ---------------------------------------------------
             -- Create research team
             ---------------------------------------------------
@@ -409,7 +415,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-
             ---------------------------------------------------
             -- Update campaign
             ---------------------------------------------------
@@ -485,7 +490,6 @@ BEGIN
             _returnCode := _sqlState;
         End If;
     END;
-
 END
 $$;
 

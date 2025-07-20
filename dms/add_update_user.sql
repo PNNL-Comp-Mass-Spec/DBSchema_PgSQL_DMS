@@ -48,6 +48,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_user(IN _username text, IN _hanfor
 **          05/22/2024 mem - Rename the Hanford ID parameter to _hanfordID
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          08/14/2024 mem - Fix bug validating _userUpdate
+**          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
 **
 *****************************************************/
 DECLARE
@@ -99,7 +100,6 @@ BEGIN
     End If;
 
     BEGIN
-
         ---------------------------------------------------
         -- Validate the inputs
         -- Replace tab characters with a space (which will be trimmed if it is at the beginning or end of the string)
@@ -114,6 +114,12 @@ BEGIN
         _operationsList    := Trim(Coalesce(_operationsList, ''));
         _comment           := Trim(Coalesce(_comment, ''));
         _mode              := Trim(Lower(Coalesce(_mode, '')));
+
+        If _mode = '' Then
+            RAISE EXCEPTION 'Empty string specified for parameter _mode';
+        ElsIf Not _mode IN ('add', 'update', 'check_add', 'check_update') Then
+            RAISE EXCEPTION 'Unsupported value for parameter _mode: %', _mode;
+        End If;
 
         If _username = '' Then
             RAISE EXCEPTION 'Username must be specified' USING ERRCODE = 'U5201';
@@ -273,7 +279,6 @@ BEGIN
             _returnCode := _sqlState;
         End If;
     END;
-
 END
 $$;
 

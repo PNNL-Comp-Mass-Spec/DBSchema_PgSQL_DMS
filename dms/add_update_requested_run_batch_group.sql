@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch_group(INOUT _i
 **          01/11/2024 mem - Check for empty strings instead of using char_length()
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
 **
 *****************************************************/
 DECLARE
@@ -92,7 +93,6 @@ BEGIN
     End If;
 
     BEGIN
-
         ---------------------------------------------------
         -- Validate the inputs
         ---------------------------------------------------
@@ -103,6 +103,12 @@ BEGIN
         _requestedRunBatchList := Trim(Coalesce(_requestedRunBatchList, ''));
         _ownerUsername         := Trim(Coalesce(_ownerUsername, ''));
         _mode                  := Trim(Lower(Coalesce(_mode, '')));
+
+        If _mode = '' Then
+            RAISE EXCEPTION 'Empty string specified for parameter _mode';
+        ElsIf Not _mode IN ('add', 'update', 'check_add', 'check_update', Lower('PreviewAdd'), Lower('PreviewUpdate')) Then
+            RAISE EXCEPTION 'Unsupported value for parameter _mode: %', _mode;
+        End If;
 
         If _name = '' Then
             _message := 'Must define a batch group name';

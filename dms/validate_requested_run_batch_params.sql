@@ -119,7 +119,6 @@ BEGIN
         -- Cannot update a non-existent entry
 
         If _mode = 'update' Then
-
             If Coalesce(_batchID, 0) = 0 Then
                 _message := 'Cannot update batch; ID must non-zero';
                 _returnCode := 'U5207';
@@ -218,7 +217,6 @@ BEGIN
             _returnCode := _sqlState;
         End If;
     END;
-
 END
 $$;
 

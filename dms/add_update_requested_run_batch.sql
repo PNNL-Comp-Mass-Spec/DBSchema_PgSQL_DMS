@@ -146,13 +146,18 @@ BEGIN
     End If;
 
     BEGIN
-
         ---------------------------------------------------
         -- Validate the inputs
         ---------------------------------------------------
 
         _requestedBatchPriority := Trim(Coalesce(_requestedBatchPriority, ''));
         _mode                   := Trim(Lower(Coalesce(_mode, '')));
+
+        If _mode = '' Then
+            RAISE EXCEPTION 'Empty string specified for parameter _mode';
+        ElsIf Not _mode IN ('add', 'update', 'check_add', 'check_update', Lower('PreviewAdd')) Then
+            RAISE EXCEPTION 'Unsupported value for parameter _mode: %', _mode;
+        End If;
 
         If _requestedBatchPriority::citext In ('', 'Normal') Then
             _requestedBatchPriority := 'Normal';

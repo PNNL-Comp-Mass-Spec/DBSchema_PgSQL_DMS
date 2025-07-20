@@ -114,6 +114,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_experiment(INOUT _experimentid int
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          08/21/2024 mem - Allow _wellNumber to be an integer instead of A1, A2, A3, A04, B06, etc.
 **                         - Customize the well-in-use warning message
+**          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
 **
 *****************************************************/
 DECLARE
@@ -221,6 +222,12 @@ BEGIN
         _alkylation            := Trim(Upper(Coalesce(_alkylation, '')));
         _mode                  := Trim(Lower(Coalesce(_mode, '')));
         _barcode               := Trim(Coalesce(_barcode, ''));
+
+        If _mode = '' Then
+            RAISE EXCEPTION 'Empty string specified for parameter _mode';
+        ElsIf Not _mode IN ('add', 'update', 'check_add', 'check_update') Then
+            RAISE EXCEPTION 'Unsupported value for parameter _mode: %', _mode;
+        End If;
 
         If _experimentName = '' Then
             RAISE EXCEPTION 'Experiment name must be specified';

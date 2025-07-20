@@ -30,6 +30,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_lc_cart(INOUT _id integer, IN _car
 **          01/12/2024 mem - Ported to PostgreSQL
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
 **
 *****************************************************/
 DECLARE
@@ -40,6 +41,12 @@ DECLARE
 
     _cartStateID int := 0;
     _currentName citext := '';
+
+    _sqlState text;
+    _exceptionMessage text;
+    _exceptionDetail text;
+    _exceptionContext text;
+    _logMessage text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -73,129 +80,155 @@ BEGIN
         RAISE EXCEPTION '%', _message;
     End If;
 
-    ---------------------------------------------------
-    -- Validate the inputs
-    ---------------------------------------------------
+    BEGIN
+        ---------------------------------------------------
+        -- Validate the inputs
+        ---------------------------------------------------
 
-    _cartName        := Trim(Coalesce(_cartName, ''));
-    _cartDescription := Trim(Coalesce(_cartDescription, ''));
-    _cartState       := Trim(Coalesce(_cartState, ''));
-    _mode            := Trim(Lower(Coalesce(_mode, '')));
+        _cartName        := Trim(Coalesce(_cartName, ''));
+        _cartDescription := Trim(Coalesce(_cartDescription, ''));
+        _cartState       := Trim(Coalesce(_cartState, ''));
+        _mode            := Trim(Lower(Coalesce(_mode, '')));
 
-    If public.has_whitespace_chars(_cartName, _allowspace => false) Then
-        If Position(chr(9) In _cartName) > 0 Then
-            RAISE EXCEPTION 'LC cart name cannot contain tabs';
+        If _mode = '' Then
+            RAISE EXCEPTION 'Empty string specified for parameter _mode';
+        ElsIf Not _mode IN ('add', 'update', 'check_add', 'check_update') Then
+            RAISE EXCEPTION 'Unsupported value for parameter _mode: %', _mode;
+        End If;
+
+        If public.has_whitespace_chars(_cartName, _allowspace => false) Then
+            If Position(chr(9) In _cartName) > 0 Then
+                RAISE EXCEPTION 'LC cart name cannot contain tabs';
+            Else
+                RAISE EXCEPTION 'LC cart name cannot contain spaces';
+            End If;
+        End If;
+
+        If _cartName = '' Then
+            RAISE EXCEPTION 'LC cart name must be specified';
+        End If;
+
+        If _cartDescription = '' Then
+            RAISE EXCEPTION 'LC cart description must be specified';
+        End If;
+
+        If _cartState = '' Then
+            RAISE EXCEPTION 'LC cart state must be specified';
+        End If;
+
+        ---------------------------------------------------
+        -- Resolve cart state name to ID
+        ---------------------------------------------------
+
+        SELECT cart_state_id
+        INTO _cartStateID
+        FROM t_lc_cart_state_name
+        WHERE cart_state = _cartState::citext;
+
+        If Not FOUND Then
+            _message := 'Could not resolve state name to ID';
+            RAISE WARNING '%', _message;
+
+            _returnCode := 'U5201';
+            RETURN;
+        End If;
+
+        ---------------------------------------------------
+        -- Verify whether entry exists or not
+        ---------------------------------------------------
+
+        If _mode = 'add' Then
+            _id := 0;
+
+            If Exists (SELECT cart_name FROM t_lc_cart WHERE cart_name = _cartName::citext) Then
+                _message := format('Cannot add: Entry already exists for cart "%s"', _cartName);
+                RAISE WARNING '%', _message;
+
+                _returnCode := 'U5202';
+                RETURN;
+            End If;
+        End If;
+
+        If _mode = 'update' Then
+            If _id Is Null Then
+                RAISE EXCEPTION 'Cannot update: cart ID is null';
+            End If;
+
+            If Not Exists (SELECT cart_id FROM t_lc_cart WHERE cart_id = _id) Then
+                _message := format('Cannot update: cart cart_id "%s" does not exist', _id);
+                RAISE WARNING '%', _message;
+
+                _returnCode := 'U5203';
+                RETURN;
+            End If;
+
+            SELECT cart_name
+            INTO _currentName
+            FROM t_lc_cart
+            WHERE cart_id = _id;
+
+            If _cartName::citext <> _currentName And Exists (SELECT cart_name FROM t_lc_cart WHERE cart_name = _cartName::citext) Then
+                _message := format('Cannot rename - Entry already exists for cart "%s"', _cartName);
+                RAISE WARNING '%', _message;
+
+                _returnCode := 'U5204';
+                RETURN;
+            End If;
+        End If;
+
+        ---------------------------------------------------
+        -- Action for add mode
+        ---------------------------------------------------
+
+        If _mode = 'add' Then
+            INSERT INTO t_lc_cart (
+                cart_name,
+                cart_state_id,
+                cart_description
+            ) VALUES (
+                _cartName,
+                _cartStateID,
+                _cartDescription
+            )
+            RETURNING cart_id
+            INTO _id;
+        End If;
+
+        ---------------------------------------------------
+        -- Action for update mode
+        ---------------------------------------------------
+
+        If _mode = 'update' Then
+
+            UPDATE t_lc_cart
+            SET cart_name        = _cartName,
+                cart_state_id    = _cartStateID,
+                cart_description = _cartDescription
+            WHERE cart_id = _id;
+        End If;
+
+    EXCEPTION
+        WHEN OTHERS THEN
+            GET STACKED DIAGNOSTICS
+                _sqlState         = returned_sqlstate,
+                _exceptionMessage = message_text,
+                _exceptionDetail  = pg_exception_detail,
+                _exceptionContext = pg_exception_context;
+
+        If _logErrors Then
+            _logMessage := format('%s; LC Cart %s', _exceptionMessage, _cartName);
+
+            _message := local_error_handler (
+                            _sqlState, _logMessage, _exceptionDetail, _exceptionContext,
+                            _callingProcLocation => '', _logError => true);
         Else
-            RAISE EXCEPTION 'LC cart name cannot contain spaces';
-        End If;
-    End If;
-
-    If _cartName = '' Then
-        RAISE EXCEPTION 'LC cart name must be specified';
-    End If;
-
-    If _cartDescription = '' Then
-        RAISE EXCEPTION 'LC cart description must be specified';
-    End If;
-
-    If _cartState = '' Then
-        RAISE EXCEPTION 'LC cart state must be specified';
-    End If;
-
-    ---------------------------------------------------
-    -- Resolve cart state name to ID
-    ---------------------------------------------------
-
-    SELECT cart_state_id
-    INTO _cartStateID
-    FROM t_lc_cart_state_name
-    WHERE cart_state = _cartState::citext;
-
-    If Not FOUND Then
-        _message := 'Could not resolve state name to ID';
-        RAISE WARNING '%', _message;
-
-        _returnCode := 'U5201';
-        RETURN;
-    End If;
-
-    ---------------------------------------------------
-    -- Verify whether entry exists or not
-    ---------------------------------------------------
-
-    If _mode = 'add' Then
-        _id := 0;
-
-        If Exists (SELECT cart_name FROM t_lc_cart WHERE cart_name = _cartName::citext) Then
-            _message := format('Cannot add: Entry already exists for cart "%s"', _cartName);
-            RAISE WARNING '%', _message;
-
-            _returnCode := 'U5202';
-            RETURN;
-        End If;
-    End If;
-
-    If _mode = 'update' Then
-        If _id Is Null Then
-            RAISE EXCEPTION 'Cannot update: cart ID is null';
+            _message := _exceptionMessage;
         End If;
 
-        If Not Exists (SELECT cart_id FROM t_lc_cart WHERE cart_id = _id) Then
-            _message := format('Cannot update: cart cart_id "%s" does not exist', _id);
-            RAISE WARNING '%', _message;
-
-            _returnCode := 'U5203';
-            RETURN;
+        If Coalesce(_returnCode, '') = '' Then
+            _returnCode := _sqlState;
         End If;
-
-        SELECT cart_name
-        INTO _currentName
-        FROM t_lc_cart
-        WHERE cart_id = _id;
-
-        If _cartName::citext <> _currentName And Exists (SELECT cart_name FROM t_lc_cart WHERE cart_name = _cartName::citext) Then
-            _message := format('Cannot rename - Entry already exists for cart "%s"', _cartName);
-            RAISE WARNING '%', _message;
-
-            _returnCode := 'U5204';
-            RETURN;
-        End If;
-    End If;
-
-    ---------------------------------------------------
-    -- Action for add mode
-    ---------------------------------------------------
-
-    If _mode = 'add' Then
-
-        INSERT INTO t_lc_cart (
-            cart_name,
-            cart_state_id,
-            cart_description
-        ) VALUES (
-            _cartName,
-            _cartStateID,
-            _cartDescription
-        )
-        RETURNING cart_id
-        INTO _id;
-
-    End If;
-
-    ---------------------------------------------------
-    -- Action for update mode
-    ---------------------------------------------------
-
-    If _mode = 'update' Then
-
-        UPDATE t_lc_cart
-        SET cart_name        = _cartName,
-            cart_state_id    = _cartStateID,
-            cart_description = _cartDescription
-        WHERE cart_id = _id;
-
-    End If;
-
+    END;
 END
 $$;
 

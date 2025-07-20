@@ -157,6 +157,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          02/17/2025 mem - Add support for requested run state 'Holding'
 **                         - Assure that requested run state name is properly capitalized
+**          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
 **
 *****************************************************/
 DECLARE
@@ -253,12 +254,17 @@ BEGIN
     End If;
 
     BEGIN
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
-
         ---------------------------------------------------
         -- Preliminary steps
         ---------------------------------------------------
+
+        _mode := Trim(Lower(Coalesce(_mode, '')));
+
+        If _mode = '' Then
+            RAISE EXCEPTION 'Empty string specified for parameter _mode';
+        ElsIf Not _mode IN ('add', 'add-auto', 'update', 'check_add', 'check_update') Then
+            RAISE EXCEPTION 'Unsupported value for parameter _mode: %', _mode;
+        End If;
 
         If _mode = 'add-auto' Then
             _mode := 'add';

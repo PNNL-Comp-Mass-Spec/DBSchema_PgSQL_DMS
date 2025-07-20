@@ -89,6 +89,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_predefined_analysis(IN _level inte
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          07/15/2024 mem - Fix invalid call to function get_analysis_tool_allowed_dataset_type_list()
+**          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
 **
 *****************************************************/
 DECLARE
@@ -153,7 +154,6 @@ BEGIN
     End If;
 
     BEGIN
-
         ---------------------------------------------------
         -- Validate the inputs
         ---------------------------------------------------
@@ -190,6 +190,12 @@ BEGIN
         End If;
 
         _mode := Trim(Lower(Coalesce(_mode, '')));
+
+        If _mode = '' Then
+            RAISE EXCEPTION 'Empty string specified for parameter _mode';
+        ElsIf Not _mode IN ('add', 'update', 'check_add', 'check_update') Then
+            RAISE EXCEPTION 'Unsupported value for parameter _mode: %', _mode;
+        End If;
 
         ---------------------------------------------------
         -- Update any null filter criteria
@@ -517,7 +523,6 @@ BEGIN
                 _msg := format('Cannot update: predefine ID %s does not exist', _id);
                 RAISE EXCEPTION '%', _msg;
             End If;
-
         End If;
 
         ---------------------------------------------------
@@ -525,7 +530,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-
             INSERT INTO t_predefined_analysis (
                 predefine_level,
                 predefine_sequence,
@@ -601,15 +605,13 @@ BEGIN
             )
             RETURNING predefine_id
             INTO _id;
-
-        End If; -- add mode
+        End If;
 
         ---------------------------------------------------
         -- Action for update mode
         ---------------------------------------------------
 
         If _mode = 'update' Then
-
             UPDATE t_predefined_analysis
             SET predefine_level            = _level,
                 predefine_sequence         = _seqVal,
@@ -647,7 +649,6 @@ BEGIN
                 creator                    = _creator,
                 last_affected              = CURRENT_TIMESTAMP
             WHERE predefine_id = _id;
-
         End If;
 
         If _dropTempTable Then

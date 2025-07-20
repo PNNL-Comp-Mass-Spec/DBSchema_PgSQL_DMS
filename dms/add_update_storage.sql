@@ -69,6 +69,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_storage(IN _path text, IN _volname
 **          01/11/2024 mem - Check for empty strings instead of using char_length()
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
 **
 *****************************************************/
 DECLARE
@@ -129,6 +130,13 @@ BEGIN
         _mode           := Lower(Trim(Coalesce(_mode, '')));
         _urlDomain      := Trim(Coalesce(_urlDomain, ''));
         _id             := Trim(Coalesce(_id, ''));
+        _mode           := Trim(Lower(Coalesce(_mode, '')));
+
+        If _mode = '' Then
+            RAISE EXCEPTION 'Empty string specified for parameter _mode';
+        ElsIf Not _mode IN ('add', 'update', 'check_add', 'check_update') Then
+            RAISE EXCEPTION 'Unsupported value for parameter _mode: %', _mode;
+        End If;
 
         If _path = '' Then
             _message := 'Storage path must be specified';
@@ -151,16 +159,6 @@ BEGIN
             RAISE WARNING '%', _message;
 
             _returnCode := 'U5203';
-            RETURN;
-        End If;
-
-        _mode := Trim(Lower(Coalesce(_mode, '')));
-
-        If Not _mode::citext In ('add', 'update') Then
-            _message := format('Mode "%s" is not recognized', _mode);
-            RAISE WARNING '%', _message;
-
-            _returnCode := 'U5204';
             RETURN;
         End If;
 
@@ -528,7 +526,6 @@ BEGIN
             _returnCode := _sqlState;
         End If;
     END;
-
 END
 $$;
 

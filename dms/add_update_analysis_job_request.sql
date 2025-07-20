@@ -107,7 +107,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_request(IN _datasets 
 **          05/28/2020 mem - Auto-update the settings file if the samples used TMTpro
 **          03/10/2021 mem - Add _dataPackageID and remove _adminReviewReqd
 **          05/28/2021 mem - Add _mode 'append', which can be be used to add additional datasets to an existing analysis job request, regardless of state
-**                         - When using append mode, optionally Set _state to 'new' to also reset the state
+**                         - When using append mode, optionally set _state to 'new' to also reset the state
 **          10/15/2021 mem - Require that _dataPackageID be defined when using a match between runs parameter file for MaxQuant and MSFragger
 **          03/10/2022 mem - Replace spaces and tabs in the dataset list with commas
 **          05/23/2022 mem - Rename requester argument
@@ -126,6 +126,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job_request(IN _datasets 
 **          09/30/2024 mem - Auto-change _protCollOptionsList to 'seq_direction=decoy,filetype=fasta' when running FragPipe
 **                         - Require that _dataPackageID be defined when using a match between runs workflow file for FragPipe
 **          11/23/2024 mem - When the tool is MSFragger or FragPipe, if using an Organism DB file, auto-switch to the decoy version if it exists
+**          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
 **
 *****************************************************/
 DECLARE
@@ -216,6 +217,12 @@ BEGIN
         _mode              := Trim(Lower(Coalesce(_mode, '')));
         _callingUser       := Trim(Coalesce(_callingUser, ''));
 
+        If _mode = '' Then
+            RAISE EXCEPTION 'Empty string specified for parameter _mode';
+        ElsIf Not _mode IN ('add', 'update', 'append', 'check_add', 'check_update', Lower('PreviewAdd')) Then
+            RAISE EXCEPTION 'Unsupported value for parameter _mode: %', _mode;
+        End If;
+
         If _requestName = '' Then
             RAISE EXCEPTION 'Cannot add: request name must be specified';
         End If;
@@ -238,7 +245,7 @@ BEGIN
 
         -- Cannot create an entry with a duplicate name
 
-        If _mode::citext In ('add', 'PreviewAdd') Then
+        If _mode In ('add', Lower('PreviewAdd')) Then
             If Exists (SELECT request_id FROM t_analysis_job_request WHERE request_name = _requestName::citext) Then
                 RAISE EXCEPTION 'Cannot add: request with same name already exists';
             End If;
@@ -662,7 +669,7 @@ BEGIN
         -- If mode is add, force _state to 'new'
         ---------------------------------------------------
 
-        If _mode::citext In ('add', 'PreviewAdd') Then
+        If _mode In ('add',  Lower('PreviewAdd')) Then
             -- Lookup the name for state 'New'
             SELECT request_state
             INTO _state
@@ -690,7 +697,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-
             INSERT INTO t_analysis_job_request (
                 request_name,
                 created,
@@ -753,7 +759,7 @@ BEGIN
 
         End If;
 
-        If _mode::citext = 'PreviewAdd' Then
+        If _mode = Lower('PreviewAdd') Then
             _message := format('Would create request "%s" with parameter file "%s" and settings file "%s"',
                                _requestName, _paramFileName, _settingsFileName);
         End If;
@@ -762,7 +768,7 @@ BEGIN
         -- Action for update mode
         ---------------------------------------------------
 
-        If _mode::citext In ('update', 'append') Then
+        If _mode In ('update', 'append') Then
             -- Update the request
 
             UPDATE t_analysis_job_request

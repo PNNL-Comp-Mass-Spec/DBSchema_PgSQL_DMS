@@ -22,7 +22,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_param_file(INOUT _paramfileid inte
 **    _paramfileMassMods        -- Dynamic and static mods
 **    _replaceExistingMassMods  -- When _mode is 'update', set this to 1 to replace existing mass mods, 0 to leave them unchanged (leave as an integer since called from a web page)
 **    _validateUnimod           -- When 1, require that mods are known UniMod modifications; 0 to disable validation (leave as an integer since called from a web page)
-**    _mode                     -- 'add', 'previewadd', or 'update'
+**    _mode                     -- 'add', 'PreviewAdd', or 'update'
 **    _message
 **    _returnCode
 **
@@ -42,8 +42,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_param_file(INOUT _paramfileid inte
 **          11/30/2018 mem - Make _paramFileID an input/output parameter
 **          11/04/2021 mem - Populate the Mod_List field using get_param_file_mass_mod_code_list
 **          04/11/2022 mem - Check for whitespace in _paramFileName
-**          02/23/2023 mem - Add mode 'previewadd'
-**                         - If the mode is 'previewadd', set _infoOnly to true when calling Store_Param_File_Mass_Mods
+**          02/23/2023 mem - Add mode 'PreviewAdd'
+**                         - If the mode is 'PreviewAdd', set _infoOnly to true when calling Store_Param_File_Mass_Mods
 **          02/23/2023 mem - Ported to PostgreSQL
 **          05/12/2023 mem - Rename variables
 **          05/22/2023 mem - Remove local variable use when raising exceptions
@@ -59,6 +59,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_param_file(INOUT _paramfileid inte
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          09/27/2024 mem - Ignore case when resolving the parameter file type name to ID
+**          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
 **
 *****************************************************/
 DECLARE
@@ -116,12 +117,17 @@ BEGIN
     End If;
 
     BEGIN
-
         ---------------------------------------------------
         -- Validate the inputs
         ---------------------------------------------------
 
         _mode := Trim(Lower(Coalesce(_mode, 'add')));
+
+        If _mode = '' Then
+            RAISE EXCEPTION 'Empty string specified for parameter _mode';
+        ElsIf Not _mode IN ('add', 'update', 'check_add', 'check_update', Lower('PreviewAdd'), Lower('PreviewAdd')) Then
+            RAISE EXCEPTION 'Unsupported value for parameter _mode: %', _mode;
+        End If;
 
         If _paramFileID Is Null And Not _mode like '%add%' Then
             _returnCode := 'U5200';
@@ -204,7 +210,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode Like '%update%' Then
-
             SELECT param_file_name,
                    param_file_type_id
             INTO _currentName, _currentTypeID
@@ -262,7 +267,7 @@ BEGIN
             DROP TABLE Tmp_Mods_Precheck;
 
             If _paramfileMassMods <> '' And (
-                _mode IN ('add', 'previewadd') Or
+                _mode IN ('add', Lower('PreviewAdd')) Or
                 _mode = 'update' And _replaceExistingMassMods = 1 Or
                 _mode = 'update' And _replaceExistingMassMods = 0 AND
                 Not Exists (SELECT param_file_id FROM t_param_file_mass_mods WHERE param_file_id = _paramFileID))
@@ -301,7 +306,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-
             INSERT INTO t_param_files (
                 param_file_name,
                 param_file_description,
@@ -330,7 +334,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-
             UPDATE t_param_files
             SET param_file_name        = _paramFileName,
                 param_file_description = _paramFileDesc,
@@ -340,7 +343,6 @@ BEGIN
             WHERE param_file_id = _paramFileID;
 
             _updateMassMods := true;
-
         End If;
 
         If _paramFileID > 0 And _paramfileMassMods <> '' And _updateMassMods Then
@@ -371,12 +373,10 @@ BEGIN
         End If;
 
         If _mode In ('add', 'update') Then
-
             -- Update the Mod_List field
             UPDATE t_param_files
             SET mod_list = public.get_param_file_mass_mod_code_list(param_file_id, 0)
             WHERE param_file_id = _paramFileID;
-
         End If;
 
     EXCEPTION
@@ -404,7 +404,6 @@ BEGIN
             _returnCode := _sqlState;
         End If;
     END;
-
 END
 $$;
 

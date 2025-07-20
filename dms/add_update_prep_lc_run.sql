@@ -52,6 +52,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_prep_lc_run(INOUT _id integer, IN 
 **          01/16/2024 mem - Ported to PostgreSQL
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
 **
 *****************************************************/
 DECLARE
@@ -105,7 +106,6 @@ BEGIN
     End If;
 
     BEGIN
-
         ---------------------------------------------------
         -- Validate the inputs
         ---------------------------------------------------
@@ -125,7 +125,13 @@ BEGIN
         _instrumentPressure := Trim(Coalesce(_instrumentPressure, ''));
         _qualityControl     := Trim(Coalesce(_qualityControl, ''));
         _datasets           := Trim(Coalesce(_datasets, ''));
-        _mode := Trim(Lower(Coalesce(_mode, '')));
+        _mode               := Trim(Lower(Coalesce(_mode, '')));
+
+        If _mode = '' Then
+            RAISE EXCEPTION 'Empty string specified for parameter _mode';
+        ElsIf Not _mode IN ('add', 'update', 'check_add', 'check_update') Then
+            RAISE EXCEPTION 'Unsupported value for parameter _mode: %', _mode;
+        End If;
 
         If _mode = 'update' And Coalesce(_id, 0) <= 0 Then
             RAISE EXCEPTION 'Cannot update: prep LC run ID must be a positive integer';
@@ -263,7 +269,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-
             INSERT INTO t_prep_lc_run (
                 prep_run_name,
                 instrument,
@@ -304,7 +309,6 @@ BEGIN
             )
             SELECT _id AS Prep_LC_Run_ID, Dataset_ID
             FROM Tmp_Datasets;
-
         End If;
 
         ---------------------------------------------------
@@ -312,7 +316,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-
             UPDATE t_prep_lc_run
             SET prep_run_name        = _prepRunName,
                 instrument           = _instrument,
@@ -340,7 +343,6 @@ BEGIN
             DELETE FROM t_prep_lc_run_dataset
             WHERE prep_lc_run_id = _id AND
                   NOT t_prep_lc_run_dataset.dataset_id IN (SELECT dataset_id FROM Tmp_Datasets);
-
         End If;
 
         -- Update the work package list using the sample prep request ID(s)

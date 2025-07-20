@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_separation_group(IN _separationgro
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          07/01/2025 mem - Add _acqLengthMinutes
+**          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
 **
 *****************************************************/
 DECLARE
@@ -93,6 +94,12 @@ BEGIN
         _acqLengthMinutes  := Coalesce(_acqLengthMinutes, 0);
         _mode              := Trim(Lower(Coalesce(_mode, '')));
 
+        If _mode = '' Then
+            RAISE EXCEPTION 'Empty string specified for parameter _mode';
+        ElsIf Not _mode IN ('add', 'update', 'check_add', 'check_update') Then
+            RAISE EXCEPTION 'Unsupported value for parameter _mode: %', _mode;
+        End If;
+
         If _separationGroup = '' Then
             RAISE EXCEPTION 'Separation group name must be defined';
         End If;
@@ -122,7 +129,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-
             INSERT INTO t_separation_group (
                 separation_group,
                 comment,
@@ -138,7 +144,6 @@ BEGIN
                 _fractionCount,
                 _acqLengthMinutes
             );
-
         End If;
 
         ---------------------------------------------------
@@ -146,7 +151,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-
             UPDATE t_separation_group
             SET comment             = _comment,
                 active              = _active,
@@ -154,7 +158,6 @@ BEGIN
                 fraction_count      = _fractionCount,
                 acq_length_minutes  = _acqLengthMinutes
             WHERE separation_group = _separationGroup::citext;
-
         End If;
 
     EXCEPTION
@@ -173,7 +176,6 @@ BEGIN
             _returnCode := _sqlState;
         End If;
     END;
-
 END
 $$;
 
