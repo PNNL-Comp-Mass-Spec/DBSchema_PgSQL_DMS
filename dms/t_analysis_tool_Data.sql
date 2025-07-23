@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
+-- Dumped from database version 17.5
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -66,7 +66,7 @@ COPY public.t_analysis_tool (analysis_tool_id, analysis_tool, tool_base_name, pa
 59	MSAlign_Histone	MSAlign_Histone	1022	\\\\gigasax\\DMS_Parameter_Files\\MSAlign_Histone	G:\\DMS_Parameter_Files\\MSAlign_Histone	??	MSA_Peptide_Hit	no	0	mzXML	1	N	\N	0	1	1
 23	MSClusterDAT_Gen	MSClusterDAT_Gen	1	\\\\gigasax\\DMS_Parameter_Files\\MSClusterDAT_Gen	G:\\DMS_Parameter_Files\\MSClusterDAT_Gen	MSClusterDAT_ExtractMSn.xml	MSClusterDAT	no	0	(na)	0	N	\N	0	1	0
 47	MSDeconv_Bruker	MSDeconv	1019	\\\\gigasax\\DMS_Parameter_Files\\MSAlign	G:\\DMS_Parameter_Files\\MSAlign	??	MSD_HMMA_Peak	no	0	mzXML	0	N	\N	0	1	0
-88	MSFragger	MSFragger	1033	\\\\gigasax\\DMS_Parameter_Files\\MSFragger	G:\\DMS_Parameter_Files\\MSFragger	??	MSF_Peptide_Hit	no	1	mzML	1	N	\N	0	1	1
+88	MSFragger	MSFragger	1033	\\\\gigasax\\DMS_Parameter_Files\\MSFragger	G:\\DMS_Parameter_Files\\MSFragger	??	MSF_Peptide_Hit	no	0	mzML	1	N	\N	0	1	1
 36	MSGFPlus	MSGFPlus	1018	\\\\gigasax\\DMS_Parameter_Files\\MSGFPlus	G:\\DMS_Parameter_Files\\MSGFPlus	IonTrapDefSettings.xml	MSG_Peptide_Hit	no	0	Concat_DTA	1	Y	Search MS/MS spectra with MS-GF+	0	1	1
 48	MSGFPlus_Bruker	MSGFPlus	1018	\\\\gigasax\\DMS_Parameter_Files\\MSGFPlus	G:\\DMS_Parameter_Files\\MSGFPlus	MSGFPlus_MzXML_Bruker.xml	MSG_Peptide_Hit	no	0	mzXML	1	Y	\N	0	1	1
 37	MSGFPlus_DTARefinery	MSGFPlus_DTARefinery	1018	\\\\gigasax\\DMS_Parameter_Files\\MSGFPlus	G:\\DMS_Parameter_Files\\MSGFPlus	IonTrapDefSettings_DeconMSN_DTARef_NoMods.xml	MSG_Peptide_Hit	no	0	Concat_DTA	1	Y	Use DTA_Refinery to refine the parent ion masses, then search MS/MS spectra with MS-GF+. Allows you to post-filter the search results with a tight ppm mass error tolerance.	0	1	1

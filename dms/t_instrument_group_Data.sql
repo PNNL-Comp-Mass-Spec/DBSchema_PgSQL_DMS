@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
+-- Dumped from database version 17.5
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -77,7 +77,7 @@ Shimadzu_GC	Real-time atmospheric monitoring		1	18	GC	0	1	\N
 TSQ	MRM		1	9	QQQ	1	1	\N
 TSQ_Frac	Requested runs with LC-MicroHpH, LC-MicroSCX, LC-NanoHpH, etc.		1	9	QQQ	0	1	TSQ
 Thermo_SII_LC	LC instruments controlled using SII for Xcalibur	SII - Standard Instrument Integration, allows controlling Chromeleon-supported LC modules from Xcalibur	1	31	None	0	0	\N
-VelosOrbi	LC-HMS with MS/MS; optionally ETD		1	3	ORB	1	1	\N
+VelosOrbi	LC-HMS with MS/MS; optionally ETD		0	3	ORB	1	1	\N
 VelosPro	Ion trap instrument with CID, HCD, PQD, or ETD; No orbitrap		0	2	LTQ	0	1	\N
 Waters_Acquity_LC	Waters Acquity LC instruments controlled using MassLynx		1	31	None	0	0	\N
 Waters_IMS	Waters Synapt IMS		1	6	IMS	1	1	\N

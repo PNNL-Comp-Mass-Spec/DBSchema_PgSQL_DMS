@@ -28,7 +28,6 @@ COPY public.t_dataset_cc_report_state (cc_report_state_id, cc_report_state, desc
 3	Submitted to cost center	
 4	Need to refund to cost center	
 5	Refunded to cost center	
-6	Force submit to cost center in next report	
 \.
 
 
