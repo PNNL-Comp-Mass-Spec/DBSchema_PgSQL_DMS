@@ -11,7 +11,8 @@ CREATE TABLE cc.t_service_use (
     transaction_date timestamp without time zone,
     transaction_units real,
     is_held public.citext DEFAULT 'N'::public.citext NOT NULL,
-    comment public.citext DEFAULT ''::public.citext
+    comment public.citext DEFAULT ''::public.citext,
+    dataset_id integer NOT NULL
 );
 
 
@@ -42,6 +43,24 @@ ALTER TABLE cc.t_service_use ALTER COLUMN entry_id ADD GENERATED ALWAYS AS IDENT
 
 ALTER TABLE ONLY cc.t_service_use
     ADD CONSTRAINT pk_t_service_use PRIMARY KEY (entry_id);
+
+--
+-- Name: ix_t_service_use_charge_code; Type: INDEX; Schema: cc; Owner: d3l243
+--
+
+CREATE INDEX ix_t_service_use_charge_code ON cc.t_service_use USING btree (charge_code);
+
+--
+-- Name: ix_t_service_use_dataset_id; Type: INDEX; Schema: cc; Owner: d3l243
+--
+
+CREATE INDEX ix_t_service_use_dataset_id ON cc.t_service_use USING btree (dataset_id);
+
+--
+-- Name: ix_t_service_use_service_type_id; Type: INDEX; Schema: cc; Owner: d3l243
+--
+
+CREATE INDEX ix_t_service_use_service_type_id ON cc.t_service_use USING btree (service_type_id);
 
 --
 -- Name: t_service_use fk_t_service_use_t_service_type; Type: FK CONSTRAINT; Schema: cc; Owner: d3l243
