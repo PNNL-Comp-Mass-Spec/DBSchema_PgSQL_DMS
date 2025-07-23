@@ -178,6 +178,12 @@ CREATE INDEX ix_t_dataset_acq_time_start ON public.t_dataset USING btree (acq_ti
 CREATE INDEX ix_t_dataset_cart_config_id ON public.t_dataset USING btree (cart_config_id);
 
 --
+-- Name: ix_t_dataset_cc_report_state_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_dataset_cc_report_state_id ON public.t_dataset USING btree (cc_report_state_id);
+
+--
 -- Name: ix_t_dataset_created; Type: INDEX; Schema: public; Owner: d3l243
 --
 
