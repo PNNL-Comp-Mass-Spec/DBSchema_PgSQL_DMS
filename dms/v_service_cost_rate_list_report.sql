@@ -1,8 +1,8 @@
 --
--- Name: v_service_cost_rate; Type: VIEW; Schema: cc; Owner: d3l243
+-- Name: v_service_cost_rate_list_report; Type: VIEW; Schema: public; Owner: d3l243
 --
 
-CREATE VIEW cc.v_service_cost_rate AS
+CREATE VIEW public.v_service_cost_rate_list_report AS
  SELECT cr.cost_group_id,
     costgroup.description,
     servicetype.service_type,
@@ -20,5 +20,12 @@ CREATE VIEW cc.v_service_cost_rate AS
      JOIN cc.t_service_cost_group costgroup ON ((costgroup.cost_group_id = cr.cost_group_id)));
 
 
-ALTER VIEW cc.v_service_cost_rate OWNER TO d3l243;
+ALTER VIEW public.v_service_cost_rate_list_report OWNER TO d3l243;
+
+--
+-- Name: TABLE v_service_cost_rate_list_report; Type: ACL; Schema: public; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE public.v_service_cost_rate_list_report TO readaccess;
+GRANT SELECT ON TABLE public.v_service_cost_rate_list_report TO writeaccess;
 

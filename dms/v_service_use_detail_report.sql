@@ -1,8 +1,8 @@
 --
--- Name: v_service_use_list_report; Type: VIEW; Schema: public; Owner: d3l243
+-- Name: v_service_use_detail_report; Type: VIEW; Schema: public; Owner: d3l243
 --
 
-CREATE VIEW public.v_service_use_list_report AS
+CREATE VIEW public.v_service_use_detail_report AS
  SELECT u.entry_id AS id,
     u.report_id,
     u.dataset_id,
@@ -22,12 +22,12 @@ CREATE VIEW public.v_service_use_list_report AS
      LEFT JOIN public.t_charge_code public ON ((public.charge_code OPERATOR(public.=) u.charge_code)));
 
 
-ALTER VIEW public.v_service_use_list_report OWNER TO d3l243;
+ALTER VIEW public.v_service_use_detail_report OWNER TO d3l243;
 
 --
--- Name: TABLE v_service_use_list_report; Type: ACL; Schema: public; Owner: d3l243
+-- Name: TABLE v_service_use_detail_report; Type: ACL; Schema: public; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE public.v_service_use_list_report TO readaccess;
-GRANT SELECT ON TABLE public.v_service_use_list_report TO writeaccess;
+GRANT SELECT ON TABLE public.v_service_use_detail_report TO readaccess;
+GRANT SELECT ON TABLE public.v_service_use_detail_report TO writeaccess;
 
