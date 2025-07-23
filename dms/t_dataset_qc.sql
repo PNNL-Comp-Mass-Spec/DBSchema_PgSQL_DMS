@@ -131,6 +131,13 @@ ALTER TABLE ONLY public.t_dataset_qc
 ALTER TABLE public.t_dataset_qc CLUSTER ON pk_t_dataset_qc_dataset_id;
 
 --
+-- Name: t_dataset_qc fk_t_dataset_qc_t_dataset; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset_qc
+    ADD CONSTRAINT fk_t_dataset_qc_t_dataset FOREIGN KEY (dataset_id) REFERENCES public.t_dataset(dataset_id);
+
+--
 -- Name: TABLE t_dataset_qc; Type: ACL; Schema: public; Owner: d3l243
 --
 

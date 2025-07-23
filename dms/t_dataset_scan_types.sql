@@ -48,6 +48,13 @@ CREATE INDEX ix_t_dataset_scan_types_dataset_id_scan_type ON public.t_dataset_sc
 CREATE INDEX ix_t_dataset_scan_types_scan_type_dataset_id ON public.t_dataset_scan_types USING btree (scan_type, dataset_id);
 
 --
+-- Name: t_dataset_scan_types fk_t_dataset_scan_types_t_dataset; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset_scan_types
+    ADD CONSTRAINT fk_t_dataset_scan_types_t_dataset FOREIGN KEY (dataset_id) REFERENCES public.t_dataset(dataset_id);
+
+--
 -- Name: TABLE t_dataset_scan_types; Type: ACL; Schema: public; Owner: d3l243
 --
 
