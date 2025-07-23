@@ -81,7 +81,7 @@ CREATE OR REPLACE FUNCTION public.get_cc_service_type(_datasetname text, _experi
 **
 **  Auth:   mem
 **  Date:   06/28/2025 mem - Initial release
-**          07/19/2025 mem - Return service type ID 1 (None) when the dataset type is "DataFiles", as is the case for data package datasets
+**          07/19/2025 mem - Return service type ID 1 (None) when the dataset type is 'DataFiles' or 'Tracking'
 **
 *****************************************************/
 DECLARE
@@ -208,7 +208,8 @@ BEGIN
         RETURN 1;       -- Service type: None
     End If;
 
-    If _datasetType = 'DataFiles' Then
+    -- Check for a data package based dataset (which has dataset type 'DataFiles') or a tracking dataset
+    If _datasetType IN ('DataFiles', 'Tracking') Then
         RETURN 1;       -- Service type: None
     End If;
 
