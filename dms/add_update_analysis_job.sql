@@ -115,6 +115,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job(IN _datasetname text,
 **          10/24/2024 mem - Prevent copying data package based jobs
 **          02/15/2025 mem - Set update_required to 1 in t_cached_dataset_stats
 **          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
+**          07/23/2025 mem - Check for an existing job when _mode is 'check_update' or 'PreviewUpdate' (in addition to 'update' and 'check_update')
 **
 *****************************************************/
 DECLARE
@@ -235,7 +236,7 @@ BEGIN
         -- Is entry already in database? (only applies to updates and resets)
         ---------------------------------------------------
 
-        If _mode = 'update' Or _mode = 'reset' Then
+        If _mode IN ('update', 'check_update', Lower('PreviewUpdate'), 'reset') Then
             _currentLocation := 'Check for non-existent entry';
 
             If _showDebug Then
