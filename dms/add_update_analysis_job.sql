@@ -116,6 +116,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_analysis_job(IN _datasetname text,
 **          02/15/2025 mem - Set update_required to 1 in t_cached_dataset_stats
 **          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
 **          07/23/2025 mem - Check for an existing job when _mode is 'check_update' or 'PreviewUpdate' (in addition to 'update' and 'check_update')
+**                         - Use custom return code values when raising exceptions
 **
 *****************************************************/
 DECLARE
@@ -229,6 +230,7 @@ BEGIN
                 RAISE WARNING '%', _msg;
             End If;
 
+            _returnCode := 'U5201';
             RAISE EXCEPTION '%', _msg;
         End If;
 
@@ -250,6 +252,7 @@ BEGIN
                     RAISE WARNING '%', _msg;
                 End If;
 
+                _returnCode := 'U5202';
                 RAISE EXCEPTION '%', _msg;
             End If;
 
@@ -266,6 +269,7 @@ BEGIN
                     RAISE WARNING '%', _msg;
                 End If;
 
+                _returnCode := 'U5203';
                 RAISE EXCEPTION '%', _msg;
             End If;
 
@@ -311,6 +315,7 @@ BEGIN
                     RAISE WARNING '%', _msg;
                 End If;
 
+                _returnCode := 'U5204';
                 RAISE EXCEPTION '%', _msg;
             End If;
 
@@ -383,6 +388,7 @@ BEGIN
                     RAISE WARNING '%', _msg;
                 End If;
 
+                _returnCode := 'U5205';
                 RAISE EXCEPTION '%', _msg;
             End If;
         End If;
@@ -417,6 +423,7 @@ BEGIN
             WHERE group_name = _associatedProcessorGroup::citext;
 
             If Not FOUND Then
+                _returnCode := 'U5206';
                 RAISE EXCEPTION 'Processor group "%" not found', _associatedProcessorGroup;
             End If;
         End If;
@@ -500,6 +507,10 @@ BEGIN
 
             If _infoOnly Then
                 RAISE WARNING '%', _msg;
+            End If;
+
+            If Coalesce(_returnCode, '') = '' Then
+                _returnCode := 'U5207';
             End If;
 
             RAISE EXCEPTION '%', _msg;
@@ -678,6 +689,7 @@ BEGIN
                     RAISE INFO '%', _msg;
                 End If;
 
+                _returnCode := 'U5208';
                 RAISE EXCEPTION '%', _msg;
             End If;
 
@@ -861,6 +873,7 @@ BEGIN
                         RAISE INFO '%', _msg;
                     End If;
 
+                    _returnCode := 'U5209';
                     RAISE EXCEPTION '%', _msg;
                 End If;
             End If;
