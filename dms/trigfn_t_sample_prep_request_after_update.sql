@@ -20,10 +20,11 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_sample_prep_request_after_update() RE
 **          08/06/2022 mem - Ported to PostgreSQL
 **          08/08/2022 mem - Reference the OLD and NEW variables directly instead of using transition tables (which contain every updated row, not just the current row)
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          07/23/2025 mem - Change _username to citext
 **
 *****************************************************/
 DECLARE
-    _username text;
+    _username citext;
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
@@ -31,8 +32,8 @@ BEGIN
 
     If OLD.state_id <> NEW.state_id Or          -- Use <> since state_id is never null
        OLD.state_id = NEW.state_id And
-       Not _username In ('postgres', 'msdadmin') Then
-
+       Not _username In ('postgres', 'msdadmin')
+    Then
         INSERT INTO t_sample_prep_request_updates (
             request_id,
             system_account,
