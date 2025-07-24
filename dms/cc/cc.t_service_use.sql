@@ -63,6 +63,18 @@ CREATE INDEX ix_t_service_use_dataset_id ON cc.t_service_use USING btree (datase
 CREATE INDEX ix_t_service_use_service_type_id ON cc.t_service_use USING btree (service_type_id);
 
 --
+-- Name: t_service_use trig_t_service_use_after_delete; Type: TRIGGER; Schema: cc; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_service_use_after_delete AFTER DELETE ON cc.t_service_use REFERENCING OLD TABLE AS deleted FOR EACH STATEMENT EXECUTE FUNCTION cc.trigfn_t_service_use_after_delete();
+
+--
+-- Name: t_service_use trig_t_service_use_after_update; Type: TRIGGER; Schema: cc; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_service_use_after_update AFTER UPDATE ON cc.t_service_use FOR EACH ROW EXECUTE FUNCTION cc.trigfn_t_service_use_after_update();
+
+--
 -- Name: t_service_use fk_t_service_use_t_service_type; Type: FK CONSTRAINT; Schema: cc; Owner: d3l243
 --
 
