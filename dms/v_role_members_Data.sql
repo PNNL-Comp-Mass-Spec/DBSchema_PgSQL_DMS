@@ -7,6 +7,7 @@ FROM v_role_members
 ORDER BY member, role;
 
 member	role	path
+------  ----    ----
 dmsreader	readaccess	dmsreader -> readaccess
 dmswebuser	readaccess	dmswebuser -> readaccess
 dmswebuser	writeaccess	dmswebuser -> writeaccess

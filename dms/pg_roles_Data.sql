@@ -7,6 +7,7 @@ FROM pg_roles
 ORDER BY rolname;
 
 rolname	rolsuper	rolinherit	rolcreaterole	rolcreatedb	rolcanlogin	rolreplication	rolconnlimit	rolpassword	rolvaliduntil	rolbypassrls	rolconfig	oid
+-------	--------	----------	-------------	-----------	-----------	--------------	------------	-----------	-------------	------------	---------	---
 d3l243	true	true	true	true	true	false	-1	********	[NULL]	false	NULL	16,493
 dmsreader	false	true	false	false	true	false	-1	********	[NULL]	false	NULL	24,853
 dmswebuser	false	true	false	false	true	false	-1	********	[NULL]	false	NULL	24,854

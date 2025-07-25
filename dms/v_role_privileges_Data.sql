@@ -6,7 +6,9 @@ SELECT object_schema, object_type, object_name, grantor, grantee, privilege_type
 FROM v_role_privileges
 ORDER BY grantee, object_schema, object_name, privilege_type;
 
+
 object_schema	object_type	object_name	grantor	grantee	privilege_type
+-------------   ----------- ----------- ------- ------- --------------
 public	schema	public	postgres	d3l243	CREATE
 public	schema	public	postgres	d3l243	USAGE
 cap	table	t_log_entries	d3l243	dmswebuser	INSERT
@@ -67,6 +69,9 @@ pc	table	t_passphrase_hashes	d3l243	pceditor	UPDATE
 pc	table	t_protein_collection_members	d3l243	pceditor	DELETE
 pc	table	t_protein_collection_members	d3l243	pceditor	INSERT
 pc	table	t_protein_collection_members	d3l243	pceditor	UPDATE
+pc	table	t_protein_collection_members_cached	d3l243	pceditor	DELETE
+pc	table	t_protein_collection_members_cached	d3l243	pceditor	INSERT
+pc	table	t_protein_collection_members_cached	d3l243	pceditor	UPDATE
 pc	table	t_protein_collections	d3l243	pceditor	DELETE
 pc	table	t_protein_collections	d3l243	pceditor	INSERT
 pc	table	t_protein_collections	d3l243	pceditor	UPDATE
@@ -79,6 +84,10 @@ pc	table	t_protein_names	d3l243	pceditor	UPDATE
 pc	table	t_proteins	d3l243	pceditor	DELETE
 pc	table	t_proteins	d3l243	pceditor	INSERT
 pc	table	t_proteins	d3l243	pceditor	UPDATE
+public	table	t_organism_db_file	d3l243	pceditor	INSERT
+public	table	t_organism_db_file	d3l243	pceditor	UPDATE
+public	table	t_organisms	d3l243	pceditor	INSERT
+public	table	t_organisms	d3l243	pceditor	UPDATE
 public	function	pg_relpages	d3l243	pg_stat_scan_tables	EXECUTE
 public	function	pg_relpages	d3l243	pg_stat_scan_tables	EXECUTE
 public	function	pgstatginindex	d3l243	pg_stat_scan_tables	EXECUTE
@@ -132,6 +141,10 @@ timetable	view	v_chain_start_times	d3l243	pgdms	DELETE
 timetable	view	v_chain_start_times	d3l243	pgdms	INSERT
 timetable	view	v_chain_start_times	d3l243	pgdms	TRUNCATE
 timetable	view	v_chain_start_times	d3l243	pgdms	UPDATE
+timetable	view	v_chain_start_times_recent	d3l243	pgdms	DELETE
+timetable	view	v_chain_start_times_recent	d3l243	pgdms	INSERT
+timetable	view	v_chain_start_times_recent	d3l243	pgdms	TRUNCATE
+timetable	view	v_chain_start_times_recent	d3l243	pgdms	UPDATE
 [NULL]	foreign server	op_warehouse_fdw	d3l243	pgdms	USAGE
 public	function	get_backup_age_pgbackrest	d3l243	pgwatch2	EXECUTE
 public	function	get_backup_age_walg	d3l243	pgwatch2	EXECUTE
@@ -260,10 +273,13 @@ cap	procedure	update_task_dependent_steps	d3l243	public	EXECUTE
 cap	procedure	update_task_state	d3l243	public	EXECUTE
 cap	procedure	update_task_step_states	d3l243	public	EXECUTE
 cap	procedure	update_task_step_status_history	d3l243	public	EXECUTE
+cc	function	trigfn_t_service_use_after_delete	d3l243	public	EXECUTE
+cc	function	trigfn_t_service_use_after_update	d3l243	public	EXECUTE
 dpkg	procedure	add_update_data_package	d3l243	public	EXECUTE
 dpkg	procedure	add_update_osm_package	d3l243	public	EXECUTE
 dpkg	function	check_data_package_dataset_job_coverage	d3l243	public	EXECUTE
 dpkg	procedure	check_for_myemsl_errors	d3l243	public	EXECUTE
+dpkg	function	data_repository_upload_counts	d3l243	public	EXECUTE
 dpkg	procedure	delete_all_items_from_data_package	d3l243	public	EXECUTE
 dpkg	procedure	delete_data_package	d3l243	public	EXECUTE
 dpkg	procedure	find_stale_myemsl_uploads	d3l243	public	EXECUTE
@@ -356,6 +372,8 @@ pc	function	get_annotation_type_id	d3l243	public	EXECUTE
 pc	procedure	get_archived_file_id_for_protein_collection_list	d3l243	public	EXECUTE
 pc	function	get_file_name_from_path	d3l243	public	EXECUTE
 pc	function	get_protein_collection_id	d3l243	public	EXECUTE
+pc	function	get_protein_collection_overlap	d3l243	public	EXECUTE
+pc	function	get_protein_collection_overlap	d3l243	public	EXECUTE
 pc	procedure	get_protein_collection_state	d3l243	public	EXECUTE
 pc	function	get_shared_protein_ids	d3l243	public	EXECUTE
 pc	function	get_unique_protein_ids	d3l243	public	EXECUTE
@@ -484,6 +502,7 @@ public	function	charge_code_activation_state	d3l243	public	EXECUTE
 public	procedure	check_data_integrity	d3l243	public	EXECUTE
 public	function	check_emsl_usage_item_validity	d3l243	public	EXECUTE
 public	function	check_plural	d3l243	public	EXECUTE
+public	function	check_plural	d3l243	public	EXECUTE
 public	procedure	cleanup_dataset_comments	d3l243	public	EXECUTE
 public	procedure	cleanup_operating_logs	d3l243	public	EXECUTE
 public	procedure	cleanup_timetable_logs	d3l243	public	EXECUTE
@@ -501,6 +520,7 @@ public	procedure	copy_aux_info	d3l243	public	EXECUTE
 public	procedure	copy_aux_info_multi_id	d3l243	public	EXECUTE
 public	procedure	copy_requested_run	d3l243	public	EXECUTE
 public	procedure	create_analysis_jobs_from_request_list	d3l243	public	EXECUTE
+public	procedure	create_dataset_cc_report	d3l243	public	EXECUTE
 public	function	create_like_clause_from_separated_string	d3l243	public	EXECUTE
 public	procedure	create_pending_predefined_analysis_tasks	d3l243	public	EXECUTE
 public	procedure	create_predefined_analysis_jobs	d3l243	public	EXECUTE
@@ -601,11 +621,13 @@ public	function	get_campaign_id	d3l243	public	EXECUTE
 public	function	get_campaign_role_person	d3l243	public	EXECUTE
 public	function	get_campaign_role_person_list	d3l243	public	EXECUTE
 public	function	get_campaign_work_package_list	d3l243	public	EXECUTE
+public	function	get_cc_service_type	d3l243	public	EXECUTE
 public	function	get_current_function_info	d3l243	public	EXECUTE
 public	function	get_current_manager_activity	d3l243	public	EXECUTE
 public	function	get_data_analysis_request_batch_list	d3l243	public	EXECUTE
 public	function	get_data_analysis_request_data_package_list	d3l243	public	EXECUTE
 public	function	get_data_package_xml	d3l243	public	EXECUTE
+public	function	get_dataset_cc_service_type	d3l243	public	EXECUTE
 public	procedure	get_dataset_details_from_dataset_info_xml	d3l243	public	EXECUTE
 public	function	get_dataset_factor_count	d3l243	public	EXECUTE
 public	function	get_dataset_id	d3l243	public	EXECUTE
@@ -695,6 +717,7 @@ public	procedure	get_psm_job_definitions	d3l243	public	EXECUTE
 public	function	get_query_row_count	d3l243	public	EXECUTE
 public	procedure	get_query_row_count_proc	d3l243	public	EXECUTE
 public	function	get_requested_run_batch_max_days_in_queue	d3l243	public	EXECUTE
+public	function	get_requested_run_cc_service_type	d3l243	public	EXECUTE
 public	function	get_requested_run_eus_users_list	d3l243	public	EXECUTE
 public	procedure	get_requested_run_factors_for_edit	d3l243	public	EXECUTE
 public	procedure	get_requested_run_factors_for_export	d3l243	public	EXECUTE
@@ -1010,6 +1033,7 @@ public	procedure	update_dataset_instrument	d3l243	public	EXECUTE
 public	procedure	update_dataset_interval	d3l243	public	EXECUTE
 public	procedure	update_dataset_interval_for_multiple_instruments	d3l243	public	EXECUTE
 public	procedure	update_dataset_rating	d3l243	public	EXECUTE
+public	procedure	update_dataset_service_type_if_required	d3l243	public	EXECUTE
 public	procedure	update_datasets	d3l243	public	EXECUTE
 public	procedure	update_emsl_instrument_acq_overlap_data	d3l243	public	EXECUTE
 public	procedure	update_emsl_instrument_usage_report	d3l243	public	EXECUTE
@@ -1054,6 +1078,7 @@ public	procedure	update_run_op_log	d3l243	public	EXECUTE
 public	procedure	update_sample_prep_request_item_count	d3l243	public	EXECUTE
 public	procedure	update_sample_prep_request_items	d3l243	public	EXECUTE
 public	procedure	update_sample_request_assignments	d3l243	public	EXECUTE
+public	procedure	update_service_use	d3l243	public	EXECUTE
 public	procedure	update_taxonomy_item_if_defined	d3l243	public	EXECUTE
 public	procedure	update_users_from_warehouse	d3l243	public	EXECUTE
 public	function	uuid_generate_v1	d3l243	public	EXECUTE
@@ -1178,6 +1203,7 @@ sw	procedure	request_folder_create_task	d3l243	public	EXECUTE
 sw	procedure	request_step_task_xml	d3l243	public	EXECUTE
 sw	procedure	reset_aggregation_job	d3l243	public	EXECUTE
 sw	procedure	reset_dependent_job_steps	d3l243	public	EXECUTE
+sw	procedure	reset_dependent_job_steps	d3l243	public	EXECUTE
 sw	procedure	reset_failed_managers	d3l243	public	EXECUTE
 sw	procedure	reset_failed_mz_refinery_steps	d3l243	public	EXECUTE
 sw	procedure	reset_job_and_shared_results	d3l243	public	EXECUTE
@@ -1241,6 +1267,8 @@ sw	procedure	validate_job_server_info	d3l243	public	EXECUTE
 sw	procedure	validate_protein_collection_list_for_data_package	d3l243	public	EXECUTE
 sw	procedure	verify_job_parameters	d3l243	public	EXECUTE
 test	function	return_dynamic_sql_results	d3l243	public	EXECUTE
+test	function	sum_params	d3l243	public	EXECUTE
+test	function	sum_values	d3l243	public	EXECUTE
 test	procedure	test_chain_procedures	d3l243	public	EXECUTE
 test	function	test_exception_handler	d3l243	public	EXECUTE
 test	function	test_exception_handler_nested	d3l243	public	EXECUTE
@@ -1346,6 +1374,7 @@ cap	view	v_capture_step_tools_detail_report	d3l243	readaccess	SELECT
 cap	view	v_capture_step_tools_entry	d3l243	readaccess	SELECT
 cap	view	v_capture_step_tools_list_report	d3l243	readaccess	SELECT
 cap	view	v_capture_tasks_active_or_complete	d3l243	readaccess	SELECT
+cap	view	v_dataset_info_xml	d3l243	readaccess	SELECT
 cap	view	v_dms_dataset_archive_status	d3l243	readaccess	SELECT
 cap	view	v_dms_dataset_lc_instrument	d3l243	readaccess	SELECT
 cap	view	v_dms_dataset_metadata	d3l243	readaccess	SELECT
@@ -1367,8 +1396,10 @@ cap	view	v_myemsl_uploads	d3l243	readaccess	SELECT
 cap	view	v_myemsl_uploads2	d3l243	readaccess	SELECT
 cap	view	v_processor_status_warnings_ctm	d3l243	readaccess	SELECT
 cap	view	v_processor_tool_for_manager	d3l243	readaccess	SELECT
+cap	view	v_task_events	d3l243	readaccess	SELECT
 cap	view	v_task_step_backlog_crosstab	d3l243	readaccess	SELECT
 cap	view	v_task_step_backlog_history	d3l243	readaccess	SELECT
+cap	view	v_task_step_events	d3l243	readaccess	SELECT
 cap	view	v_task_step_processing_log	d3l243	readaccess	SELECT
 cap	view	v_task_steps	d3l243	readaccess	SELECT
 cap	view	v_task_steps2	d3l243	readaccess	SELECT
@@ -1378,6 +1409,14 @@ cap	view	v_task_steps_stale_and_failed	d3l243	readaccess	SELECT
 cap	view	v_tasks	d3l243	readaccess	SELECT
 cap	view	v_tasks_history	d3l243	readaccess	SELECT
 cap	view	v_tasks_history_detail_report	d3l243	readaccess	SELECT
+cc	table	t_service_cost_group	d3l243	readaccess	SELECT
+cc	table	t_service_cost_group_state	d3l243	readaccess	SELECT
+cc	table	t_service_cost_rate	d3l243	readaccess	SELECT
+cc	table	t_service_type	d3l243	readaccess	SELECT
+cc	table	t_service_use	d3l243	readaccess	SELECT
+cc	table	t_service_use_report	d3l243	readaccess	SELECT
+cc	table	t_service_use_report_state	d3l243	readaccess	SELECT
+cc	table	t_service_use_updates	d3l243	readaccess	SELECT
 dpkg	schema	dpkg	d3l243	readaccess	USAGE
 dpkg	table	t_data_package	d3l243	readaccess	SELECT
 dpkg	table	t_data_package_analysis_jobs	d3l243	readaccess	SELECT
@@ -1670,8 +1709,10 @@ pc	view	v_missing_archive_entries	d3l243	readaccess	SELECT
 pc	view	v_organism_picker	d3l243	readaccess	SELECT
 pc	view	v_protein_collection_authority	d3l243	readaccess	SELECT
 pc	view	v_protein_collection_list_export	d3l243	readaccess	SELECT
+pc	view	v_protein_collection_member_ids	d3l243	readaccess	SELECT
 pc	view	v_protein_collection_member_names_export	d3l243	readaccess	SELECT
 pc	view	v_protein_collection_members	d3l243	readaccess	SELECT
+pc	view	v_protein_collection_members_cached	d3l243	readaccess	SELECT
 pc	view	v_protein_collections	d3l243	readaccess	SELECT
 pc	view	v_protein_collections_by_organism	d3l243	readaccess	SELECT
 pc	view	v_protein_collections_detail_report	d3l243	readaccess	SELECT
@@ -1779,6 +1820,7 @@ public	table	t_dataset	d3l243	readaccess	SELECT
 public	table	t_dataset_archive	d3l243	readaccess	SELECT
 public	table	t_dataset_archive_state_name	d3l243	readaccess	SELECT
 public	table	t_dataset_archive_update_state_name	d3l243	readaccess	SELECT
+public	table	t_dataset_cc_report_state	d3l243	readaccess	SELECT
 public	table	t_dataset_create_queue	d3l243	readaccess	SELECT
 public	sequence	t_dataset_create_queue_entry_id_seq	d3l243	readaccess	SELECT
 public	table	t_dataset_create_queue_state	d3l243	readaccess	SELECT
@@ -2202,6 +2244,7 @@ public	view	v_dataset_archive	d3l243	readaccess	SELECT
 public	view	v_dataset_archive_ex	d3l243	readaccess	SELECT
 public	view	v_dataset_archive_path	d3l243	readaccess	SELECT
 public	view	v_dataset_archive_state_name_picklist	d3l243	readaccess	SELECT
+public	view	v_dataset_cc_report_state_list_report	d3l243	readaccess	SELECT
 public	view	v_dataset_check_report	d3l243	readaccess	SELECT
 public	view	v_dataset_comments_recent_datasets	d3l243	readaccess	SELECT
 public	view	v_dataset_create_queue	d3l243	readaccess	SELECT
@@ -2217,6 +2260,7 @@ public	view	v_dataset_files_recent	d3l243	readaccess	SELECT
 public	view	v_dataset_folder_paths	d3l243	readaccess	SELECT
 public	view	v_dataset_folder_paths_ex	d3l243	readaccess	SELECT
 public	view	v_dataset_funding_report	d3l243	readaccess	SELECT
+public	view	v_dataset_info	d3l243	readaccess	SELECT
 public	view	v_dataset_info_detail_report	d3l243	readaccess	SELECT
 public	view	v_dataset_info_list_report	d3l243	readaccess	SELECT
 public	view	v_dataset_instrument_list_report	d3l243	readaccess	SELECT
@@ -2257,6 +2301,7 @@ public	view	v_emsl_allocated_usage_by_category	d3l243	readaccess	SELECT
 public	view	v_emsl_instrument_usage_type_picklist	d3l243	readaccess	SELECT
 public	view	v_emsl_instruments	d3l243	readaccess	SELECT
 public	view	v_entity_rename_log	d3l243	readaccess	SELECT
+public	view	v_entity_users_one_year	d3l243	readaccess	SELECT
 public	view	v_enzyme_details	d3l243	readaccess	SELECT
 public	view	v_enzyme_export	d3l243	readaccess	SELECT
 public	view	v_enzyme_picklist	d3l243	readaccess	SELECT
@@ -2648,6 +2693,13 @@ public	view	v_separation_group_picklist	d3l243	readaccess	SELECT
 public	view	v_separation_type_detail_report	d3l243	readaccess	SELECT
 public	view	v_separation_type_entry	d3l243	readaccess	SELECT
 public	view	v_separation_type_list_report	d3l243	readaccess	SELECT
+public	view	v_service_cost_rate_list_report	d3l243	readaccess	SELECT
+public	view	v_service_type_list_report	d3l243	readaccess	SELECT
+public	view	v_service_type_picklist	d3l243	readaccess	SELECT
+public	view	v_service_use_detail_report	d3l243	readaccess	SELECT
+public	view	v_service_use_entry	d3l243	readaccess	SELECT
+public	view	v_service_use_list_report	d3l243	readaccess	SELECT
+public	view	v_service_use_report_list_report	d3l243	readaccess	SELECT
 public	view	v_settings_file_lookup	d3l243	readaccess	SELECT
 public	view	v_settings_file_picklist	d3l243	readaccess	SELECT
 public	view	v_settings_files_detail_report	d3l243	readaccess	SELECT
@@ -2699,6 +2751,10 @@ public	view	v_wellplate_picklist	d3l243	readaccess	SELECT
 sw	schema	sw	d3l243	readaccess	USAGE
 sw	table	t_data_folder_create_queue	d3l243	readaccess	SELECT
 sw	sequence	t_data_folder_create_queue_entry_id_seq	d3l243	readaccess	SELECT
+sw	table	t_debug_tmp_job_parameters	dmswebuser	readaccess	SELECT
+sw	table	t_debug_tmp_job_step_dependencies	dmswebuser	readaccess	SELECT
+sw	table	t_debug_tmp_job_steps	dmswebuser	readaccess	SELECT
+sw	table	t_debug_tmp_jobs	dmswebuser	readaccess	SELECT
 sw	table	t_job_events	d3l243	readaccess	SELECT
 sw	sequence	t_job_events_event_id_seq	d3l243	readaccess	SELECT
 sw	table	t_job_parameters	d3l243	readaccess	SELECT
@@ -2712,6 +2768,7 @@ sw	table	t_job_step_processing_log	d3l243	readaccess	SELECT
 sw	sequence	t_job_step_processing_log_event_id_seq	d3l243	readaccess	SELECT
 sw	table	t_job_step_processing_stats	d3l243	readaccess	SELECT
 sw	sequence	t_job_step_processing_stats_entry_id_seq	d3l243	readaccess	SELECT
+sw	table	t_job_step_reset_stats	d3l243	readaccess	SELECT
 sw	table	t_job_step_state_name	d3l243	readaccess	SELECT
 sw	table	t_job_step_status_history	d3l243	readaccess	SELECT
 sw	sequence	t_job_step_status_history_entry_id_seq	d3l243	readaccess	SELECT
@@ -2758,9 +2815,11 @@ sw	view	v_dms_data_packages	d3l243	readaccess	SELECT
 sw	view	v_dms_pipeline_existing_jobs	d3l243	readaccess	SELECT
 sw	view	v_dms_pipeline_jobs	d3l243	readaccess	SELECT
 sw	view	v_failed_job_steps	d3l243	readaccess	SELECT
+sw	view	v_job_events	d3l243	readaccess	SELECT
 sw	view	v_job_processing_time	d3l243	readaccess	SELECT
 sw	view	v_job_step_backlog_crosstab	d3l243	readaccess	SELECT
 sw	view	v_job_step_backlog_history	d3l243	readaccess	SELECT
+sw	view	v_job_step_events	d3l243	readaccess	SELECT
 sw	view	v_job_step_processing_log	d3l243	readaccess	SELECT
 sw	view	v_job_step_processing_log_retries	d3l243	readaccess	SELECT
 sw	view	v_job_step_processing_stats	d3l243	readaccess	SELECT
@@ -2984,6 +3043,7 @@ cap	view	v_capture_step_tools_detail_report	d3l243	writeaccess	SELECT
 cap	view	v_capture_step_tools_entry	d3l243	writeaccess	SELECT
 cap	view	v_capture_step_tools_list_report	d3l243	writeaccess	SELECT
 cap	view	v_capture_tasks_active_or_complete	d3l243	writeaccess	SELECT
+cap	view	v_dataset_info_xml	d3l243	writeaccess	SELECT
 cap	view	v_dms_dataset_archive_status	d3l243	writeaccess	SELECT
 cap	view	v_dms_dataset_lc_instrument	d3l243	writeaccess	SELECT
 cap	view	v_dms_dataset_metadata	d3l243	writeaccess	SELECT
@@ -3005,8 +3065,10 @@ cap	view	v_myemsl_uploads	d3l243	writeaccess	SELECT
 cap	view	v_myemsl_uploads2	d3l243	writeaccess	SELECT
 cap	view	v_processor_status_warnings_ctm	d3l243	writeaccess	SELECT
 cap	view	v_processor_tool_for_manager	d3l243	writeaccess	SELECT
+cap	view	v_task_events	d3l243	writeaccess	SELECT
 cap	view	v_task_step_backlog_crosstab	d3l243	writeaccess	SELECT
 cap	view	v_task_step_backlog_history	d3l243	writeaccess	SELECT
+cap	view	v_task_step_events	d3l243	writeaccess	SELECT
 cap	view	v_task_step_processing_log	d3l243	writeaccess	SELECT
 cap	view	v_task_steps	d3l243	writeaccess	SELECT
 cap	view	v_task_steps2	d3l243	writeaccess	SELECT
@@ -3016,6 +3078,20 @@ cap	view	v_task_steps_stale_and_failed	d3l243	writeaccess	SELECT
 cap	view	v_tasks	d3l243	writeaccess	SELECT
 cap	view	v_tasks_history	d3l243	writeaccess	SELECT
 cap	view	v_tasks_history_detail_report	d3l243	writeaccess	SELECT
+cc	schema	cc	d3l243	writeaccess	CREATE
+cc	schema	cc	d3l243	writeaccess	USAGE
+cc	table	t_service_cost_group	d3l243	writeaccess	SELECT
+cc	table	t_service_cost_group_state	d3l243	writeaccess	SELECT
+cc	table	t_service_cost_rate	d3l243	writeaccess	SELECT
+cc	table	t_service_type	d3l243	writeaccess	SELECT
+cc	table	t_service_use	d3l243	writeaccess	INSERT
+cc	table	t_service_use	d3l243	writeaccess	SELECT
+cc	table	t_service_use	d3l243	writeaccess	UPDATE
+cc	table	t_service_use_report	d3l243	writeaccess	SELECT
+cc	table	t_service_use_report_state	d3l243	writeaccess	SELECT
+cc	table	t_service_use_updates	d3l243	writeaccess	INSERT
+cc	table	t_service_use_updates	d3l243	writeaccess	SELECT
+cc	table	t_service_use_updates	d3l243	writeaccess	UPDATE
 dpkg	schema	dpkg	d3l243	writeaccess	CREATE
 dpkg	schema	dpkg	d3l243	writeaccess	USAGE
 dpkg	table	t_data_package	d3l243	writeaccess	DELETE
@@ -3124,6 +3200,7 @@ eus	foreign table	vw_instruments	d3l243	writeaccess	SELECT
 eus	foreign table	vw_proposal_participants	d3l243	writeaccess	SELECT
 eus	foreign table	vw_proposals	d3l243	writeaccess	SELECT
 eus	foreign table	vw_requested_allocated_hours	d3l243	writeaccess	SELECT
+eus	foreign table	vw_users	d3l243	writeaccess	SELECT
 logcap	schema	logcap	d3l243	writeaccess	CREATE
 logcap	schema	logcap	d3l243	writeaccess	USAGE
 logcap	table	t_log_entries	d3l243	writeaccess	DELETE
@@ -3147,6 +3224,8 @@ logcap	table	t_task_step_processing_log	d3l243	writeaccess	INSERT
 logcap	table	t_task_step_processing_log	d3l243	writeaccess	SELECT
 logcap	table	t_task_step_processing_log	d3l243	writeaccess	UPDATE
 logcap	sequence	t_task_step_processing_log_id_seq	d3l243	writeaccess	SELECT
+logcap	view	v_task_events	d3l243	writeaccess	SELECT
+logcap	view	v_task_step_events	d3l243	writeaccess	SELECT
 logdms	schema	logdms	d3l243	writeaccess	CREATE
 logdms	schema	logdms	d3l243	writeaccess	USAGE
 logdms	table	t_event_log	d3l243	writeaccess	DELETE
@@ -3185,6 +3264,10 @@ logsw	table	t_log_entries	d3l243	writeaccess	SELECT
 logsw	table	t_log_entries	d3l243	writeaccess	UPDATE
 logsw	table	t_log_entries_local	d3l243	writeaccess	SELECT
 logsw	sequence	t_log_entries_local_entry_id_seq	d3l243	writeaccess	SELECT
+logsw	view	v_job_events	d3l243	writeaccess	SELECT
+logsw	view	v_job_events_stats	d3l243	writeaccess	SELECT
+logsw	view	v_job_step_events	d3l243	writeaccess	SELECT
+logsw	view	v_job_step_events_stats	d3l243	writeaccess	SELECT
 mc	schema	mc	d3l243	writeaccess	CREATE
 mc	schema	mc	d3l243	writeaccess	USAGE
 mc	table	t_event_log	d3l243	writeaccess	DELETE
@@ -3510,8 +3593,10 @@ pc	view	v_missing_archive_entries	d3l243	writeaccess	SELECT
 pc	view	v_organism_picker	d3l243	writeaccess	SELECT
 pc	view	v_protein_collection_authority	d3l243	writeaccess	SELECT
 pc	view	v_protein_collection_list_export	d3l243	writeaccess	SELECT
+pc	view	v_protein_collection_member_ids	d3l243	writeaccess	SELECT
 pc	view	v_protein_collection_member_names_export	d3l243	writeaccess	SELECT
 pc	view	v_protein_collection_members	d3l243	writeaccess	SELECT
+pc	view	v_protein_collection_members_cached	d3l243	writeaccess	SELECT
 pc	view	v_protein_collections	d3l243	writeaccess	SELECT
 pc	view	v_protein_collections_by_organism	d3l243	writeaccess	SELECT
 pc	view	v_protein_collections_detail_report	d3l243	writeaccess	SELECT
@@ -3813,6 +3898,7 @@ public	table	t_dataset_archive	d3l243	writeaccess	SELECT
 public	table	t_dataset_archive	d3l243	writeaccess	UPDATE
 public	table	t_dataset_archive_state_name	d3l243	writeaccess	SELECT
 public	table	t_dataset_archive_update_state_name	d3l243	writeaccess	SELECT
+public	table	t_dataset_cc_report_state	d3l243	writeaccess	SELECT
 public	table	t_dataset_create_queue	d3l243	writeaccess	DELETE
 public	table	t_dataset_create_queue	d3l243	writeaccess	INSERT
 public	table	t_dataset_create_queue	d3l243	writeaccess	SELECT
@@ -4579,6 +4665,7 @@ public	view	v_dataset_archive	d3l243	writeaccess	SELECT
 public	view	v_dataset_archive_ex	d3l243	writeaccess	SELECT
 public	view	v_dataset_archive_path	d3l243	writeaccess	SELECT
 public	view	v_dataset_archive_state_name_picklist	d3l243	writeaccess	SELECT
+public	view	v_dataset_cc_report_state_list_report	d3l243	writeaccess	SELECT
 public	view	v_dataset_check_report	d3l243	writeaccess	SELECT
 public	view	v_dataset_comments_recent_datasets	d3l243	writeaccess	SELECT
 public	view	v_dataset_create_queue	d3l243	writeaccess	SELECT
@@ -4594,6 +4681,7 @@ public	view	v_dataset_files_recent	d3l243	writeaccess	SELECT
 public	view	v_dataset_folder_paths	d3l243	writeaccess	SELECT
 public	view	v_dataset_folder_paths_ex	d3l243	writeaccess	SELECT
 public	view	v_dataset_funding_report	d3l243	writeaccess	SELECT
+public	view	v_dataset_info	d3l243	writeaccess	SELECT
 public	view	v_dataset_info_detail_report	d3l243	writeaccess	SELECT
 public	view	v_dataset_info_list_report	d3l243	writeaccess	SELECT
 public	view	v_dataset_instrument_list_report	d3l243	writeaccess	SELECT
@@ -4634,6 +4722,7 @@ public	view	v_emsl_allocated_usage_by_category	d3l243	writeaccess	SELECT
 public	view	v_emsl_instrument_usage_type_picklist	d3l243	writeaccess	SELECT
 public	view	v_emsl_instruments	d3l243	writeaccess	SELECT
 public	view	v_entity_rename_log	d3l243	writeaccess	SELECT
+public	view	v_entity_users_one_year	d3l243	writeaccess	SELECT
 public	view	v_enzyme_details	d3l243	writeaccess	SELECT
 public	view	v_enzyme_export	d3l243	writeaccess	SELECT
 public	view	v_enzyme_picklist	d3l243	writeaccess	SELECT
@@ -5025,6 +5114,13 @@ public	view	v_separation_group_picklist	d3l243	writeaccess	SELECT
 public	view	v_separation_type_detail_report	d3l243	writeaccess	SELECT
 public	view	v_separation_type_entry	d3l243	writeaccess	SELECT
 public	view	v_separation_type_list_report	d3l243	writeaccess	SELECT
+public	view	v_service_cost_rate_list_report	d3l243	writeaccess	SELECT
+public	view	v_service_type_list_report	d3l243	writeaccess	SELECT
+public	view	v_service_type_picklist	d3l243	writeaccess	SELECT
+public	view	v_service_use_detail_report	d3l243	writeaccess	SELECT
+public	view	v_service_use_entry	d3l243	writeaccess	SELECT
+public	view	v_service_use_list_report	d3l243	writeaccess	SELECT
+public	view	v_service_use_report_list_report	d3l243	writeaccess	SELECT
 public	view	v_settings_file_lookup	d3l243	writeaccess	SELECT
 public	view	v_settings_file_picklist	d3l243	writeaccess	SELECT
 public	view	v_settings_files_detail_report	d3l243	writeaccess	SELECT
@@ -5080,6 +5176,10 @@ sw	table	t_data_folder_create_queue	d3l243	writeaccess	INSERT
 sw	table	t_data_folder_create_queue	d3l243	writeaccess	SELECT
 sw	table	t_data_folder_create_queue	d3l243	writeaccess	UPDATE
 sw	sequence	t_data_folder_create_queue_entry_id_seq	d3l243	writeaccess	SELECT
+sw	table	t_debug_tmp_job_parameters	dmswebuser	writeaccess	SELECT
+sw	table	t_debug_tmp_job_step_dependencies	dmswebuser	writeaccess	SELECT
+sw	table	t_debug_tmp_job_steps	dmswebuser	writeaccess	SELECT
+sw	table	t_debug_tmp_jobs	dmswebuser	writeaccess	SELECT
 sw	table	t_job_events	d3l243	writeaccess	DELETE
 sw	table	t_job_events	d3l243	writeaccess	INSERT
 sw	table	t_job_events	d3l243	writeaccess	SELECT
@@ -5117,6 +5217,10 @@ sw	table	t_job_step_processing_stats	d3l243	writeaccess	INSERT
 sw	table	t_job_step_processing_stats	d3l243	writeaccess	SELECT
 sw	table	t_job_step_processing_stats	d3l243	writeaccess	UPDATE
 sw	sequence	t_job_step_processing_stats_entry_id_seq	d3l243	writeaccess	SELECT
+sw	table	t_job_step_reset_stats	d3l243	writeaccess	DELETE
+sw	table	t_job_step_reset_stats	d3l243	writeaccess	INSERT
+sw	table	t_job_step_reset_stats	d3l243	writeaccess	SELECT
+sw	table	t_job_step_reset_stats	d3l243	writeaccess	UPDATE
 sw	table	t_job_step_state_name	d3l243	writeaccess	SELECT
 sw	table	t_job_step_status_history	d3l243	writeaccess	DELETE
 sw	table	t_job_step_status_history	d3l243	writeaccess	INSERT
@@ -5229,9 +5333,11 @@ sw	view	v_dms_data_packages	d3l243	writeaccess	SELECT
 sw	view	v_dms_pipeline_existing_jobs	d3l243	writeaccess	SELECT
 sw	view	v_dms_pipeline_jobs	d3l243	writeaccess	SELECT
 sw	view	v_failed_job_steps	d3l243	writeaccess	SELECT
+sw	view	v_job_events	d3l243	writeaccess	SELECT
 sw	view	v_job_processing_time	d3l243	writeaccess	SELECT
 sw	view	v_job_step_backlog_crosstab	d3l243	writeaccess	SELECT
 sw	view	v_job_step_backlog_history	d3l243	writeaccess	SELECT
+sw	view	v_job_step_events	d3l243	writeaccess	SELECT
 sw	view	v_job_step_processing_log	d3l243	writeaccess	SELECT
 sw	view	v_job_step_processing_log_retries	d3l243	writeaccess	SELECT
 sw	view	v_job_step_processing_stats	d3l243	writeaccess	SELECT
@@ -5314,6 +5420,9 @@ timetable	table	t_cron_interval	d3l243	writeaccess	SELECT
 timetable	table	task	d3l243	writeaccess	SELECT
 timetable	schema	timetable	d3l243	writeaccess	CREATE
 timetable	schema	timetable	d3l243	writeaccess	USAGE
+timetable	view	v_chain	d3l243	writeaccess	SELECT
 timetable	view	v_chain_errors	d3l243	writeaccess	SELECT
 timetable	view	v_chain_errors_summary	d3l243	writeaccess	SELECT
 timetable	view	v_chain_start_times	d3l243	writeaccess	SELECT
+timetable	view	v_chain_start_times_recent	d3l243	writeaccess	SELECT
+timetable	view	v_task	d3l243	writeaccess	SELECT
