@@ -45,3 +45,9 @@ ALTER FOREIGN TABLE ONLY eus.vw_users ALTER COLUMN last_change_date OPTIONS (
 
 ALTER FOREIGN TABLE eus.vw_users OWNER TO d3l243;
 
+--
+-- Name: TABLE vw_users; Type: ACL; Schema: eus; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE eus.vw_users TO writeaccess;
+

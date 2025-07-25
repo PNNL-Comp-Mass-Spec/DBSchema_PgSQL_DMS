@@ -24,3 +24,9 @@ CREATE VIEW timetable.v_task AS
 
 ALTER VIEW timetable.v_task OWNER TO d3l243;
 
+--
+-- Name: TABLE v_task; Type: ACL; Schema: timetable; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE timetable.v_task TO writeaccess;
+

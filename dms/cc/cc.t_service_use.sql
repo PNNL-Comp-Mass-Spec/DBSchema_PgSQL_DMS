@@ -86,5 +86,5 @@ ALTER TABLE ONLY cc.t_service_use
 --
 
 GRANT SELECT ON TABLE cc.t_service_use TO readaccess;
-GRANT SELECT ON TABLE cc.t_service_use TO writeaccess;
+GRANT SELECT,INSERT,UPDATE ON TABLE cc.t_service_use TO writeaccess;
 

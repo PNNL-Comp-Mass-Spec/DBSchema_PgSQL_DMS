@@ -18,3 +18,9 @@ CREATE VIEW logcap.v_task_events AS
 
 ALTER VIEW logcap.v_task_events OWNER TO d3l243;
 
+--
+-- Name: TABLE v_task_events; Type: ACL; Schema: logcap; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE logcap.v_task_events TO writeaccess;
+

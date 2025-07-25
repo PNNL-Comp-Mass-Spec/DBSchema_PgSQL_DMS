@@ -55,3 +55,10 @@ CREATE INDEX ix_t_service_use_updates_entered ON cc.t_service_use_updates USING 
 
 CREATE INDEX ix_t_service_use_updates_service_use_entry_id ON cc.t_service_use_updates USING btree (service_use_entry_id);
 
+--
+-- Name: TABLE t_service_use_updates; Type: ACL; Schema: cc; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE cc.t_service_use_updates TO readaccess;
+GRANT SELECT,INSERT,UPDATE ON TABLE cc.t_service_use_updates TO writeaccess;
+

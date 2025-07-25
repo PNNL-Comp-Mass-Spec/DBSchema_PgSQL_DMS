@@ -19,3 +19,9 @@ CREATE VIEW timetable.v_chain AS
 
 ALTER VIEW timetable.v_chain OWNER TO d3l243;
 
+--
+-- Name: TABLE v_chain; Type: ACL; Schema: timetable; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE timetable.v_chain TO writeaccess;
+

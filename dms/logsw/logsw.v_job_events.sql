@@ -18,3 +18,9 @@ CREATE VIEW logsw.v_job_events AS
 
 ALTER VIEW logsw.v_job_events OWNER TO d3l243;
 
+--
+-- Name: TABLE v_job_events; Type: ACL; Schema: logsw; Owner: d3l243
+--
+
+GRANT SELECT ON TABLE logsw.v_job_events TO writeaccess;
+
