@@ -3,8 +3,8 @@
 --
 
 CREATE VIEW public.v_service_use_list_report AS
- SELECT u.entry_id AS id,
-    u.report_id,
+ SELECT u.report_id,
+    u.entry_id,
     u.dataset_id,
     public.sub_account,
     u.charge_code,
