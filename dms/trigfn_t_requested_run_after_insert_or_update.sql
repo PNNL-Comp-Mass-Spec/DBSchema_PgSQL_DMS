@@ -30,6 +30,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_requested_run_after_insert_or_update(
 **          02/21/2023 mem - Pass batch group ID to get_requested_run_name_code
 **          05/31/2023 mem - Use format() for string concatenation
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          07/25/2025 mem - Also update t_requested_run_updates
 **
 *****************************************************/
 DECLARE
@@ -55,6 +56,10 @@ BEGIN
        OLD.request_type_id    IS DISTINCT FROM NEW.request_type_id Or
        OLD.separation_group   IS DISTINCT FROM NEW.separation_group
     Then
+        ---------------------------------------------------
+        -- Update request_name_code, if required
+        ---------------------------------------------------
+
         SELECT batch, created, batch_group_id
         INTO _batchInfo
         FROM t_requested_run_batches
@@ -92,6 +97,10 @@ BEGIN
 
     If TG_OP = 'INSERT' Then
 
+        ---------------------------------------------------
+        -- Add a new row to t_event_log for the new requested run
+        ---------------------------------------------------
+
         SELECT state_id
         INTO _stateIdNew
         FROM t_requested_run_state_name
@@ -111,6 +120,10 @@ BEGIN
                CURRENT_TIMESTAMP;
 
     ElsIf OLD.state_name <> NEW.state_name Then     -- Use <> since state_name is never null
+
+        ---------------------------------------------------
+        -- Add a new row to t_event_log for the updated requested run
+        ---------------------------------------------------
 
         SELECT state_id
         INTO _stateIdOld
@@ -137,7 +150,10 @@ BEGIN
 
     End If;
 
+    ---------------------------------------------------
     -- Update these three columns for inserts and updates (which are filtered with a WHEN clause in the trigger definition)
+    ---------------------------------------------------
+
     UPDATE t_requested_run
     SET Updated = CURRENT_TIMESTAMP,
         Queue_State = CASE WHEN NEW.state_name = 'Completed' THEN 3 ELSE NEW.Queue_State END,
@@ -146,7 +162,10 @@ BEGIN
 
     If TG_OP = 'UPDATE' Then
 
-        -- Check for renamed requested run
+        ---------------------------------------------------
+        -- Check for a renamed requested run
+        ---------------------------------------------------
+
         -- Use <> since request_name is never null
         If OLD.request_name <> NEW.request_name Then
 
@@ -163,9 +182,11 @@ BEGIN
 
         End If;
 
-        -- Check for updated Dataset ID (including changing to null)
-        If Not OLD.dataset_id Is Null And OLD.dataset_id IS DISTINCT FROM NEW.dataset_id Then
+        ---------------------------------------------------
+        -- Check for an updated Dataset ID (including changing to null)
+        ---------------------------------------------------
 
+        If Not OLD.dataset_id Is Null And OLD.dataset_id IS DISTINCT FROM NEW.dataset_id Then
             SELECT dataset
             INTO _datasetNameOld
             FROM t_dataset
@@ -192,9 +213,52 @@ BEGIN
                    );
         End If;
 
-        -- Check for updated Experiment ID
-        If OLD.exp_id <> NEW.exp_id then
+        ---------------------------------------------------
+        -- Add a row to t_requested_run_updates if any of the following were updated:
+        --   Work Package
+        --   EUS Proposal
+        --   EUS Usage Type ID
+        --   Service Type ID
+        ---------------------------------------------------
 
+        If OLD.work_package      IS DISTINCT FROM NEW.work_package Or
+           OLD.eus_proposal_id   IS DISTINCT FROM NEW.eus_proposal_id Or
+           OLD.eus_usage_type_id <> NEW.eus_usage_type_id Or            -- Use <> since eus_usage_type_id is never null
+           OLD.service_type_id   <> NEW.service_type_id                 -- Use <> since service_type_id is never null
+        Then
+            INSERT INTO t_requested_run_updates (
+                request_id,
+                work_package_change,
+                eus_proposal_change,
+                eus_usage_type_change,
+                service_type_change,
+                entered_by
+            )
+            SELECT NEW.request_id,
+                   CASE WHEN OLD.work_package IS DISTINCT FROM NEW.work_package
+                        THEN format('%s -> %s', Coalesce(OLD.work_package, '""'), Coalesce(NEW.work_package, '""'))
+                        ELSE NULL
+                   END,
+                   CASE WHEN OLD.eus_proposal_id IS DISTINCT FROM NEW.eus_proposal_id
+                        THEN format('%s -> %s', Coalesce(OLD.eus_proposal_id, '""'), Coalesce(NEW.eus_proposal_id, '""'))
+                        ELSE NULL
+                   END,
+                   CASE WHEN OLD.eus_usage_type_id <> NEW.eus_usage_type_id
+                        THEN format('%s -> %s', OLD.eus_usage_type_id, NEW.eus_usage_type_id)
+                        ELSE NULL
+                   END,
+                   CASE WHEN OLD.service_type_id <> NEW.service_type_id
+                        THEN format('%s -> %s', OLD.service_type_id, NEW.service_type_id)
+                        ELSE NULL
+                   END,
+                   public.get_user_login_without_domain('');
+        End If;
+
+        ---------------------------------------------------
+        -- Check for an updated Experiment ID
+        ---------------------------------------------------
+
+        If OLD.exp_id <> NEW.exp_id then
             SELECT experiment
             INTO _experimentNameOld
             FROM t_experiments
@@ -216,14 +280,16 @@ BEGIN
                     format('%s: %s', OLD.exp_id, _experimentNameOld),
                     format('%s: %s', NEW.exp_id, _experimentNameNew)
                    );
-
         End If;
 
     End If;
 
     If TG_OP = 'INSERT' Or Not NEW.dataset_id Is Null And OLD.dataset_id IS DISTINCT FROM NEW.dataset_id Then
 
+        ---------------------------------------------------
         -- Check whether another requested run already has the new Dataset ID
+        ---------------------------------------------------
+
         INSERT INTO t_entity_rename_log (
             target_type,
             target_id,
