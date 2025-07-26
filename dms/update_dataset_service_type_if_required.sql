@@ -24,11 +24,15 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_service_type_if_required(IN _d
 **
 **  Auth:   mem
 **  Date:   07/10/2025 mem - Initial release
+**          07/25/2025 mem - Update service_type_id in t_requested_run
+**                         - Call RAISE INFO with '' when _infoOnly is true
 **
 *****************************************************/
 DECLARE
     _currentServiceTypeID smallint;
     _autoDefinedServiceTypeID smallint;
+    _requestID int;
+    _reqRunCurrentServiceTypeID smallint;
     _debugMsg text;
 BEGIN
     ---------------------------------------------------
@@ -40,7 +44,7 @@ BEGIN
     _logDebugMessages := Coalesce(_logDebugMessages, false);
 
     If _infoOnly Then
-        _logDebugMessages := true;
+        RAISE INFO '';
     End If;
 
     ---------------------------------------------------
@@ -86,6 +90,31 @@ BEGIN
 
                 CALL post_log_entry ('Normal', _debugMsg, 'update_dataset_service_type_if_required');
             End If;
+
+            ---------------------------------------------------
+            -- Also update the requested run, if required
+            ---------------------------------------------------
+
+            SELECT request_id, service_type_id
+            INTO _requestID, _reqRunCurrentServiceTypeID
+            FROM t_requested_run
+            WHERE dataset_id = _datasetID
+            ORDER BY request_id DESC
+            LIMIT 1;
+
+            If FOUND And _reqRunCurrentServiceTypeID <> _autoDefinedServiceTypeID Then
+                UPDATE t_requested_run
+                SET service_type_id = _autoDefinedServiceTypeID
+                WHERE dataset_id = _datasetID;
+
+                If _reqRunCurrentServiceTypeID <> 0 Or _logDebugMessages Then
+                    _debugMsg := format('Changed cost center service type ID for requested run %s from %s to %s',
+                                        _requestID, _reqRunCurrentServiceTypeID, _autoDefinedServiceTypeID);
+
+                    CALL post_log_entry ('Normal', _debugMsg, 'update_dataset_service_type_if_required');
+                End If;
+            End If;
+
         End If;
     End If;
 END
