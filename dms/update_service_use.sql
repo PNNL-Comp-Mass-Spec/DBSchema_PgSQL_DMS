@@ -23,6 +23,8 @@ CREATE OR REPLACE PROCEDURE public.update_service_use(IN _entryid integer, IN _c
 **
 **  Auth:   mem
 **  Date:   07/23/2025 mem - Initial release
+**          07/28/2025 mem - When charge code is updated, also update t_requested_run
+**                         - When service_type_id is updated, also update t_dataset and t_requested_run
 **
 *****************************************************/
 DECLARE
@@ -35,6 +37,11 @@ DECLARE
     _msg text;
     _existingValues record;
     _alterEnteredByMessage text;
+
+    _chargeCodeMatch text;
+    _datasetID int = 0;
+    _requestedRunValues record;
+    _datasetServiceTypeID int;
 
     _currentLocation text := 'Start';
     _sqlState text;
@@ -129,7 +136,12 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        If Not Exists (SELECT charge_code FROM t_charge_code WHERE charge_code = _chargeCode) Then
+        SELECT charge_code
+        INTO _chargeCodeMatch
+        FROM t_charge_code
+        WHERE charge_code = _chargeCode::citext;
+
+        If Not FOUND Then
             _msg := format('Cannot update: charge code %s is not valid', _chargeCode);
 
             If _infoOnly Then
@@ -138,6 +150,9 @@ BEGIN
 
             _returnCode := 'U5204';
             RAISE EXCEPTION '%', _msg;
+        Else
+            -- Assure that the charge code is properly capitalized
+            _chargeCode := _chargeCodeMatch;
         End If;
 
         If Not Exists (SELECT service_type_id FROM cc.t_service_type WHERE service_type_id = _serviceTypeID) Then
@@ -173,6 +188,7 @@ BEGIN
                    charge_code,
                    service_type_id,
                    comment,
+                   dataset_id,
                    charge_code     <> _chargeCode    AS charge_code_changed,
                    service_type_id <> _serviceTypeID AS service_type_changed,
                    comment         <> _comment       AS comment_changed
@@ -190,6 +206,7 @@ BEGIN
                 RAISE EXCEPTION '%', _msg;
             End If;
 
+            _datasetID := _existingValues.dataset_id;
         End If;
 
         If _infoOnly Then
@@ -240,6 +257,44 @@ BEGIN
 
                 CALL public.alter_entered_by_user ('cc', 't_service_use_updates', 'service_use_entry_id', _entryID, _callingUser,
                                                    _entryDateColumnName => 'entered', _enteredByColumnName => 'entered_by', _message => _alterEnteredByMessage);
+            End If;
+
+            If _datasetID > 0 Then
+                ---------------------------------------------------
+                -- Update work package and service type ID in t_requested_run, if required
+                ---------------------------------------------------
+
+                SELECT request_id, work_package, service_type_id
+                INTO _requestedRunValues
+                FROM t_requested_run
+                WHERE dataset_id = _datasetID
+                ORDER BY request_id DESC
+                LIMIT 1;
+
+                If FOUND And
+                   (_requestedRunValues.work_package    <> _chargeCode::citext Or
+                    _requestedRunValues.service_type_id <> _serviceTypeID)
+                Then
+                    UPDATE t_requested_run
+                    SET work_package    = _chargeCode,
+                        service_type_id = _serviceTypeID
+                    WHERE request_id = _requestedRunValues.request_id;
+                End If;
+
+                ---------------------------------------------------
+                -- Update service type ID in t_dataset, if required
+                ---------------------------------------------------
+
+                SELECT service_type_id
+                INTO _datasetServiceTypeID
+                FROM t_dataset
+                WHERE dataset_id = _datasetID;
+
+                If FOUND And _datasetServiceTypeID <> _serviceTypeID Then
+                    UPDATE t_dataset
+                    SET service_type_id = _serviceTypeID
+                    WHERE dataset_id = _datasetID;
+                End If;
             End If;
         End If;
 
