@@ -158,6 +158,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **          02/17/2025 mem - Add support for requested run state 'Holding'
 **                         - Assure that requested run state name is properly capitalized
 **          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
+**          07/29/2025 mem - When work package is updated, also update cc.t_service_use for any rows where report_state_id is 1 or 2
 **
 *****************************************************/
 DECLARE
@@ -171,6 +172,7 @@ DECLARE
     _separationGroup text;
     _defaultPriority int;
     _currentBatch int := 0;
+    _datasetID int := 0;
     _debugMsg text;
     _logErrors boolean := false;
     _raiseErrorOnMultipleEUSUsers boolean := true;
@@ -181,6 +183,7 @@ DECLARE
     _oldRequestName citext := '';
     _oldEusProposalID citext := '';
     _oldStatus citext := '';
+    _oldWorkPackage citext := '';
     _matchFound boolean := false;
     _stateID int := 0;
     _stateNameMatch text;
@@ -361,9 +364,11 @@ BEGIN
                 SELECT request_name,
                        request_id,
                        eus_proposal_id,
-                       state_name
-                       batch_id
-                INTO _oldRequestName, _requestID, _oldEusProposalID, _oldStatus, _currentBatch
+                       state_name,
+                       work_package,
+                       batch_id,
+                       dataset_id
+                INTO _oldRequestName, _requestID, _oldEusProposalID, _oldStatus, _oldWorkPackage, _currentBatch, _datasetID
                 FROM t_requested_run
                 WHERE request_id = _requestIDForUpdate;
 
@@ -371,7 +376,7 @@ BEGIN
                     _matchFound := true;
                 End If;
 
-                If _oldRequestName <> _requestName::citext Then
+                If _matchFound And _oldRequestName <> _requestName::citext Then
                     If _oldStatus <> 'Active' Then
                         RAISE EXCEPTION 'Requested run is not active; cannot rename: "%"', _oldRequestName;
                     End If;
@@ -380,15 +385,16 @@ BEGIN
                         RAISE EXCEPTION 'Cannot rename "%" since new name already exists: "%"', _oldRequestName, _requestName;
                     End If;
                 End If;
-
             Else
                 -- Look for the requested run by name and state
                 SELECT request_name,
                        request_id,
                        eus_proposal_id,
                        state_name,
-                       batch_id
-                INTO _oldRequestName, _requestID, _oldEusProposalID, _oldStatus, _currentBatch
+                       work_package,
+                       batch_id,
+                       dataset_id
+                INTO _oldRequestName, _requestID, _oldEusProposalID, _oldStatus, _oldWorkPackage, _currentBatch, _datasetID
                 FROM t_requested_run
                 WHERE request_name = _requestName::citext AND
                       state_name = _status::citext;
@@ -406,13 +412,17 @@ BEGIN
             SELECT request_name,
                    request_id,
                    eus_proposal_id,
-                   state_name
-                   batch_id
-            INTO _oldRequestName, _requestID, _oldEusProposalID, _oldStatus, _currentBatch
+                   state_name,
+                   work_package,
+                   batch_id,
+                   dataset_id
+            INTO _oldRequestName, _requestID, _oldEusProposalID, _oldStatus, _oldWorkPackage, _currentBatch, _datasetID
             FROM t_requested_run
             WHERE request_name = _requestName::citext;
 
-            If Not FOUND Then
+            If FOUND Then
+                _matchFound := true;
+            Else
                 _requestID := 0;
             End If;
         End If;
@@ -422,6 +432,9 @@ BEGIN
 
         -- Assure that _oldStatus is not null
         _oldStatus := Coalesce(_oldStatus, '? request not found ?');
+
+        -- Assure that _oldWorkPackage is not null
+        _oldWorkPackage := Coalesce(_oldWorkPackage, '');
 
         -- Cannot create an entry that already exists
 
@@ -1036,7 +1049,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-
             SELECT batch_id
             INTO _currentBatch
             FROM t_requested_run
@@ -1096,6 +1108,36 @@ BEGIN
             If _batch = 0 And _currentBatch <> 0 Then
                 _msg := format('Removed request %s from batch %s', _requestID, _currentBatch);
                 _message := public.append_to_text(_message, _msg);
+            End If;
+
+            If _datasetID > 0 And _oldWorkPackage <> _workPackage Then
+                ---------------------------------------------------
+                -- Update cc.t_service_use for any rows where report_state_id is 1 or 2
+                ---------------------------------------------------
+
+                /*
+                    -- Option 1 (easier to read)
+
+                    UPDATE cc.t_service_use
+                    SET charge_code = _workPackage
+                    WHERE entry_id IN ( SELECT entry_id
+                                        FROM cc.t_service_use SvcUse
+                                             INNER JOIN cc.t_service_use_report Rep
+                                               ON SvcUse.report_id = Rep.report_id
+                                        WHERE SvcUse.dataset_id = _datasetID AND
+                                              SvcUse.charge_code <> _workPackage AND
+                                              Rep.report_state_id IN (1, 2) );
+                */
+
+                -- Option 2 (better performance)
+
+                UPDATE cc.t_service_use Target
+                SET charge_code = _workPackage
+                FROM cc.t_service_use_report AS Rep
+                WHERE Target.report_id = Rep.report_id AND
+                      Rep.report_state_id IN (1, 2) AND
+                      Target.dataset_id = _datasetID AND
+                      Target.charge_code <> _workPackage;
             End If;
         End If;
 
