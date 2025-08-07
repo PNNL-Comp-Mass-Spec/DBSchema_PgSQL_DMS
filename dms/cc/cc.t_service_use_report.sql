@@ -34,6 +34,8 @@ ALTER TABLE cc.t_service_use_report ALTER COLUMN report_id ADD GENERATED ALWAYS 
 ALTER TABLE ONLY cc.t_service_use_report
     ADD CONSTRAINT pk_t_service_use_report PRIMARY KEY (report_id);
 
+ALTER TABLE cc.t_service_use_report CLUSTER ON pk_t_service_use_report;
+
 --
 -- Name: t_service_use_report fk_t_service_use_report_t_service_cost_group; Type: FK CONSTRAINT; Schema: cc; Owner: d3l243
 --

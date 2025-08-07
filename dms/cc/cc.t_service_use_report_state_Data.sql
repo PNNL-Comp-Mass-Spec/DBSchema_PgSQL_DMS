@@ -25,6 +25,7 @@ COPY cc.t_service_use_report_state (report_state_id, report_state) FROM stdin;
 1	New
 2	Active
 3	Complete
+4	Inactive
 \.
 
 
@@ -32,7 +33,7 @@ COPY cc.t_service_use_report_state (report_state_id, report_state) FROM stdin;
 -- Name: t_service_use_report_state_report_state_id_seq; Type: SEQUENCE SET; Schema: cc; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('cc.t_service_use_report_state_report_state_id_seq', 3, true);
+SELECT pg_catalog.setval('cc.t_service_use_report_state_report_state_id_seq', 4, true);
 
 
 --
