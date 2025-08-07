@@ -5,7 +5,8 @@
 CREATE VIEW public.v_service_type_list_report AS
  SELECT service_type_id,
     service_type,
-    service_description
+    service_description,
+    abbreviation
    FROM cc.t_service_type;
 
 
