@@ -393,7 +393,7 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Optionally remove acquistion rows
+    -- Optionally remove acquisition rows
     ---------------------------------------------------
 
     If _includeAcquisitions = 0 Then
