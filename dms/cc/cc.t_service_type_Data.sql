@@ -21,18 +21,19 @@ SET row_security = off;
 -- Data for Name: t_service_type; Type: TABLE DATA; Schema: cc; Owner: d3l243
 --
 
-COPY cc.t_service_type (service_type_id, service_type, service_description) FROM stdin;
-0	Undefined	Undefined
-1	None	Not a cost center tracked requested run or dataset
-2	Peptides: Short advanced MS	Astral, nanoPOTS, timsTOF SCP, separation time < 60 minutes
-3	Peptides: Short standard MS	HFX, Lumos, Eclipse, Exploris, SRM, MRM, separation time < 60 minutes
-4	Peptides: Long advanced MS	Astral, nanoPOTS, timsTOF SCP, separation time >= 60 minutes
-5	Peptides: Long standard MS	HFX, Lumos, Eclipse, Exploris, separation time >= 60 minutes
-6	Peptides: Screening MS (Ulta Fast)	All Orbitraps, separation time < 5 minutes, or infusion
-7	Lipids and Metabolites	Lipids and Metabolites
-8	GC-MS	GC-MS
-9	MALDI	MALDI (run count = hr count)
-25	Ambiguous	Unable to auto-determine the correct service type
+COPY cc.t_service_type (service_type_id, service_type, service_description, abbreviation) FROM stdin;
+0	Undefined	Undefined	Undefined
+1	None	Not a cost center tracked requested run or dataset	None
+25	Ambiguous	Unable to auto-determine the correct service type	Ambiguous
+100	Peptides: Short Advanced MS	Astral, nanoPOTS, timsTOF SCP, separation time <= 60 minutes	PepSA
+101	Peptides: Short Standard MS	HFX, Lumos, Eclipse, Exploris, SRM, MRM, separation time <= 60 minutes	PepSS
+102	Peptides: Long Advanced MS	Astral, nanoPOTS, timsTOF SCP, separation time > 60 minutes	PepLA
+103	Peptides: Long Standard MS	HFX, Lumos, Eclipse, Exploris, separation time > 60 minutes	PepLS
+104	MALDI	MALDI (run count = hr count)	MALDI
+110	Peptides: Screening MS	All Orbitraps, separation time <= 5 minutes (ultra fast), or infusion	PepScreen
+111	Lipids	Lipids	Lipid
+112	Metabolites	Metabolites	Metab
+113	GC-MS	GC-MS	GCMS
 \.
 
 
