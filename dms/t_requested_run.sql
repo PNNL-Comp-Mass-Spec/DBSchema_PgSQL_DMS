@@ -420,7 +420,7 @@ ALTER TABLE ONLY public.t_requested_run
 --
 
 ALTER TABLE ONLY public.t_requested_run
-    ADD CONSTRAINT fk_t_requested_run_t_service_type FOREIGN KEY (service_type_id) REFERENCES cc.t_service_type(service_type_id);
+    ADD CONSTRAINT fk_t_requested_run_t_service_type FOREIGN KEY (service_type_id) REFERENCES cc.t_service_type(service_type_id) ON UPDATE CASCADE;
 
 --
 -- Name: t_requested_run fk_t_requested_run_t_users; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

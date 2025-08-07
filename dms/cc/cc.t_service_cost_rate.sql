@@ -44,7 +44,7 @@ ALTER TABLE ONLY cc.t_service_cost_rate
 --
 
 ALTER TABLE ONLY cc.t_service_cost_rate
-    ADD CONSTRAINT fk_t_service_cost_rate_t_service_type FOREIGN KEY (service_type_id) REFERENCES cc.t_service_type(service_type_id);
+    ADD CONSTRAINT fk_t_service_cost_rate_t_service_type FOREIGN KEY (service_type_id) REFERENCES cc.t_service_type(service_type_id) ON UPDATE CASCADE;
 
 --
 -- Name: TABLE t_service_cost_rate; Type: ACL; Schema: cc; Owner: d3l243

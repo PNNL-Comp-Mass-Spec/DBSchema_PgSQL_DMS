@@ -12,7 +12,8 @@ CREATE TABLE cc.t_service_use (
     transaction_units real,
     is_held public.citext DEFAULT 'N'::public.citext NOT NULL,
     comment public.citext DEFAULT ''::public.citext,
-    dataset_id integer NOT NULL
+    dataset_id integer NOT NULL,
+    transaction_cost_est double precision
 );
 
 
@@ -79,7 +80,7 @@ CREATE TRIGGER trig_t_service_use_after_update AFTER UPDATE ON cc.t_service_use 
 --
 
 ALTER TABLE ONLY cc.t_service_use
-    ADD CONSTRAINT fk_t_service_use_t_service_type FOREIGN KEY (service_type_id) REFERENCES cc.t_service_type(service_type_id);
+    ADD CONSTRAINT fk_t_service_use_t_service_type FOREIGN KEY (service_type_id) REFERENCES cc.t_service_type(service_type_id) ON UPDATE CASCADE;
 
 --
 -- Name: TABLE t_service_use; Type: ACL; Schema: cc; Owner: d3l243
