@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
+-- Dumped from database version 17.5
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -209,6 +209,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 198	105	10	Update cached analysis job state name for recent and active jobs	SQL	CALL update_cached_analysis_job_state_name_recent_and_active (_mostRecentDays => 50);	\N	\N	f	t	0
 199	106	10	Sleep 8 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 200	106	20	Update pending jobs	SQL	CALL update_pending_jobs(_requestID => 0, _infoOnly => false);	\N	\N	f	t	0
+201	107	10	Lock active dataset cost center reports	SQL	CALL lock_active_dataset_cc_reports(_infoOnly => false);	\N	\N	f	t	0
 \.
 
 
@@ -216,7 +217,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 -- Name: task_task_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.task_task_id_seq', 200, true);
+SELECT pg_catalog.setval('timetable.task_task_id_seq', 201, true);
 
 
 --

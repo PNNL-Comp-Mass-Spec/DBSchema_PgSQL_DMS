@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
+-- Dumped from database version 17.5
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -118,6 +118,7 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 104	Enable archive-dependent managers once	23 16 * * *	\N	0	f	f	f	\N	\N
 105	Update cached analysis job state name for recent jobs	21/30 * * * *	\N	0	t	f	f	\N	\N
 106	Update pending jobs	42/30 * * * *	\N	0	t	f	f	\N	\N
+107	Lock active dataset cost center reports	45 23 * * 5	\N	0	t	f	f	\N	\N
 \.
 
 
@@ -125,7 +126,7 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 -- Name: chain_chain_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.chain_chain_id_seq', 106, true);
+SELECT pg_catalog.setval('timetable.chain_chain_id_seq', 107, true);
 
 
 --
