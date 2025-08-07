@@ -25,6 +25,8 @@ CREATE OR REPLACE PROCEDURE public.update_service_use(IN _entryid integer, IN _c
 **  Date:   07/23/2025 mem - Initial release
 **          07/28/2025 mem - When charge code is updated, also update t_requested_run
 **                         - When service_type_id is updated, also update t_dataset and t_requested_run
+**          08/01/2025 mem - Only allow editing a service use entry when the service use report's state is 'New' or 'Active'
+**          08/06/2025 mem - Remove duplicate check for _entryID being null
 **
 *****************************************************/
 DECLARE
@@ -173,28 +175,23 @@ BEGIN
         If _mode IN ('update', 'check_update', Lower('PreviewUpdate'), 'reset') Then
             _currentLocation := 'Check for non-existent entry';
 
-            If _entryID Is Null Then
-                _msg := 'Cannot update: _entryID parameter cannot be null';
+            -- Note that we already verified that _entryID is not null
 
-                If _infoOnly Then
-                    RAISE WARNING '%', _msg;
-                End If;
-
-                _returnCode := 'U5206';
-                RAISE EXCEPTION '%', _msg;
-            End If;
-
-            SELECT entry_id,
-                   charge_code,
-                   service_type_id,
-                   comment,
-                   dataset_id,
-                   charge_code     <> _chargeCode    AS charge_code_changed,
-                   service_type_id <> _serviceTypeID AS service_type_changed,
-                   comment         <> _comment       AS comment_changed
+            SELECT Rep.report_id,
+                   Rep.report_state_id,
+                   SvcUse.entry_id,
+                   SvcUse.charge_code,
+                   SvcUse.service_type_id,
+                   SvcUse.comment,
+                   SvcUse.dataset_id,
+                   SvcUse.charge_code     <> _chargeCode    AS charge_code_changed,
+                   SvcUse.service_type_id <> _serviceTypeID AS service_type_changed,
+                   SvcUse.comment         <> _comment       AS comment_changed
             INTO _existingValues
-            FROM cc.t_service_use
-            WHERE entry_id = _entryID;
+            FROM cc.t_service_use SvcUse
+                 INNER JOIN cc.t_service_use_report Rep
+                   ON SvcUse.report_id = Rep.report_id
+            WHERE SvcUse.entry_id = _entryID;
 
             If Not FOUND Then
                 _msg := format('Cannot update: service use entry ID %s does not exist', _entryID);
@@ -207,6 +204,17 @@ BEGIN
             End If;
 
             _datasetID := _existingValues.dataset_id;
+
+            If Not _existingValues.report_state_id IN (1, 2) Then
+                _msg := format('Cannot update service use entry ID %s since service use report %s is not active',
+                               _entryID, _existingValues.report_id);
+
+                If _infoOnly Then
+                    RAISE WARNING '%', _msg;
+                End If;
+
+                RAISE EXCEPTION '%', _msg;
+            End If;
         End If;
 
         If _infoOnly Then
