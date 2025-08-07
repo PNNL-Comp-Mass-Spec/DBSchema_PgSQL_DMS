@@ -36,6 +36,8 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_cc_report(IN _enddate timestam
 **
 **  Auth:   mem
 **  Date:   07/22/2025 mem - Initial release
+**          08/06/2025 mem - Update service type IDs to be between 100 and 113 instead of 2 and 9
+**                         - For MALDI, use service type ID 104
 **
 *****************************************************/
 DECLARE
@@ -189,8 +191,8 @@ BEGIN
 
             _returnCode = 'U5202';
             RETURN;
-        ElsIf _minServiceTypeID <> 2 Or _maxServiceTypeID <> 9 Then
-            _message := format('Service type IDs in cc.t_service_cost_rate span %s to %s, but they should be 2 to 9; unable to proceed', _minServiceTypeID, _maxServiceTypeID);
+        ElsIf _minServiceTypeID <> 100 Or _maxServiceTypeID <> 113 Then
+            _message := format('Service type IDs in cc.t_service_cost_rate span %s to %s, but they should be 100 to 113; unable to proceed', _minServiceTypeID, _maxServiceTypeID);
             RAISE WARNING '%', _infoOnly;
 
             If Not _infoOnly Then
@@ -214,7 +216,7 @@ BEGIN
             WHERE dataset_state_id = 3 AND                                  -- Dataset state 3: Complete
                   created BETWEEN _startDate AND _beginningOfNextDay AND
                   cc_report_state_id = 0 AND                                -- Cost center report state 0: Undefined
-                  service_type_id BETWEEN 2 AND 9;                          -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous)
+                  service_type_id BETWEEN 100 AND 113;                      -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous)
 
             If _datasetCount = 0 Then
                 RAISE INFO 'Every dataset created between % and % already has a non-zero cost center report state', _startDate, _beginningOfNextDay;
@@ -230,7 +232,7 @@ BEGIN
                   WHERE dataset_state_id = 3 AND                                  -- Dataset state 3: Complete
                         created BETWEEN _startDate AND _beginningOfNextDay AND
                         cc_report_state_id = 0 AND                                -- Cost center report state 0: Undefined
-                        service_type_id BETWEEN 2 AND 9                           -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous); limit to the range of valid IDs, for safety
+                        service_type_id BETWEEN 100 AND 113                       -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous); limit to the range of valid IDs, for safety
                   ) FilterQ
             WHERE t_dataset.dataset_id = FilterQ.dataset_id;
 
@@ -260,16 +262,17 @@ BEGIN
         _currentLocation := 'Populate a temporary table with datasets to add to the report';
 
         CREATE TEMP TABLE Tmp_Datasets_to_Add (
-            dataset_id          int NOT NULL PRIMARY KEY,
-            dataset             citext NOT NULL,
-            service_type_id     smallint NOT NULL,
-            cc_report_state_id  smallint NOT NULL,
-            acq_length_minutes  int NOT NULL DEFAULT 0,
-            charge_code         citext DEFAULT '' NOT NULL,
-            transaction_date    timestamp,
-            transaction_units   real,
-            is_held             citext DEFAULT 'N' NOT NULL,
-            comment             citext DEFAULT ''
+            dataset_id           int NOT NULL PRIMARY KEY,
+            dataset              citext NOT NULL,
+            service_type_id      smallint NOT NULL,
+            cc_report_state_id   smallint NOT NULL,
+            acq_length_minutes   int NOT NULL DEFAULT 0,
+            charge_code          citext DEFAULT '' NOT NULL,
+            transaction_date     timestamp,
+            transaction_units    real,
+            transaction_cost_est real,
+            is_held              citext DEFAULT 'N' NOT NULL,
+            comment              citext DEFAULT ''
         );
 
         INSERT INTO Tmp_Datasets_to_Add (dataset_id, dataset, service_type_id, cc_report_state_id, acq_length_minutes, charge_code, transaction_date, comment)
@@ -332,17 +335,23 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Populate column transaction_units in Tmp_Datasets_to_Add
+        -- Populate columns transaction_units and transaction_cost_est in Tmp_Datasets_to_Add
         --
-        -- For MALDI datasets, use acq_length_hours * total_rate_per_run
-        -- For non-MALDI datasets, simply use total_rate_per_run
+        -- For MALDI datasets, the transaction_unit is the run length, in hours
+        -- For non-MALDI datasets, the transaction unit is one
+        --
+        -- Column transaction_cost_est is the estimated cost of the run, determined by multiplying the transaction_units by total_rate_per_run
         ---------------------------------------------------
 
         UPDATE Tmp_Datasets_to_Add DS
-        SET transaction_units = CASE WHEN DS.service_type_id = 9
-                                     THEN (DS.acq_length_minutes / 60.0 * CR.total_rate_per_run)::numeric(1000, 2)::real    -- MALDI dataset
-                                     ELSE CR.total_rate_per_run::real                                                       -- Non-MALDI dataset
-                                END
+        SET transaction_units    = CASE WHEN DS.service_type_id = 104
+                                        THEN (DS.acq_length_minutes / 60.0)::numeric(1000, 2)::real    -- MALDI dataset, use acq_length_hours
+                                        ELSE 1                                                         -- Non-MALDI dataset
+                                   END,
+            transaction_cost_est = CASE WHEN DS.service_type_id = 104
+                                        THEN (DS.acq_length_minutes / 60.0 * CR.total_rate_per_run)::numeric(1000, 2)::real    -- MALDI dataset
+                                        ELSE CR.total_rate_per_run                                                             -- Non-MALDI dataset
+                                   END
         FROM ( SELECT service_type_id,
                       base_rate_per_run + labor_rate_per_run AS total_rate_per_run
                FROM cc.t_service_cost_rate
@@ -361,10 +370,14 @@ BEGIN
 
             SELECT DS.service_type_id,
                    CR.total_rate_per_run,
-                   CASE WHEN DS.service_type_id = 9
+                   CASE WHEN DS.service_type_id = 104
+                        THEN (DS.acq_length_minutes / 60.0)::numeric(1000, 2)::real   -- For MALDI datasets, use acq_length_hours
+                        ELSE 1
+                   END AS transaction_units
+                   CASE WHEN DS.service_type_id = 104
                         THEN (DS.acq_length_minutes / 60.0 * CR.total_rate_per_run)::numeric(1000, 2)::real   -- For MALDI datasets, use total_rate_per_run times acq_length_hours
                         ELSE CR.total_rate_per_run::real
-                   END AS transaction_units
+                   END AS transaction_cost_est
             FROM Tmp_Datasets_to_Add DS
                  INNER JOIN ( SELECT service_type_id,
                                      base_rate_per_run + labor_rate_per_run AS total_rate_per_run
@@ -407,7 +420,8 @@ BEGIN
         INSERT INTO cc.t_service_use (report_id, ticket_number,
                                       charge_code, service_type_id,
                                       transaction_date, transaction_units,
-                                      is_held, comment, dataset_id)
+                                      is_held, comment, dataset_id,
+                                      transaction_cost_est)
         SELECT _reportID,
                format('%s_%s', to_char(_endDate, 'yyyy-mm-dd'), dataset_id) AS ticket_number,
                charge_code,
@@ -416,7 +430,8 @@ BEGIN
                transaction_units,
                is_held,
                comment,
-               dataset_id
+               dataset_id,
+               transaction_cost_est
         FROM Tmp_Datasets_to_Add;
 
         GET DIAGNOSTICS _affectedCount = ROW_COUNT;

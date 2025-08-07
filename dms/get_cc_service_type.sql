@@ -10,7 +10,22 @@ CREATE OR REPLACE FUNCTION public.get_cc_service_type(_datasetname text, _experi
 **  Desc:
 **      Determines the cost center service type for the given set of metadata
 **
-**      Service types are tracked via table cc.t_service_type
+**      Service types (tracked via table cc.t_service_type):
+**
+**      ID     Service Type                         Description
+**      --     ------------                         -----------
+**      0      Undefined                            Undefined
+**      1      None                                 Not a cost center tracked requested run or dataset
+**      25     Ambiguous                            Unable to auto-determine the correct service type
+**      100    Peptides: Short Advanced MS          Astral, nanoPOTS, timsTOF SCP, separation time <= 60 minutes
+**      101    Peptides: Short Standard MS          HFX, Lumos, Eclipse, Exploris, SRM, MRM, separation time <= 60 minutes
+**      102    Peptides: Long Advanced MS           Astral, nanoPOTS, timsTOF SCP, separation time > 60 minutes
+**      103    Peptides: Long Standard MS           HFX, Lumos, Eclipse, Exploris, separation time > 60 minutes
+**      104    MALDI                                MALDI (run count = hr count)
+**      110    Peptides: Screening MS               All Orbitraps, separation time <= 5 minutes (ultra fast), or infusion
+**      111    Lipids                               Lipids
+**      112    Metabolites                          Metabolites
+**      113    GC-MS                                GC-MS
 **
 **  Arguments:
 **    _datasetName              Dataset name (ignored if an empty string)
@@ -31,21 +46,23 @@ CREATE OR REPLACE FUNCTION public.get_cc_service_type(_datasetname text, _experi
 **      - If the experiment name is 'Blank' or the experiment's campaign is 'Blank',      service_type is 1 (None)
 **      - If the campaign name is QC_Mammalian, QC-Standard, or QC-Shew-Standard,         service_type is 1 (None)
 **      - If the dataset name or experiment name starts with QC_Mam, QC_Metab, QC_Shew, or QC_BTLE, service_type is 1
-**      - If the dataset type is MRM, service_type is 3
-**      - If the instrument group contains GC, service_type is 8
-**      - If the instrument group is Agilent_QQQ, service_type is 8
-**      - If the dataset type contains GC or is EI-HMS, service_type is 8
-**      - If the dataset type contains MALDI, service_type is 9
-**      - If the instrument group contains MALDI or is QExactive_Imaging, service_type is 9 (this includes MALDI_timsTOF_Imaging)
-**      - If the instrument group is timsTOF_Flex, service_type is 9
-**      - If instrument group is timsTOF_SCP, service_type is 2 or 4, depending on separation time (< 60 minutes or >= 60)
-**      - If sample_type for the separation type is Metabolites, Lipids, or Glycans, service_type is 7
-**      - If acquistion time is less than 5 minutes, type is 6
-**      - If separation_type name or separation group name has "-NanoPot", service_type is 2 or 4, depending on separation time (< 60 minutes or >= 60)
-**      - If instrument group is Astral and separation time is >= 60 minutes, service_type is 4
-**      - If instrument group is Astral and separation time is < 60 minutes, service_type is 2
-**      - If instrument group is Ascend, Eclipse, Exploris, Lumos, QEHFX, QExactive, VelosOrbi and separation time is >= 60 minutes, service_type is 5
-**      - If instrument group is Ascend, Eclipse, Exploris, Lumos, QEHFX, QExactive, VelosOrbi and separation time is < 60 minutes, service_type is 3
+**      - If the dataset type is MRM, service_type is 101
+**      - If the instrument group contains GC, service_type is 113
+**      - If the instrument group is Agilent_QQQ, service_type is 113
+**      - If the dataset type contains GC or is EI-HMS, service_type is 113
+**      - If the dataset type contains MALDI, service_type is 104
+**      - If the instrument group contains MALDI or is QExactive_Imaging, service_type is 104 (this includes MALDI_timsTOF_Imaging)
+**      - If the instrument group is timsTOF_Flex, service_type is 104
+**      - If instrument group is timsTOF_SCP, service_type is 100 or 102, depending on separation time (<= 60 minutes or > 60)
+**      - If sample_type for the separation type is Lipids, service_type is 111
+**      - If sample_type for the separation type is Metabolites, service_type is 112
+**      - If sample_type for the separation type is Glycans, service_type is 103 (long standard peptides)
+**      - If acquisition time is 5 minutes or shorter, type is 110
+**      - If separation_type name or separation group name has "-NanoPot", service_type is 100 or 102, depending on separation time (<= 60 minutes or > 60)
+**      - If instrument group is Astral and separation time is > 60 minutes, service_type is 102
+**      - If instrument group is Astral and separation time is <= 60 minutes, service_type is 100
+**      - If instrument group is Ascend, Eclipse, Exploris, Lumos, QEHFX, QExactive, VelosOrbi and separation time is > 60 minutes, service_type is 103
+**      - If instrument group is Ascend, Eclipse, Exploris, Lumos, QEHFX, QExactive, VelosOrbi and separation time is <= 60 minutes, service_type is 101
 **      - Otherwise, set service_type to Ambiguous
 **
 **  Example usage:
@@ -82,6 +99,9 @@ CREATE OR REPLACE FUNCTION public.get_cc_service_type(_datasetname text, _experi
 **  Auth:   mem
 **  Date:   06/28/2025 mem - Initial release
 **          07/19/2025 mem - Return service type ID 1 (None) when the dataset type is 'DataFiles' or 'Tracking'
+**          07/31/2025 mem - Change service type IDs to range from 100 to 107 instead of 2 to 9
+**                         - Use > 60 instead of >= 60 when differentiating between "short" or "long" peptide ID
+**          08/06/2025 mem - Change service type IDs (MALDI is now 104, Peptide Screening is now 110, Lipids is now 111, Metabolites is new at 112, GC-MS is now 113)
 **
 *****************************************************/
 DECLARE
@@ -215,40 +235,40 @@ BEGIN
 
     -- Check for an MRM (aka SRM) dataset
     If _datasetType = 'MRM' Then
-        RETURN 3;       -- Peptides: Short standard MS
+        RETURN 101;       -- Peptides: Short standard MS
     End If;
 
     -- Check for a GC instrument group
     If _instrumentGroup LIKE '%GC%' OR _instrumentGroup = 'Agilent_QQQ' Then
-        RETURN 8;       -- GC-MS
+        RETURN 113;       -- GC-MS
     End If;
 
     -- Check for a GC dataset
     If _datasetType LIKE '%GC%' OR _datasetType = 'EI-HMS' Then
-        RETURN 8;       -- GC-MS
+        RETURN 113;       -- GC-MS
     End If;
 
     -- Check for a MALDI dataset
     If _datasetType LIKE '%MALDI%' Then
-        RETURN 9;       -- MALDI
+        RETURN 104;       -- MALDI
     End If;
 
     -- Check for a MALDI instrument group (this includes MALDI_timsTOF_Imaging)
     If _instrumentGroup LIKE '%MALDI%' OR _instrumentGroup = 'QExactive_Imaging' Then
-        RETURN 9;       -- MALDI
+        RETURN 104;       -- MALDI
     End If;
 
     -- Check for the timsTOF_Flex instrument group
     If _instrumentGroup = 'timsTOF_Flex' Then
-        RETURN 9;       -- MALDI
+        RETURN 104;       -- MALDI
     End If;
 
     -- Check for the timsTOF_SCP instrument group
     If _instrumentGroup = 'timsTOF_SCP' Then
-        If _acqLengthMinutes < 60 Then
-            RETURN 2;   -- Peptides: Short advanced MS
+        If _acqLengthMinutes <= 60 Then
+            RETURN 100;   -- Peptides: Short advanced MS
         Else
-            RETURN 4;   -- Peptides: Long advanced MS
+            RETURN 102;   -- Peptides: Long advanced MS
         End If;
     End If;
 
@@ -257,9 +277,19 @@ BEGIN
         RETURN 25;      -- Ambiguous
     End If;
 
-    -- Check for a lipids or metabolites sample
-    If _sampleType IN ('Metabolites', 'Lipids', 'Glycans') Then
-        RETURN 7;       -- Lipids and Metabolites
+    -- Check for a lipid sample
+    If _sampleType IN ('Lipids') Then
+        RETURN 111;       -- Lipids
+    End If;
+
+    -- Check for a metabolite sample
+    If _sampleType IN ('Metabolites') Then
+        RETURN 112;       -- Metabolites
+    End If;
+
+    -- Check for a glycan sample
+    If _sampleType IN ('Glycans') Then
+        RETURN 103;       -- Peptides: Long Standard MS
     End If;
 
     -- Check for an undefined acquisition length
@@ -268,34 +298,34 @@ BEGIN
     End If;
 
     -- Check for short datasets
-    If _acqLengthMinutes < 5 Then
-        RETURN 6;       -- Peptides: Screening MS (Ulta Fast)
+    If _acqLengthMinutes <= 5 Then
+        RETURN 110;       -- Peptides: Screening MS
     End If;
 
     -- Check for NanoPots datasets
     If _separationType LIKE '%NanoPot%' OR _separationGroup LIKE '%NanoPot%' Then
-        If _acqLengthMinutes < 60 Then
-            RETURN 2;   -- Peptides: Short advanced MS
+        If _acqLengthMinutes <= 60 Then
+            RETURN 100;   -- Peptides: Short Advanced MS
         Else
-            RETURN 4;   -- Peptides: Long advanced MS
+            RETURN 102;   -- Peptides: Long Advanced MS
         End If;
     End If;
 
     -- Check for Astral datasets
     If _instrumentGroup LIKE '%Astral%' Then
-        If _acqLengthMinutes < 60 Then
-            RETURN 2;   -- Peptides: Short advanced MS
+        If _acqLengthMinutes <= 60 Then
+            RETURN 100;   -- Peptides: Short Advanced MS
         Else
-            RETURN 4;   -- Peptides: Long advanced MS
+            RETURN 102;   -- Peptides: Long Advanced MS
         End If;
     End If;
 
     -- Check for Orbitrap datasets
     If _instrumentGroup IN ('Ascend', 'Eclipse', 'Exploris', 'Lumos', 'QEHFX', 'QExactive', 'VelosOrbi') Then
-        If _acqLengthMinutes < 60 Then
-            RETURN 3;   -- Peptides: Short standard MS
+        If _acqLengthMinutes <= 60 Then
+            RETURN 101;   -- Peptides: Short Standard MS
         Else
-            RETURN 5;   -- Peptides: Long standard MS
+            RETURN 103;   -- Peptides: Long Standard MS
         End If;
     End If;
 
