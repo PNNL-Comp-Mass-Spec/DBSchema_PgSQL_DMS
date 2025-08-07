@@ -52,6 +52,13 @@ CREATE OR REPLACE FUNCTION timetable.add_job(job_name text, job_schedule timetab
 **                  job_kind => 'BUILTIN'
 **             );
 **
+**      SELECT timetable.add_job(
+**                  job_name       => 'Retire stale LC columns',
+**                  job_schedule   => '15 15 * * 4',
+**                  job_command    => 'CALL retire_stale_lc_columns (_infoOnly => false);',
+**                  job_kind => 'SQL'
+**             );
+**
 **  Auth:   mem
 **  Date:   03/18/2024 mem - Initial release
 **
