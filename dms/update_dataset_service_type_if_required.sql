@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_service_type_if_required(IN _d
 **  Date:   07/10/2025 mem - Initial release
 **          07/25/2025 mem - Update service_type_id in t_requested_run
 **                         - Call RAISE INFO with '' when _infoOnly is true
+**          07/31/2025 mem - When service type ID is updated, also update cc.t_service_use for any rows where report_state_id is 1 or 2
 **
 *****************************************************/
 DECLARE
@@ -33,6 +34,8 @@ DECLARE
     _autoDefinedServiceTypeID smallint;
     _requestID int;
     _reqRunCurrentServiceTypeID smallint;
+    _serviceUseEntryID int;
+    _serviceUseCurrentServiceTypeID smallint;
     _debugMsg text;
 BEGIN
     ---------------------------------------------------
@@ -110,6 +113,34 @@ BEGIN
                 If _reqRunCurrentServiceTypeID <> 0 Or _logDebugMessages Then
                     _debugMsg := format('Changed cost center service type ID for requested run %s from %s to %s',
                                         _requestID, _reqRunCurrentServiceTypeID, _autoDefinedServiceTypeID);
+
+                    CALL post_log_entry ('Normal', _debugMsg, 'update_dataset_service_type_if_required');
+                End If;
+            End If;
+
+            ---------------------------------------------------
+            -- Also update cc.t_service_use, provided report_state_id is 1 or 2 for the corresponding service use report
+            ---------------------------------------------------
+
+            SELECT entry_id, service_type_id
+            INTO _serviceUseEntryID, _serviceUseCurrentServiceTypeID
+            FROM cc.t_service_use
+            WHERE dataset_id = _datasetID
+            ORDER BY entry_id DESC
+            LIMIT 1;
+
+            If FOUND And _serviceUseCurrentServiceTypeID <> _autoDefinedServiceTypeID Then
+                UPDATE cc.t_service_use Target
+                SET service_type_id = _autoDefinedServiceTypeID
+                FROM cc.t_service_use_report AS Rep
+                WHERE Target.report_id = Rep.report_id AND
+                      Rep.report_state_id IN (1, 2) AND
+                      Target.dataset_id = _datasetID AND
+                      Target.service_type_id <> _autoDefinedServiceTypeID;
+
+                If _serviceUseCurrentServiceTypeID <> 0 Or _logDebugMessages Then
+                    _debugMsg := format('Changed cost center service type ID for service use entry %s from %s to %s',
+                                        _serviceUseEntryID, _serviceUseCurrentServiceTypeID, _autoDefinedServiceTypeID);
 
                     CALL post_log_entry ('Normal', _debugMsg, 'update_dataset_service_type_if_required');
                 End If;
