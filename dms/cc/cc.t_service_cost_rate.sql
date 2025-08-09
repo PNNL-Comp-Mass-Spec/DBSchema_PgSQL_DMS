@@ -5,13 +5,10 @@
 CREATE TABLE cc.t_service_cost_rate (
     cost_group_id integer NOT NULL,
     service_type_id smallint NOT NULL,
-    adjustment real DEFAULT 1.0 NOT NULL,
-    base_rate_per_hour_adj real DEFAULT 0.0 NOT NULL,
-    overhead_hours_per_run real DEFAULT 1.0 NOT NULL,
-    base_rate_per_run real GENERATED ALWAYS AS ((base_rate_per_hour_adj * overhead_hours_per_run)) STORED NOT NULL,
-    labor_rate_per_hour real DEFAULT 200 NOT NULL,
-    labor_hours_per_run real DEFAULT 0.15 NOT NULL,
-    labor_rate_per_run real GENERATED ALWAYS AS ((labor_rate_per_hour * labor_hours_per_run)) STORED NOT NULL
+    indirect_per_run real DEFAULT 0.0 NOT NULL,
+    direct_per_run real DEFAULT 0.0 NOT NULL,
+    non_labor_per_run real DEFAULT 0.0 NOT NULL,
+    total_per_run real GENERATED ALWAYS AS (((((indirect_per_run + direct_per_run) + non_labor_per_run))::numeric(1000,2))::real) STORED NOT NULL
 );
 
 
@@ -21,7 +18,7 @@ ALTER TABLE cc.t_service_cost_rate OWNER TO d3l243;
 -- Name: TABLE t_service_cost_rate; Type: COMMENT; Schema: cc; Owner: d3l243
 --
 
-COMMENT ON TABLE cc.t_service_cost_rate IS 'Column "base_rate_per_hour_adj" is computed by multiplying "base_rate_per_hour" (table cc.t_service_cost_group) and "adjustment" in this table. Column "labor_rate_per_run" should have the same value as "labor_rate_per_hour" in table cc.t_service_cost_group.';
+COMMENT ON TABLE cc.t_service_cost_rate IS 'Column "total_per_run" is computed by adding indirect_per_run, direct_per_run, and non_labor_per_run';
 
 --
 -- Name: t_service_cost_rate pk_t_service_cost_rate; Type: CONSTRAINT; Schema: cc; Owner: d3l243

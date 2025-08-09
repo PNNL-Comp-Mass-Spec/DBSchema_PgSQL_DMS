@@ -6,8 +6,6 @@ CREATE TABLE cc.t_service_cost_group (
     cost_group_id integer NOT NULL,
     description public.citext DEFAULT ''::public.citext NOT NULL,
     service_cost_state_id smallint DEFAULT 1 NOT NULL,
-    base_rate_per_hour real DEFAULT 0.0 NOT NULL,
-    labor_rate_per_hour real DEFAULT 0.0 NOT NULL,
     entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 
