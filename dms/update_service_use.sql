@@ -27,6 +27,7 @@ CREATE OR REPLACE PROCEDURE public.update_service_use(IN _entryid integer, IN _c
 **                         - When service_type_id is updated, also update t_dataset and t_requested_run
 **          08/01/2025 mem - Only allow editing a service use entry when the service use report's state is 'New' or 'Active'
 **          08/06/2025 mem - Remove duplicate check for _entryID being null
+**          08/07/2025 mem - Do not validate the charge code if the service type ID is 0 or 1
 **
 *****************************************************/
 DECLARE
@@ -116,8 +117,8 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        If _chargeCode = '' Then
-            _msg := 'Cannot update: charge code cannot be an empty string';
+        If _serviceTypeID IS NULL Then
+            _msg := 'Cannot update: _serviceTypeID parameter cannot be null';
 
             If _infoOnly Then
                 RAISE WARNING '%', _msg;
@@ -127,8 +128,8 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        If _serviceTypeID IS NULL Then
-            _msg := 'Cannot update: _serviceTypeID parameter cannot be null';
+        If Not Exists (SELECT service_type_id FROM cc.t_service_type WHERE service_type_id = _serviceTypeID) Then
+            _msg := format('Cannot update: service type ID %s is not valid', _serviceTypeID);
 
             If _infoOnly Then
                 RAISE WARNING '%', _msg;
@@ -138,34 +139,36 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        SELECT charge_code
-        INTO _chargeCodeMatch
-        FROM t_charge_code
-        WHERE charge_code = _chargeCode::citext;
+        If Not _serviceTypeID IN (0, 1) Then
+            If _chargeCode = '' Then
+                _msg := 'Cannot update: charge code cannot be an empty string';
 
-        If Not FOUND Then
-            _msg := format('Cannot update: charge code %s is not valid', _chargeCode);
+                If _infoOnly Then
+                    RAISE WARNING '%', _msg;
+                End If;
 
-            If _infoOnly Then
-                RAISE WARNING '%', _msg;
+                _returnCode := 'U5204';
+                RAISE EXCEPTION '%', _msg;
             End If;
 
-            _returnCode := 'U5204';
-            RAISE EXCEPTION '%', _msg;
-        Else
-            -- Assure that the charge code is properly capitalized
-            _chargeCode := _chargeCodeMatch;
-        End If;
+            SELECT charge_code
+            INTO _chargeCodeMatch
+            FROM t_charge_code
+            WHERE charge_code = _chargeCode::citext;
 
-        If Not Exists (SELECT service_type_id FROM cc.t_service_type WHERE service_type_id = _serviceTypeID) Then
-            _msg := format('Cannot update: service type ID %s is not valid', _serviceTypeID);
+            If Not FOUND Then
+                _msg := format('Cannot update: charge code %s is not valid', _chargeCode);
 
-            If _infoOnly Then
-                RAISE WARNING '%', _msg;
+                If _infoOnly Then
+                    RAISE WARNING '%', _msg;
+                End If;
+
+                _returnCode := 'U5205';
+                RAISE EXCEPTION '%', _msg;
+            Else
+                -- Assure that the charge code is properly capitalized
+                _chargeCode := _chargeCodeMatch;
             End If;
-
-            _returnCode := 'U5205';
-            RAISE EXCEPTION '%', _msg;
         End If;
 
         ---------------------------------------------------
