@@ -15,7 +15,7 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_cc_report(IN _enddate timestam
 **      - Created on or before the end date (created any time on the end date)
 **      - Cost center report state of 2 (Need to submit to cost center) or 4 (Need to refund to cost center)
 **
-**      Added datasets will have their cost center report state changed to 3 (Submitted to cost center) or 5 (Refunded to cost center)
+**      Added datasets will have their cost center report state changed to 3 (Submitting to cost center) or 5 (Refunding to cost center)
 **
 **      See also column cc_report_state_id in table t_dataset and table t_dataset_cc_report_state
 **
@@ -38,6 +38,8 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_cc_report(IN _enddate timestam
 **  Date:   07/22/2025 mem - Initial release
 **          08/06/2025 mem - Update service type IDs to be between 100 and 113 instead of 2 and 9
 **                         - For MALDI, use service type ID 104
+**          08/07/2025 mem - Table t_service_cost_rate now has 9 service types per cost group
+**                         - Determine the total rate per run using column total_per_run in t_service_cost_rate
 **
 *****************************************************/
 DECLARE
@@ -181,8 +183,8 @@ BEGIN
         FROM cc.t_service_cost_rate
         WHERE cost_group_id = _costGroupID;
 
-        If _serviceTypeIDs <> 8 Then
-            _message := format('Table cc.t_service_cost_rate has %s service type IDs, but it should have 8; unable to proceed', _serviceTypeIDs);
+        If _serviceTypeIDs <> 9 Then
+            _message := format('Table cc.t_service_cost_rate has %s service type IDs, but it should have 9; unable to proceed', _serviceTypeIDs);
             RAISE WARNING '%', _infoOnly;
 
             If Not _infoOnly Then
@@ -353,12 +355,12 @@ BEGIN
                                         ELSE CR.total_rate_per_run                                                             -- Non-MALDI dataset
                                    END
         FROM ( SELECT service_type_id,
-                      base_rate_per_run + labor_rate_per_run AS total_rate_per_run
+                      total_per_run AS total_rate_per_run
                FROM cc.t_service_cost_rate
                WHERE cost_group_id = _costGroupID
              ) CR
         WHERE DS.service_type_id = CR.service_type_id;
-
+        --
         GET DIAGNOSTICS _affectedCount = ROW_COUNT;
 
         If _showDebug Then
@@ -380,7 +382,7 @@ BEGIN
                    END AS transaction_cost_est
             FROM Tmp_Datasets_to_Add DS
                  INNER JOIN ( SELECT service_type_id,
-                                     base_rate_per_run + labor_rate_per_run AS total_rate_per_run
+                                     total_per_run AS total_rate_per_run
                               FROM cc.t_service_cost_rate
                               WHERE cost_group_id = 100
                             ) CR
@@ -433,7 +435,6 @@ BEGIN
                dataset_id,
                transaction_cost_est
         FROM Tmp_Datasets_to_Add;
-
         GET DIAGNOSTICS _affectedCount = ROW_COUNT;
 
         If _showDebug Then
@@ -457,7 +458,7 @@ BEGIN
                FROM Tmp_Datasets_to_Add
              ) LookupQ
         WHERE DS.dataset_id = LookupQ.dataset_id;
-
+        --
         GET DIAGNOSTICS _affectedCount = ROW_COUNT;
 
         If _showDebug Then
