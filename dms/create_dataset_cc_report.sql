@@ -40,6 +40,7 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_cc_report(IN _enddate timestam
 **                         - For MALDI, use service type ID 104
 **          08/07/2025 mem - Table t_service_cost_rate now has 9 service types per cost group
 **                         - Determine the total rate per run using column total_per_run in t_service_cost_rate
+**                         - Exclude datasets that do not have a requested run with a work package
 **
 *****************************************************/
 DECLARE
@@ -54,6 +55,7 @@ DECLARE
     _beginningOfNextDay date;
     _datasetCount int;
     _logMsg text;
+    _matchLoc int;
     _activeCostGroups int;
     _costGroupID int;
     _serviceTypeIDs int;
@@ -173,7 +175,7 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Assure that table t_service_cost_rate has a row for each of standard service type IDs
+        -- Assure that table t_service_cost_rate has a row for each of the standard service type IDs
         ---------------------------------------------------
 
         SELECT COUNT(*),
@@ -207,18 +209,28 @@ BEGIN
 
         ---------------------------------------------------
         -- Look for datasets with a cost center report state of 0 (Undefined) that can be changed to state 2 (Need to submit to cost center)
+        -- Exclude datasets that do not have a valid work package ('', 'none', 'na', n/a', '(lookup)')
         ---------------------------------------------------
 
         _currentLocation := 'Change cost center report state from 0 to 2 for eligible datasets';
 
+        CREATE TEMP TABLE Tmp_Datasets_to_Update (
+            dataset_id int NOT NULL PRIMARY KEY
+        );
+
         If _infoOnly Then
-            SELECT COUNT(*) AS Datasets
-            INTO _datasetCount
-            FROM t_dataset
-            WHERE dataset_state_id = 3 AND                                  -- Dataset state 3: Complete
-                  created BETWEEN _startDate AND _beginningOfNextDay AND
-                  cc_report_state_id = 0 AND                                -- Cost center report state 0: Undefined
-                  service_type_id BETWEEN 100 AND 113;                      -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous)
+            INSERT INTO Tmp_Datasets_to_Update (dataset_id)
+            SELECT DS.dataset_id
+            FROM t_dataset DS
+                 INNER JOIN t_requested_run RR
+                   ON DS.dataset_id = RR.dataset_id
+            WHERE DS.dataset_state_id = 3 AND                                       -- Dataset state 3: Complete
+                  DS.created BETWEEN _startDate AND _beginningOfNextDay AND
+                  DS.cc_report_state_id = 0 AND                                     -- Cost center report state 0: Undefined
+                  DS.service_type_id BETWEEN 100 AND 113 AND                        -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous)
+                  NOT Trim(Coalesce(RR.work_package, '')) IN ('', 'none', 'na', 'n/a', '(lookup)');
+            --
+            GET DIAGNOSTICS _datasetCount = ROW_COUNT;
 
             If _datasetCount = 0 Then
                 RAISE INFO 'Every dataset created between % and % already has a non-zero cost center report state', _startDate, _beginningOfNextDay;
@@ -229,20 +241,23 @@ BEGIN
         Else
             UPDATE t_dataset
             SET cc_report_state_id = 2
-            FROM (SELECT dataset_id
-                  FROM t_dataset
-                  WHERE dataset_state_id = 3 AND                                  -- Dataset state 3: Complete
-                        created BETWEEN _startDate AND _beginningOfNextDay AND
-                        cc_report_state_id = 0 AND                                -- Cost center report state 0: Undefined
-                        service_type_id BETWEEN 100 AND 113                       -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous); limit to the range of valid IDs, for safety
+            FROM (SELECT DS.dataset_id
+                  FROM t_dataset DS
+                       INNER JOIN t_requested_run RR
+                         ON DS.dataset_id = RR.dataset_id
+                  WHERE DS.dataset_state_id = 3 AND                                     -- Dataset state 3: Complete
+                        DS.created BETWEEN _startDate AND _beginningOfNextDay AND
+                        DS.cc_report_state_id = 0 AND                                   -- Cost center report state 0: Undefined
+                        DS.service_type_id BETWEEN 100 AND 113 AND                      -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous); limit to the range of valid IDs, for safety
+                        NOT Trim(Coalesce(RR.work_package, '')) IN ('', 'none', 'na', 'n/a', '(lookup)')
                   ) FilterQ
             WHERE t_dataset.dataset_id = FilterQ.dataset_id;
-
+            --
             GET DIAGNOSTICS _datasetCount = ROW_COUNT;
 
             If _datasetCount = 0 Then
                 If _showDebug Then
-                    RAISE INFO 'Every dataset created between % and % already has a non-zero cost center report state', _startDate, _beginningOfNextDay;
+                    RAISE INFO 'Every dataset created between % and % already has a non-zero cost center report state (or an undefined work package)', _startDate, _beginningOfNextDay;
                 End If;
             Else
                 _logMsg := format('Changed cost center report state from 0 to 2 for %s %s created between %s and %s',
@@ -301,12 +316,16 @@ BEGIN
                FROM t_dataset DS
                     LEFT OUTER JOIN t_requested_run RR
                       ON DS.dataset_id = RR.dataset_id
+                    LEFT OUTER JOIN Tmp_Datasets_to_Update DTU
+                      ON DS.dataset_id = DTU.dataset_id
                WHERE DS.dataset_state_id = 3 AND
                      DS.created BETWEEN _startDate AND _beginningOfNextDay AND
-                     DS.cc_report_state_id IN (2, 4)
+                     (DS.cc_report_state_id IN (2, 4) OR
+                     _infoOnly AND NOT DTU.dataset_id IS NULL   -- Also include datasets that would have had cc_report_state_id auto-updated from 0 to 2 (see 'Change cost center report state' above)
+                     )
              ) FilterQ
         ORDER BY dataset_id;
-
+        --
         GET DIAGNOSTICS _datasetCount = ROW_COUNT;
 
         If _datasetCount = 0 Then
@@ -315,11 +334,12 @@ BEGIN
                        -- to_char(_beginningOfNextDay, 'yyyy-mm-dd');
                        _startDate, _beginningOfNextDay;
 
+            DROP TABLE Tmp_Datasets_to_Update;
             DROP TABLE Tmp_Datasets_to_Add;
             RETURN;
         End If;
 
-        _logMsg = format('a new cost center report for %s %s that %s a cost center report state of 2 (Need to submit) or 4 (Need to refund), '
+        _logMsg = format('a new cost center report using %s %s that %s a cost center report state of 2 (Need to submit) or 4 (Need to refund), '
                        'filtering on dataset_state_id = 3 and dataset created between %s and %s',
                        _datasetCount,
                        check_plural(_datasetCount, 'dataset', 'datasets'),
@@ -327,12 +347,26 @@ BEGIN
                        _startDate, _beginningOfNextDay);
 
         If _infoOnly Then
-            RAISE INFO 'Would create %', _logMsg;
+            -- Would create a new cost center report using 1473 datasets that have a cost center report state of 2 (Need to submit) or 4 (Need to refund), filtering on dataset_state_id = 3 and dataset created between 2024-07-30 and 2025-07-31
+            _logMsg := format('Would create %s', _logMsg);
+
+            RAISE INFO '%', _logMsg;
+
+            _matchLoc = Position('filtering' IN _logMsg);
+
+            If _matchLoc > 1 Then
+                _message := Left(_logMsg, _matchLoc - 3);
+            Else
+                _message := _logMsg;
+            End If;
+
+            DROP TABLE Tmp_Datasets_to_Update;
             DROP TABLE Tmp_Datasets_to_Add;
             RETURN;
         End If;
 
         If _showDebug Then
+            -- Creating a new cost center report using 1473 datasets that have a cost center report state of 2 (Need to submit) or 4 (Need to refund), filtering on dataset_state_id = 3 and dataset created between 2024-07-30 and 2025-07-31
             RAISE INFO 'Creating %', _logMsg;
         End If;
 
@@ -435,6 +469,7 @@ BEGIN
                dataset_id,
                transaction_cost_est
         FROM Tmp_Datasets_to_Add;
+        --
         GET DIAGNOSTICS _affectedCount = ROW_COUNT;
 
         If _showDebug Then
@@ -443,15 +478,15 @@ BEGIN
 
         ---------------------------------------------------
         -- Update the cost center report state for the datasets in the report
-        -- The new state will be either 3 (Submitted to cost center) or 5 (Refunded to cost center)
+        -- The new state will be either 3 (Submitting to cost center) or 5 (Refunding to cost center)
         ---------------------------------------------------
 
         _currentLocation := 'Update cost center report state ID for the datasets in the report';
 
         UPDATE t_dataset DS
         SET cc_report_state_id = CASE WHEN LookupQ.cc_report_state_id = 4
-                                      THEN 5        -- Refunded
-                                      ELSE 3        -- Submitted
+                                      THEN 5        -- Refunding
+                                      ELSE 3        -- Submitting
                                  END
         FROM ( SELECT dataset_id,
                       cc_report_state_id
@@ -479,7 +514,7 @@ BEGIN
         -- Log info about the new report
         ---------------------------------------------------
 
-        _logMsg := format('Created cost center report %s with %s %s',
+        _logMsg := format('Created cost center report %s using %s %s',
                           _reportID, _datasetCount, check_plural(_datasetCount, 'dataset', 'datasets'));
 
         If _showDebug Then
@@ -488,6 +523,9 @@ BEGIN
 
         CALL post_log_entry('Normal', _logMsg, 'create_dataset_cc_report');
 
+        _message := _logMsg;
+
+        DROP TABLE Tmp_Datasets_to_Update;
         DROP TABLE Tmp_Datasets_to_Add;
         RETURN;
 
@@ -514,6 +552,7 @@ BEGIN
         End If;
     END;
 
+    DROP TABLE IF EXISTS Tmp_Datasets_to_Update;
     DROP TABLE IF EXISTS Tmp_Datasets_to_Add;
 END
 $$;
