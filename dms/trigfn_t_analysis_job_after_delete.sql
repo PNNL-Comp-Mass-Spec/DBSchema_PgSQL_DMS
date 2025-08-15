@@ -86,7 +86,8 @@ BEGIN
               t_dataset.decontools_job_for_qc IS DISTINCT FROM _bestJobByDataset.job;
     End If;
 
-    RETURN null;
+    -- Although the return value is ignored, we return OLD here since that is the required option for a function called by a "before delete" trigger
+    RETURN OLD;
 END
 $$;
 

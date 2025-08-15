@@ -49,6 +49,11 @@ ALTER TABLE ONLY cc.t_service_cost_rate
 ALTER TABLE cc.t_service_cost_rate CLUSTER ON pk_t_service_cost_rate;
 
 --
+-- Name: t_service_cost_rate trig_t_service_cost_rate_before_delete; Type: TRIGGER; Schema: cc; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_service_cost_rate_before_delete BEFORE DELETE ON cc.t_service_cost_rate FOR EACH ROW EXECUTE FUNCTION cc.trigfn_t_service_cost_rate_before_delete();
+
 --
 -- Name: t_service_cost_rate fk_t_service_cost_rate_t_service_cost_group; Type: FK CONSTRAINT; Schema: cc; Owner: d3l243
 --
