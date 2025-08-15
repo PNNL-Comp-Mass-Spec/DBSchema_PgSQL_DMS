@@ -83,6 +83,13 @@ ALTER TABLE ONLY cc.t_service_use
     ADD CONSTRAINT fk_t_service_use_t_service_type FOREIGN KEY (service_type_id) REFERENCES cc.t_service_type(service_type_id) ON UPDATE CASCADE;
 
 --
+-- Name: t_service_use fk_t_service_use_t_service_use_report; Type: FK CONSTRAINT; Schema: cc; Owner: d3l243
+--
+
+ALTER TABLE ONLY cc.t_service_use
+    ADD CONSTRAINT fk_t_service_use_t_service_use_report FOREIGN KEY (report_id) REFERENCES cc.t_service_use_report(report_id);
+
+--
 -- Name: TABLE t_service_use; Type: ACL; Schema: cc; Owner: d3l243
 --
 
