@@ -8,7 +8,9 @@ CREATE TABLE cc.t_service_cost_rate (
     indirect_per_run real DEFAULT 0.0 NOT NULL,
     direct_per_run real DEFAULT 0.0 NOT NULL,
     non_labor_per_run real DEFAULT 0.0 NOT NULL,
-    total_per_run real GENERATED ALWAYS AS (((((indirect_per_run + direct_per_run) + non_labor_per_run))::numeric(1000,2))::real) STORED NOT NULL
+    base_rate_per_run real GENERATED ALWAYS AS (((((indirect_per_run + direct_per_run) + non_labor_per_run))::numeric(1000,2))::real) STORED NOT NULL,
+    doe_burdened_rate_per_run real,
+    hhs_burdened_rate_per_run real
 );
 
 
@@ -18,7 +20,24 @@ ALTER TABLE cc.t_service_cost_rate OWNER TO d3l243;
 -- Name: TABLE t_service_cost_rate; Type: COMMENT; Schema: cc; Owner: d3l243
 --
 
-COMMENT ON TABLE cc.t_service_cost_rate IS 'Column "total_per_run" is computed by adding indirect_per_run, direct_per_run, and non_labor_per_run';
+COMMENT ON TABLE cc.t_service_cost_rate IS 'Column "base_rate_per_run" is computed by adding indirect_per_run, direct_per_run, and non_labor_per_run.
+
+Use the following queries to update the burdened rate per run columns:
+
+UPDATE cc.t_service_cost_rate target
+SET doe_burdened_rate_per_run = total_burdened_rate_per_run
+FROM cc.t_service_cost_rate_burdened src
+WHERE target.cost_group_id = src.cost_group_id AND
+      target.service_type_id = src.service_type_id AND
+      src.funding_agency=''DOE'';
+
+UPDATE cc.t_service_cost_rate target
+SET hhs_burdened_rate_per_run = total_burdened_rate_per_run
+FROM cc.t_service_cost_rate_burdened src
+WHERE target.cost_group_id = src.cost_group_id AND
+      target.service_type_id = src.service_type_id AND
+      src.funding_agency=''HHS'';
+';
 
 --
 -- Name: t_service_cost_rate pk_t_service_cost_rate; Type: CONSTRAINT; Schema: cc; Owner: d3l243
@@ -29,6 +48,7 @@ ALTER TABLE ONLY cc.t_service_cost_rate
 
 ALTER TABLE cc.t_service_cost_rate CLUSTER ON pk_t_service_cost_rate;
 
+--
 --
 -- Name: t_service_cost_rate fk_t_service_cost_rate_t_service_cost_group; Type: FK CONSTRAINT; Schema: cc; Owner: d3l243
 --
