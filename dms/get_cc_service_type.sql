@@ -42,8 +42,6 @@ CREATE OR REPLACE FUNCTION public.get_cc_service_type(_datasetname text, _experi
 **
 **  Logic:
 **      - If dataset rating is -5 or -4 (Not Released), this function returns service_type 1 (None)
-**      - If the dataset rating is -1 (No Data aka Blank/Bad),                            service_type is 1 (None)
-**      - If the experiment name is 'Blank' or the experiment's campaign is 'Blank',      service_type is 1 (None)
 **      - If the campaign name is QC_Mammalian, QC-Standard, or QC-Shew-Standard,         service_type is 1 (None)
 **      - If the dataset name or experiment name starts with QC_Mam, QC_Metab, QC_Shew, or QC_BTLE, service_type is 1
 **      - If the dataset type is MRM, service_type is 101
@@ -53,7 +51,9 @@ CREATE OR REPLACE FUNCTION public.get_cc_service_type(_datasetname text, _experi
 **      - If the dataset type contains MALDI, service_type is 104
 **      - If the instrument group contains MALDI or is QExactive_Imaging, service_type is 104 (this includes MALDI_timsTOF_Imaging)
 **      - If the instrument group is timsTOF_Flex, service_type is 104
+**      - If dataset rating is -1 (No Data aka Blank/Bad),                            service_type is 1 (None)
 **      - If dataset rating is  6 (Exclude From Service Center),                      service_type is 1 (None)
+**      - If experiment name is 'Blank',                                              service_type is 1 (None)
 **      - If instrument group is timsTOF_SCP, service_type is 100 or 102, depending on separation time (<= 60 minutes or > 60)
 **      - If sample_type for the separation type is Lipids, service_type is 111
 **      - If sample_type for the separation type is Metabolites, service_type is 112
@@ -195,8 +195,9 @@ BEGIN
         RETURN 1;       -- Service type: None
     End If;
 
-    -- Check for the 'Blank' experiment or 'Blank' campaign
-    If _experiment = 'Blank' OR _campaign = 'Blank' Then
+
+    -- Check for the 'Blank' experiment
+    If _experiment = 'Blank' Then
         RETURN 1;       -- Service type: None
     End If;
 
@@ -208,10 +209,6 @@ BEGIN
              INNER JOIN t_campaign C
                ON E.campaign_id = C.campaign_id
         WHERE experiment = _experiment;
-
-        If FOUND And _campaign = 'Blank' Then
-            RETURN 1;       -- Service type: None
-        End If;
 
         _campaign := Coalesce(_campaign, '');
     End If;
