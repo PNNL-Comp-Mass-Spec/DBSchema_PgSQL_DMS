@@ -42,18 +42,18 @@ CREATE OR REPLACE FUNCTION public.get_cc_service_type(_datasetname text, _experi
 **
 **  Logic:
 **      - If dataset rating is -5 or -4 (Not Released), this function returns service_type 1 (None)
-**      - If the campaign name is QC_Mammalian, QC-Standard, or QC-Shew-Standard,         service_type is 1 (None)
-**      - If the dataset name or experiment name starts with QC_Mam, QC_Metab, QC_Shew, or QC_BTLE, service_type is 1
-**      - If the dataset type is MRM, service_type is 101
-**      - If the instrument group contains GC, service_type is 113
-**      - If the instrument group is Agilent_QQQ, service_type is 113
-**      - If the dataset type contains GC or is EI-HMS, service_type is 113
-**      - If the dataset type contains MALDI, service_type is 104
-**      - If the instrument group contains MALDI or is QExactive_Imaging, service_type is 104 (this includes MALDI_timsTOF_Imaging)
-**      - If the instrument group is timsTOF_Flex, service_type is 104
 **      - If dataset rating is -1 (No Data aka Blank/Bad),                            service_type is 1 (None)
 **      - If dataset rating is  6 (Exclude From Service Center),                      service_type is 1 (None)
 **      - If experiment name is 'Blank',                                              service_type is 1 (None)
+**      - If campaign name is QC_Mammalian, QC-Standard, or QC-Shew-Standard,         service_type is 1 (None)
+**      - If dataset name or experiment name starts with QC_Mam, QC_Metab, QC_Shew, or QC_BTLE, service_type is 1
+**      - If dataset type is MRM, service_type is 101
+**      - If instrument group contains GC, service_type is 113
+**      - If instrument group is Agilent_QQQ, service_type is 113
+**      - If dataset type contains GC or is EI-HMS, service_type is 113
+**      - If dataset type contains MALDI, service_type is 104
+**      - If instrument group contains MALDI or is QExactive_Imaging, service_type is 104 (this includes MALDI_timsTOF_Imaging)
+**      - If instrument group is timsTOF_Flex, service_type is 104
 **      - If instrument group is timsTOF_SCP, service_type is 100 or 102, depending on separation time (<= 60 minutes or > 60)
 **      - If sample_type for the separation type is Lipids, service_type is 111
 **      - If sample_type for the separation type is Metabolites, service_type is 112
@@ -103,6 +103,9 @@ CREATE OR REPLACE FUNCTION public.get_cc_service_type(_datasetname text, _experi
 **          07/31/2025 mem - Change service type IDs to range from 100 to 107 instead of 2 to 9
 **                         - Use > 60 instead of >= 60 when differentiating between "short" or "long" peptide ID
 **          08/06/2025 mem - Change service type IDs (MALDI is now 104, Peptide Screening is now 110, Lipids is now 111, Metabolites is new at 112, GC-MS is now 113)
+**          08/15/2025 mem - Assign service type 1 when the dataset rating is 6 (Exclude From Service Center)
+**                         - No longer use service type 1 when the experiment's campaign is Blank; only use 1 if the experiment name is "Blank"
+**                         - Assign 1 for service type if the dataset's instrument is not service center eligible
 **
 *****************************************************/
 DECLARE
@@ -116,6 +119,7 @@ DECLARE
     _sampleType citext;
     _separationType citext;
     _separationGroup citext;
+    _serviceCenterInstrument boolean;
 
     _sqlState text;
     _exceptionMessage text;
@@ -195,6 +199,22 @@ BEGIN
         RETURN 1;       -- Service type: None
     End If;
 
+    If _instrument <> '' Then
+        -- Check for a service center eligible instrument
+        SELECT Service_Center_Eligible
+        INTO _serviceCenterInstrument
+        FROM t_instrument_name
+        WHERE instrument = _instrument;
+
+        If Not FOUND Then
+            -- Instrument not found
+            RETURN 25;      -- Ambiguous
+        End If;
+
+        If Not _serviceCenterInstrument Then
+            RETURN 1;       -- Service type: None
+        End If;
+    End If;
 
     -- Check for the 'Blank' experiment
     If _experiment = 'Blank' Then
