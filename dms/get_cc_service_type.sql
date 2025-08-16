@@ -53,6 +53,7 @@ CREATE OR REPLACE FUNCTION public.get_cc_service_type(_datasetname text, _experi
 **      - If the dataset type contains MALDI, service_type is 104
 **      - If the instrument group contains MALDI or is QExactive_Imaging, service_type is 104 (this includes MALDI_timsTOF_Imaging)
 **      - If the instrument group is timsTOF_Flex, service_type is 104
+**      - If dataset rating is  6 (Exclude From Service Center),                      service_type is 1 (None)
 **      - If instrument group is timsTOF_SCP, service_type is 100 or 102, depending on separation time (<= 60 minutes or > 60)
 **      - If sample_type for the separation type is Lipids, service_type is 111
 **      - If sample_type for the separation type is Metabolites, service_type is 112
@@ -181,6 +182,11 @@ BEGIN
 
     -- Check for a dataset rating of 'No Data (Blank/Bad)'
     If _datasetRatingID = -1 Then
+        RETURN 1;       -- Service type: None
+    End If;
+
+   -- Check for a dataset rating of 'Exclude From Service Center'
+    If _datasetRatingID = 6 Then
         RETURN 1;       -- Service type: None
     End If;
 
