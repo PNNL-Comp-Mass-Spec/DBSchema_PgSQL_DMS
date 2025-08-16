@@ -37,7 +37,8 @@ CASE
     ELSE (room_number)::text
 END) STORED,
     default_purge_priority smallint DEFAULT 3 NOT NULL,
-    storage_purge_holdoff_months smallint DEFAULT 1 NOT NULL
+    storage_purge_holdoff_months smallint DEFAULT 1 NOT NULL,
+    service_center_eligible boolean DEFAULT false NOT NULL
 );
 
 
