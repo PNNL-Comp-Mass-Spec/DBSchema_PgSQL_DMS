@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
+-- Dumped from database version 17.5
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -33,6 +33,7 @@ COPY public.t_dataset_rating_name (dataset_rating_id, dataset_rating) FROM stdin
 2	Unknown
 3	Interest
 5	Released
+6	Exclude From Service Center
 \.
 
 
