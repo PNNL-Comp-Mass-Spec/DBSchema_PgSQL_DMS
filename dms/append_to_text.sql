@@ -27,6 +27,7 @@ CREATE OR REPLACE FUNCTION public.append_to_text(_basetext text, _addnltext text
 **                         - Ignore _maxlength if _addnlText is an empty string
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/11/2023 mem - Adjust capitalization of keywords
+**          08/17/2025 mem - Do not append the delimiter if _addnlText starts with the delimiter
 **
 *****************************************************/
 DECLARE
@@ -55,7 +56,7 @@ BEGIN
                 If _delimiter Like '% ' And Not _updatedText Like '% ' Then
                     _updatedText := format('%s ', _updatedText);
                 End If;
-            Else
+            ElsIf Not _addnlText Like RTrim(_delimiter) || '%' Then
                 _updatedText := format('%s%s', _updatedText, _delimiter);
             End If;
 
