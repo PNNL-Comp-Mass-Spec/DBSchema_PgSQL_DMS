@@ -151,7 +151,6 @@ BEGIN
             FROM Tmp_Instruments
             ORDER BY EntryID
         LOOP
-
             If _infoOnly Then
                 RAISE INFO 'SELECT * FROM get_monthly_instrument_usage_report (%, 0, %, %, ''report'');', _instrument, _year, _month;
             End If;
@@ -173,7 +172,6 @@ BEGIN
                        Dataset_ID
                 FROM public.get_monthly_instrument_usage_report(_instrument, 0, _year, _month, 'report') U;
             End If;
-
         END LOOP;
 
         ---------------------------------------------------
