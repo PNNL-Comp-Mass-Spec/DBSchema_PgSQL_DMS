@@ -16,14 +16,18 @@ CREATE VIEW public.v_instrument_list_report AS
             ELSE 'No'::public.citext
         END AS scan_source,
     instgroup.allocation_tag,
-    instname.percent_emsl_owned,
-    instname.capture_method AS capture,
     instname.room_number AS room,
+    instname.percent_emsl_owned,
+        CASE
+            WHEN instname.service_center_eligible THEN 'Yes'::public.citext
+            ELSE 'No'::public.citext
+        END AS service_center,
     (((spath.vol_name_client)::text || (spath.storage_path)::text))::public.citext AS assigned_storage,
     (s.source)::public.citext AS assigned_source,
     definestorageyesno.description AS auto_define_storage,
     (((instname.auto_sp_vol_name_client)::text || (instname.auto_sp_path_root)::text))::public.citext AS auto_storage_path,
     (public.get_instrument_dataset_type_list(instname.instrument_id))::public.citext AS allowed_dataset_types,
+    instname.capture_method AS capture,
     instname.created,
     eusmapping.eus_instrument_id,
     eusmapping.eus_display_name,

@@ -5,32 +5,35 @@
 CREATE VIEW public.v_instrument_detail_report AS
  SELECT instname.instrument_id AS id,
     instname.instrument AS name,
-    instname.source_path_id,
-    (s.source)::public.citext AS assigned_source,
-    instname.storage_path_id,
-    (((spath.vol_name_client)::text || (spath.storage_path)::text))::public.citext AS assigned_storage,
-    archpath.archive_path AS assigned_archive_path,
-    archpath.network_share_path AS archive_share_path,
     instname.description,
     instname.instrument_class AS class,
     instname.instrument_group,
-    instname.room_number AS room,
-    instname.capture_method AS capture,
     (((((instname.status)::text || ' ('::text) || (statename.description)::text) || ')'::text))::public.citext AS status,
     instname.usage,
     instname.operations_role AS ops_role,
-    trackingyesno.description AS track_usage_when_inactive,
         CASE
             WHEN (instname.status OPERATOR(public.=) 'active'::public.citext) THEN scansourceyesno.description
             ELSE 'No (not active)'::public.citext
         END AS scan_source,
     instgroup.allocation_tag,
+    instname.room_number AS room,
     instname.percent_emsl_owned,
-    (public.get_instrument_dataset_type_list(instname.instrument_id))::public.citext AS allowed_dataset_types,
-    instname.created,
+        CASE
+            WHEN instname.service_center_eligible THEN 'Yes'::public.citext
+            ELSE 'No'::public.citext
+        END AS service_center_eligible,
+    instname.source_path_id,
+    (((spath.vol_name_client)::text || (spath.storage_path)::text))::public.citext AS assigned_storage,
+    (s.source)::public.citext AS assigned_source,
     definestorageyesno.description AS auto_define_storage,
+    instname.storage_path_id,
     (((instname.auto_sp_vol_name_client)::text || (instname.auto_sp_path_root)::text))::public.citext AS auto_defined_storage_path_root,
     (((instname.auto_sp_vol_name_server)::text || (instname.auto_sp_path_root)::text))::public.citext AS auto_defined_storage_path_on_server,
+    (public.get_instrument_dataset_type_list(instname.instrument_id))::public.citext AS allowed_dataset_types,
+    instname.capture_method AS capture,
+    instname.created,
+    archpath.archive_path AS assigned_archive_path,
+    archpath.network_share_path AS archive_share_path,
     instname.auto_sp_url_domain AS auto_defined_url_domain,
     (((instname.auto_sp_archive_server_name)::text || (instname.auto_sp_archive_path_root)::text))::public.citext AS auto_defined_archive_path_root,
     instname.auto_sp_archive_share_path_root AS auto_defined_archive_share_path_root,
@@ -48,6 +51,7 @@ CREATE VIEW public.v_instrument_detail_report AS
             WHEN (insttracking.reporting OPERATOR(public.~~) '%T%'::text) THEN 'Tracking flag enabled'::public.citext
             ELSE ''::public.citext
         END AS usage_tracking_status,
+    trackingyesno.description AS track_usage_when_inactive,
     instname.default_purge_policy,
     instname.default_purge_priority,
     instname.storage_purge_holdoff_months
