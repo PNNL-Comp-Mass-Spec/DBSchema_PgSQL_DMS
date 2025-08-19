@@ -98,7 +98,6 @@ COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description
 47	25 17 * * 2,5	Tuesday and Friday at 5:25 PM
 46	14 23 * * 2,4,6	Tuesday, Thursday, Saturday at 11:14 PM
 50	00 15 * * 3,7	Wednesday and Sunday at 3:00 PM
-91	45 23 * * 5	Weekly, on Friday at 11:45 PM
 31	0 3 * * 5	Weekly, on Friday at 3:00 AM
 30	15 18 * * 5	Weekly, on Friday at 6:15 PM
 44	19 21 * * 5	Weekly, on Friday at 9:19 PM
@@ -112,6 +111,7 @@ COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description
 17	15 5 * * 7	Weekly, on Sunday at 5:15 AM
 29	15 15 * * 4	Weekly, on Thursday at 3:15 PM
 28	16 15 * * 4	Weekly, on Thursday at 3:16 PM
+91	45 23 * * 3	Weekly, on Wednesday at 11:45 PM
 2	@reboot	When the PostgreSQL instance starts
 \.
 
