@@ -66,7 +66,7 @@ COPY public.t_emsl_instruments (eus_instrument_id, eus_display_name, eus_instrum
 34080	Mass Spectrometer: Linear Ion trap (LTQ)	Mass Spectrometer: ETD_LTQ1	10	\N	\N	2024-08-06 06:15:53	0	0
 34081	Mass Spectrometer: LC Triple Quadrupole	Mass Spectrometer: TSQ_1	10	Mass Spectrometer:  LC-QQQ	\N	2024-08-06 06:15:53	0	0
 34094	Mass Spectrometer: Isotope Ratio	Mass Spectrometer: Isotope Ratio	24	\N	\N	2024-08-06 06:15:53	0	0
-34097	Bottom-up (Fragmented) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Quad TSQ LC-MS 2 (2008)	10	Mass Spectrometer:  LC-QQQ	\N	2024-08-06 06:15:53	0	0
+34097	Targeted (SRM) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Quad TSQ LC-MS 2 (2008)	10	Mass Spectrometer:  LC-QQQ	\N	2025-08-09 06:16:02.690183	0	0
 34098	Mass Spectrometer: Time-of-Flight (ToF)	Mass Spectrometer: Agilent Q-TOF1	10	\N	\N	2024-08-06 06:15:53	0	0
 34099	Metabolomic Liquid State Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: ToF LC-MS 4 (2008)	10	\N	Mass Spectrometry: Ion Mobility Spectrometry, TOF (IMS_TOF3)	2024-08-06 06:15:53	1	0
 34100	Mass Spectrometer: HP ion trap	Mass Spectrometer: HP ion trap	10	\N	\N	2024-08-06 06:15:53	0	0
@@ -80,7 +80,7 @@ COPY public.t_emsl_instruments (eus_instrument_id, eus_display_name, eus_instrum
 34139	Fourier-Transform Ion Cyclotron Resonance (FTICR)	Mass Spectrometer: 15T FTICR (2010)	10	Mass Spectrometer:  Fourier-Transform Ion Cyclotron Resonance	\N	2024-08-06 06:15:53	0	1
 34145	Mass Spectrometer: MALDI-TOF	Mass Spectrometer: Maxis_01	10	Mass Spectrometer: Imaging-MS	\N	2024-08-06 06:15:53	0	0
 34146	Mass Spectrometer: MALDI FTICR 	Mass Spectrometer: MALDI FTICR	10	Mass Spectrometer: Imaging-MS	Mass Spectrometer: MALDI 9.4T FTICR	2024-08-07 06:16:00.891027	0	0
-34149	Bottom-up (Fragmented) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Quad TSQ LC-MS 3 (2009)	10	Mass Spectrometer:  LC-QQQ	\N	2024-08-06 06:15:53	1	0
+34149	Targeted (SRM) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Quad TSQ LC-MS 3 (2009)	10	Mass Spectrometer:  LC-QQQ	\N	2025-08-09 06:16:02.690183	1	0
 34150	Metabolomic Gas Chromatography-Mass Spectrometry (GC-MS)	Mass Spectrometer: Agilent GC-MS 1 (2009)	10	Mass Spectrometry:  GC-MS	\N	2024-12-05 06:16:46.760634	1	0
 34152	Mass Spectrometer: GC-MS (metabolomics)	Mass Spectrometer: Thermo_GC_MS_01	10	Mass Spectrometry:  GC-MS	\N	2024-08-06 06:15:53	0	0
 34153	Mass Spectrometer: Chromatograph, Liquid, qTRAP	Mass Spectrometer: QTrap01	24	Mass Spectrometer:  LC-QQQ	\N	2024-08-06 06:15:53	0	0
@@ -111,13 +111,13 @@ COPY public.t_emsl_instruments (eus_instrument_id, eus_display_name, eus_instrum
 34215	Mass Spectrometer: TSQ_5	Mass Spectrometer: TSQ_5	10	\N	\N	2024-08-06 06:15:53	0	0
 34225	Fourier-Transform Ion Cyclotron Resonance (FTICR)	Mass Spectrometer: 21T FTICR (2012)	10	\N	\N	2024-08-06 06:15:53	1	1
 34228	Top-down (Intact) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q Exactive LC-MS 2 (2014)	24	\N	\N	2024-08-06 06:15:53	1	1
-34229	Bottom-up (Fragmented) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Quad TSQ LC-MS 6 (2014)	10	\N	\N	2024-08-06 06:15:53	1	0
+34229	Targeted (SRM) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Quad TSQ LC-MS 6 (2014)	10	\N	\N	2025-08-09 06:16:02.690183	1	0
 34230	Mass Spectrometer: FTICR-SIMS	Mass Spectrometer: 7.0 Tesla, 160mm Bore FTICR	10	\N	\N	2024-08-06 06:15:53	0	0
 34231	Top-down (Intact) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q Exactive LC-MS 3 (2015)	24	\N	\N	2024-08-06 06:15:53	1	1
 34232	Top-down (Intact) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q Exactive LC-MS 4 (2015)	24	\N	\N	2024-08-06 06:15:53	1	1
 34233	Mass Spectrometer: Shimadzu RTMS	Mass Spectrometer: Shimadzu RTMS	10	\N	\N	2023-12-18 06:15:32	0	0
-34234	Bottom-up (Fragmented) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Quad TSQ LC-MS 5 (2013)	10	\N	\N	2025-05-30 06:16:33.791293	0	0
-34235	Bottom-up (Fragmented) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Quad TSQ LC-MS 4 (2013)	10	\N	\N	2024-08-06 06:15:53	1	0
+34234	Targeted (SRM) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Quad TSQ LC-MS 5 (2013)	10	\N	\N	2025-08-09 06:16:02.690183	0	0
+34235	Targeted (SRM) Proteomic Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Quad TSQ LC-MS 4 (2013)	10	\N	\N	2025-08-09 06:16:02.690183	1	0
 34236	Mass Spectrometer: Agilent_QQQ_01	Mass Spectrometer: Agilent_QQQ_01	10	\N	\N	2024-08-06 06:15:53	0	0
 34237	Mass Spectrometer: Ozone NS	Mass Spectrometer: Ozone NS	10	\N	\N	2024-08-06 06:15:53	0	0
 34244	Metabolomic Gas Chromatography-Mass Spectrometry (GC-MS)	Mass Spectrometer: Q Exactive GC-MS (2016)	24	\N	\N	2024-12-05 06:16:46.760634	1	0
