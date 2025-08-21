@@ -22,6 +22,10 @@ CREATE VIEW public.v_instrument_entry AS
             ELSE 'Y'::text
         END AS scan_source_dir,
     percent_emsl_owned,
+        CASE
+            WHEN service_center_eligible THEN 'Yes'::public.citext
+            ELSE 'No'::public.citext
+        END AS service_center_eligible,
     source_path_id,
     storage_path_id,
         CASE

@@ -1,8 +1,8 @@
 --
--- Name: add_update_instrument(integer, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: add_update_instrument(integer, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.add_update_instrument(IN _instrumentid integer, IN _instrumentname text, IN _instrumentclass text, IN _instrumentgroup text, IN _capturemethod text, IN _status text, IN _roomnumber text, IN _description text, IN _usage text, IN _operationsrole text, IN _percentemslowned text, IN _autodefinestoragepath text DEFAULT 'No'::text, IN _trackusagewheninactive text DEFAULT 'No'::text, IN _scansourcedir text DEFAULT 'Yes'::text, IN _autospvolnameclient text DEFAULT ''::text, IN _autospvolnameserver text DEFAULT ''::text, IN _autosppathroot text DEFAULT ''::text, IN _autospurldomain text DEFAULT ''::text, IN _autosparchiveservername text DEFAULT ''::text, IN _autosparchivepathroot text DEFAULT ''::text, IN _autosparchivesharepathroot text DEFAULT ''::text, IN _mode text DEFAULT 'update'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.add_update_instrument(IN _instrumentid integer, IN _instrumentname text, IN _instrumentclass text, IN _instrumentgroup text, IN _capturemethod text, IN _status text, IN _roomnumber text, IN _description text, IN _usage text, IN _operationsrole text, IN _percentemslowned text, IN _servicecentereligible text DEFAULT 'No'::text, IN _autodefinestoragepath text DEFAULT 'No'::text, IN _trackusagewheninactive text DEFAULT 'No'::text, IN _scansourcedir text DEFAULT 'Yes'::text, IN _autospvolnameclient text DEFAULT ''::text, IN _autospvolnameserver text DEFAULT ''::text, IN _autosppathroot text DEFAULT ''::text, IN _autospurldomain text DEFAULT ''::text, IN _autosparchiveservername text DEFAULT ''::text, IN _autosparchivepathroot text DEFAULT ''::text, IN _autosparchivesharepathroot text DEFAULT ''::text, IN _mode text DEFAULT 'update'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_instrument(IN _instrumentid intege
 **    _usage                        Instrument usage (empty string if no specific usage)
 **    _operationsRole               Operations role: 'Research', 'Production', or 'Offsite'
 **    _percentEMSLOwned             Percent of instrument owned by EMSL; number between 0 and 100
+**    _serviceCenterEligible        Set to 'Yes' if the datasets from this instrument will be submitted to the service center
 **    _autoDefineStoragePath        Set to 'Yes' to enable auto-defining the storage path based on the _spPath and _archivePath related parameters
 **    _trackUsageWhenInactive       'Yes' or 'No'
 **    _scanSourceDir                Set to 'No' to skip this instrument when the DMS_InstDirScanner looks for files and directories on the instrument's source share
@@ -67,6 +68,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_instrument(IN _instrumentid intege
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          07/12/2024 mem - If _percentEMSLOwned is an empty string, treat it as 0%
 **          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
+**          08/20/2025 mem - Add parameter _serviceCenterEligible
 **
 *****************************************************/
 DECLARE
@@ -77,6 +79,7 @@ DECLARE
 
     _logErrors boolean := false;
     _percentEMSLOwnedVal int;
+    _serviceCenterEligibleBool boolean;
     _nextContainerID int;
     _valTrackUsageWhenInactive int;
     _valScanSourceDir int;
@@ -127,11 +130,12 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _instrumentName      := Trim(Coalesce(_instrumentName, ''));
-        _description         := Trim(Coalesce(_description, ''));
-        _usage               := Trim(Coalesce(_usage, ''));
-        _mode                := Trim(Lower(Coalesce(_mode, '')));
-        _percentEMSLOwnedVal := Round(public.try_cast(_percentEMSLOwned, 0.0::numeric))::int;
+        _instrumentName        := Trim(Coalesce(_instrumentName, ''));
+        _description           := Trim(Coalesce(_description, ''));
+        _usage                 := Trim(Coalesce(_usage, ''));
+        _mode                  := Trim(Lower(Coalesce(_mode, '')));
+        _percentEMSLOwnedVal   := Round(public.try_cast(_percentEMSLOwned, 0.0::numeric))::int;
+        _serviceCenterEligible := Trim(Coalesce(_serviceCenterEligible, 'No'));
 
         If _mode = '' Then
             RAISE EXCEPTION 'Empty string specified for parameter _mode';
@@ -185,6 +189,16 @@ BEGIN
         _valAutoDefineStoragePath  := public.boolean_text_to_integer(_autoDefineStoragePath);
 
         ---------------------------------------------------
+        -- _serviceCenterEligible should be 'Yes' or 'No'; convert to boolean
+        ---------------------------------------------------
+
+        -- Option 1, use boolean_text_to_integer()
+        -- _serviceCenterEligibleBool = public.boolean_text_to_integer(_serviceCenterEligible)::boolean
+
+        -- Option 2, use try_cast()
+        _serviceCenterEligibleBool = public.try_cast(_serviceCenterEligible, false);
+
+        ---------------------------------------------------
         -- Validate the _autoSP parameters
         -- Procedure validate_auto_storage_path_params will raise an exception if there is a problem
         ---------------------------------------------------
@@ -225,6 +239,7 @@ BEGIN
                 tracking                        = _valTrackUsageWhenInactive,
                 scan_source_dir                 = _valScanSourceDir,
                 percent_emsl_owned              = _percentEMSLOwnedVal,
+                service_center_eligible         = _serviceCenterEligibleBool,
                 auto_define_storage_path        = _valAutoDefineStoragePath,
                 auto_sp_vol_name_client         = _autoSPVolNameClient,
                 auto_sp_vol_name_server         = _autoSPVolNameServer,
@@ -262,11 +277,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.add_update_instrument(IN _instrumentid integer, IN _instrumentname text, IN _instrumentclass text, IN _instrumentgroup text, IN _capturemethod text, IN _status text, IN _roomnumber text, IN _description text, IN _usage text, IN _operationsrole text, IN _percentemslowned text, IN _autodefinestoragepath text, IN _trackusagewheninactive text, IN _scansourcedir text, IN _autospvolnameclient text, IN _autospvolnameserver text, IN _autosppathroot text, IN _autospurldomain text, IN _autosparchiveservername text, IN _autosparchivepathroot text, IN _autosparchivesharepathroot text, IN _mode text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.add_update_instrument(IN _instrumentid integer, IN _instrumentname text, IN _instrumentclass text, IN _instrumentgroup text, IN _capturemethod text, IN _status text, IN _roomnumber text, IN _description text, IN _usage text, IN _operationsrole text, IN _percentemslowned text, IN _servicecentereligible text, IN _autodefinestoragepath text, IN _trackusagewheninactive text, IN _scansourcedir text, IN _autospvolnameclient text, IN _autospvolnameserver text, IN _autosppathroot text, IN _autospurldomain text, IN _autosparchiveservername text, IN _autosparchivepathroot text, IN _autosparchivesharepathroot text, IN _mode text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE add_update_instrument(IN _instrumentid integer, IN _instrumentname text, IN _instrumentclass text, IN _instrumentgroup text, IN _capturemethod text, IN _status text, IN _roomnumber text, IN _description text, IN _usage text, IN _operationsrole text, IN _percentemslowned text, IN _autodefinestoragepath text, IN _trackusagewheninactive text, IN _scansourcedir text, IN _autospvolnameclient text, IN _autospvolnameserver text, IN _autosppathroot text, IN _autospurldomain text, IN _autosparchiveservername text, IN _autosparchivepathroot text, IN _autosparchivesharepathroot text, IN _mode text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE add_update_instrument(IN _instrumentid integer, IN _instrumentname text, IN _instrumentclass text, IN _instrumentgroup text, IN _capturemethod text, IN _status text, IN _roomnumber text, IN _description text, IN _usage text, IN _operationsrole text, IN _percentemslowned text, IN _servicecentereligible text, IN _autodefinestoragepath text, IN _trackusagewheninactive text, IN _scansourcedir text, IN _autospvolnameclient text, IN _autospvolnameserver text, IN _autosppathroot text, IN _autospurldomain text, IN _autosparchiveservername text, IN _autosparchivepathroot text, IN _autosparchivesharepathroot text, IN _mode text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.add_update_instrument(IN _instrumentid integer, IN _instrumentname text, IN _instrumentclass text, IN _instrumentgroup text, IN _capturemethod text, IN _status text, IN _roomnumber text, IN _description text, IN _usage text, IN _operationsrole text, IN _percentemslowned text, IN _autodefinestoragepath text, IN _trackusagewheninactive text, IN _scansourcedir text, IN _autospvolnameclient text, IN _autospvolnameserver text, IN _autosppathroot text, IN _autospurldomain text, IN _autosparchiveservername text, IN _autosparchivepathroot text, IN _autosparchivesharepathroot text, IN _mode text, INOUT _message text, INOUT _returncode text) IS 'AddUpdateInstrument';
+COMMENT ON PROCEDURE public.add_update_instrument(IN _instrumentid integer, IN _instrumentname text, IN _instrumentclass text, IN _instrumentgroup text, IN _capturemethod text, IN _status text, IN _roomnumber text, IN _description text, IN _usage text, IN _operationsrole text, IN _percentemslowned text, IN _servicecentereligible text, IN _autodefinestoragepath text, IN _trackusagewheninactive text, IN _scansourcedir text, IN _autospvolnameclient text, IN _autospvolnameserver text, IN _autosppathroot text, IN _autospurldomain text, IN _autosparchiveservername text, IN _autosparchivepathroot text, IN _autosparchivesharepathroot text, IN _mode text, INOUT _message text, INOUT _returncode text) IS 'AddUpdateInstrument';
 

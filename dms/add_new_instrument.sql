@@ -1,8 +1,8 @@
 --
--- Name: add_new_instrument(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: add_new_instrument(text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.add_new_instrument(IN _instrumentname text, IN _instrumentclass text, IN _instrumentgroup text, IN _capturemethod text, IN _roomnumber text, IN _description text, IN _usage text, IN _operationsrole text, IN _percentemslowned text, IN _autodefinestoragepath text DEFAULT 'No'::text, IN _sourcemachinename text DEFAULT ''::text, IN _sourcepath text DEFAULT ''::text, IN _sppath text DEFAULT ''::text, IN _spvolclient text DEFAULT ''::text, IN _spvolserver text DEFAULT ''::text, IN _archivepath text DEFAULT ''::text, IN _archiveserver text DEFAULT ''::text, IN _archivenote text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.add_new_instrument(IN _instrumentname text, IN _instrumentclass text, IN _instrumentgroup text, IN _capturemethod text, IN _roomnumber text, IN _description text, IN _usage text, IN _operationsrole text, IN _percentemslowned text, IN _servicecentereligible text DEFAULT 'No'::text, IN _autodefinestoragepath text DEFAULT 'No'::text, IN _sourcemachinename text DEFAULT ''::text, IN _sourcepath text DEFAULT ''::text, IN _sppath text DEFAULT ''::text, IN _spvolclient text DEFAULT ''::text, IN _spvolserver text DEFAULT ''::text, IN _archivepath text DEFAULT ''::text, IN _archiveserver text DEFAULT ''::text, IN _archivenote text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE public.add_new_instrument(IN _instrumentname text, I
 **    _usage                        Optional description of instrument usage
 **    _operationsRole               Operations role: 'Research', 'Production', or 'Offsite'
 **    _percentEMSLOwned             Percent of instrument owned by EMSL; number between 0 and 100
+**    _serviceCenterEligible        Set to 'Yes' if the datasets from this instrument will be submitted to the service center
 **    _autoDefineStoragePath        Set to 'Yes' to enable auto-defining the storage path based on the _spPath and _archivePath related parameters
 **    _sourceMachineName            Source machine to capture data from,  e.g. Lumos02.bionet
 **    _sourcePath                   Transfer directory on source machine, e.g. ProteomicsData\
@@ -50,11 +51,11 @@ CREATE OR REPLACE PROCEDURE public.add_new_instrument(IN _instrumentname text, I
 **          02/12/2010 mem - Now calling Update_Instrument_Allowed_Dataset_Type for each dataset type in _allowedDatasetTypes
 **          05/25/2010 dac - Updated archive paths for switch from nwfs to aurora
 **          08/30/2010 mem - Replaced parameter _allowedDatasetTypes with _instrumentGroup
-**          05/12/2011 mem - Added _autoDefineStoragePath
-**                         - Expanded _archivePath, _archiveServer, and _archiveNote to larger varchar() variables
+**          05/12/2011 mem - Add parameter _autoDefineStoragePath
+**                         - Expand _archivePath, _archiveServer, and _archiveNote to larger varchar() variables
 **          05/13/2011 mem - Now calling Validate_Auto_Storage_Path_Params
-**          11/30/2011 mem - Added parameter _percentEMSLOwned
-**          06/02/2015 mem - Replaced IDENT_CURRENT with SCOPE_IDENTITY()
+**          11/30/2011 mem - Add parameter _percentEMSLOwned
+**          06/02/2015 mem - Replace IDENT_CURRENT with SCOPE_IDENTITY()
 **          04/06/2016 mem - Now using Try_Convert to convert from text to int
 **          07/05/2016 mem - Archive path is now aurora.emsl.pnl.gov
 **          09/02/2016 mem - Archive path is now adms.emsl.pnl.gov
@@ -66,6 +67,7 @@ CREATE OR REPLACE PROCEDURE public.add_new_instrument(IN _instrumentname text, I
 **          10/05/2023 mem - Archive path is now agate.emsl.pnl.gov
 **                         - Ported to PostgreSQL
 **          07/12/2024 mem - If _percentEMSLOwned is an empty string, treat it as 0%
+**          08/20/2025 mem - Add parameter _serviceCenterEligible
 **
 *****************************************************/
 DECLARE
@@ -75,6 +77,7 @@ DECLARE
     _existingInstrumentID int;
     _archiveNetworkSharePath text;
     _autoDefineStoragePathBool boolean;
+    _serviceCenterEligibleBool boolean;
     _autoSPVolNameClient text;
     _autoSPVolNameServer text;
     _autoSPPathRoot text;
@@ -117,8 +120,8 @@ BEGIN
     _description           := Trim(Coalesce(_description, ''));
     _usage                 := Trim(Coalesce(_usage, ''));
     _autoDefineStoragePath := Trim(Coalesce(_autoDefineStoragePath, 'No'));
-
-    _percentEMSLOwnedVal := Round(public.try_cast(_percentEMSLOwned, 0.0::numeric))::int;
+    _percentEMSLOwnedVal   := Round(public.try_cast(_percentEMSLOwned, 0.0::numeric))::int;
+    _serviceCenterEligible := Trim(Coalesce(_serviceCenterEligible, 'No'));
 
     If _percentEMSLOwnedVal Is Null Or _percentEMSLOwnedVal < 0 Or _percentEMSLOwnedVal > 100 Then
         RAISE EXCEPTION 'Percent EMSL Owned should be a number between 0 and 100';
@@ -145,7 +148,7 @@ BEGIN
     _archiveNetworkSharePath := format('\%s', Replace(Replace(_archivePath, 'archive', 'agate.emsl.pnl.gov'), '/', '\'));
 
     ---------------------------------------------------
-    -- _autoDefineStoragePath should be 'Yes' or 'No'; convert to boolean
+    -- _autoDefineStoragePath and _serviceCenterEligible should each be 'Yes' or 'No'; convert to boolean
     ---------------------------------------------------
 
     -- Option 1, use boolean_text_to_integer()
@@ -153,6 +156,7 @@ BEGIN
 
     -- Option 2, use try_cast()
     _autoDefineStoragePathBool = public.try_cast(_autoDefineStoragePath, false);
+    _serviceCenterEligibleBool = public.try_cast(_serviceCenterEligible, false);
 
     ---------------------------------------------------
     -- Define the _autoSP variables
@@ -190,7 +194,6 @@ BEGIN
                         _autoSPArchiveServerName    => _autoSPArchiveServerName,
                         _autoSPArchivePathRoot      => _autoSPArchivePathRoot,
                         _autoSPArchiveSharePathRoot => _autoSPArchiveSharePathRoot);
-
     End If;
 
     ---------------------------------------------------
@@ -218,6 +221,7 @@ BEGIN
         usage,
         operations_role,
         percent_emsl_owned,
+        service_center_eligible,
         auto_define_storage_path,
         auto_sp_vol_name_client,
         auto_sp_vol_name_server,
@@ -240,6 +244,7 @@ BEGIN
         Coalesce(_usage, ''),
         _operationsRole,
         _percentEMSLOwnedVal,
+        _serviceCenterEligibleBool,
         CASE WHEN _autoDefineStoragePathBool THEN 1 ELSE 0 END,
         _autoSPVolNameClient,
         _autoSPVolNameServer,
@@ -330,7 +335,6 @@ BEGIN
     End If;
 
     If Not _autoDefineStoragePathBool Then
-
         ---------------------------------------------------
         -- Add new archive storage path for new instrument
         ---------------------------------------------------
@@ -353,16 +357,15 @@ BEGIN
         RETURNING archive_path_id
         INTO _archivePathID;
     End If;
-
 END
 $$;
 
 
-ALTER PROCEDURE public.add_new_instrument(IN _instrumentname text, IN _instrumentclass text, IN _instrumentgroup text, IN _capturemethod text, IN _roomnumber text, IN _description text, IN _usage text, IN _operationsrole text, IN _percentemslowned text, IN _autodefinestoragepath text, IN _sourcemachinename text, IN _sourcepath text, IN _sppath text, IN _spvolclient text, IN _spvolserver text, IN _archivepath text, IN _archiveserver text, IN _archivenote text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.add_new_instrument(IN _instrumentname text, IN _instrumentclass text, IN _instrumentgroup text, IN _capturemethod text, IN _roomnumber text, IN _description text, IN _usage text, IN _operationsrole text, IN _percentemslowned text, IN _servicecentereligible text, IN _autodefinestoragepath text, IN _sourcemachinename text, IN _sourcepath text, IN _sppath text, IN _spvolclient text, IN _spvolserver text, IN _archivepath text, IN _archiveserver text, IN _archivenote text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE add_new_instrument(IN _instrumentname text, IN _instrumentclass text, IN _instrumentgroup text, IN _capturemethod text, IN _roomnumber text, IN _description text, IN _usage text, IN _operationsrole text, IN _percentemslowned text, IN _autodefinestoragepath text, IN _sourcemachinename text, IN _sourcepath text, IN _sppath text, IN _spvolclient text, IN _spvolserver text, IN _archivepath text, IN _archiveserver text, IN _archivenote text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE add_new_instrument(IN _instrumentname text, IN _instrumentclass text, IN _instrumentgroup text, IN _capturemethod text, IN _roomnumber text, IN _description text, IN _usage text, IN _operationsrole text, IN _percentemslowned text, IN _servicecentereligible text, IN _autodefinestoragepath text, IN _sourcemachinename text, IN _sourcepath text, IN _sppath text, IN _spvolclient text, IN _spvolserver text, IN _archivepath text, IN _archiveserver text, IN _archivenote text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.add_new_instrument(IN _instrumentname text, IN _instrumentclass text, IN _instrumentgroup text, IN _capturemethod text, IN _roomnumber text, IN _description text, IN _usage text, IN _operationsrole text, IN _percentemslowned text, IN _autodefinestoragepath text, IN _sourcemachinename text, IN _sourcepath text, IN _sppath text, IN _spvolclient text, IN _spvolserver text, IN _archivepath text, IN _archiveserver text, IN _archivenote text, INOUT _message text, INOUT _returncode text) IS 'AddNewInstrument';
+COMMENT ON PROCEDURE public.add_new_instrument(IN _instrumentname text, IN _instrumentclass text, IN _instrumentgroup text, IN _capturemethod text, IN _roomnumber text, IN _description text, IN _usage text, IN _operationsrole text, IN _percentemslowned text, IN _servicecentereligible text, IN _autodefinestoragepath text, IN _sourcemachinename text, IN _sourcepath text, IN _sppath text, IN _spvolclient text, IN _spvolserver text, IN _archivepath text, IN _archiveserver text, IN _archivenote text, INOUT _message text, INOUT _returncode text) IS 'AddNewInstrument';
 
