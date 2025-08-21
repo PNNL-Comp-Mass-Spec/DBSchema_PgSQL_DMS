@@ -23,11 +23,11 @@ SET row_security = off;
 
 COPY public.t_dataset_cc_report_state (cc_report_state_id, cc_report_state, description) FROM stdin;
 0	Undefined	
-1	Do not submit to cost center	
-2	Need to submit to cost center	
-3	Submitted to cost center	
-4	Need to refund to cost center	
-5	Refunded to cost center	
+1	Do not submit to service center	
+2	Need to submit to service center	
+3	Submitted to service center	
+4	Need to refund to service center	
+5	Refunded to service center	
 \.
 
 
