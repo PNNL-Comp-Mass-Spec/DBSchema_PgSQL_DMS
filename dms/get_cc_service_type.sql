@@ -10,7 +10,7 @@ CREATE OR REPLACE FUNCTION public.get_cc_service_type(_datasetname text, _experi
 **  Desc:
 **      Determines the cost center service type for the given set of metadata
 **
-**      Service types (tracked via table cc.t_service_type):
+**      Service types (tracked via table svc.t_service_type):
 **
 **      ID     Service Type                         Description
 **      --     ------------                         -----------
@@ -106,6 +106,7 @@ CREATE OR REPLACE FUNCTION public.get_cc_service_type(_datasetname text, _experi
 **          08/15/2025 mem - Assign service type 1 when the dataset rating is 6 (Exclude From Service Center)
 **                         - No longer use service type 1 when the experiment's campaign is Blank; only use 1 if the experiment name is "Blank"
 **                         - Assign 1 for service type if the dataset's instrument is not service center eligible
+**          08/20/2025 mem - Reference schema svc instead of cc
 **
 *****************************************************/
 DECLARE

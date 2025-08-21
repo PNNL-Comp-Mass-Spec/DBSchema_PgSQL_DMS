@@ -158,7 +158,8 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **          02/17/2025 mem - Add support for requested run state 'Holding'
 **                         - Assure that requested run state name is properly capitalized
 **          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
-**          07/29/2025 mem - When work package is updated, also update cc.t_service_use for any rows where report_state_id is 1 or 2
+**          07/29/2025 mem - When work package is updated, also update svc.t_service_use for any rows where report_state_id is 1 or 2
+**          08/20/2025 mem - Reference schema svc instead of cc
 **
 *****************************************************/
 DECLARE
@@ -1112,17 +1113,17 @@ BEGIN
 
             If _datasetID > 0 And _oldWorkPackage <> _workPackage Then
                 ---------------------------------------------------
-                -- Update cc.t_service_use for any rows where report_state_id is 1 or 2
+                -- Update svc.t_service_use for any rows where report_state_id is 1 or 2
                 ---------------------------------------------------
 
                 /*
                     -- Option 1 (easier to read)
 
-                    UPDATE cc.t_service_use
+                    UPDATE svc.t_service_use
                     SET charge_code = _workPackage
                     WHERE entry_id IN ( SELECT entry_id
-                                        FROM cc.t_service_use SvcUse
-                                             INNER JOIN cc.t_service_use_report Rep
+                                        FROM svc.t_service_use SvcUse
+                                             INNER JOIN svc.t_service_use_report Rep
                                                ON SvcUse.report_id = Rep.report_id
                                         WHERE SvcUse.dataset_id = _datasetID AND
                                               SvcUse.charge_code <> _workPackage AND
@@ -1131,9 +1132,9 @@ BEGIN
 
                 -- Option 2 (better performance)
 
-                UPDATE cc.t_service_use Target
+                UPDATE svc.t_service_use Target
                 SET charge_code = _workPackage
-                FROM cc.t_service_use_report AS Rep
+                FROM svc.t_service_use_report AS Rep
                 WHERE Target.report_id = Rep.report_id AND
                       Rep.report_state_id IN (1, 2) AND
                       Target.dataset_id = _datasetID AND

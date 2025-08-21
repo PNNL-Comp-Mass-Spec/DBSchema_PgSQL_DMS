@@ -25,9 +25,9 @@ CREATE VIEW public.v_service_use_detail_report AS
             WHEN ((rep.report_state_id = ANY (ARRAY[1, 2])) AND (ds.cc_report_state_id = 5)) THEN 'Refunding to cost center'::public.citext
             ELSE dsrepstate.cc_report_state
         END AS cost_center_report_state
-   FROM ((((((((cc.t_service_use u
-     JOIN cc.t_service_use_report rep ON ((rep.report_id = u.report_id)))
-     JOIN cc.t_service_type t ON ((t.service_type_id = u.service_type_id)))
+   FROM ((((((((svc.t_service_use u
+     JOIN svc.t_service_use_report rep ON ((rep.report_id = u.report_id)))
+     JOIN svc.t_service_type t ON ((t.service_type_id = u.service_type_id)))
      LEFT JOIN public.t_charge_code cc ON ((cc.charge_code OPERATOR(public.=) u.charge_code)))
      LEFT JOIN public.t_dataset ds ON ((u.dataset_id = ds.dataset_id)))
      LEFT JOIN public.t_dataset_rating_name dsrating ON ((dsrating.dataset_rating_id = ds.dataset_rating_id)))

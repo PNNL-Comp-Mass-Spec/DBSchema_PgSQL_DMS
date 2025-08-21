@@ -18,10 +18,10 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Data for Name: t_service_cost_group_state; Type: TABLE DATA; Schema: cc; Owner: d3l243
+-- Data for Name: t_service_cost_group_state; Type: TABLE DATA; Schema: svc; Owner: d3l243
 --
 
-COPY cc.t_service_cost_group_state (service_cost_state_id, service_cost_state) FROM stdin;
+COPY svc.t_service_cost_group_state (service_cost_state_id, service_cost_state) FROM stdin;
 1	New
 2	Active
 3	Inactive
@@ -29,10 +29,10 @@ COPY cc.t_service_cost_group_state (service_cost_state_id, service_cost_state) F
 
 
 --
--- Name: t_service_cost_group_state_service_cost_state_id_seq; Type: SEQUENCE SET; Schema: cc; Owner: d3l243
+-- Name: t_service_cost_group_state_service_cost_state_id_seq; Type: SEQUENCE SET; Schema: svc; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('cc.t_service_cost_group_state_service_cost_state_id_seq', 3, true);
+SELECT pg_catalog.setval('svc.t_service_cost_group_state_service_cost_state_id_seq', 3, true);
 
 
 --

@@ -10,7 +10,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_service_type_if_required(IN _d
 **  Desc:
 **      Updates service_type_id in t_dataset if the auto-defined value differs from the current value
 **      However, if the current service type ID is non-zero, will not change the value to 25 (Ambiguous)
-**      See also table cc.t_service_type
+**      See also table svc.t_service_type
 **
 **  Arguments:
 **    _datasetID            Dataset ID
@@ -26,7 +26,8 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_service_type_if_required(IN _d
 **  Date:   07/10/2025 mem - Initial release
 **          07/25/2025 mem - Update service_type_id in t_requested_run
 **                         - Call RAISE INFO with '' when _infoOnly is true
-**          07/31/2025 mem - When service type ID is updated, also update cc.t_service_use for any rows where report_state_id is 1 or 2
+**          07/31/2025 mem - When service type ID is updated, also update svc.t_service_use for any rows where report_state_id is 1 or 2
+**          08/20/2025 mem - Reference schema svc instead of cc
 **
 *****************************************************/
 DECLARE
@@ -119,20 +120,20 @@ BEGIN
             End If;
 
             ---------------------------------------------------
-            -- Also update cc.t_service_use, provided report_state_id is 1 or 2 for the corresponding service use report
+            -- Also update svc.t_service_use, provided report_state_id is 1 or 2 for the corresponding service use report
             ---------------------------------------------------
 
             SELECT entry_id, service_type_id
             INTO _serviceUseEntryID, _serviceUseCurrentServiceTypeID
-            FROM cc.t_service_use
+            FROM svc.t_service_use
             WHERE dataset_id = _datasetID
             ORDER BY entry_id DESC
             LIMIT 1;
 
             If FOUND And _serviceUseCurrentServiceTypeID <> _autoDefinedServiceTypeID Then
-                UPDATE cc.t_service_use Target
+                UPDATE svc.t_service_use Target
                 SET service_type_id = _autoDefinedServiceTypeID
-                FROM cc.t_service_use_report AS Rep
+                FROM svc.t_service_use_report AS Rep
                 WHERE Target.report_id = Rep.report_id AND
                       Rep.report_state_id IN (1, 2) AND
                       Target.dataset_id = _datasetID AND

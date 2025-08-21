@@ -15,9 +15,9 @@ CREATE VIEW public.v_service_use_admin_report AS
     u.comment,
     dsrating.dataset_rating,
     u.report_id
-   FROM ((((((cc.t_service_use u
-     JOIN cc.t_service_use_report rep ON ((rep.report_id = u.report_id)))
-     JOIN cc.t_service_type t ON ((t.service_type_id = u.service_type_id)))
+   FROM ((((((svc.t_service_use u
+     JOIN svc.t_service_use_report rep ON ((rep.report_id = u.report_id)))
+     JOIN svc.t_service_type t ON ((t.service_type_id = u.service_type_id)))
      JOIN public.t_dataset ds ON ((u.dataset_id = ds.dataset_id)))
      JOIN public.t_dataset_rating_name dsrating ON ((dsrating.dataset_rating_id = ds.dataset_rating_id)))
      LEFT JOIN public.t_charge_code public ON ((public.charge_code OPERATOR(public.=) u.charge_code)))

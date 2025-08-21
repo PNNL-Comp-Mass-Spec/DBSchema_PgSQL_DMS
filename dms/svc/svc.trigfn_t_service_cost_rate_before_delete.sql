@@ -1,17 +1,18 @@
 --
--- Name: trigfn_t_service_cost_rate_before_delete(); Type: FUNCTION; Schema: cc; Owner: d3l243
+-- Name: trigfn_t_service_cost_rate_before_delete(); Type: FUNCTION; Schema: svc; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION cc.trigfn_t_service_cost_rate_before_delete() RETURNS trigger
+CREATE OR REPLACE FUNCTION svc.trigfn_t_service_cost_rate_before_delete() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
-**      Assures that table cc.t_service_use does not reference a cost rate row prior to its deletion
+**      Assures that table svc.t_service_use does not reference a cost rate row prior to its deletion
 **
 **  Auth:   mem
 **  Date:   08/14/2025 mem - Initial release
+**          08/20/2025 mem - Reference schema svc instead of cc
 **
 *****************************************************/
 DECLARE
@@ -22,8 +23,8 @@ BEGIN
 
     SELECT R.report_id
     INTO _reportID
-    FROM cc.t_service_use U
-         INNER JOIN cc.t_service_use_report R
+    FROM svc.t_service_use U
+         INNER JOIN svc.t_service_use_report R
            ON U.report_id = R.report_id
     WHERE R.cost_group_id   = OLD.cost_group_id AND
           U.service_type_id = OLD.service_type_id
@@ -43,5 +44,5 @@ END
 $$;
 
 
-ALTER FUNCTION cc.trigfn_t_service_cost_rate_before_delete() OWNER TO d3l243;
+ALTER FUNCTION svc.trigfn_t_service_cost_rate_before_delete() OWNER TO d3l243;
 

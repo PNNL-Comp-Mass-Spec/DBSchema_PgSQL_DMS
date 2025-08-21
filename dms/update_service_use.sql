@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_service_use(IN _entryid integer, IN _c
 /****************************************************
 **
 **  Desc:
-**      Update a service use entry in cc.t_service_use
+**      Update a service use entry in svc.t_service_use
 **
 **  Arguments:
 **    _entryID              Entry ID
@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE public.update_service_use(IN _entryid integer, IN _c
 **          08/01/2025 mem - Only allow editing a service use entry when the service use report's state is 'New' or 'Active'
 **          08/06/2025 mem - Remove duplicate check for _entryID being null
 **          08/07/2025 mem - Do not validate the charge code if the service type ID is 0 or 1
+**          08/20/2025 mem - Reference schema svc instead of cc
 **
 *****************************************************/
 DECLARE
@@ -128,7 +129,7 @@ BEGIN
             RAISE EXCEPTION '%', _msg;
         End If;
 
-        If Not Exists (SELECT service_type_id FROM cc.t_service_type WHERE service_type_id = _serviceTypeID) Then
+        If Not Exists (SELECT service_type_id FROM svc.t_service_type WHERE service_type_id = _serviceTypeID) Then
             _msg := format('Cannot update: service type ID %s is not valid', _serviceTypeID);
 
             If _infoOnly Then
@@ -191,8 +192,8 @@ BEGIN
                    SvcUse.service_type_id <> _serviceTypeID AS service_type_changed,
                    SvcUse.comment         <> _comment       AS comment_changed
             INTO _existingValues
-            FROM cc.t_service_use SvcUse
-                 INNER JOIN cc.t_service_use_report Rep
+            FROM svc.t_service_use SvcUse
+                 INNER JOIN svc.t_service_use_report Rep
                    ON SvcUse.report_id = Rep.report_id
             WHERE SvcUse.entry_id = _entryID;
 
@@ -256,7 +257,7 @@ BEGIN
         If _mode = 'update' Then
             _currentLocation := format('Update service use entry %s', _entryID);
 
-            UPDATE cc.t_service_use
+            UPDATE svc.t_service_use
             SET charge_code     = _chargeCode,
                 service_type_id = _serviceTypeID,
                 comment         = _comment

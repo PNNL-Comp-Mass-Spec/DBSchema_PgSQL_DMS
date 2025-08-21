@@ -22,6 +22,7 @@ CREATE OR REPLACE PROCEDURE public.update_service_use_comment(IN _texttofind tex
 **
 **  Auth:   mem
 **  Date:   08/17/2025 mem - Initial version
+**          08/20/2025 mem - Reference schema svc instead of cc
 **
 *****************************************************/
 DECLARE
@@ -167,7 +168,7 @@ BEGIN
                U.dataset_id,
                U.comment,
                U.comment
-        FROM cc.t_service_use U
+        FROM svc.t_service_use U
              INNER JOIN Tmp_ServiceUseEntries src
                ON U.Entry_ID = src.Entry_ID;
         --
@@ -195,9 +196,9 @@ BEGIN
         SELECT COUNT(U.entry_id)
         INTO _lockedServiceUseEntries
         FROM Tmp_ServiceUseEntriesToUpdate src
-             INNER JOIN cc.t_service_use U
+             INNER JOIN svc.t_service_use U
                ON U.entry_id = src.entry_id
-             INNER JOIN cc.t_service_use_report R
+             INNER JOIN svc.t_service_use_report R
                ON R.report_id = U.report_id
         WHERE Not R.report_state_id IN (1, 2);
 
@@ -320,7 +321,7 @@ BEGIN
             -- Perform the update
             ----------------------------------------------------------
 
-            UPDATE cc.t_service_use target
+            UPDATE svc.t_service_use target
             SET comment = src.New_Comment
             FROM Tmp_ServiceUseEntriesToUpdate src
             WHERE target.Entry_ID = src.Entry_ID AND

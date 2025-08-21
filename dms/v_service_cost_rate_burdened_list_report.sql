@@ -19,10 +19,10 @@ CREATE VIEW public.v_service_cost_rate_burdened_list_report AS
     crb.ldrd,
     crb.facilities,
     crb.total_burdened_rate_per_run
-   FROM (((cc.t_service_cost_rate cr
-     JOIN cc.t_service_type t ON ((t.service_type_id = cr.service_type_id)))
-     JOIN cc.t_service_cost_group cg ON ((cg.cost_group_id = cr.cost_group_id)))
-     JOIN cc.t_service_cost_rate_burdened crb ON (((cg.cost_group_id = cr.cost_group_id) AND (t.service_type_id = crb.service_type_id))));
+   FROM (((svc.t_service_cost_rate cr
+     JOIN svc.t_service_type t ON ((t.service_type_id = cr.service_type_id)))
+     JOIN svc.t_service_cost_group cg ON ((cg.cost_group_id = cr.cost_group_id)))
+     JOIN svc.t_service_cost_rate_burdened crb ON (((cg.cost_group_id = cr.cost_group_id) AND (t.service_type_id = crb.service_type_id))));
 
 
 ALTER VIEW public.v_service_cost_rate_burdened_list_report OWNER TO d3l243;

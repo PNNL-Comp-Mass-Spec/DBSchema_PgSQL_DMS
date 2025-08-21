@@ -26,6 +26,7 @@ CREATE OR REPLACE PROCEDURE public.update_service_use_entries(IN _mode text, IN 
 **
 **  Auth:   mem
 **  Date:   08/18/2025 mem - Initial version
+**          08/20/2025 mem - Reference schema svc instead of cc
 **
 *****************************************************/
 DECLARE
@@ -139,9 +140,9 @@ BEGIN
         SELECT COUNT(U.entry_id)
         INTO _lockedServiceUseEntries
         FROM Tmp_ServiceUseIDs src
-             INNER JOIN cc.t_service_use U
+             INNER JOIN svc.t_service_use U
                ON U.entry_id = src.entry_id
-             INNER JOIN cc.t_service_use_report R
+             INNER JOIN svc.t_service_use_report R
                ON R.report_id = U.report_id
         WHERE Not R.report_state_id IN (1, 2);
 
@@ -263,9 +264,9 @@ BEGIN
                            DS.dataset_rating_id    AS Old_Dataset_Rating_ID,
                            _newDatasetRatingID     AS New_Dataset_Rating_ID
                     FROM Tmp_ServiceUseIDs src
-                         INNER JOIN cc.t_service_use U
+                         INNER JOIN svc.t_service_use U
                            ON U.entry_id = src.entry_id
-                         INNER JOIN cc.t_service_use_report R
+                         INNER JOIN svc.t_service_use_report R
                            ON R.report_id = U.report_id
                          INNER JOIN t_dataset DS
                            ON DS.dataset_id = U.dataset_id
@@ -291,9 +292,9 @@ BEGIN
                 UPDATE t_dataset DS
                 SET dataset_rating_id = _newDatasetRatingID
                 FROM Tmp_ServiceUseIDs src
-                     INNER JOIN cc.t_service_use U
+                     INNER JOIN svc.t_service_use U
                        ON U.entry_id = src.entry_id
-                     INNER JOIN cc.t_service_use_report R
+                     INNER JOIN svc.t_service_use_report R
                        ON R.report_id = U.report_id
                 WHERE R.report_state_id IN (1, 2) AND
                       DS.dataset_id = U.dataset_id;
@@ -312,9 +313,9 @@ BEGIN
             FOR _datasetID IN
                 SELECT ds.dataset_ID
                 FROM Tmp_ServiceUseIDs src
-                     INNER JOIN cc.t_service_use U
+                     INNER JOIN svc.t_service_use U
                        ON U.entry_id = src.entry_id
-                     INNER JOIN cc.t_service_use_report R
+                     INNER JOIN svc.t_service_use_report R
                        ON R.report_id = U.report_id
                      INNER JOIN t_dataset DS
                        ON DS.dataset_id = U.dataset_id

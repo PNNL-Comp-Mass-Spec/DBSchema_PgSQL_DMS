@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_cc_report(IN _enddate timestam
 /****************************************************
 **
 **  Desc:
-**      Creates a new cost center usage report, adding rows to cc.t_service_use_report
+**      Creates a new cost center usage report, adding rows to svc.t_service_use_report
 **
 **      Looks for datasets that meet the following conditions
 **      - Dataset state 3 (Complete)
@@ -41,6 +41,7 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_cc_report(IN _enddate timestam
 **          08/07/2025 mem - Table t_service_cost_rate now has 9 service types per cost group
 **                         - Determine the total rate per run using column total_per_run in t_service_cost_rate
 **                         - Exclude datasets that do not have a requested run with a work package
+**          08/20/2025 mem - Reference schema svc instead of cc
 **
 *****************************************************/
 DECLARE
@@ -149,11 +150,11 @@ BEGIN
         SELECT COUNT(*) AS active_cost_groups,
                MAX(cost_group_id) AS most_recent_cost_group
         INTO _activeCostGroups, _costGroupID
-        FROM cc.t_service_cost_group
+        FROM svc.t_service_cost_group
         WHERE service_cost_state_id = 2;
 
         If _activeCostGroups = 0 Then
-            _message := 'Active cost group not found in cc.t_service_cost_group (service_cost_state_id = 2); unable to proceed';
+            _message := 'Active cost group not found in svc.t_service_cost_group (service_cost_state_id = 2); unable to proceed';
             RAISE WARNING '%', _infoOnly;
 
             If Not _infoOnly Then
@@ -163,7 +164,7 @@ BEGIN
             _returnCode = 'U5200';
             RETURN;
         ElsIf _activeCostGroups > 1 Then
-            _message := 'There are multiple active cost groups in cc.t_service_cost_group (service_cost_state_id = 2); unable to proceed';
+            _message := 'There are multiple active cost groups in svc.t_service_cost_group (service_cost_state_id = 2); unable to proceed';
             RAISE WARNING '%', _infoOnly;
 
             If Not _infoOnly Then
@@ -182,11 +183,11 @@ BEGIN
                MIN(service_type_id),
                MAX(service_type_id)
         INTO _serviceTypeIDs, _minServiceTypeID, _maxServiceTypeID
-        FROM cc.t_service_cost_rate
+        FROM svc.t_service_cost_rate
         WHERE cost_group_id = _costGroupID;
 
         If _serviceTypeIDs <> 9 Then
-            _message := format('Table cc.t_service_cost_rate has %s service type IDs, but it should have 9; unable to proceed', _serviceTypeIDs);
+            _message := format('Table svc.t_service_cost_rate has %s service type IDs, but it should have 9; unable to proceed', _serviceTypeIDs);
             RAISE WARNING '%', _infoOnly;
 
             If Not _infoOnly Then
@@ -196,7 +197,7 @@ BEGIN
             _returnCode = 'U5202';
             RETURN;
         ElsIf _minServiceTypeID <> 100 Or _maxServiceTypeID <> 113 Then
-            _message := format('Service type IDs in cc.t_service_cost_rate span %s to %s, but they should be 100 to 113; unable to proceed', _minServiceTypeID, _maxServiceTypeID);
+            _message := format('Service type IDs in svc.t_service_cost_rate span %s to %s, but they should be 100 to 113; unable to proceed', _minServiceTypeID, _maxServiceTypeID);
             RAISE WARNING '%', _infoOnly;
 
             If Not _infoOnly Then
@@ -390,7 +391,7 @@ BEGIN
                                    END
         FROM ( SELECT service_type_id,
                       total_per_run AS total_rate_per_run
-               FROM cc.t_service_cost_rate
+               FROM svc.t_service_cost_rate
                WHERE cost_group_id = _costGroupID
              ) CR
         WHERE DS.service_type_id = CR.service_type_id;
@@ -417,7 +418,7 @@ BEGIN
             FROM Tmp_Datasets_to_Add DS
                  INNER JOIN ( SELECT service_type_id,
                                      total_per_run AS total_rate_per_run
-                              FROM cc.t_service_cost_rate
+                              FROM svc.t_service_cost_rate
                               WHERE cost_group_id = 100
                             ) CR
                   ON DS.service_type_id = CR.service_type_id
@@ -438,13 +439,13 @@ BEGIN
 
         _currentLocation := 'Create a new cost center report';
 
-        INSERT INTO cc.t_service_use_report(start_time, end_time, requestor_employee_id, report_state_id, cost_group_id)
+        INSERT INTO svc.t_service_use_report(start_time, end_time, requestor_employee_id, report_state_id, cost_group_id)
         VALUES (_startDate, _beginningOfNextDay, current_user, 1, _costGroupID)
         RETURNING report_id
         INTO _reportID;
 
         ---------------------------------------------------
-        -- Add the datasets to table cc.t_service_use
+        -- Add the datasets to table svc.t_service_use
         ---------------------------------------------------
 
         _currentLocation := format('Add datasets to the new cost center report (Report_ID: %s)', _reportID);
@@ -453,7 +454,7 @@ BEGIN
             RAISE INFO '%', _currentLocation;
         End If;
 
-        INSERT INTO cc.t_service_use (report_id, ticket_number,
+        INSERT INTO svc.t_service_use (report_id, ticket_number,
                                       charge_code, service_type_id,
                                       transaction_date, transaction_units,
                                       is_held, comment, dataset_id,
@@ -506,7 +507,7 @@ BEGIN
 
         _currentLocation := 'Change the cost center report state to 2 = active';
 
-        UPDATE cc.t_service_use_report
+        UPDATE svc.t_service_use_report
         SET report_state_id = 2
         WHERE report_id = _reportID;
 

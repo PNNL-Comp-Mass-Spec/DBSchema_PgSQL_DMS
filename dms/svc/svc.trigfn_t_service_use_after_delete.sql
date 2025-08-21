@@ -1,24 +1,25 @@
 --
--- Name: trigfn_t_service_use_after_delete(); Type: FUNCTION; Schema: cc; Owner: d3l243
+-- Name: trigfn_t_service_use_after_delete(); Type: FUNCTION; Schema: svc; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION cc.trigfn_t_service_use_after_delete() RETURNS trigger
+CREATE OR REPLACE FUNCTION svc.trigfn_t_service_use_after_delete() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
-**      Makes an entry in cc.t_service_use_updates for the deleted service use entry
+**      Makes an entry in svc.t_service_use_updates for the deleted service use entry
 **
 **  Auth:   mem
 **  Date:   07/23/2025 mem - Initial release
+**          08/20/2025 mem - Reference schema svc instead of cc
 **
 *****************************************************/
 BEGIN
     -- RAISE NOTICE '% trigger, % %, depth=%, level=%; %', TG_TABLE_NAME, TG_WHEN, TG_OP, pg_trigger_depth(), TG_LEVEL, to_char(CURRENT_TIMESTAMP, 'hh24:mi:ss');
 
-    -- Add entries to cc.t_service_use_updates for each entry deleted from cc.t_service_use
-    INSERT INTO cc.t_service_use_updates (
+    -- Add entries to svc.t_service_use_updates for each entry deleted from svc.t_service_use
+    INSERT INTO svc.t_service_use_updates (
         service_use_entry_id,
         dataset_id,
         charge_code_change,
@@ -38,5 +39,5 @@ END
 $$;
 
 
-ALTER FUNCTION cc.trigfn_t_service_use_after_delete() OWNER TO d3l243;
+ALTER FUNCTION svc.trigfn_t_service_use_after_delete() OWNER TO d3l243;
 

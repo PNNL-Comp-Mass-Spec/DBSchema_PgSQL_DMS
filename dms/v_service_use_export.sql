@@ -14,9 +14,9 @@ CREATE VIEW public.v_service_use_export AS
     u.comment AS "Comment",
     u.report_id,
     u.entry_id
-   FROM ((((cc.t_service_use u
-     JOIN cc.t_service_use_report rep ON ((rep.report_id = u.report_id)))
-     JOIN cc.t_service_type t ON ((t.service_type_id = u.service_type_id)))
+   FROM ((((svc.t_service_use u
+     JOIN svc.t_service_use_report rep ON ((rep.report_id = u.report_id)))
+     JOIN svc.t_service_type t ON ((t.service_type_id = u.service_type_id)))
      LEFT JOIN public.t_charge_code public ON ((public.charge_code OPERATOR(public.=) u.charge_code)))
      LEFT JOIN public.t_cached_dataset_stats cds ON ((u.dataset_id = cds.dataset_id)))
   WHERE (NOT (u.service_type_id = ANY (ARRAY[0, 1, 25])));

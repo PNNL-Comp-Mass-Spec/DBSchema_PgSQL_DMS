@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE public.update_service_use_wp(IN _oldworkpackage text
 **
 **  Auth:   mem
 **  Date:   08/17/2025 mem - Initial version
+**          08/20/2025 mem - Reference schema svc instead of cc
 **
 *****************************************************/
 DECLARE
@@ -182,7 +183,7 @@ BEGIN
             SELECT U.entry_id,
                    U.dataset_id,
                    U.charge_code
-            FROM cc.t_service_use U
+            FROM svc.t_service_use U
                  INNER JOIN Tmp_ServiceUseEntries src
                    ON src.Entry_ID = U.Entry_ID
             WHERE U.charge_code = _oldWorkPackage;
@@ -211,9 +212,9 @@ BEGIN
             SELECT COUNT(U.entry_id)
             INTO _lockedServiceUseEntries
             FROM Tmp_ServiceUseEntriesToUpdate src
-                 INNER JOIN cc.t_service_use U
+                 INNER JOIN svc.t_service_use U
                    ON U.entry_id = src.entry_id
-                 INNER JOIN cc.t_service_use_report R
+                 INNER JOIN svc.t_service_use_report R
                    ON R.report_id = U.report_id
             WHERE Not R.report_state_id IN (1, 2);
 
@@ -238,8 +239,8 @@ BEGIN
             SELECT U.entry_id,
                    U.dataset_id,
                    U.charge_code
-            FROM cc.t_service_use U
-                 INNER JOIN cc.t_service_use_report R
+            FROM svc.t_service_use U
+                 INNER JOIN svc.t_service_use_report R
                    ON R.report_id = U.report_id
             WHERE R.report_state_id IN (1, 2) AND
                   U.charge_code = _oldWorkPackage;
@@ -349,7 +350,7 @@ BEGIN
             -- Perform the update
             ----------------------------------------------------------
 
-            UPDATE cc.t_service_use target
+            UPDATE svc.t_service_use target
             SET charge_code = _newWorkPackage
             FROM Tmp_ServiceUseEntriesToUpdate src
             WHERE Target.Entry_ID = Src.Entry_ID;

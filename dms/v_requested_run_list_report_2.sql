@@ -38,7 +38,7 @@ CREATE VIEW public.v_requested_run_list_report_2 AS
     lc.cart_name AS cart,
     cartconfig.cart_config_name AS cart_config,
     ds.comment AS dataset_comment,
-    rr.service_type_id AS cc_service_type,
+    rr.service_type_id AS svc_center_use_type,
     rr.request_name_code,
         CASE
             WHEN (NOT (rr.state_name OPERATOR(public.=) ANY (ARRAY['Active'::public.citext, 'Holding'::public.citext]))) THEN 0
@@ -60,7 +60,7 @@ CREATE VIEW public.v_requested_run_list_report_2 AS
      JOIN public.t_lc_cart lc ON ((rr.cart_id = lc.cart_id)))
      JOIN public.t_requested_run_queue_state qs ON ((rr.queue_state = qs.queue_state)))
      JOIN public.t_charge_code_activation_state cca ON ((rr.cached_wp_activation_state = cca.activation_state)))
-     JOIN cc.t_service_type ccst ON ((rr.service_type_id = ccst.service_type_id)))
+     JOIN svc.t_service_type svcusetype ON ((rr.service_type_id = svcusetype.service_type_id)))
      LEFT JOIN public.t_dataset ds ON ((rr.dataset_id = ds.dataset_id)))
      LEFT JOIN public.t_lc_cart_configuration cartconfig ON ((rr.cart_config_id = cartconfig.cart_config_id)))
      LEFT JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))

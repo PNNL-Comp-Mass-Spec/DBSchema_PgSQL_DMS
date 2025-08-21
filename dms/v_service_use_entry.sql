@@ -13,7 +13,7 @@ CREATE VIEW public.v_service_use_entry AS
     is_held,
     comment,
     ticket_number
-   FROM cc.t_service_use;
+   FROM svc.t_service_use;
 
 
 ALTER VIEW public.v_service_use_entry OWNER TO d3l243;

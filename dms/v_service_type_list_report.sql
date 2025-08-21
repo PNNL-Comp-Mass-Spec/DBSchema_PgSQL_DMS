@@ -7,7 +7,7 @@ CREATE VIEW public.v_service_type_list_report AS
     service_type,
     service_description,
     abbreviation
-   FROM cc.t_service_type;
+   FROM svc.t_service_type;
 
 
 ALTER VIEW public.v_service_type_list_report OWNER TO d3l243;

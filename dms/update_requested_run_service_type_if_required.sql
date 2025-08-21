@@ -10,7 +10,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_service_type_if_required
 **  Desc:
 **      Updates service_type_id in t_requested_run if the auto-defined value differs from the current value
 **      However, if the current service type ID is non-zero, will not change the value to 25 (Ambiguous)
-**      See also table cc.t_service_type
+**      See also table svc.t_service_type
 **
 **  Arguments:
 **    _requestID            Requested run ID
@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_service_type_if_required
 **
 **  Auth:   mem
 **  Date:   07/25/2025 mem - Initial release
+**          08/20/2025 mem - Reference schema svc instead of cc
 **
 *****************************************************/
 DECLARE

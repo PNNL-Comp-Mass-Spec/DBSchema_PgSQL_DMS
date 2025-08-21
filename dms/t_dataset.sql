@@ -408,7 +408,7 @@ ALTER TABLE ONLY public.t_dataset
 --
 
 ALTER TABLE ONLY public.t_dataset
-    ADD CONSTRAINT fk_t_dataset_t_service_type FOREIGN KEY (service_type_id) REFERENCES cc.t_service_type(service_type_id) ON UPDATE CASCADE;
+    ADD CONSTRAINT fk_t_dataset_t_service_type FOREIGN KEY (service_type_id) REFERENCES svc.t_service_type(service_type_id) ON UPDATE CASCADE;
 
 --
 -- Name: t_dataset fk_t_dataset_t_storage_path; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

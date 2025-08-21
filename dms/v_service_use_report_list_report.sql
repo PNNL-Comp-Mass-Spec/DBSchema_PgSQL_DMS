@@ -10,8 +10,8 @@ CREATE VIEW public.v_service_use_report_list_report AS
     state.report_state,
     rep.report_state_id,
     rep.cost_group_id
-   FROM (cc.t_service_use_report rep
-     JOIN cc.t_service_use_report_state state ON ((rep.report_state_id = state.report_state_id)));
+   FROM (svc.t_service_use_report rep
+     JOIN svc.t_service_use_report_state state ON ((rep.report_state_id = state.report_state_id)));
 
 
 ALTER VIEW public.v_service_use_report_list_report OWNER TO d3l243;

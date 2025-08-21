@@ -1,17 +1,18 @@
 --
--- Name: trigfn_t_service_use_after_update(); Type: FUNCTION; Schema: cc; Owner: d3l243
+-- Name: trigfn_t_service_use_after_update(); Type: FUNCTION; Schema: svc; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION cc.trigfn_t_service_use_after_update() RETURNS trigger
+CREATE OR REPLACE FUNCTION svc.trigfn_t_service_use_after_update() RETURNS trigger
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
-**      Makes an entry in cc.t_service_use_updates for the updated service use entry
+**      Makes an entry in svc.t_service_use_updates for the updated service use entry
 **
 **  Auth:   mem
 **  Date:   07/23/2025 mem - Initial release
+**          08/20/2025 mem - Reference schema svc instead of cc
 **
 *****************************************************/
 DECLARE
@@ -24,7 +25,7 @@ BEGIN
     If OLD.charge_code     <> NEW.charge_code Or    -- Use <> since charge_code and service_type_id are never null
        OLD.service_type_id <> NEW.service_type_id
     Then
-        INSERT INTO cc.t_service_use_updates (
+        INSERT INTO svc.t_service_use_updates (
             service_use_entry_id,
             dataset_id,
             charge_code_change,
@@ -49,5 +50,5 @@ END
 $$;
 
 
-ALTER FUNCTION cc.trigfn_t_service_use_after_update() OWNER TO d3l243;
+ALTER FUNCTION svc.trigfn_t_service_use_after_update() OWNER TO d3l243;
 

@@ -1,8 +1,8 @@
 --
--- Name: t_service_cost_rate_burdened; Type: TABLE; Schema: cc; Owner: d3l243
+-- Name: t_service_cost_rate_burdened; Type: TABLE; Schema: svc; Owner: d3l243
 --
 
-CREATE TABLE cc.t_service_cost_rate_burdened (
+CREATE TABLE svc.t_service_cost_rate_burdened (
     cost_group_id integer NOT NULL,
     funding_agency public.citext NOT NULL,
     service_type_id smallint NOT NULL,
@@ -17,35 +17,35 @@ CREATE TABLE cc.t_service_cost_rate_burdened (
 );
 
 
-ALTER TABLE cc.t_service_cost_rate_burdened OWNER TO d3l243;
+ALTER TABLE svc.t_service_cost_rate_burdened OWNER TO d3l243;
 
 --
--- Name: t_service_cost_rate_burdened pk_t_service_cost_rate_burdened; Type: CONSTRAINT; Schema: cc; Owner: d3l243
+-- Name: t_service_cost_rate_burdened pk_t_service_cost_rate_burdened; Type: CONSTRAINT; Schema: svc; Owner: d3l243
 --
 
-ALTER TABLE ONLY cc.t_service_cost_rate_burdened
+ALTER TABLE ONLY svc.t_service_cost_rate_burdened
     ADD CONSTRAINT pk_t_service_cost_rate_burdened PRIMARY KEY (cost_group_id, funding_agency, service_type_id);
 
-ALTER TABLE cc.t_service_cost_rate_burdened CLUSTER ON pk_t_service_cost_rate_burdened;
+ALTER TABLE svc.t_service_cost_rate_burdened CLUSTER ON pk_t_service_cost_rate_burdened;
 
 --
--- Name: t_service_cost_rate_burdened fk_pk_t_service_cost_rate_burdened_t_service_cost_group; Type: FK CONSTRAINT; Schema: cc; Owner: d3l243
+-- Name: t_service_cost_rate_burdened fk_pk_t_service_cost_rate_burdened_t_service_cost_group; Type: FK CONSTRAINT; Schema: svc; Owner: d3l243
 --
 
-ALTER TABLE ONLY cc.t_service_cost_rate_burdened
-    ADD CONSTRAINT fk_pk_t_service_cost_rate_burdened_t_service_cost_group FOREIGN KEY (cost_group_id) REFERENCES cc.t_service_cost_group(cost_group_id);
+ALTER TABLE ONLY svc.t_service_cost_rate_burdened
+    ADD CONSTRAINT fk_pk_t_service_cost_rate_burdened_t_service_cost_group FOREIGN KEY (cost_group_id) REFERENCES svc.t_service_cost_group(cost_group_id);
 
 --
--- Name: t_service_cost_rate_burdened fk_pk_t_service_cost_rate_burdened_t_service_type; Type: FK CONSTRAINT; Schema: cc; Owner: d3l243
+-- Name: t_service_cost_rate_burdened fk_pk_t_service_cost_rate_burdened_t_service_type; Type: FK CONSTRAINT; Schema: svc; Owner: d3l243
 --
 
-ALTER TABLE ONLY cc.t_service_cost_rate_burdened
-    ADD CONSTRAINT fk_pk_t_service_cost_rate_burdened_t_service_type FOREIGN KEY (service_type_id) REFERENCES cc.t_service_type(service_type_id) ON UPDATE CASCADE;
+ALTER TABLE ONLY svc.t_service_cost_rate_burdened
+    ADD CONSTRAINT fk_pk_t_service_cost_rate_burdened_t_service_type FOREIGN KEY (service_type_id) REFERENCES svc.t_service_type(service_type_id) ON UPDATE CASCADE;
 
 --
--- Name: TABLE t_service_cost_rate_burdened; Type: ACL; Schema: cc; Owner: d3l243
+-- Name: TABLE t_service_cost_rate_burdened; Type: ACL; Schema: svc; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE cc.t_service_cost_rate_burdened TO readaccess;
-GRANT SELECT ON TABLE cc.t_service_cost_rate_burdened TO writeaccess;
+GRANT SELECT ON TABLE svc.t_service_cost_rate_burdened TO readaccess;
+GRANT SELECT ON TABLE svc.t_service_cost_rate_burdened TO writeaccess;
 

@@ -13,9 +13,9 @@ CREATE VIEW public.v_service_cost_rate_list_report AS
     cr.base_rate_per_run,
     cr.doe_burdened_rate_per_run AS doe_burdened_rate,
     cr.hhs_burdened_rate_per_run AS hhs_burdened_rate
-   FROM ((cc.t_service_cost_rate cr
-     JOIN cc.t_service_type t ON ((t.service_type_id = cr.service_type_id)))
-     JOIN cc.t_service_cost_group cg ON ((cg.cost_group_id = cr.cost_group_id)));
+   FROM ((svc.t_service_cost_rate cr
+     JOIN svc.t_service_type t ON ((t.service_type_id = cr.service_type_id)))
+     JOIN svc.t_service_cost_group cg ON ((cg.cost_group_id = cr.cost_group_id)));
 
 
 ALTER VIEW public.v_service_cost_rate_list_report OWNER TO d3l243;
