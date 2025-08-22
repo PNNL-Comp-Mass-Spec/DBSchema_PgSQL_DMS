@@ -34,7 +34,7 @@ CREATE VIEW public.v_dataset_list_report_2 AS
     org.organism,
     bto.term_name AS tissue,
     ds.service_type_id AS svc_center_use_type,
-    ds.cc_report_state_id AS svc_center_report_state,
+    ds.svc_center_report_state_id AS svc_center_report_state,
     ds.date_sort_key
    FROM (((((((((((((public.t_dataset_state_name dsn
      JOIN public.t_dataset ds ON ((dsn.dataset_state_id = ds.dataset_state_id)))

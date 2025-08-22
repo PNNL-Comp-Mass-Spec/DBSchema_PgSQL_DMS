@@ -3,8 +3,8 @@
 --
 
 CREATE VIEW public.v_dataset_svc_center_report_state_list_report AS
- SELECT cc_report_state_id,
-    cc_report_state,
+ SELECT svc_center_report_state_id,
+    svc_center_report_state,
     description
    FROM public.t_dataset_svc_center_report_state;
 

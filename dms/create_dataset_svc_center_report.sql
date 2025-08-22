@@ -17,7 +17,7 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate 
 **
 **      Added datasets will have their service center report state changed to 3 (Submitting to service center) or 5 (Refunded to service center)
 **
-**      See also column cc_report_state_id in table t_dataset and table t_dataset_svc_center_report_state
+**      See also column svc_center_report_state_id in table t_dataset and table t_dataset_svc_center_report_state
 **
 **  Arguments:
 **    _endDate          Ending date for dataset creation (time of day is ignored)
@@ -43,6 +43,7 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate 
 **                         - Exclude datasets that do not have a requested run with a work package
 **          08/20/2025 mem - Reference schema svc instead of cc
 **          08/21/2025 mem - Rename procedure
+**                         - Use new service center report state column names
 **
 *****************************************************/
 DECLARE
@@ -228,7 +229,7 @@ BEGIN
                    ON DS.dataset_id = RR.dataset_id
             WHERE DS.dataset_state_id = 3 AND                                       -- Dataset state 3: Complete
                   DS.created BETWEEN _startDate AND _beginningOfNextDay AND
-                  DS.cc_report_state_id = 0 AND                                     -- Service center report state 0: Undefined
+                  DS.svc_center_report_state_id = 0 AND                             -- Service center report state 0: Undefined
                   DS.service_type_id BETWEEN 100 AND 113 AND                        -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous)
                   NOT Trim(Coalesce(RR.work_package, '')) IN ('', 'none', 'na', 'n/a', '(lookup)');
             --
@@ -242,14 +243,14 @@ BEGIN
             End If;
         Else
             UPDATE t_dataset
-            SET cc_report_state_id = 2
+            SET svc_center_report_state_id = 2
             FROM (SELECT DS.dataset_id
                   FROM t_dataset DS
                        INNER JOIN t_requested_run RR
                          ON DS.dataset_id = RR.dataset_id
                   WHERE DS.dataset_state_id = 3 AND                                     -- Dataset state 3: Complete
                         DS.created BETWEEN _startDate AND _beginningOfNextDay AND
-                        DS.cc_report_state_id = 0 AND                                   -- Service center report state 0: Undefined
+                        DS.svc_center_report_state_id = 0 AND                           -- Service center report state 0: Undefined
                         DS.service_type_id BETWEEN 100 AND 113 AND                      -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous); limit to the range of valid IDs, for safety
                         NOT Trim(Coalesce(RR.work_package, '')) IN ('', 'none', 'na', 'n/a', '(lookup)')
                   ) FilterQ
@@ -281,24 +282,24 @@ BEGIN
         _currentLocation := 'Populate a temporary table with datasets to add to the report';
 
         CREATE TEMP TABLE Tmp_Datasets_to_Add (
-            dataset_id           int NOT NULL PRIMARY KEY,
-            dataset              citext NOT NULL,
-            service_type_id      smallint NOT NULL,
-            cc_report_state_id   smallint NOT NULL,
-            acq_length_minutes   int NOT NULL DEFAULT 0,
-            charge_code          citext DEFAULT '' NOT NULL,
-            transaction_date     timestamp,
-            transaction_units    real,
-            transaction_cost_est real,
-            is_held              citext DEFAULT 'N' NOT NULL,
-            comment              citext DEFAULT ''
+            dataset_id                  int NOT NULL PRIMARY KEY,
+            dataset                     citext NOT NULL,
+            service_type_id             smallint NOT NULL,
+            svc_center_report_state_id  smallint NOT NULL,
+            acq_length_minutes          int NOT NULL DEFAULT 0,
+            charge_code                 citext DEFAULT '' NOT NULL,
+            transaction_date            timestamp,
+            transaction_units           real,
+            transaction_cost_est        real,
+            is_held                     citext DEFAULT 'N' NOT NULL,
+            comment                     citext DEFAULT ''
         );
 
-        INSERT INTO Tmp_Datasets_to_Add (dataset_id, dataset, service_type_id, cc_report_state_id, acq_length_minutes, charge_code, transaction_date, comment)
+        INSERT INTO Tmp_Datasets_to_Add (dataset_id, dataset, service_type_id, svc_center_report_state_id, acq_length_minutes, charge_code, transaction_date, comment)
         SELECT dataset_id,
                dataset,
                service_type_id,
-               cc_report_state_id,
+               svc_center_report_state_id,
                CASE WHEN acq_time_start IS NULL OR acq_length_minutes <= 0
                     THEN Coalesce(req_run_acq_length_minutes, 0)
                     ELSE acq_length_minutes
@@ -309,7 +310,7 @@ BEGIN
         FROM ( SELECT DS.dataset_id,
                       DS.dataset,
                       DS.service_type_id,
-                      DS.cc_report_state_id,
+                      DS.svc_center_report_state_id,
                       DS.acq_time_start,
                       DS.acq_length_minutes,
                       Round(extract(epoch FROM RR.request_run_finish - RR.request_run_start) / 60.0, 0)::int AS req_run_acq_length_minutes,
@@ -322,8 +323,8 @@ BEGIN
                       ON DS.dataset_id = DTU.dataset_id
                WHERE DS.dataset_state_id = 3 AND
                      DS.created BETWEEN _startDate AND _beginningOfNextDay AND
-                     (DS.cc_report_state_id IN (2, 4) OR
-                     _infoOnly AND NOT DTU.dataset_id IS NULL   -- Also include datasets that would have had cc_report_state_id auto-updated from 0 to 2 (see 'Change service center report state' above)
+                     (DS.svc_center_report_state_id IN (2, 4) OR
+                     _infoOnly AND NOT DTU.dataset_id IS NULL   -- Also include datasets that would have had svc_center_report_state_id auto-updated from 0 to 2 (see 'Change service center report state' above)
                      )
              ) FilterQ
         ORDER BY dataset_id;
@@ -427,12 +428,12 @@ BEGIN
         */
 
         ---------------------------------------------------
-        -- Change the transaction units to a negative value for any datasets with cc_report_state_id = 4 (Need to refund to service center)
+        -- Change the transaction units to a negative value for any datasets with svc_center_report_state_id = 4 (Need to refund to service center)
         ---------------------------------------------------
 
         UPDATE Tmp_Datasets_to_Add
         SET transaction_units = -ABS(transaction_units)
-        WHERE cc_report_state_id = 4;
+        WHERE svc_center_report_state_id = 4;
 
         ---------------------------------------------------
         -- Create a new service center report, settings its state to 1=New
@@ -486,12 +487,12 @@ BEGIN
         _currentLocation := 'Update service center report state ID for the datasets in the report';
 
         UPDATE t_dataset DS
-        SET cc_report_state_id = CASE WHEN LookupQ.cc_report_state_id = 4
-                                      THEN 5        -- Refunding
-                                      ELSE 3        -- Submitting
+        SET svc_center_report_state_id = CASE WHEN LookupQ.svc_center_report_state_id = 4
+                                         THEN 5        -- Refunding
+                                         ELSE 3        -- Submitting
                                  END
         FROM ( SELECT dataset_id,
-                      cc_report_state_id
+                      svc_center_report_state_id
                FROM Tmp_Datasets_to_Add
              ) LookupQ
         WHERE DS.dataset_id = LookupQ.dataset_id;
@@ -499,7 +500,7 @@ BEGIN
         GET DIAGNOSTICS _affectedCount = ROW_COUNT;
 
         If _showDebug Then
-            RAISE INFO 'Update cc_report_state_id for % % in table t_dataset', _affectedCount, check_plural(_affectedCount, 'dataset', 'datasets');
+            RAISE INFO 'Update svc_center_report_state_id for % % in table t_dataset', _affectedCount, check_plural(_affectedCount, 'dataset', 'datasets');
         End If;
 
         ---------------------------------------------------

@@ -34,7 +34,7 @@ CREATE TABLE public.t_dataset (
     capture_subfolder public.citext,
     cart_config_id integer,
     service_type_id smallint DEFAULT 0 NOT NULL,
-    cc_report_state_id smallint DEFAULT 0 NOT NULL,
+    svc_center_report_state_id smallint DEFAULT 0 NOT NULL,
     CONSTRAINT ck_t_dataset_dataset_name_not_empty CHECK ((COALESCE(dataset, ''::public.citext) OPERATOR(public.<>) ''::public.citext)),
     CONSTRAINT ck_t_dataset_dataset_name_whitespace CHECK ((public.has_whitespace_chars((dataset)::text, false) = false)),
     CONSTRAINT ck_t_dataset_ds_folder_name_not_empty CHECK ((COALESCE(folder_name, ''::public.citext) OPERATOR(public.<>) ''::public.citext))
@@ -301,7 +301,7 @@ CREATE INDEX ix_t_dataset_storage_path_id_created_instrument_id_rating ON public
 -- Name: ix_t_dataset_svc_center_report_state_id; Type: INDEX; Schema: public; Owner: d3l243
 --
 
-CREATE INDEX ix_t_dataset_svc_center_report_state_id ON public.t_dataset USING btree (cc_report_state_id);
+CREATE INDEX ix_t_dataset_svc_center_report_state_id ON public.t_dataset USING btree (svc_center_report_state_id);
 
 --
 -- Name: t_dataset trig_t_dataset_after_delete_all; Type: TRIGGER; Schema: public; Owner: d3l243
@@ -352,7 +352,7 @@ ALTER TABLE ONLY public.t_dataset
 --
 
 ALTER TABLE ONLY public.t_dataset
-    ADD CONSTRAINT fk_t_dataset_t_dataset_svc_center_report_state FOREIGN KEY (cc_report_state_id) REFERENCES public.t_dataset_svc_center_report_state(cc_report_state_id);
+    ADD CONSTRAINT fk_t_dataset_t_dataset_svc_center_report_state FOREIGN KEY (svc_center_report_state_id) REFERENCES public.t_dataset_svc_center_report_state(svc_center_report_state_id);
 
 --
 -- Name: t_dataset fk_t_dataset_t_dataset_type_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

@@ -21,7 +21,7 @@ SET row_security = off;
 -- Data for Name: t_dataset_svc_center_report_state; Type: TABLE DATA; Schema: public; Owner: d3l243
 --
 
-COPY public.t_dataset_svc_center_report_state (cc_report_state_id, cc_report_state, description) FROM stdin;
+COPY public.t_dataset_svc_center_report_state (svc_center_report_state_id, svc_center_report_state, description) FROM stdin;
 0	Undefined	
 1	Do not submit to service center	
 2	Need to submit to service center	
