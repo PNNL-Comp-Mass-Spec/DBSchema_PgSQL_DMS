@@ -1,8 +1,8 @@
 --
--- Name: v_service_use_admin_report; Type: VIEW; Schema: public; Owner: d3l243
+-- Name: v_service_center_use_admin_report; Type: VIEW; Schema: public; Owner: d3l243
 --
 
-CREATE VIEW public.v_service_use_admin_report AS
+CREATE VIEW public.v_service_center_use_admin_report AS
  SELECT u.entry_id,
     u.dataset_id,
     cds.instrument,
@@ -15,21 +15,20 @@ CREATE VIEW public.v_service_use_admin_report AS
     u.comment,
     dsrating.dataset_rating,
     u.report_id
-   FROM ((((((svc.t_service_use u
+   FROM (((((svc.t_service_use u
      JOIN svc.t_service_use_report rep ON ((rep.report_id = u.report_id)))
      JOIN svc.t_service_type t ON ((t.service_type_id = u.service_type_id)))
      JOIN public.t_dataset ds ON ((u.dataset_id = ds.dataset_id)))
      JOIN public.t_dataset_rating_name dsrating ON ((dsrating.dataset_rating_id = ds.dataset_rating_id)))
-     LEFT JOIN public.t_charge_code public ON ((public.charge_code OPERATOR(public.=) u.charge_code)))
      LEFT JOIN public.t_cached_dataset_stats cds ON ((u.dataset_id = cds.dataset_id)));
 
 
-ALTER VIEW public.v_service_use_admin_report OWNER TO d3l243;
+ALTER VIEW public.v_service_center_use_admin_report OWNER TO d3l243;
 
 --
--- Name: TABLE v_service_use_admin_report; Type: ACL; Schema: public; Owner: d3l243
+-- Name: TABLE v_service_center_use_admin_report; Type: ACL; Schema: public; Owner: d3l243
 --
 
-GRANT SELECT ON TABLE public.v_service_use_admin_report TO readaccess;
-GRANT SELECT ON TABLE public.v_service_use_admin_report TO writeaccess;
+GRANT SELECT ON TABLE public.v_service_center_use_admin_report TO readaccess;
+GRANT SELECT ON TABLE public.v_service_center_use_admin_report TO writeaccess;
 

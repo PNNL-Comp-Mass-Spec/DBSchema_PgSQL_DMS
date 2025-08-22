@@ -1,38 +1,38 @@
 --
--- Name: create_dataset_cc_report(timestamp without time zone, integer, boolean, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: create_dataset_svc_center_report(timestamp without time zone, integer, boolean, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.create_dataset_cc_report(IN _enddate timestamp without time zone, IN _daycount integer DEFAULT 365, IN _infoonly boolean DEFAULT false, IN _showdebug boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate timestamp without time zone, IN _daycount integer DEFAULT 365, IN _infoonly boolean DEFAULT false, IN _showdebug boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
-**      Creates a new cost center usage report, adding rows to svc.t_service_use_report
+**      Creates a new service center usage report, adding rows to svc.t_service_use_report
 **
 **      Looks for datasets that meet the following conditions
 **      - Dataset state 3 (Complete)
 **      - Created on or before the end date (created any time on the end date)
-**      - Cost center report state of 2 (Need to submit to cost center) or 4 (Need to refund to cost center)
+**      - Service center report state of 2 (Need to submit to service center) or 4 (Need to refund to service center)
 **
-**      Added datasets will have their cost center report state changed to 3 (Submitting to cost center) or 5 (Refunding to cost center)
+**      Added datasets will have their service center report state changed to 3 (Submitting to service center) or 5 (Refunded to service center)
 **
-**      See also column cc_report_state_id in table t_dataset and table t_dataset_cc_report_state
+**      See also column cc_report_state_id in table t_dataset and table t_dataset_svc_center_report_state
 **
 **  Arguments:
 **    _endDate          Ending date for dataset creation (time of day is ignored)
 **    _dayCount         Number of days to look back for new DMS datasets
-**    _infoOnly         When true, show the datasets that would be added to the new cost center usage report
+**    _infoOnly         When true, show the datasets that would be added to the new service center usage report
 **    _showDebug        When true, show additional status messages; auto-set to true if _infoOnly is true
 **    _message          Status message
 **    _returnCode       Return code
 **
 **  Example Usage:
-**      CALL create_dataset_cc_report('2025-07-16', _infoOnly => true);
-**      CALL create_dataset_cc_report('2025-07-16', _dayCount => 365, _infoOnly => true);
-**      CALL create_dataset_cc_report('2025-07-16', 365, _infoOnly => true);
-**      CALL create_dataset_cc_report(CURRENT_TIMESTAMP::date - INTERVAL '1 day', _dayCount => 365, _infoOnly => true);
-**      CALL create_dataset_cc_report('2024-08-13', 5, _infoOnly => false, _showDebug => true);
+**      CALL create_dataset_svc_center_report('2025-07-16', _infoOnly => true);
+**      CALL create_dataset_svc_center_report('2025-07-16', _dayCount => 365, _infoOnly => true);
+**      CALL create_dataset_svc_center_report('2025-07-16', 365, _infoOnly => true);
+**      CALL create_dataset_svc_center_report(CURRENT_TIMESTAMP::date - INTERVAL '1 day', _dayCount => 365, _infoOnly => true);
+**      CALL create_dataset_svc_center_report('2024-08-13', 5, _infoOnly => false, _showDebug => true);
 **
 **  Auth:   mem
 **  Date:   07/22/2025 mem - Initial release
@@ -42,6 +42,7 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_cc_report(IN _enddate timestam
 **                         - Determine the total rate per run using column total_per_run in t_service_cost_rate
 **                         - Exclude datasets that do not have a requested run with a work package
 **          08/20/2025 mem - Reference schema svc instead of cc
+**          08/21/2025 mem - Rename procedure
 **
 *****************************************************/
 DECLARE
@@ -158,7 +159,7 @@ BEGIN
             RAISE WARNING '%', _infoOnly;
 
             If Not _infoOnly Then
-                CALL post_log_entry('Error', _message, 'create_dataset_cc_report');
+                CALL post_log_entry('Error', _message, 'create_dataset_svc_center_report');
             End If;
 
             _returnCode = 'U5200';
@@ -168,7 +169,7 @@ BEGIN
             RAISE WARNING '%', _infoOnly;
 
             If Not _infoOnly Then
-                CALL post_log_entry('Error', _message, 'create_dataset_cc_report');
+                CALL post_log_entry('Error', _message, 'create_dataset_svc_center_report');
             End If;
 
             _returnCode = 'U5201';
@@ -191,7 +192,7 @@ BEGIN
             RAISE WARNING '%', _infoOnly;
 
             If Not _infoOnly Then
-                CALL post_log_entry('Error', _message, 'create_dataset_cc_report');
+                CALL post_log_entry('Error', _message, 'create_dataset_svc_center_report');
             End If;
 
             _returnCode = 'U5202';
@@ -201,7 +202,7 @@ BEGIN
             RAISE WARNING '%', _infoOnly;
 
             If Not _infoOnly Then
-                CALL post_log_entry('Error', _message, 'create_dataset_cc_report');
+                CALL post_log_entry('Error', _message, 'create_dataset_svc_center_report');
             End If;
 
             _returnCode = 'U5203';
@@ -209,11 +210,11 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Look for datasets with a cost center report state of 0 (Undefined) that can be changed to state 2 (Need to submit to cost center)
+        -- Look for datasets with a service center report state of 0 (Undefined) that can be changed to state 2 (Need to submit to service center)
         -- Exclude datasets that do not have a valid work package ('', 'none', 'na', n/a', '(lookup)')
         ---------------------------------------------------
 
-        _currentLocation := 'Change cost center report state from 0 to 2 for eligible datasets';
+        _currentLocation := 'Change service center report state from 0 to 2 for eligible datasets';
 
         CREATE TEMP TABLE Tmp_Datasets_to_Update (
             dataset_id int NOT NULL PRIMARY KEY
@@ -227,16 +228,16 @@ BEGIN
                    ON DS.dataset_id = RR.dataset_id
             WHERE DS.dataset_state_id = 3 AND                                       -- Dataset state 3: Complete
                   DS.created BETWEEN _startDate AND _beginningOfNextDay AND
-                  DS.cc_report_state_id = 0 AND                                     -- Cost center report state 0: Undefined
+                  DS.cc_report_state_id = 0 AND                                     -- Service center report state 0: Undefined
                   DS.service_type_id BETWEEN 100 AND 113 AND                        -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous)
                   NOT Trim(Coalesce(RR.work_package, '')) IN ('', 'none', 'na', 'n/a', '(lookup)');
             --
             GET DIAGNOSTICS _datasetCount = ROW_COUNT;
 
             If _datasetCount = 0 Then
-                RAISE INFO 'Every dataset created between % and % already has a non-zero cost center report state', _startDate, _beginningOfNextDay;
+                RAISE INFO 'Every dataset created between % and % already has a non-zero service center report state', _startDate, _beginningOfNextDay;
             Else
-                RAISE INFO 'Would change the cost center report state from 0 (Undefined) to 2 (Need to submit to cost center) for % %',
+                RAISE INFO 'Would change the service center report state from 0 (Undefined) to 2 (Need to submit to service center) for % %',
                            _datasetCount, check_plural(_datasetCount, 'dataset', 'datasets');
             End If;
         Else
@@ -248,7 +249,7 @@ BEGIN
                          ON DS.dataset_id = RR.dataset_id
                   WHERE DS.dataset_state_id = 3 AND                                     -- Dataset state 3: Complete
                         DS.created BETWEEN _startDate AND _beginningOfNextDay AND
-                        DS.cc_report_state_id = 0 AND                                   -- Cost center report state 0: Undefined
+                        DS.cc_report_state_id = 0 AND                                   -- Service center report state 0: Undefined
                         DS.service_type_id BETWEEN 100 AND 113 AND                      -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous); limit to the range of valid IDs, for safety
                         NOT Trim(Coalesce(RR.work_package, '')) IN ('', 'none', 'na', 'n/a', '(lookup)')
                   ) FilterQ
@@ -258,10 +259,10 @@ BEGIN
 
             If _datasetCount = 0 Then
                 If _showDebug Then
-                    RAISE INFO 'Every dataset created between % and % already has a non-zero cost center report state (or an undefined work package)', _startDate, _beginningOfNextDay;
+                    RAISE INFO 'Every dataset created between % and % already has a non-zero service center report state (or an undefined work package)', _startDate, _beginningOfNextDay;
                 End If;
             Else
-                _logMsg := format('Changed cost center report state from 0 to 2 for %s %s created between %s and %s',
+                _logMsg := format('Changed service center report state from 0 to 2 for %s %s created between %s and %s',
                                   _datasetCount, check_plural(_datasetCount, 'dataset', 'datasets'),
                                   _startDate, _beginningOfNextDay);
 
@@ -269,12 +270,12 @@ BEGIN
                     RAISE INFO '%', _logMsg;
                 End If;
 
-                CALL post_log_entry('Normal', _logMsg, 'create_dataset_cc_report');
+                CALL post_log_entry('Normal', _logMsg, 'create_dataset_svc_center_report');
             End If;
         End If;
 
         ---------------------------------------------------
-        -- Populate a temporary table with datasets to add to the cost center report
+        -- Populate a temporary table with datasets to add to the service center report
         ---------------------------------------------------
 
         _currentLocation := 'Populate a temporary table with datasets to add to the report';
@@ -322,7 +323,7 @@ BEGIN
                WHERE DS.dataset_state_id = 3 AND
                      DS.created BETWEEN _startDate AND _beginningOfNextDay AND
                      (DS.cc_report_state_id IN (2, 4) OR
-                     _infoOnly AND NOT DTU.dataset_id IS NULL   -- Also include datasets that would have had cc_report_state_id auto-updated from 0 to 2 (see 'Change cost center report state' above)
+                     _infoOnly AND NOT DTU.dataset_id IS NULL   -- Also include datasets that would have had cc_report_state_id auto-updated from 0 to 2 (see 'Change service center report state' above)
                      )
              ) FilterQ
         ORDER BY dataset_id;
@@ -330,7 +331,7 @@ BEGIN
         GET DIAGNOSTICS _datasetCount = ROW_COUNT;
 
         If _datasetCount = 0 Then
-            RAISE INFO 'Did not find any datasets created between % and % with a cost center report state of 2 or 4',
+            RAISE INFO 'Did not find any datasets created between % and % with a service center report state of 2 or 4',
                        -- to_char(_startDate, 'yyyy-mm-dd'),
                        -- to_char(_beginningOfNextDay, 'yyyy-mm-dd');
                        _startDate, _beginningOfNextDay;
@@ -340,7 +341,7 @@ BEGIN
             RETURN;
         End If;
 
-        _logMsg = format('a new cost center report using %s %s that %s a cost center report state of 2 (Need to submit) or 4 (Need to refund), '
+        _logMsg = format('a new service center report using %s %s that %s a service center report state of 2 (Need to submit) or 4 (Need to refund), '
                        'filtering on dataset_state_id = 3 and dataset created between %s and %s',
                        _datasetCount,
                        check_plural(_datasetCount, 'dataset', 'datasets'),
@@ -348,7 +349,7 @@ BEGIN
                        _startDate, _beginningOfNextDay);
 
         If _infoOnly Then
-            -- Would create a new cost center report using 1473 datasets that have a cost center report state of 2 (Need to submit) or 4 (Need to refund), filtering on dataset_state_id = 3 and dataset created between 2024-07-30 and 2025-07-31
+            -- Would create a new service center report using 1473 datasets that have a service center report state of 2 (Need to submit) or 4 (Need to refund), filtering on dataset_state_id = 3 and dataset created between 2024-07-30 and 2025-07-31
             _logMsg := format('Would create %s', _logMsg);
 
             RAISE INFO '%', _logMsg;
@@ -367,7 +368,7 @@ BEGIN
         End If;
 
         If _showDebug Then
-            -- Creating a new cost center report using 1473 datasets that have a cost center report state of 2 (Need to submit) or 4 (Need to refund), filtering on dataset_state_id = 3 and dataset created between 2024-07-30 and 2025-07-31
+            -- Creating a new service center report using 1473 datasets that have a service center report state of 2 (Need to submit) or 4 (Need to refund), filtering on dataset_state_id = 3 and dataset created between 2024-07-30 and 2025-07-31
             RAISE INFO 'Creating %', _logMsg;
         End If;
 
@@ -399,7 +400,7 @@ BEGIN
         GET DIAGNOSTICS _affectedCount = ROW_COUNT;
 
         If _showDebug Then
-            RAISE INFO 'Defined the transaction_units for % % in the cost center report', _affectedCount, check_plural(_affectedCount, 'dataset', 'datasets');
+            RAISE INFO 'Defined the transaction_units for % % in the service center report', _affectedCount, check_plural(_affectedCount, 'dataset', 'datasets');
         End If;
 
         /*
@@ -426,7 +427,7 @@ BEGIN
         */
 
         ---------------------------------------------------
-        -- Change the transaction units to a negative value for any datasets with cc_report_state_id = 4 (Need to refund to cost center)
+        -- Change the transaction units to a negative value for any datasets with cc_report_state_id = 4 (Need to refund to service center)
         ---------------------------------------------------
 
         UPDATE Tmp_Datasets_to_Add
@@ -434,10 +435,10 @@ BEGIN
         WHERE cc_report_state_id = 4;
 
         ---------------------------------------------------
-        -- Create a new cost center report, settings its state to 1=New
+        -- Create a new service center report, settings its state to 1=New
         ---------------------------------------------------
 
-        _currentLocation := 'Create a new cost center report';
+        _currentLocation := 'Create a new service center report';
 
         INSERT INTO svc.t_service_use_report(start_time, end_time, requestor_employee_id, report_state_id, cost_group_id)
         VALUES (_startDate, _beginningOfNextDay, current_user, 1, _costGroupID)
@@ -448,7 +449,7 @@ BEGIN
         -- Add the datasets to table svc.t_service_use
         ---------------------------------------------------
 
-        _currentLocation := format('Add datasets to the new cost center report (Report_ID: %s)', _reportID);
+        _currentLocation := format('Add datasets to the new service center report (Report_ID: %s)', _reportID);
 
         If _showDebug Then
             RAISE INFO '%', _currentLocation;
@@ -478,11 +479,11 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Update the cost center report state for the datasets in the report
-        -- The new state will be either 3 (Submitting to cost center) or 5 (Refunding to cost center)
+        -- Update the service center report state for the datasets in the report
+        -- The new state will be either 3 (Submitting to service center) or 5 (Refunding to service center)
         ---------------------------------------------------
 
-        _currentLocation := 'Update cost center report state ID for the datasets in the report';
+        _currentLocation := 'Update service center report state ID for the datasets in the report';
 
         UPDATE t_dataset DS
         SET cc_report_state_id = CASE WHEN LookupQ.cc_report_state_id = 4
@@ -502,10 +503,10 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- Change the cost center report state to 2 = Active
+        -- Change the service center report state to 2 = Active
         ---------------------------------------------------
 
-        _currentLocation := 'Change the cost center report state to 2 = active';
+        _currentLocation := 'Change the service center report state to 2 = active';
 
         UPDATE svc.t_service_use_report
         SET report_state_id = 2
@@ -515,14 +516,14 @@ BEGIN
         -- Log info about the new report
         ---------------------------------------------------
 
-        _logMsg := format('Created cost center report %s using %s %s',
+        _logMsg := format('Created service center report %s using %s %s',
                           _reportID, _datasetCount, check_plural(_datasetCount, 'dataset', 'datasets'));
 
         If _showDebug Then
             RAISE INFO '%', _logMsg;
         End If;
 
-        CALL post_log_entry('Normal', _logMsg, 'create_dataset_cc_report');
+        CALL post_log_entry('Normal', _logMsg, 'create_dataset_svc_center_report');
 
         _message := _logMsg;
 
@@ -559,5 +560,5 @@ END
 $$;
 
 
-ALTER PROCEDURE public.create_dataset_cc_report(IN _enddate timestamp without time zone, IN _daycount integer, IN _infoonly boolean, IN _showdebug boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.create_dataset_svc_center_report(IN _enddate timestamp without time zone, IN _daycount integer, IN _infoonly boolean, IN _showdebug boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 

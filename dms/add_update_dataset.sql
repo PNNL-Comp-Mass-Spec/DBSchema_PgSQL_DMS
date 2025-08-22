@@ -162,7 +162,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset(IN _datasetname text, IN _
 **          01/22/2025 mem - Include the dataset age in the error message if the dataset already exists and it was created within the last two hours
 **          05/16/2025 mem - Use new procedure name in exception message
 **          06/27/2025 mem - Specify parameter name when calling schedule_predefined_analysis_jobs
-**          07/02/2025 mem - Update cost center service type ID
+**          07/02/2025 mem - Update service center use type ID
 **          07/10/2025 mem - Refactor code into procedure update_dataset_service_type_if_required
 **          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
 **

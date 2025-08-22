@@ -1,14 +1,14 @@
 --
--- Name: get_requested_run_cc_service_type(integer); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_requested_run_svc_center_use_type(integer); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_requested_run_cc_service_type(_requestid integer) RETURNS smallint
+CREATE OR REPLACE FUNCTION public.get_requested_run_svc_center_use_type(_requestid integer) RETURNS smallint
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
-**      Determines the cost center service type for the given requested run
+**      Determines the service center use type for the given requested run
 **
 **  Arguments:
 **    _requestID        Requested run ID
@@ -16,12 +16,13 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_cc_service_type(_requestid i
 **  Example Usage:
 **      SELECT request_id,
 **             request_name,
-**             get_requested_run_cc_service_type(request_id)
+**             get_requested_run_svc_center_use_type(request_id)
 **      FROM t_requested_run
 **      WHERE request_id BETWEEN 1250000 AND 1250050;
 **
 **  Auth:   mem
 **  Date:   06/29/2025 mem - Initial release
+**          08/21/2025 mem - Rename function and use new procedure name
 **
 *****************************************************/
 DECLARE
@@ -115,7 +116,7 @@ BEGIN
     -- Determine the service type
     ---------------------------------------------------
 
-    _serviceTypeID := public.get_cc_service_type (
+    _serviceTypeID := public.get_service_center_use_type (
              _datasetName         => _rrInfo.dataset,
              _experimentName      => _rrInfo.experiment,
              _campaignName        => _rrInfo.campaign,
@@ -162,5 +163,5 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_requested_run_cc_service_type(_requestid integer) OWNER TO d3l243;
+ALTER FUNCTION public.get_requested_run_svc_center_use_type(_requestid integer) OWNER TO d3l243;
 

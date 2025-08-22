@@ -1,14 +1,14 @@
 --
--- Name: lock_active_dataset_cc_reports(boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: lock_active_dataset_svc_center_reports(boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.lock_active_dataset_cc_reports(IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.lock_active_dataset_svc_center_reports(IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
-**      Updates the state of any active cost center service use reports, changing from Active (2) to Complete (3)
+**      Updates the state of any active service center use reports, changing from Active (2) to Complete (3)
 **
 **  Arguments:
 **    _infoOnly         When true, show the report IDs that would be updated
@@ -16,11 +16,12 @@ CREATE OR REPLACE PROCEDURE public.lock_active_dataset_cc_reports(IN _infoonly b
 **    _returnCode       Return code
 **
 **  Example Usage:
-**      CALL lock_active_dataset_cc_reports(_infoOnly => true);
-**      CALL lock_active_dataset_cc_reports(_infoOnly => false);
+**      CALL lock_active_dataset_svc_center_reports(_infoOnly => true);
+**      CALL lock_active_dataset_svc_center_reports(_infoOnly => false);
 **
 **  Auth:   mem
 **  Date:   08/06/2025 mem - Initial release
+**          08/21/2025 mem - Rename procedure
 **
 *****************************************************/
 DECLARE
@@ -92,7 +93,7 @@ BEGIN
         _currentLocation := 'Look for active service use reports';
 
         If Not Exists (SELECT report_id FROM t_service_use_report WHERE report_state_id IN (1, 2)) Then
-            _message = 'No active cost center reports found; nothing to do';
+            _message = 'No active service center reports found; nothing to do';
 
             RAISE INFO '%', _message;
             RETURN;
@@ -110,7 +111,7 @@ BEGIN
         End If;
 
         If _infoOnly Then
-            _message = format('Would change the state of cost center %s %s to 3 (Complete)',
+            _message = format('Would change the state of service center %s %s to 3 (Complete)',
                               _reportDescription,
                               _reportIDs);
 
@@ -121,7 +122,7 @@ BEGIN
         _logErrors := true;
 
         ---------------------------------------------------
-        -- Update the cost center service use report state
+        -- Update the service center use report state
         ---------------------------------------------------
 
         _currentLocation := 'Update service use report state';
@@ -131,17 +132,17 @@ BEGIN
         WHERE report_state_id IN (1, 2);
 
         -- Example values for _message
-        -- Cost center report 1001 now has state 3 (Complete)
-        -- Cost center reports 1001, 1002 now have state 3 (Complete)
+        -- Service center report 1001 now has state 3 (Complete)
+        -- Service center reports 1001, 1002 now have state 3 (Complete)
 
-        _message := format('Cost center %s %s now %s state 3 (Complete)',
+        _message := format('Service center %s %s now %s state 3 (Complete)',
                            _reportDescription,
                            _reportIDs,
                            CASE WHEN _reportDescription = 'report' THEN 'has' ELSE 'have' END);
 
         RAISE INFO '%', _message;
 
-        CALL post_log_entry('Normal', _message, 'lock_active_dataset_cc_reports');
+        CALL post_log_entry('Normal', _message, 'lock_active_dataset_svc_center_reports');
 
         RETURN;
 
@@ -171,5 +172,5 @@ END
 $$;
 
 
-ALTER PROCEDURE public.lock_active_dataset_cc_reports(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.lock_active_dataset_svc_center_reports(IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 

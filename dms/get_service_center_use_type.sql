@@ -1,21 +1,21 @@
 --
--- Name: get_cc_service_type(text, text, text, text, integer, text, text, integer, text, text, text); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_service_center_use_type(text, text, text, text, integer, text, text, integer, text, text, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_cc_service_type(_datasetname text, _experimentname text, _campaignname text, _datasettypename text, _datasetratingid integer, _instrumentname text, _instrumentgroupname text, _acqlengthminutes integer, _separationtypename text, _separationgroupname text, _sampletypename text) RETURNS smallint
+CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text, _experimentname text, _campaignname text, _datasettypename text, _datasetratingid integer, _instrumentname text, _instrumentgroupname text, _acqlengthminutes integer, _separationtypename text, _separationgroupname text, _sampletypename text) RETURNS smallint
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
-**      Determines the cost center service type for the given set of metadata
+**      Determines the service center use type for the given set of metadata
 **
 **      Service types (tracked via table svc.t_service_type):
 **
 **      ID     Service Type                         Description
 **      --     ------------                         -----------
 **      0      Undefined                            Undefined
-**      1      None                                 Not a cost center tracked requested run or dataset
+**      1      None                                 Not a service center tracked requested run or dataset
 **      25     Ambiguous                            Unable to auto-determine the correct service type
 **      100    Peptides: Short Advanced MS          Astral, nanoPOTS, timsTOF SCP, separation time <= 60 minutes
 **      101    Peptides: Short Standard MS          HFX, Lumos, Eclipse, Exploris, SRM, MRM, separation time <= 60 minutes
@@ -68,7 +68,7 @@ CREATE OR REPLACE FUNCTION public.get_cc_service_type(_datasetname text, _experi
 **
 **  Example usage:
 **      SELECT *
-**      FROM get_cc_service_type (
+**      FROM get_service_center_use_type (
 **           _datasetName => 'QC_Mam_23_01_R08_27June25_Monty_ES906_1602_70SPD',
 **           _experimentName => 'QC_Mam_23_01',
 **           _campaignName => 'QC_Mammalian',
@@ -83,7 +83,7 @@ CREATE OR REPLACE FUNCTION public.get_cc_service_type(_datasetname text, _experi
 **      );
 **
 **      SELECT *
-**      FROM get_cc_service_type (
+**      FROM get_service_center_use_type (
 **           _datasetName => 'MoTrPAC_HM_CompRef_Plex01_G_f18_18Jan23_Bart_BEH-CoA-23-11-12',
 **           _experimentName => 'MoTrPAC_HM_CompRef_Plex01_G_f18',
 **           _campaignName => 'MoTrPAC',
@@ -107,6 +107,7 @@ CREATE OR REPLACE FUNCTION public.get_cc_service_type(_datasetname text, _experi
 **                         - No longer use service type 1 when the experiment's campaign is Blank; only use 1 if the experiment name is "Blank"
 **                         - Assign 1 for service type if the dataset's instrument is not service center eligible
 **          08/20/2025 mem - Reference schema svc instead of cc
+**          08/21/2025 mem - Rename function
 **
 *****************************************************/
 DECLARE
@@ -390,5 +391,5 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_cc_service_type(_datasetname text, _experimentname text, _campaignname text, _datasettypename text, _datasetratingid integer, _instrumentname text, _instrumentgroupname text, _acqlengthminutes integer, _separationtypename text, _separationgroupname text, _sampletypename text) OWNER TO d3l243;
+ALTER FUNCTION public.get_service_center_use_type(_datasetname text, _experimentname text, _campaignname text, _datasettypename text, _datasetratingid integer, _instrumentname text, _instrumentgroupname text, _acqlengthminutes integer, _separationtypename text, _separationgroupname text, _sampletypename text) OWNER TO d3l243;
 

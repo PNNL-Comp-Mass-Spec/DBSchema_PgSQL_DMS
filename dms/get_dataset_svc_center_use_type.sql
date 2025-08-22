@@ -1,27 +1,28 @@
 --
--- Name: get_dataset_cc_service_type(integer); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_dataset_svc_center_use_type(integer); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_dataset_cc_service_type(_datasetid integer) RETURNS smallint
+CREATE OR REPLACE FUNCTION public.get_dataset_svc_center_use_type(_datasetid integer) RETURNS smallint
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
-**      Determines the cost center service type for the given dataset
+**      Determines the service center use type for the given dataset
 **
 **  Arguments:
 **    _datasetID        Dataset ID
 **
 **  Example Usage:
 **      SELECT dataset,
-**             get_dataset_cc_service_type(dataset_id)
+**             get_dataset_svc_center_use_type(dataset_id)
 **      FROM t_dataset
 **      WHERE dataset_id BETWEEN 1200000 AND 1200100;
 **
 **  Auth:   mem
 **  Date:   06/29/2025 mem - Initial release
 **          07/10/2025 mem - Use requested run start and finish times when the dataset acquisition start/end times are null
+**          08/21/2025 mem - Rename function
 **
 *****************************************************/
 DECLARE
@@ -99,7 +100,7 @@ BEGIN
     -- Determine the service type
     ---------------------------------------------------
 
-    _serviceTypeID := public.get_cc_service_type (
+    _serviceTypeID := public.get_service_center_use_type (
              _datasetName         => _datasetInfo.dataset,
              _experimentName      => _datasetInfo.experiment,
              _campaignName        => _datasetInfo.campaign,
@@ -146,5 +147,5 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_dataset_cc_service_type(_datasetid integer) OWNER TO d3l243;
+ALTER FUNCTION public.get_dataset_svc_center_use_type(_datasetid integer) OWNER TO d3l243;
 

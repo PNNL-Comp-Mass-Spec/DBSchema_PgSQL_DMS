@@ -25,6 +25,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_service_type_if_required
 **  Auth:   mem
 **  Date:   07/25/2025 mem - Initial release
 **          08/20/2025 mem - Reference schema svc instead of cc
+**          08/21/2025 mem - Use new function names
 **
 *****************************************************/
 DECLARE
@@ -62,7 +63,7 @@ BEGIN
     -- Obtain the auto-defined service type ID, then update if required
     ---------------------------------------------------
 
-    _autoDefinedServiceTypeID := public.get_requested_run_cc_service_type(_requestID);
+    _autoDefinedServiceTypeID := public.get_requested_run_svc_center_use_type(_requestID);
 
     If _currentServiceTypeID = _autoDefinedServiceTypeID Then
         If _infoOnly OR _logDebugMessages Then
@@ -82,7 +83,7 @@ BEGIN
             WHERE request_id = _requestID;
 
             If _currentServiceTypeID <> 0 Or _logDebugMessages Then
-                _debugMsg := format('Changed cost center service type ID for requested run %s from %s to %s',
+                _debugMsg := format('Changed service center use type ID for requested run %s from %s to %s',
                                     _requestID, _currentServiceTypeID, _autoDefinedServiceTypeID);
 
                 CALL post_log_entry ('Normal', _debugMsg, 'update_requested_run_service_type_if_required');

@@ -178,12 +178,6 @@ CREATE INDEX ix_t_dataset_acq_time_start ON public.t_dataset USING btree (acq_ti
 CREATE INDEX ix_t_dataset_cart_config_id ON public.t_dataset USING btree (cart_config_id);
 
 --
--- Name: ix_t_dataset_cc_report_state_id; Type: INDEX; Schema: public; Owner: d3l243
---
-
-CREATE INDEX ix_t_dataset_cc_report_state_id ON public.t_dataset USING btree (cc_report_state_id);
-
---
 -- Name: ix_t_dataset_created; Type: INDEX; Schema: public; Owner: d3l243
 --
 
@@ -304,6 +298,12 @@ CREATE INDEX ix_t_dataset_state_id ON public.t_dataset USING btree (dataset_stat
 CREATE INDEX ix_t_dataset_storage_path_id_created_instrument_id_rating ON public.t_dataset USING btree (storage_path_id, created, instrument_id, dataset_rating_id, dataset_id);
 
 --
+-- Name: ix_t_dataset_svc_center_report_state_id; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_dataset_svc_center_report_state_id ON public.t_dataset USING btree (cc_report_state_id);
+
+--
 -- Name: t_dataset trig_t_dataset_after_delete_all; Type: TRIGGER; Schema: public; Owner: d3l243
 --
 
@@ -334,13 +334,6 @@ CREATE TRIGGER trig_t_dataset_after_update_all AFTER UPDATE ON public.t_dataset 
 CREATE TRIGGER trig_t_dataset_after_update_row AFTER UPDATE ON public.t_dataset FOR EACH ROW WHEN (((old.dataset_state_id <> new.dataset_state_id) OR (old.dataset_rating_id <> new.dataset_rating_id) OR (old.dataset OPERATOR(public.<>) new.dataset) OR (old.exp_id <> new.exp_id) OR (old.created <> new.created) OR ((old.folder_name)::text IS DISTINCT FROM (new.folder_name)::text) OR (old.acq_time_start IS DISTINCT FROM new.acq_time_start))) EXECUTE FUNCTION public.trigfn_t_dataset_after_update();
 
 --
--- Name: t_dataset fk_t_dataset_t_dataset_cc_report_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
---
-
-ALTER TABLE ONLY public.t_dataset
-    ADD CONSTRAINT fk_t_dataset_t_dataset_cc_report_state FOREIGN KEY (cc_report_state_id) REFERENCES public.t_dataset_cc_report_state(cc_report_state_id);
-
---
 -- Name: t_dataset fk_t_dataset_t_dataset_rating_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
 --
 
@@ -353,6 +346,13 @@ ALTER TABLE ONLY public.t_dataset
 
 ALTER TABLE ONLY public.t_dataset
     ADD CONSTRAINT fk_t_dataset_t_dataset_state_name FOREIGN KEY (dataset_state_id) REFERENCES public.t_dataset_state_name(dataset_state_id);
+
+--
+-- Name: t_dataset fk_t_dataset_t_dataset_svc_center_report_state; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
+--
+
+ALTER TABLE ONLY public.t_dataset
+    ADD CONSTRAINT fk_t_dataset_t_dataset_svc_center_report_state FOREIGN KEY (cc_report_state_id) REFERENCES public.t_dataset_svc_center_report_state(cc_report_state_id);
 
 --
 -- Name: t_dataset fk_t_dataset_t_dataset_type_name; Type: FK CONSTRAINT; Schema: public; Owner: d3l243

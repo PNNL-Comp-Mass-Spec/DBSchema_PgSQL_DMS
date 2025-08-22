@@ -118,7 +118,7 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 104	Enable archive-dependent managers once	23 16 * * *	\N	0	f	f	f	\N	\N
 105	Update cached analysis job state name for recent jobs	21/30 * * * *	\N	0	t	f	f	\N	\N
 106	Update pending jobs	42/30 * * * *	\N	0	t	f	f	\N	\N
-107	Lock active dataset cost center reports	45 23 * * 3	\N	0	t	f	f	\N	\N
+107	Lock active dataset service center reports	45 23 * * 3	\N	0	t	f	f	\N	\N
 \.
 
 

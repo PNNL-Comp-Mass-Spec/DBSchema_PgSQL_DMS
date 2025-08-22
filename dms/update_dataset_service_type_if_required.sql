@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_service_type_if_required(IN _d
 **                         - Call RAISE INFO with '' when _infoOnly is true
 **          07/31/2025 mem - When service type ID is updated, also update svc.t_service_use for any rows where report_state_id is 1 or 2
 **          08/20/2025 mem - Reference schema svc instead of cc
+**          08/21/2025 mem - Use new function names
 **
 *****************************************************/
 DECLARE
@@ -69,7 +70,7 @@ BEGIN
     -- Obtain the auto-defined service type ID, then update if required
     ---------------------------------------------------
 
-    _autoDefinedServiceTypeID := public.get_dataset_cc_service_type(_datasetID);
+    _autoDefinedServiceTypeID := public.get_dataset_svc_center_use_type(_datasetID);
 
     If _currentServiceTypeID = _autoDefinedServiceTypeID Then
         If _infoOnly OR _logDebugMessages Then
@@ -89,7 +90,7 @@ BEGIN
             WHERE dataset_id = _datasetID;
 
             If _currentServiceTypeID <> 0 Or _logDebugMessages Then
-                _debugMsg := format('Changed cost center service type ID for dataset ID %s from %s to %s',
+                _debugMsg := format('Changed service center use type ID for dataset ID %s from %s to %s',
                                     _datasetID, _currentServiceTypeID, _autoDefinedServiceTypeID);
 
                 CALL post_log_entry ('Normal', _debugMsg, 'update_dataset_service_type_if_required');
@@ -112,7 +113,7 @@ BEGIN
                 WHERE dataset_id = _datasetID;
 
                 If _reqRunCurrentServiceTypeID <> 0 Or _logDebugMessages Then
-                    _debugMsg := format('Changed cost center service type ID for requested run %s from %s to %s',
+                    _debugMsg := format('Changed service center use type ID for requested run %s from %s to %s',
                                         _requestID, _reqRunCurrentServiceTypeID, _autoDefinedServiceTypeID);
 
                     CALL post_log_entry ('Normal', _debugMsg, 'update_dataset_service_type_if_required');
@@ -140,7 +141,7 @@ BEGIN
                       Target.service_type_id <> _autoDefinedServiceTypeID;
 
                 If _serviceUseCurrentServiceTypeID <> 0 Or _logDebugMessages Then
-                    _debugMsg := format('Changed cost center service type ID for service use entry %s from %s to %s',
+                    _debugMsg := format('Changed service center use type ID for service use entry %s from %s to %s',
                                         _serviceUseEntryID, _serviceUseCurrentServiceTypeID, _autoDefinedServiceTypeID);
 
                     CALL post_log_entry ('Normal', _debugMsg, 'update_dataset_service_type_if_required');
