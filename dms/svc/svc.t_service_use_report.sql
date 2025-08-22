@@ -55,5 +55,5 @@ ALTER TABLE ONLY svc.t_service_use_report
 --
 
 GRANT SELECT ON TABLE svc.t_service_use_report TO readaccess;
-GRANT SELECT ON TABLE svc.t_service_use_report TO writeaccess;
+GRANT SELECT,INSERT,UPDATE ON TABLE svc.t_service_use_report TO writeaccess;
 

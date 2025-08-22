@@ -5183,7 +5183,9 @@ svc	table	t_service_type	d3l243	writeaccess	SELECT
 svc	table	t_service_use	d3l243	writeaccess	INSERT
 svc	table	t_service_use	d3l243	writeaccess	SELECT
 svc	table	t_service_use	d3l243	writeaccess	UPDATE
+svc	table	t_service_use_report	d3l243	writeaccess	INSERT
 svc	table	t_service_use_report	d3l243	writeaccess	SELECT
+svc	table	t_service_use_report	d3l243	writeaccess	UPDATE
 svc	table	t_service_use_report_state	d3l243	writeaccess	SELECT
 svc	table	t_service_use_updates	d3l243	writeaccess	INSERT
 svc	table	t_service_use_updates	d3l243	writeaccess	SELECT
