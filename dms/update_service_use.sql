@@ -267,7 +267,7 @@ BEGIN
             If _callingUser <> '' Then
                 _currentLocation := format('Call alter_entered_by_user for service use entry ID %s', _entryID);
 
-                CALL public.alter_entered_by_user ('cc', 't_service_use_updates', 'service_use_entry_id', _entryID, _callingUser,
+                CALL public.alter_entered_by_user ('svc', 't_service_use_updates', 'service_use_entry_id', _entryID, _callingUser,
                                                    _entryDateColumnName => 'entered', _enteredByColumnName => 'entered_by', _message => _alterEnteredByMessage);
             End If;
 
