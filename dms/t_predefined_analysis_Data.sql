@@ -878,6 +878,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 1885	90	59	LTQ_FT	Exploris%		Protein Thiol Oxidation		MoTrPAC_PASS1A1C_Global%						%HCD%			TMT18			0	0	MSGFPlus_MzML	MSGFPlus_HighResMSn_PartTryp_DynMetOx_CysNEM_CysAlk_Stat_TMT_16plex_20ppmParTol.txt	MzML_Stat_16plexTMT_Dyn_CysAlk.xml	36	na	Rattus_norvegicus_NCBI_RefSeq_2018-04-10,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	3		1	Similar to predefine 1821 but with a different experiment filter	2025-06-24 17:38:47.646494	D3L243	91	1	0	2025-06-25 10:18:04.725461
 1886	90	59	LTQ_FT	Exploris%		Protein Thiol Oxidation		MoTrPAC_PASS1A1C_Redox%						%HCD%			TMT18			0	0	MSGFPlus_MzML	MSGFPlus_HighResMSn_PartTryp_DynMetOx_CysNEM_CysAlk_Stat_TMT_16plex_20ppmParTol.txt	MzML_Stat_16plexTMT_Dyn_CysAlk.xml	36	na	Rattus_norvegicus_NCBI_RefSeq_2018-04-10,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	3		1	Similar to predefine 1885 but with a different experiment filter	2025-06-24 17:39:50.284715	D3L243	91	1	0	2025-06-25 10:18:12.791758
 1887	85	10	LTQ_FT	Astral%		Structural_Proteomics		83250_DTRA_Mers_LiP_MVE%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_NTermAcet_Stat_CysAlk_Precursor380-980.txt	DiaNN_Standard.xml	8	na	H_sapiens_UniProt_SPROT_2024-09-12,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		1		2025-06-25 10:31:16.924921	D3L243	86	1	0	2025-06-25 10:31:16.924921
+1888	90	59	LTQ_FT	%		MoTrPAC		MoTrPAC[_]T[0-9][_]%[_]P[_]%						%HCD%			TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynSTYPhos_Stat_CysAlk_TMT_16Plex_Protocol1_20ppmParTol.txt	MzML_StatCysAlk_S_Phospho_Dyn_TY_Phospho_16plexTMT.xml	8	na	H_sapiens_UniProt_SPROT_2021-06-20,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	3		1	For MoTrPAC human muscle (HM) and human adipose (HA) samples, phospho; similar to predefine 1835	2025-08-19 16:24:07.17816	D3L243	91	1	0	2025-08-19 16:32:41.972309
 \.
 
 
@@ -885,7 +886,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 -- Name: t_predefined_analysis_predefine_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1887, true);
+SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1888, true);
 
 
 --

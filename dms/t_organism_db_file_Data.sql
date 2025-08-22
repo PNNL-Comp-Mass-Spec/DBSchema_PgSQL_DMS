@@ -2654,6 +2654,13 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 8894	EMSL_60964_Ellenbogen_MAGs_TrypPigBov_2024-12-12_decoy.fasta	1849	Decoy version of EMSL_60964_Ellenbogen_MAGs_TrypPigBov_2024-12-12.fasta (auto-created)	1	13662812	4190905980	1	6.673843e+06	2024-12-24 15:18:25.925456	t
 8896	EMSL_60964_Ellenbogen_MAGs_TrypPigBov_2024-12-12_excerpt_half_decoy.fasta	1849	Excerpt from EMSL_60964_Ellenbogen_MAGs_TrypPigBov_2024-12-12_decoy.fasta (50% of the full size)	1	7003280	2079916994	1	3.319928e+06	2024-12-28 18:51:04.414066	f
 8895	EMSL_60964_Ellenbogen_MAGs_TrypPigBov_2024-12-12_excerpt_quarter_decoy.fasta	1849	Excerpt from EMSL_60964_Ellenbogen_MAGs_TrypPigBov_2024-12-12_decoy.fasta (25% of the full size)	1	3516514	1038532164	1	1.676157e+06	2024-12-28 18:51:04.414066	f
+9149	EMSL_60964_Ellenbogen_Methanogen526_TrypPigBov_2025-08-18.fasta	1849	DRAM-produced methanogen database from 526 SIP metagenomes provided by Jared Ellenbogen (Jared.Ellenbogen@colostate.edu)	1	1106574	329569104	1	629760	2025-08-19 10:46:00.092522	f
+9151	EMSL_60964_Ellenbogen_Methanogen526_TrypPigBov_2025-08-18_5x_1.fasta	1849	Auto-created	0	221252	65913678	1	126114	2025-08-20 17:31:07.28248	f
+9152	EMSL_60964_Ellenbogen_Methanogen526_TrypPigBov_2025-08-18_5x_2.fasta	1849	Auto-created	0	221222	65913928	1	126017	2025-08-20 17:31:07.293228	f
+9153	EMSL_60964_Ellenbogen_Methanogen526_TrypPigBov_2025-08-18_5x_3.fasta	1849	Auto-created	0	221573	65913517	1	126168	2025-08-20 17:31:07.298102	f
+9154	EMSL_60964_Ellenbogen_Methanogen526_TrypPigBov_2025-08-18_5x_4.fasta	1849	Auto-created	0	221145	65914187	1	126026	2025-08-20 17:31:07.302533	f
+9155	EMSL_60964_Ellenbogen_Methanogen526_TrypPigBov_2025-08-18_5x_5.fasta	1849	Auto-created	0	221382	65913794	1	126073	2025-08-20 17:31:07.307082	f
+9156	EMSL_60964_Ellenbogen_Methanogen526_TrypPigBov_2025-08-18_decoy.fasta	1849	Decoy version of EMSL_60964_Ellenbogen_Methanogen526_TrypPigBov_2025-08-18.fasta (auto-created)	1	2213148	659138208	1	1.265117e+06	2025-08-21 08:26:35.517023	t
 8772	EMSL_60964_Ellenbogen_Methanogen_TrypPigBov_2024-12-12.fasta	1849	DRAM-produced methanogen database from 495 SIP metagenomes provided by Jared Ellenbogen (Jared.Ellenbogen@colostate.edu)	1	1010209	299096648	1	420864	2024-12-11 21:15:27.235591	f
 8775	EMSL_60964_Ellenbogen_Methanogen_TrypPigBov_2024-12-12_5x_1.fasta	1849	Auto-created	0	202421	59819296	1	84363	2024-12-16 20:11:30.786461	f
 8776	EMSL_60964_Ellenbogen_Methanogen_TrypPigBov_2024-12-12_5x_2.fasta	1849	Auto-created	0	201549	59819675	1	84300	2024-12-16 20:11:30.797603	f
@@ -4673,6 +4680,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 9139	KILPIS_MAGs_TrypPigBov_2025-06-04_5x_3.fasta	1860	Auto-created	0	395383	118161560	1	135470	2025-06-09 14:02:07.768448	f
 9140	KILPIS_MAGs_TrypPigBov_2025-06-04_5x_4.fasta	1860	Auto-created	0	395676	118161322	1	135484	2025-06-09 14:02:07.772478	f
 9141	KILPIS_MAGs_TrypPigBov_2025-06-04_5x_5.fasta	1860	Auto-created	0	396526	118161320	1	135516	2025-06-09 14:02:07.776492	f
+9150	KILPIS_and_PALLAS_MAGs_TrypPigBov_2025-08-19.fasta	1860	Metaproteome compilation for Finland Kilpisjärvi tundra and Pallas forest and peatland for EMSL project # 61290 provided by Välikangas Tommi <tommi.valikangas@luke.fi> from Finland Natural Resources Institute	1	2573002	762007198	1	1.298172e+06	2025-08-19 16:54:05.483186	f
 1972	KNP_Hybrid_contigs_prodigal_TrypPigBov_2016-11-04.fasta	16	Rick White generated community files	1	845546	236882186	1	363503	2016-11-04 14:59:00	f
 1982	KNP_Hybrid_contigs_prodigal_TrypPigBov_2016-11-04_15x_01.fasta	16	Auto-created	0	56300	15792654	1	23998	2016-11-04 18:25:00	f
 1983	KNP_Hybrid_contigs_prodigal_TrypPigBov_2016-11-04_15x_02.fasta	16	Auto-created	0	56627	15791825	1	24040	2016-11-04 18:25:00	f
@@ -8823,7 +8831,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 -- Name: t_organism_db_file_org_db_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9148, true);
+SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9156, true);
 
 
 --

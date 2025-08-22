@@ -72,7 +72,8 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 234	Aragorn	Waters_Acquity_LC	Waters_Acquity_LC	4585	4928	secfso	Active	EMSL 1142	Waters nanoAcquity LC	2023-11-03 13:15:38
 225	Arwen	Waters_Acquity_LC	Waters_Acquity_LC	4576	4919	secfso	Active	EMSL 1314	Waters Acquity M-Class LC	2023-11-02 17:25:10
 192	Ascend01	LTQ_FT	Ascend	4440	5132	secfso	Active	BSF 1229	Orbitrap Ascend Tribrid, MS:1003356; Purchased by Leidos	2023-04-18 12:19:15
-254	Astral01	LTQ_FT	Astral	4839	5122	secfso	Active	BSF 2235	Orbitrap Astral, MS:1003378; 50% BSD, 50% NSD	2024-05-28 18:03:42
+254	Astral01	LTQ_FT	Astral	4839	5122	secfso	Active	BSF 2235	Orbitrap Astral, MS:1003378; 50% EBSD, 50% NSD	2024-05-28 18:03:42
+262	AstralZ02	LTQ_FT	Astral	5174	2	secfso	Active	BSF 2233	Orbitrap Astral, MS:1003378; purchased by Tao Liu's Framingham project	2025-08-20 15:17:40.698952
 131	BSF_GC01	Agilent_Ion_Trap	Agilent_GC	1754	2	secfso	Offline	BSF 1229	GC with FID	2015-07-06 16:23:30
 139	BSF_GC02	Agilent_Ion_Trap	Agilent_GC	1991	2	secfso	Offline	BSF 1215	GC with FID	2016-01-27 11:33:06
 132	BSF_GCMS01	Agilent_Ion_Trap	Agilent_GC_MS	1755	2	secfso	Offline	BSF 1229	GC-MS	2015-07-06 16:24:23
@@ -115,7 +116,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 242	Exploris05	LTQ_FT	Exploris	4657	5128	secfso	Active	BSF 1229	Katrina's PPI (Predictive Phenomics Initiative) instrument; Orbitrap Exploris 480, MS:1003028	2024-01-09 14:29:09
 246	Exploris06	LTQ_FT	Exploris	4733	5126	secfso	Active	EMSL 1526	Orbitrap Exploris 480 purchased by EMSL; MS:1003028,	2024-03-01 11:00:40
 259	Exploris07	LTQ_FT	Exploris	4948	5129	secfso	Active	BSF 1215	Vlad's Alzheimer projects instrument; Orbitrap Exploris 480, MS:1003028	2024-08-15 11:09:11.441472
-261	ExplorisMSL01	LTQ_FT	Exploris	5088	2	fso	Offline	MSL5 118	Orbitrap Exploris 240, in the Marine Sciences Laboratory in Sequim (WD90136); on LabNET with IP 10.70.57.212	2025-04-09 14:59:34.49121
+261	ExplorisMSL01	LTQ_FT	Exploris	5088	2	fso	Active	MSL5 118	Orbitrap Exploris 240, in the Marine Sciences Laboratory in Sequim (WD90136); on LabNET with IP 10.70.57.212; Connected to a Thermo Vanquish Flex LC.	2025-04-09 14:59:34.49121
 258	ExplorisMX01	LTQ_FT	Exploris	4865	5159	secfso	Active	EMSL 1130	Orbitrap Exploris MX, owned by EMSL	2024-07-03 15:00:57
 175	External_Agilent_QQQ	Agilent_TOF_V2	Agilent_QQQ	3709	3714	fso	Active	Offsite	Agilent triple-quad data acquired offsite	2021-01-19 20:47:37
 185	External_Agilent_QTOF	Agilent_TOF_V2	Agilent_TOF_V2	4073	4079	fso	Active	Offsite	Agilent Q-TOF data acquired offsite	2022-02-25 08:31:43
@@ -157,6 +158,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 172	IMS11_AgQTOF08	IMS_Agilent_TOF_DotD	IMS	3526	4548	secfso	Inactive	EMSL 1430	Agilent 6560B IM-QTOF; replaced under warranty. Powered down, packaged, and shipped back to Agilent by Agilent technicians as of February 23rd, 2023. Warranty replacement instrument is IMS12-AgQTOF09	2020-09-04 18:01:52
 191	IMS12-AgQTOF09	IMS_Agilent_TOF_DotD	IMS	4399	5136	secfso	Active	EMSL 1430	Agilent 6560C IM-QTOF; warranty replacement for IMS11_AgQTOF08	2023-03-02 14:43:27
 45	IMS_TOF_1	IMS_Agilent_TOF_UIMF	IMS	200	199	secfso	Inactive	EMSL 1430	IMS AGILENT TOF	2009-04-01 00:00:00
+263	IQX01	LTQ_FT	Other	2	2	secfso	Active	BSF 1215	Orbitrap IQ-X, MS:1003411; Purchased by EBSD	2025-08-20 16:08:53.320151
 114	JCVI_VPro01	LTQ_FT	VelosPro	1394	1471	fso	Inactive	JCVI (Rockville, MD)	J. Craig Venter Institute Velos Pro	2013-11-22 12:43:41
 149	JHU_QExactP01	LTQ_FT	QExactive	2629	2630	fso	Inactive	JHU (Baltimore)	Johns Hopkins University Q Exactive Orbitrap	2017-12-15 14:02:55
 91	JHU_VOrbiETD01	LTQ_FT	VelosOrbi	1136	2631	fso	Inactive	JHU (Baltimore)	Johns Hopkins University LTQ-Velos Orbitrap and Orbitrap Lumos	2012-06-05 21:16:51
@@ -184,8 +186,8 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 217	Lisa	Thermo_SII_LC	Thermo_SII_LC	4568	4911	secfso	Active	BSF 1229	Vanquish Neo LC (binary pump, autosampler, and column compartment)	2023-11-01 10:16:58
 229	Lola	Waters_Acquity_LC	Waters_Acquity_LC	4580	4923	secfso	Active	EMSL 1521	Waters Acquity H-Class LC	2023-11-02 17:27:37
 138	Lumos01	LTQ_FT	Lumos	1901	5134	secfso	Active	EMSL 1526	Orbitrap Fusion Lumos, MS:1002732	2015-12-15 16:13:14
-145	Lumos02	LTQ_FT	Lumos	2318	5146	secfso	Active	BSF 1217	Orbitrap Fusion Lumos, MS:1002732	2017-03-22 15:11:53
-160	Lumos03	LTQ_FT	Lumos	2998	5135	secfso	Active	EMSL 1444	Orbitrap Fusion Lumos, MS:1002732	2019-01-16 16:30:45
+145	Lumos02	LTQ_FT	Lumos	2318	5146	secfso	Active	EMSL 1444	Orbitrap Fusion Lumos, MS:1002732	2017-03-22 15:11:53
+160	Lumos03	LTQ_FT	Lumos	2998	5135	secfso	Broken	EMSL 1401 (storage)	Orbitrap Fusion Lumos, MS:1002732	2019-01-16 16:30:45
 92	MIT_Orbi01	LTQ_FT	VelosOrbi	1137	1139	fso	Inactive	MIT - Forest White lab (Massachusets)	MIT Orbitrap Elite or Orbitrap XL	2012-06-05 21:28:14
 238	Magnolia	LCMSNet_LC	LCMSNet_LC	4589	4932	secfso	Active	EMSL 1621	LCMSNet LC with a Shimadzu LC40D infusion pump. Used for LCDatasetCapture tasks.  The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets.	2023-11-06 11:15:48
 201	Maple	Thermo_SII_LC	Thermo_SII_LC	4552	4895	secfso	Active	EMSL 1444	LCMSNet LC with Thermo RSLCnano NCS-3500RS nano/loading pump	2023-10-26 14:37:17
@@ -277,10 +279,10 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 93	VPro01	Finnigan_Ion_Trap	VelosPro	1162	1345	secfso	Inactive	EMSL 1621	Velos Pro Ion Trap	2012-07-13 14:11:46
 89	Vanderbilt_VOrbiETD01	LTQ_FT	VelosOrbi	1098	1446	fso	Inactive	VU (Tennessee)	Vanderbilt Institute LTQ-Velos Orbitrap	2012-03-21 13:19:23
 90	WashU_TripleTOF5600	Sciex_TripleTOF	Sciex_TripleTOF	1133	1134	fso	Inactive	WUSL (Washington University in St. Louis)	Data acquired under the CPTAC project	2012-05-14 20:28:39
-174	XevoG2_01	Waters_TOF	Waters_TOF	3536	5117	secfso	Active	BSF 1215	Transfer/Moved from BSEL in September 2020	2020-09-23 12:48:22
-255	timsTOFFlex02	BrukerTOF_TDF	timsTOF_Flex	4863	5168	secfso	Active	EMSL 1444	Bruker timsTOF Flex with ESI source. Also has MALDI imaging capability	2024-07-03 13:46:33
-256	timsTOFFlex02_Imaging	timsTOF_MALDI_Imaging	MALDI_timsTOF_Imaging	4863	5142	secfso	Active	EMSL 1444	Bruker timsTOF Flex with MALDI imaging capability	2024-07-03 13:47:58
-194	timsTOFScp01	BrukerTOF_TDF	timsTOF_SCP	4442	5119	secfso	Active	EMSL 1314	Bruker timsTOF for single cell proteomics; for MassIVE, use timsTOF SCP, MS:1003231	2023-04-19 16:36:27
+174	XevoG2_01	Waters_TOF	Waters_TOF	3536	5173	secfso	Inactive	BSF 1215	Transfer/Moved from BSEL in September 2020; Excessed 2024	2020-09-23 12:48:22
+255	timsTOFFlex02	BrukerTOF_TDF	timsTOF_Flex	4863	5168	secfso	Active	EMSL 1444	Bruker timsTOF Flex with ESI source. Also has MALDI imaging capability; Owned by EBSD	2024-07-03 13:46:33
+256	timsTOFFlex02_Imaging	timsTOF_MALDI_Imaging	MALDI_timsTOF_Imaging	4863	5142	secfso	Active	EMSL 1444	Bruker timsTOF Flex with MALDI imaging capability; Owned by EBSD	2024-07-03 13:47:58
+194	timsTOFScp01	BrukerTOF_TDF	timsTOF_SCP	4442	5119	secfso	Active	EMSL 1314	Bruker timsTOF for single cell proteomics; for MassIVE, use timsTOF SCP, MS:1003231; EBSD/EMSD owned	2023-04-19 16:36:27
 \.
 
 
