@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.4
+-- Dumped from database version 17.5
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -156,6 +156,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1519	DeamideMock	Mock Deamidation: 0.0193 + 1.0034; to estimate the FDR of the deamidation and citrullination peptides	1.022694	\N	-	PNNL	MockDeamidated	\N	\N
 1272	Dehydro	Loss of hydrogen atom	-1.007825	\N	-	UniMod	Dehydro	\N	H(-1)
 1411	DeoxyHex	Deoxyhexose	146.057906	\N	-	PNNL	DeoxyHex	Deoxyhexose	H(10) C(6) O(4)
+1580	Desulfinition	One O16 coupled with loss of one S	-15.9772	-16.0656	-	UniMod	Cys->Ser	Desulfinition	O S(-1)
 1373	DeutForm	Addition of CHD2 (DiMethyl-CHD2)	32.056407	32.0778	-	UniMod	Dimethyl:2H(4)	CHD2	2H(4) C(2)
 1084	DeutMeth	Deuterated Methoxy	17.034479	17.045099	-	UniMod	Methyl:2H(3)	Deuterated Methoxy	H(-1) 2H(3) C
 1167	DiAcet_K	Twice acetylated Lysine	84.0212	\N	-	PNNL		DiAcet_K	\N
@@ -473,7 +474,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 -- Name: t_mass_correction_factors_mass_correction_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1579, true);
+SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1580, true);
 
 
 --

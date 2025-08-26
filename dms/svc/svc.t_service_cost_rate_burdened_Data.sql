@@ -18,10 +18,10 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Data for Name: t_service_cost_rate_burdened; Type: TABLE DATA; Schema: cc; Owner: d3l243
+-- Data for Name: t_service_cost_rate_burdened; Type: TABLE DATA; Schema: svc; Owner: d3l243
 --
 
-COPY cc.t_service_cost_rate_burdened (cost_group_id, funding_agency, service_type_id, base_rate_per_run, pdm, general_and_administration, safeguards_and_security, fee, ldrd, facilities) FROM stdin;
+COPY svc.t_service_cost_rate_burdened (cost_group_id, funding_agency, service_type_id, base_rate_per_run, pdm, general_and_administration, safeguards_and_security, fee, ldrd, facilities) FROM stdin;
 101	DOE	100	139.98	5.46	39.12	4.8	1.29	6.29	0
 101	DOE	101	104.85	4.09	29.31	3.6	0.97	4.71	0
 101	DOE	102	219.77	8.57	61.42	7.54	2.03	9.88	0

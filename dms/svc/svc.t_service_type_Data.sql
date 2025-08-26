@@ -18,12 +18,12 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Data for Name: t_service_type; Type: TABLE DATA; Schema: cc; Owner: d3l243
+-- Data for Name: t_service_type; Type: TABLE DATA; Schema: svc; Owner: d3l243
 --
 
-COPY cc.t_service_type (service_type_id, service_type, service_description, abbreviation) FROM stdin;
+COPY svc.t_service_type (service_type_id, service_type, service_description, abbreviation) FROM stdin;
 0	Undefined	Undefined	Undefined
-1	None	Not a cost center tracked requested run or dataset	None
+1	None	Not a service center tracked requested run or dataset	None
 25	Ambiguous	Unable to auto-determine the correct service type	Ambiguous
 100	Peptides: Short Advanced MS	Astral, nanoPOTS, timsTOF SCP, separation time <= 60 minutes	PepSA
 101	Peptides: Short Standard MS	HFX, Lumos, Eclipse, Exploris, SRM, MRM, separation time <= 60 minutes	PepSS

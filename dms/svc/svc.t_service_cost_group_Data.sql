@@ -18,20 +18,20 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Data for Name: t_service_cost_group; Type: TABLE DATA; Schema: cc; Owner: d3l243
+-- Data for Name: t_service_cost_group; Type: TABLE DATA; Schema: svc; Owner: d3l243
 --
 
-COPY cc.t_service_cost_group (cost_group_id, description, service_cost_state_id, entered) FROM stdin;
+COPY svc.t_service_cost_group (cost_group_id, description, service_cost_state_id, entered) FROM stdin;
 100	Initial group	3	2025-06-18 19:29:08.807107
 101	FY26	2	2025-08-07 15:20:48.677057
 \.
 
 
 --
--- Name: t_service_cost_group_cost_group_id_seq; Type: SEQUENCE SET; Schema: cc; Owner: d3l243
+-- Name: t_service_cost_group_cost_group_id_seq; Type: SEQUENCE SET; Schema: svc; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('cc.t_service_cost_group_cost_group_id_seq', 101, true);
+SELECT pg_catalog.setval('svc.t_service_cost_group_cost_group_id_seq', 101, true);
 
 
 --
