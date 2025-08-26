@@ -12,7 +12,8 @@ CREATE VIEW public.v_service_cost_rate_list_report AS
     cr.non_labor_per_run AS non_labor_rate_per_run,
     cr.base_rate_per_run,
     cr.doe_burdened_rate_per_run AS doe_burdened_rate,
-    cr.hhs_burdened_rate_per_run AS hhs_burdened_rate
+    cr.hhs_burdened_rate_per_run AS hhs_burdened_rate,
+    cr.ldrd_burdened_rate_per_run AS ldrd_burdened_rate
    FROM ((svc.t_service_cost_rate cr
      JOIN svc.t_service_type t ON ((t.service_type_id = cr.service_type_id)))
      JOIN svc.t_service_cost_group cg ON ((cg.cost_group_id = cr.cost_group_id)));

@@ -10,7 +10,8 @@ CREATE TABLE svc.t_service_cost_rate (
     non_labor_per_run real DEFAULT 0.0 NOT NULL,
     base_rate_per_run real GENERATED ALWAYS AS (((((indirect_per_run + direct_per_run) + non_labor_per_run))::numeric(1000,2))::real) STORED NOT NULL,
     doe_burdened_rate_per_run real,
-    hhs_burdened_rate_per_run real
+    hhs_burdened_rate_per_run real,
+    ldrd_burdened_rate_per_run real
 );
 
 
