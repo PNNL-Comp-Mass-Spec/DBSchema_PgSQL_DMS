@@ -38,7 +38,12 @@ CASE
 END) STORED,
     default_purge_priority smallint DEFAULT 3 NOT NULL,
     storage_purge_holdoff_months smallint DEFAULT 1 NOT NULL,
-    service_center_eligible boolean DEFAULT false NOT NULL
+    service_center_eligible boolean DEFAULT false NOT NULL,
+    name_for_picklist public.citext GENERATED ALWAYS AS ((TRIM(BOTH FROM (((instrument)::text || ' '::text) || (usage)::text)) ||
+CASE
+    WHEN (percent_emsl_owned > 0) THEN ((' ('::text || (percent_emsl_owned)::text) || '% EMSL)'::text)
+    ELSE ''::text
+END)) STORED
 );
 
 
