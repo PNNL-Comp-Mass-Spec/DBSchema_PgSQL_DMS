@@ -3,7 +3,7 @@
 --
 
 CREATE VIEW public.v_instrument_admin_picklist AS
- SELECT ((((instrument)::text || ' '::text) || (usage)::text))::public.citext AS val,
+ SELECT name_for_picklist AS val,
     instrument AS ex
    FROM public.t_instrument_name
   WHERE (status OPERATOR(public.=) ANY (ARRAY['Active'::public.citext, 'Offline'::public.citext, 'Broken'::public.citext]));

@@ -3,8 +3,9 @@
 --
 
 CREATE VIEW public.v_instrument_picklist AS
- SELECT ((((instrument)::text || ' '::text) || (usage)::text))::public.citext AS val,
-    instrument AS ex
+ SELECT name_for_picklist AS val,
+    instrument AS ex,
+    operations_role
    FROM public.t_instrument_name
   WHERE ((NOT (instrument OPERATOR(public.~~) 'SW_%'::public.citext)) AND (status OPERATOR(public.=) ANY (ARRAY['Active'::public.citext, 'Offline'::public.citext, 'PrepHPLC'::public.citext])) AND (operations_role OPERATOR(public.<>) 'QC'::public.citext));
 
