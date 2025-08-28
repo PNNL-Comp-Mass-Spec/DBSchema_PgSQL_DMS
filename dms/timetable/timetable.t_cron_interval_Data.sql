@@ -109,6 +109,7 @@ COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description
 63	38 15 * * 7	Weekly, on Sunday at 3:38 PM
 16	9 4 * * 7	Weekly, on Sunday at 4:09 AM
 17	15 5 * * 7	Weekly, on Sunday at 5:15 AM
+93	05 00 * * 4	Weekly, on Thursday at 12:05 am
 29	15 15 * * 4	Weekly, on Thursday at 3:15 PM
 28	16 15 * * 4	Weekly, on Thursday at 3:16 PM
 91	45 23 * * 3	Weekly, on Wednesday at 11:45 PM
@@ -120,7 +121,7 @@ COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description
 -- Name: t_cron_interval_interval_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.t_cron_interval_interval_id_seq', 92, true);
+SELECT pg_catalog.setval('timetable.t_cron_interval_interval_id_seq', 93, true);
 
 
 --
