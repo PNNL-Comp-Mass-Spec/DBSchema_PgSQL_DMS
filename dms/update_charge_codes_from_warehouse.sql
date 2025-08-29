@@ -36,6 +36,8 @@ CREATE OR REPLACE PROCEDURE public.update_charge_codes_from_warehouse(IN _infoon
 **          12/14/2023 mem - Ported to PostgreSQL
 **          05/18/2024 mem - Call procedure update_cached_wp_activation_states
 **          05/20/2024 mem - Use parameter names when calling function charge_code_activation_state()
+**          08/28/2025 mem - Pass inactive_date to function charge_code_activation_state()
+**                         - Change the charge code activation state to "Inactive" (state 3, 4, or 5) if the Inactive_Date is in the past, even if Deactivated is 'N'
 **
 *****************************************************/
 DECLARE
@@ -44,6 +46,7 @@ DECLARE
     _mergeCount int;
     _mergeInsertCount int;
     _mergeUpdateCount int;
+    _updateCount int;
     _callingProcName text;
     _currentLocation text := 'Start';
 
@@ -134,7 +137,6 @@ BEGIN
         _currentLocation := 'Query opwhse';
 
         If Exists (SELECT Charge_Code FROM Tmp_CCsExplicit) Then
-
             INSERT INTO Tmp_ChargeCode (
                 Charge_Code,
                 Resp_Username,
@@ -174,9 +176,7 @@ BEGIN
                    ON Upper(CC."CHARGE_CD") = Upper(Tmp_CCsExplicit.Charge_Code)
                  LEFT OUTER JOIN pnnldata."VW_PUB_CHARGE_CODE_TRAIL" CT
                    ON Upper(CC."CHARGE_CD") = Upper(CT."CHARGE_CD");
-
         Else
-
             INSERT INTO Tmp_ChargeCode (
                 Charge_Code,
                 Resp_Username,
@@ -231,20 +231,18 @@ BEGIN
                   )
                   OR
                   (_updateAll AND Upper(CC."CHARGE_CD") IN (SELECT Upper(charge_code) FROM t_charge_code));
-
         End If;
 
         If Not _infoOnly Then
-
             ----------------------------------------------------------
             -- Merge new/updated charge codes
             --
             -- Note that field Activation_State will be auto-updated by trigger trig_t_charge_code_after_update
             -- whenever values in any of these fields change:
-            --    Deactivated, Charge_Code_State, Usage_SamplePrep, Usage_RequestedRun, Activation_State
+            --    Deactivated, Inactive_Date, Charge_Code_State, Usage_SamplePrep, Usage_RequestedRun, Activation_State
             --
             -- Activation_State values are determined by scalar-valued function charge_code_activation_state()
-            -- That function uses the Deactivated, Charge_Code_State, Usage_SamplePrep, and Usage_RequestedRun to determine the activation state
+            -- That function uses the Deactivated, Inactive_Date, Charge_Code_State, Usage_SamplePrep, and Usage_RequestedRun to determine the charge code activation state
             --
             -- Logic below updates Charge_Code_State based on Deactivated, Setup_Date, Usage_SamplePrep, and Usage_RequestedRun
             ----------------------------------------------------------
@@ -304,6 +302,7 @@ BEGIN
                              1,        -- auto_defined=1
                              1,        -- charge_code_state = 1 (Interest Unknown)
                              public.charge_code_activation_state(_deactivated       => source.deactivated,
+                                                                 _inactiveDate      => source.inactive_date,
                                                                  _chargeCodeState   => 1,
                                                                  _usageSamplePrep   => 0,
                                                                  _usageRequestedRun => 0),
@@ -493,6 +492,34 @@ BEGIN
                             _includeInactiveChargeCodes => false,
                             _message                    => _message,
                             _returnCode                 => _returnCode);
+
+            ----------------------------------------------------------
+            -- Change the charge code activation state to "Inactive" (state 3, 4, or 5) if the Inactive_Date is in the past, even if Deactivated is 'N'
+            ----------------------------------------------------------
+
+            UPDATE T_Charge_Code
+            SET activation_state = charge_code_activation_state(
+                                     _deactivated       => deactivated,
+                                     _inactiveDate      => inactive_date,
+                                     _chargeCodeState   => charge_code_state,
+                                     _usageSamplePrep   => usage_sample_prep,
+                                     _usageRequestedRun => usage_requested_run)
+            WHERE deactivated = 'N' AND
+                  inactive_date < CURRENT_TIMESTAMP AND
+                  activation_state IN (0, 1, 2);
+
+            GET DIAGNOSTICS _updateCount = ROW_COUNT;
+
+            If _updateCount > 0 Then
+                _message := format('Changed charge code activation state to "Inactive" for %s %s with an inactive date prior to %s',
+                                   _updateCount,
+                                   public.check_plural(_updateCount, 'charge code', 'charge codes'),
+                                   CURRENT_TIMESTAMP::date);
+
+                CALL post_log_entry ('Normal', _message, 'Update_Charge_Codes_From_Warehouse');
+
+                _message := '';
+            End If;
 
             ----------------------------------------------------------
             -- Make sure that Cached_WP_Activation_State is up-to-date in T_Requested_Run

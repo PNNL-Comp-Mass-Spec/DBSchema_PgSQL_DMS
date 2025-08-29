@@ -16,6 +16,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_charge_code_after_update() RETURNS tr
 **          08/04/2022 mem - Ported to PostgreSQL
 **          08/08/2022 mem - Move value comparison to WHEN condition of trigger
 **                         - Reference the NEW variable directly instead of using transition tables (which contain every updated row, not just the current row)
+**          08/28/2025 mem - Pass inactive_date to function charge_code_activation_state()
 **
 *****************************************************/
 BEGIN
@@ -32,6 +33,7 @@ BEGIN
     SET activation_state =
             charge_code_activation_state(
               NEW.deactivated,
+              NEW.inactive_date,
               NEW.charge_code_state,
               NEW.usage_sample_prep,
               NEW.usage_requested_run)
