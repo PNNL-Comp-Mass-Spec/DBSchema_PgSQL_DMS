@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate 
 **          08/20/2025 mem - Reference schema svc instead of cc
 **          08/21/2025 mem - Rename procedure
 **                         - Use new service center report state column names
+**          08/29/2025 mem - Use doe_burdened_rate_per_run instead of total_per_run
 **
 *****************************************************/
 DECLARE
@@ -392,7 +393,7 @@ BEGIN
                                         ELSE CR.total_rate_per_run                                                             -- Non-MALDI dataset
                                    END
         FROM ( SELECT service_type_id,
-                      total_per_run AS total_rate_per_run
+                      doe_burdened_rate_per_run AS total_rate_per_run
                FROM svc.t_service_cost_rate
                WHERE cost_group_id = _costGroupID
              ) CR
@@ -419,7 +420,7 @@ BEGIN
                    END AS transaction_cost_est
             FROM Tmp_Datasets_to_Add DS
                  INNER JOIN ( SELECT service_type_id,
-                                     total_per_run AS total_rate_per_run
+                                     doe_burdened_rate_per_run AS total_rate_per_run
                               FROM svc.t_service_cost_rate
                               WHERE cost_group_id = 100
                             ) CR
