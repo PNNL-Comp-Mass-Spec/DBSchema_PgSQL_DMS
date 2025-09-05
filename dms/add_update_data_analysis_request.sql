@@ -51,6 +51,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_data_analysis_request(IN _requestn
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          10/11/2024 mem - Replace parameter _dataPackageID with parameter _dataPackageIDs
+**          09/04/2025 mem - Fix bug joining table t_datasets to t_experiments when determining the best EUS proposal ID to use, given an experiment group id
 **
 *****************************************************/
 DECLARE
@@ -482,7 +483,6 @@ BEGIN
         LIMIT 1;
 
         If _mode Like 'preview%' Then
-
             RAISE INFO '';
 
             _formatSpecifier := '%-16s %-11s %-12s %-10s %-55s';
@@ -660,7 +660,7 @@ BEGIN
                        INNER JOIN t_experiments E
                          ON EG.exp_id = E.exp_id
                        INNER JOIN t_dataset DS
-                         ON E.exp_id = DS.dataset_id
+                         ON E.exp_id = DS.exp_id
                        INNER JOIN t_requested_run RR
                          ON DS.dataset_id = RR.dataset_id
                   WHERE EG.group_id = _experimentGroupID
@@ -679,7 +679,6 @@ BEGIN
         End If;
 
         If _preferredContainer IN ('Batch', 'Data Package') Then
-
             -- Determine the number of datasets associated with the batch IDs
             SELECT COUNT(DISTINCT RR.dataset_id)
             INTO _datasetCountRequestedRuns
@@ -700,7 +699,6 @@ BEGIN
             ElsIf _datasetCountDataPackages > _datasetCount And _datasetCountDataPackages > _datasetCountRequestedRuns Then
                 _datasetCount := _datasetCountDataPackages;
             End If;
-
         End If;
 
         If _batchDefined And _representativeBatchID Is Null Then
@@ -770,7 +768,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode Like '%update%' Then
-
             SELECT state,
                    assigned_personnel
             INTO _currentStateID, _currentAssignedPersonnel
@@ -820,7 +817,6 @@ BEGIN
             If Exists (SELECT request_name FROM t_data_analysis_request WHERE request_name = _requestName::citext) Then
                 RAISE EXCEPTION 'Cannot add: request "%" already exists', _requestName;
             End If;
-
         ElsIf Exists (SELECT request_name FROM t_data_analysis_request WHERE request_name = _requestName::citext AND request_id <> _id) Then
             RAISE EXCEPTION 'Cannot rename: request "%" already exists', _requestName;
         End If;
@@ -904,7 +900,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-
             SELECT estimated_analysis_time_days
             INTO _currentEstimatedAnalysisTimeDays
             FROM t_data_analysis_request
@@ -992,7 +987,6 @@ BEGIN
                 DELETE FROM t_data_analysis_request_data_package_ids
                 WHERE request_id = _id;
             End If;
-
         End If;
 
         DROP TABLE Tmp_BatchIDs;
