@@ -5,7 +5,7 @@
 CREATE TABLE svc.t_service_use (
     entry_id integer NOT NULL,
     report_id integer NOT NULL,
-    ticket_number public.citext NOT NULL,
+    ticket_number text NOT NULL,
     charge_code public.citext DEFAULT ''::public.citext NOT NULL,
     service_type_id smallint DEFAULT 0 NOT NULL,
     transaction_date timestamp without time zone,
@@ -23,7 +23,7 @@ ALTER TABLE svc.t_service_use OWNER TO d3l243;
 -- Name: TABLE t_service_use; Type: COMMENT; Schema: svc; Owner: d3l243
 --
 
-COMMENT ON TABLE svc.t_service_use IS 'Ticket_number is dataset_id and requested_run id; transaction_date is dataset Acq_Start time; transaction units is total_rate_per_run * 1 for non-MALDI or total_rate_per_run * acq_length_hours for MALDI (minimum 15 minutes)';
+COMMENT ON TABLE svc.t_service_use IS 'Ticket_number is entry_id (as text); transaction_date is dataset Acq_Start time; transaction units is total_rate_per_run * 1 for non-MALDI or total_rate_per_run * acq_length_hours for MALDI (minimum 15 minutes)';
 
 --
 -- Name: t_service_use_entry_id_seq; Type: SEQUENCE; Schema: svc; Owner: d3l243
@@ -62,6 +62,12 @@ CREATE INDEX ix_t_service_use_dataset_id ON svc.t_service_use USING btree (datas
 --
 
 CREATE INDEX ix_t_service_use_service_type_id ON svc.t_service_use USING btree (service_type_id);
+
+--
+-- Name: ix_t_service_use_ticket_number; Type: INDEX; Schema: svc; Owner: d3l243
+--
+
+CREATE INDEX ix_t_service_use_ticket_number ON svc.t_service_use USING btree (ticket_number);
 
 --
 -- Name: t_service_use trig_t_service_use_after_delete; Type: TRIGGER; Schema: svc; Owner: d3l243
