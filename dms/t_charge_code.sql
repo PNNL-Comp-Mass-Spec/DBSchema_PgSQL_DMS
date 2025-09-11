@@ -45,6 +45,12 @@ ALTER TABLE ONLY public.t_charge_code
 ALTER TABLE public.t_charge_code CLUSTER ON pk_t_charge_code;
 
 --
+-- Name: ix_t_charge_code_resp_hid; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_charge_code_resp_hid ON public.t_charge_code USING btree (resp_hid);
+
+--
 -- Name: ix_t_charge_code_resp_username; Type: INDEX; Schema: public; Owner: d3l243
 --
 
