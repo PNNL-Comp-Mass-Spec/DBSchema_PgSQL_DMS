@@ -13,9 +13,9 @@ CREATE TABLE public.t_pnnl_projects (
     project_title public.citext,
     effective_date timestamp(3) without time zone,
     inactive_date timestamp(3) without time zone,
-    deactivated boolean,
+    deactivated smallint,
     deactivated_date timestamp(3) without time zone,
-    invalid boolean,
+    invalid smallint,
     last_change_date timestamp(3) without time zone,
     last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -37,6 +37,12 @@ ALTER TABLE public.t_pnnl_projects CLUSTER ON pk_t_pnnl_projects;
 --
 
 CREATE INDEX ix_t_pnnl_projects_project_num ON public.t_pnnl_projects USING btree (project_num);
+
+--
+-- Name: ix_t_pnnl_projects_project_title_lower_text_pattern_ops; Type: INDEX; Schema: public; Owner: d3l243
+--
+
+CREATE INDEX ix_t_pnnl_projects_project_title_lower_text_pattern_ops ON public.t_pnnl_projects USING btree (lower((project_title)::text) text_pattern_ops);
 
 --
 -- Name: ix_t_pnnl_projects_resp_hid; Type: INDEX; Schema: public; Owner: d3l243
