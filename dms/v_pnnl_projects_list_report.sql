@@ -3,22 +3,24 @@
 --
 
 CREATE VIEW public.v_pnnl_projects_list_report AS
- SELECT project_number,
-    project_title,
-    setup_date,
-    effective_date,
-    inactive_date,
-    deactivated,
-    deactivated_date,
-    resp_employee_id,
-    resp_username,
-    resp_hid,
-    resp_cost_code,
-    last_change_date,
-    last_affected,
-    invalid,
-    project_num
-   FROM public.t_pnnl_projects;
+ SELECT p.project_number,
+    p.project_title,
+    p.setup_date,
+    p.effective_date,
+    p.inactive_date,
+    p.deactivated,
+    p.deactivated_date,
+    p.resp_employee_id,
+    p.resp_username,
+    p.resp_hid,
+    u_hid.name AS responsible_person_name,
+    p.resp_cost_code,
+    p.last_change_date,
+    p.last_affected,
+    p.invalid,
+    p.project_num
+   FROM (public.t_pnnl_projects p
+     LEFT JOIN public.t_users u_hid ON ((p.resp_hid OPERATOR(public.=) u_hid.hid_number)));
 
 
 ALTER VIEW public.v_pnnl_projects_list_report OWNER TO d3l243;
