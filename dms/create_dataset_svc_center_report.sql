@@ -45,6 +45,7 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate 
 **          08/21/2025 mem - Rename procedure
 **                         - Use new service center report state column names
 **          08/29/2025 mem - Use doe_burdened_rate_per_run instead of total_per_run
+**          09/10/2025 mem - Change ticket number from EndDate_DatasetID to EntryID
 **
 *****************************************************/
 DECLARE
@@ -458,12 +459,12 @@ BEGIN
         End If;
 
         INSERT INTO svc.t_service_use (report_id, ticket_number,
-                                      charge_code, service_type_id,
-                                      transaction_date, transaction_units,
-                                      is_held, comment, dataset_id,
-                                      transaction_cost_est)
+                                       charge_code, service_type_id,
+                                       transaction_date, transaction_units,
+                                       is_held, comment, dataset_id,
+                                       transaction_cost_est)
         SELECT _reportID,
-               format('%s_%s', to_char(_endDate, 'yyyy-mm-dd'), dataset_id) AS ticket_number,
+               format('%s_%s', to_char(_endDate, 'yyyy-mm-dd'), dataset_id) AS ticket_number,  -- We initially define ticket number as EndDate_DatasetID, but it is changed to EntryID below
                charge_code,
                service_type_id,
                transaction_date,
@@ -479,6 +480,15 @@ BEGIN
         If _showDebug Then
             RAISE INFO 'Added % % to table t_service_use', _affectedCount, check_plural(_affectedCount, 'row', 'rows');
         End If;
+
+        ---------------------------------------------------
+        -- Define ticket number as the Entry_ID in t_service_use
+        -- This is required because ticket numbers are limited to seven characters
+        ---------------------------------------------------
+
+        UPDATE svc.t_service_use
+        SET ticket_number = entry_id::text
+        WHERE report_id = _reportID;
 
         ---------------------------------------------------
         -- Update the service center report state for the datasets in the report
