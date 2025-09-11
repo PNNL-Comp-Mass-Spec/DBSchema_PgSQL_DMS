@@ -14,8 +14,7 @@ CREATE VIEW public.v_service_center_use_list_report AS
     u.transaction_date,
     u.transaction_units,
     u.is_held,
-    u.comment,
-    u.ticket_number
+    u.comment
    FROM ((((svc.t_service_use u
      JOIN svc.t_service_use_report rep ON ((rep.report_id = u.report_id)))
      JOIN svc.t_service_type t ON ((t.service_type_id = u.service_type_id)))
