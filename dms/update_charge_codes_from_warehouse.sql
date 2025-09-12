@@ -274,8 +274,9 @@ BEGIN
                   target.deactivated                IS DISTINCT FROM source.deactivated OR
                   target.auth_amt                   IS DISTINCT FROM source.auth_amt OR
                   target.auth_username              IS DISTINCT FROM source.auth_username OR
-                  target.auth_hid                   IS DISTINCT FROM source.auth_hid) THEN
-                UPDATE SET
+                  target.auth_hid                   IS DISTINCT FROM source.auth_hid
+                 )
+                THEN UPDATE SET
                     resp_username              = source.resp_username,
                     resp_hid                   = source.resp_hid,
                     wbs_title                  = source.wbs_title,
