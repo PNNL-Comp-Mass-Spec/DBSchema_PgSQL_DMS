@@ -211,7 +211,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 101	PrepHPLC5	PrepHPLC	PrepHPLC	1193	2	secfso	PrepHPLC	BSF 2240	Used for entering operation and maintenance notes, plus also for Prep LC runs (no datasets)	2012-09-21 13:34:32
 153	PrepHPLC6	PrepHPLC	PrepHPLC	2869	2	secfso	PrepHPLC	BSF 1206	Used for entering operation and maintenance notes, plus also for Prep LC runs (no datasets)	2018-07-31 15:14:01
 154	PrepHPLC7	PrepHPLC	PrepHPLC	2896	2	secfso	PrepHPLC	BSF 2240	Used for entering operation and maintenance notes, plus also for Prep LC runs (no datasets)	2018-10-03 15:52:27
-241	PrepHPLC8	PrepHPLC	PrepHPLC	4646	2	secfso	Active	BSF 2240	Thermo Vanquish Flex Autosampler/Fraction Collector, controlled with Chromeleon software	2024-01-02 11:41:48
+241	PrepHPLC8	PrepHPLC	PrepHPLC	4646	2	secfso	PrepHPLC	BSF 2240	Thermo Vanquish Flex Autosampler/Fraction Collector, controlled with Chromeleon software	2024-01-02 11:41:48
 27	QC_Ag_TOF	Agilent_TOF	Agilent_TOF	116	188	fso	Inactive	EMSL 1553	Agilent TOF-type instrument for QC Process	2005-05-11 00:00:00
 26	QC_Ag_XCT	Agilent_Ion_Trap	Agilent_Ion_Trap	114	113	fso	Inactive	EMSL 1553	Agilent XCT-type instrument for QC Process	2005-05-01 00:00:00
 25	QC_Bruker_ICR	BrukerFTMS	Other	112	175	fso	Inactive	EMSL 1553	Bruker-type instrument for QC Process	2004-07-30 00:00:00
@@ -227,7 +227,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 103	QExact01	LTQ_FT	QExactive	1232	2859	secfso	Inactive	EMSL 1526	Q-Exactive 1	2012-12-07 14:32:20
 127	QExactHF03	LTQ_FT	QExactive	1633	5121	secfso	Active	EMSL 1526	Q Exactive HF, MS:1002523\t	2015-02-19 10:12:31
 130	QExactHF05	LTQ_FT	QExactive	1706	5163	secfso	Active	EMSL 1621	Q Exactive HF, MS:1002523. Has HMR/UHMR configuration (boards swapped). Supports MALDI (Spectroglyph), UVPD, and ECD/ETD, depending on the connected hardware. While the MALDI source is attached, use instrument QExactHF05_Imaging for new datasets.	2015-06-29 10:54:50
-180	QExactHF05_Imaging	LTQ_FT	QExactive_Imaging	1706	5005	secfso	Active	EMSL 1621	Q Exactive HF, MS:1002523. Has HMR/UHMR configuration (boards swapped). Supports MALDI (Spectroglyph), UVPD, and ECD/ETD, depending on the connected hardware. When the MALDI source is attached, use instrument QExactHF05_Imaging for new datasets.	2021-06-24 16:09:22
+180	QExactHF05_Imaging	LTQ_FT	QExactive_Imaging	1706	5177	secfso	Active	EMSL 1621	Q Exactive HF, MS:1002523. Has HMR/UHMR configuration (boards swapped). Supports MALDI (Spectroglyph), UVPD, and ECD/ETD, depending on the connected hardware. When the MALDI source is attached, use instrument QExactHF05_Imaging for new datasets.	2021-06-24 16:09:22
 121	QExactP02	LTQ_FT	QExactive	1497	5148	secfso	Active	EMSL 1526	Q Exactive Plus, MS:1002634	2014-05-29 11:08:29
 128	QExactP04	LTQ_FT	QExactive	1662	5144	secfso	Active	EMSL 1444	Q Exactive Plus, MS:1002634	2015-04-08 14:47:10
 143	QExactP06	LTQ_FT	QExactive	2226	5164	secfso	Active	EMSL 1426	Q Exactive Plus, MS:1002634. WD56888	2016-10-19 13:33:16

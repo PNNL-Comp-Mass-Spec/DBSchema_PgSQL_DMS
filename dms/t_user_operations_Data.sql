@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
+-- Dumped from database version 17.5
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -34,6 +34,7 @@ COPY public.t_user_operations (operation_id, operation, operation_description) F
 35	DMS_Data_Analysis_Request	Selectable personnel for data analysis requests
 36	DMS_Sample_Prep_Request_State	Permission for updating sample prep request states and for updating operations_tasks items (but not listed in the prep request user picklist)
 37	DMS_LC_Column_Entry	Permissions to add/update LC columns and Prep LC columns
+38	DMS_Service_Center_Use	Permission for updating service center use report entries
 \.
 
 
@@ -41,7 +42,7 @@ COPY public.t_user_operations (operation_id, operation, operation_description) F
 -- Name: t_user_operations_operation_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_user_operations_operation_id_seq', 37, true);
+SELECT pg_catalog.setval('public.t_user_operations_operation_id_seq', 38, true);
 
 
 --

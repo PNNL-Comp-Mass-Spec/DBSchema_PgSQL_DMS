@@ -57,7 +57,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1232	AcNHS-SS	acetylation of the Sulfo-NHS-SS-Biotin probe	145.019745	\N	-	UniMod	CAMthiopropanoyl	Ac-Sulfo-NHS-SS-Biotin	H(7) C(5) N O(2) S
 1495	AcNoTMT	Acetylation on TMT-labeled samples; remove 6-plexe TMT and add Acetyl	-187.15234	\N	-	PNNL	AcetNoTMT	\N	H(-18) C(-6) 13C(-4) N(-1) 15N(-1) O(-1)
 1499	AcNoTMT0	Acetylation on TMT-zero labeled samples; remove TMT zero and add Acetylation	-182.141911	\N	-	PNNL	AcetNoTMT0	\N	H(-18) C(-10) N(-2) O(-2)
-1529	AcNoTMT16	Acetylation on TMT16-labeled samples; for use when using a static TMT 16-plex mod	-262.196586	\N	-	PNNL	AcetNoTMT16	\N	\N
+1529	AcNoTMT16	Acetylation on TMT16 labeled samples; for use when using a static TMT 16-plex mod	-262.196586	\N	-	PNNL	AcetNoTMT16	\N	\N
 1501	Acalbnib	Acalabrutinib addition	465.1913138	465.5068	-	PNNL	Acalabrutinib	\N	H(23) C(26) N(7) O(2)
 1236	AcetAmid	Acetamidation, conversion of amine to acetamidine (by methyl acetimidate)	41.026549	\N	-	UniMod	Amidine	Amidine	H(3) C(2) N
 1120	Acetyl	Acetylation	42.010567	42.0367	-	UniMod	Acetyl	Acetylation	C(2) H(2) O
@@ -103,7 +103,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1417	Carboxy	Carboxylation	43.989829	\N	-	UniMod	Carboxy	carboxyl	C O(2)
 1507	CbNoTMT	Carbamylation on TMT-labled samples; remove 6-plex TMT and add Carbamyl	-186.157086	\N	-	PNNL	CarbamylNoTMT	\N	\N
 1525	CbNoTMT0	Carbamylation on TMT-zero labeled samples	-181.146664	\N	-	PNNL	CarbamylNoTMT0	\N	\N
-1530	CbNoTMT16	Carbamylation on TMT-labled samples; for use when using a static TMT 6-plex mod	-261.201332	\N	-	PNNL	CarbamylNoTMT16	\N	\N
+1530	CbNoTMT16	Carbamylation on TMT16 labeled samples; for use when using a static TMT 6-plex mod	-261.201332	\N	-	PNNL	CarbamylNoTMT16	\N	\N
 1181	Chloro	Chlorination	33.96103	34.4448	-	PNNL		Chloro	H(-1) Cl
 1261	ChloroAA	Chloroacetamidine	56.0374464	56.06664	-	PNNL		CAA	H4 C2 N2
 1572	CitrBD	Citrulline + 2,3-Butanedione	50.999666	51.0434	-	PNNL		\N	C(4) H(1) N(-1) O
@@ -213,6 +213,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1427	H4GlNAc2	Man4-GlcNAc2	1054.370039	\N	-	UniMod	Hex(4)HexNAc(2)	Hex(4) HexNAc(2)	C(40) H(66) O(30) N(2)
 1428	H5GlNAc2	Man5-GlcNAc2	1216.4228426	\N	-	UniMod	Hex(5)HexNAc(2)	N-glycan	C(46) H(76) O(35) N(2)
 1429	H6GlNAc2	Man6-GlcNac2	1378.4756	\N	-	PNNL	Hex(6)HexNAc(2)	Hex(6) HexNAc(2)	C(36) H(60) O(30)
+1581	HCPheGlyNoTMT16	Homocitrulline_PheGly on TMT16 labeled samples; remove 16-plex TMT and add Homocitrulline_PheGly	-145.175146	\N	-	PNNL	HomocitrPheGlyNoTMT16	\N	\N
 1386	HHN	Hex HexNAc NeuAc	656.2276	\N	-	UniMod	Hex(1)HexNAc(1)NeuAc(1)	HHN	\N
 1161	HMOSERLC	Homoserine Lactone from Methionine	-48.003372	-48.1075	-	UniMod	Dethiomethyl	Homoserine Lacton	H(-4) C(-1) S(-1)
 1579	HNAcNeuAc	HexNAc NeuAc	494.174789	494.4471	-	UniMod	HexNAc(1)NeuAc(1)	HexNAc NeuAc	\N
@@ -433,7 +434,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1393	TyrToArg	Tyr to Arg substitution	-6.962218	\N	-	UniMod	Tyr->Arg	Misacylation of the tRNA or editing of the charged tRNA	H(3) C(-3) N(3) O(-1)
 1534	UbNoTMT	Ubiquitination on TMT-labeled samples; remove 6-plex TMT and add Ubiq	-115.12	\N	-	PNNL	UbiqNoTMT	\N	\N
 1544	UbNoTMT0	Ubiquitination on TMT-labeled samples; remove TMT zero and add Ubiq	-110.109547	\N	-	PNNL	UbiqNoTMT0	\N	\N
-1536	UbNoTMT16	Ubiquitination on TMT-labeled samples; remove 16-plex TMT and add Ubiq	-190.164215	\N	-	PNNL	UbiqNoTMT16	\N	\N
+1536	UbNoTMT16	Ubiquitination on TMT16 labeled samples; remove 16-plex TMT and add Ubiq	-190.164215	\N	-	PNNL	UbiqNoTMT16	\N	\N
 1189	UbiqLRGG	Ubiquitination with LRGG rather than simply GG	383.228088	383.446014	-	UniMod	LeuArgGlyGly	Ubiq_LRGG	H(29) C(16) N(7) O(4)
 1021	Ubiq_02	Ubiquitinylation (on Lys)	114.042931	114.1026	-	UniMod	GG	GlyGly	H(6) C(4) N(2) O(2)
 1134	Ubiq_H	Ubiquitination Heavy (Succinic anhydride, heavy)	104.041153	104.0974	-	UniMod	Succinyl:2H(4)	Ubiq_H	2H(4) C(4) O(3)
@@ -474,7 +475,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 -- Name: t_mass_correction_factors_mass_correction_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1580, true);
+SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1581, true);
 
 
 --

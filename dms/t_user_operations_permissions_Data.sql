@@ -33,6 +33,7 @@ COPY public.t_user_operations_permissions (user_id, operation_id) FROM stdin;
 18	16
 18	17
 18	34
+18	38
 2004	32
 2012	32
 2046	16
@@ -253,6 +254,7 @@ COPY public.t_user_operations_permissions (user_id, operation_id) FROM stdin;
 2561	25
 2684	25
 2711	32
+2712	17
 2712	32
 2739	32
 2804	25
@@ -306,7 +308,7 @@ COPY public.t_user_operations_permissions (user_id, operation_id) FROM stdin;
 3281	25
 3284	25
 3285	32
-3286	25
+3286	38
 3287	25
 3289	25
 3293	32
@@ -426,7 +428,6 @@ COPY public.t_user_operations_permissions (user_id, operation_id) FROM stdin;
 3518	17
 3520	25
 3521	25
-3524	25
 3525	25
 3529	32
 3530	17
@@ -444,10 +445,10 @@ COPY public.t_user_operations_permissions (user_id, operation_id) FROM stdin;
 3553	25
 3557	25
 3558	25
-3559	25
 3560	25
 3562	25
 3564	25
+3566	17
 3567	25
 3570	17
 3570	32
@@ -477,11 +478,13 @@ COPY public.t_user_operations_permissions (user_id, operation_id) FROM stdin;
 3649	17
 3650	17
 3651	17
+3652	17
 3653	25
 3654	25
 3660	16
 3662	25
 3664	17
+3666	38
 \.
 
 
