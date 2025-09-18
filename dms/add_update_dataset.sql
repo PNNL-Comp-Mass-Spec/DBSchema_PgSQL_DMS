@@ -1596,7 +1596,7 @@ BEGIN
         End If;
 
         ---------------------------------------------------
-        -- If adding or updating a dataset, update service_type_id if required
+        -- If adding or updating a dataset, update service center use type (service_type_id) if required
         ---------------------------------------------------
 
         If _mode IN ('update', 'add') Then
