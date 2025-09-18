@@ -27,12 +27,14 @@ CREATE OR REPLACE PROCEDURE public.auto_update_dataset_rating_via_qc_metrics(IN 
 **  Date:   10/18/2012
 **          01/16/2014 mem - Added parameter _experimentExclusion
 **          01/28/2024 mem - Ported to PostgreSQL
+**          09/17/2025 mem - Update service center use type ID
 **
 *****************************************************/
 DECLARE
     _updateCount int;
     _thresholdP_2A int;
     _thresholdP_2C int;
+    _datasetID int;
 
     _formatSpecifier text;
     _infoHead text;
@@ -186,7 +188,9 @@ BEGIN
         _message := format('Found %s %s with', _updateCount, public.check_plural(_updateCount, 'dataset', 'datasets'));
 
     Else
-        -- Update the rating
+        ---------------------------------------------------
+        -- Update the dataset rating
+        ---------------------------------------------------
 
         UPDATE t_dataset DS
         SET comment = format('%sNot released: SMAQC P_2C = %s',
@@ -204,6 +208,20 @@ BEGIN
 
         _message := format('Changed %s %s to Not Released since', _updateCount, public.check_plural(_updateCount, 'dataset', 'datasets'));
 
+        ---------------------------------------------------
+        -- Update service center use type (service_type_id) if required
+        ---------------------------------------------------
+
+        FOR _datasetID IN
+            SELECT dataset_id
+            FROM Tmp_DatasetsToUpdate
+            ORDER BY dataset_id
+        LOOP
+            CALL update_dataset_service_type_if_required (
+                    _datasetID        => _datasetID,
+                    _infoOnly         => false,
+                    _logDebugMessages => false);
+        END LOOP;
     End If;
 
     _message := format('%s P_2A below %s and P_2C below %s', _message, _thresholdP_2A, _thresholdP_2C);

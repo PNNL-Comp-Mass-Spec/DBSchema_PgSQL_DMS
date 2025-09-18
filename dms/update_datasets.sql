@@ -22,6 +22,34 @@ CREATE OR REPLACE PROCEDURE public.update_datasets(IN _datasetlist text, IN _sta
 **    _returnCode       Return code
 **    _callingUser      Username of the calling user
 **
+**  Example Usage:
+**      CALL update_datasets (
+**              'QC_Mam_23_01_R02_11Sep5_Remus_BEHCoA-25-08-02, QC_Mam_23_01_R02_11Sep25_Ned_BEHCoA-25-04-29',
+**              _state       => '[no change]',
+**              _rating      => '[no change]',
+**              _comment     => 'no usable data',
+**              _findText    => '[no change]',
+**              _replaceText => '[no change]',
+**              _mode        => 'preview');
+**
+**      CALL update_datasets (
+**              'QC_Mam_23_01_R02_11Sep5_Remus_BEHCoA-25-08-02, QC_Mam_23_01_R02_11Sep25_Ned_BEHCoA-25-04-29',
+**              _state       => '[no change]',
+**              _rating      => '[no change]',
+**              _comment     => 'no usable data',
+**              _findText    => '[no change]',
+**              _replaceText => '[no change]',
+**              _mode        => 'update');
+**
+**      CALL update_datasets (
+**              'QC_Mam_23_01_R02_11Sep5_Remus_BEHCoA-25-08-02, QC_Mam_23_01_R02_11Sep25_Ned_BEHCoA-25-04-29',
+**              _state       => '[no change]',
+**              _rating      => 'Not released',
+**              _comment     => '[no change]',
+**              _findText    => '[no change]',
+**              _replaceText => '[no change]',
+**              _mode        => 'update');
+**
 **  Auth:   jds
 **  Date:   09/21/2006
 **          03/28/2008 mem - Added optional parameter _callingUser; if provided, will call alter_event_log_entry_user_multi_id (Ticket #644)
@@ -38,6 +66,8 @@ CREATE OR REPLACE PROCEDURE public.update_datasets(IN _datasetlist text, IN _sta
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          06/27/2025 mem - Use new parameter name when calling schedule_predefined_analysis_jobs
+**          09/17/2025 mem - Join tables using dataset ID instead of dataset name
+**                         - Update service center use type ID
 **
 *****************************************************/
 DECLARE
@@ -53,6 +83,7 @@ DECLARE
     _datasetCount int := 0;
     _stateID int;
     _ratingID int;
+    _datasetID int;
     _currentDataset text;
     _usageMessage text;
     _targetType int;
@@ -157,8 +188,11 @@ BEGIN
         ---------------------------------------------------
 
         CREATE TEMP TABLE Tmp_DatasetInfo (
-            Dataset_Name citext NOT NULL
+            Dataset_Name citext NOT NULL,
+            Dataset_ID int NULL
         );
+
+        CREATE INDEX IX_Tmp_DatasetInfo_Dataset_ID ON Tmp_DatasetInfo (Dataset_ID);
 
         CREATE TEMP TABLE Tmp_DatasetSchedulePredefine (
             Entry_ID int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -177,10 +211,15 @@ BEGIN
         -- Verify that all datasets exist
         ---------------------------------------------------
 
+        UPDATE Tmp_DatasetInfo Target
+        SET dataset_id = DS.dataset_ID
+        FROM t_dataset DS
+        WHERE Target.Dataset_Name = DS.dataset;
+
         SELECT string_agg(Dataset_Name, ', ' ORDER BY Dataset_Name)
         INTO _list
         FROM Tmp_DatasetInfo
-        WHERE NOT Dataset_Name IN (SELECT dataset FROM t_dataset);
+        WHERE Coalesce(Dataset_ID, 0) = 0;
 
         If Coalesce(_list, '') <> '' Then
             If Position(',' In _list) > 0 Then
@@ -243,7 +282,6 @@ BEGIN
         End If;
 
         If _mode = 'preview' Then
-
             RAISE INFO '';
 
             _formatSpecifier := '%-10s %-80s %-8s %-12s %-9s %-13s %-60s %-60s %-60s';
@@ -300,7 +338,7 @@ BEGIN
                        END AS Comment_via_Replace
                 FROM t_dataset DS
                      INNER JOIN Tmp_DatasetInfo DI
-                       ON DS.dataset = DI.Dataset_Name
+                       ON DS.Dataset_ID = DI.Dataset_ID
                 ORDER BY DS.dataset
             LOOP
                 _infoData := format(_formatSpecifier,
@@ -317,7 +355,6 @@ BEGIN
 
                 RAISE INFO '%', _infoData;
             END LOOP;
-
         End If;
 
         _datasetStateUpdated  := false;
@@ -330,37 +367,50 @@ BEGIN
             ---------------------------------------------------
 
             If _state <> '[no change]' Then
-                UPDATE t_dataset
+                UPDATE t_dataset Target
                 SET dataset_state_id = _stateID
                 FROM Tmp_DatasetInfo DI
-                WHERE dataset = DI.Dataset_Name;
+                WHERE Target.dataset_id = DI.Dataset_ID;
 
                 _datasetStateUpdated := true;
             End If;
 
             If _rating <> '[no change]' Then
-
                 -- Find the datasets that have an existing rating of -5, -6, or -7
                 INSERT INTO Tmp_DatasetSchedulePredefine (Dataset_Name)
                 SELECT DS.dataset
                 FROM t_dataset DS
                      INNER JOIN Tmp_DatasetInfo DI
-                       ON DS.dataset = DI.Dataset_Name
+                       ON DS.dataset_id = DI.Dataset_ID
                      LEFT OUTER JOIN t_analysis_job AJ
                        ON DS.dataset_id = AJ.dataset_id AND
                           AJ.dataset_unreviewed = 0
                 WHERE DS.dataset_rating_id IN (-5, -6, -7) AND
                       AJ.job IS NULL;
 
-                UPDATE t_dataset
+                UPDATE t_dataset Target
                 SET dataset_rating_id = _ratingID
                 FROM Tmp_DatasetInfo DI
-                WHERE dataset = DI.dataset_name;
+                WHERE Target.dataset_id = DI.Dataset_ID;
+
+                ---------------------------------------------------
+                -- Update service center use type (service_type_id) if required
+                ---------------------------------------------------
+
+                FOR _datasetID IN
+                    SELECT dataset_id
+                    FROM Tmp_DatasetInfo
+                    ORDER BY dataset_id
+                LOOP
+                    CALL update_dataset_service_type_if_required (
+                            _datasetID        => _datasetID,
+                            _infoOnly         => false,
+                            _logDebugMessages => false);
+                END LOOP;
 
                 _datasetRatingUpdated := true;
 
                 If Exists (SELECT * FROM Tmp_DatasetSchedulePredefine) And _ratingID >= 2 Then
-
                     -- Schedule Predefines
 
                     FOR _currentDataset IN
@@ -380,25 +430,24 @@ BEGIN
                                         _returnCode                 => _returnCode);
 
                     END LOOP;
-
                 End If;
-
             End If;
 
             If _comment <> '[no change]' Then
-                UPDATE t_dataset
+                UPDATE t_dataset Target
                 SET comment = CASE WHEN comment IS NULL THEN _comment
                                    ELSE public.append_to_text(comment, _comment)
                               END
                 FROM Tmp_DatasetInfo DI
-                WHERE dataset = DI.dataset_name;
+                WHERE Target.dataset_id = DI.Dataset_ID;
+
             End If;
 
             If _findText <> '[no change]' And _replaceText <> '[no change]' Then
-                UPDATE t_dataset
+                UPDATE t_dataset Target
                 SET comment = Replace(comment, _findText, _replaceText)
                 FROM Tmp_DatasetInfo DI
-                WHERE dataset = DI.dataset_name;
+                WHERE Target.dataset_id = DI.Dataset_ID;
             End If;
 
             If Trim(Coalesce(_callingUser, '')) <> '' And (_datasetStateUpdated Or _datasetRatingUpdated) Then
@@ -416,7 +465,7 @@ BEGIN
                 SELECT DISTINCT DS.dataset_id
                 FROM t_dataset DS
                      INNER JOIN Tmp_DatasetInfo DI
-                       ON DS.dataset = DI.Dataset_Name;
+                       ON DS.dataset_id = DI.Dataset_ID;
 
                 If _datasetStateUpdated Then
                     _targetType := 4;

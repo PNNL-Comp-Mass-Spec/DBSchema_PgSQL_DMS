@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE public.handle_dataset_capture_validation_failure_upd
 **          06/17/2023 mem - Ported to PostgreSQL, renaming from handle_dataset_capture_validation_failure to handle_dataset_capture_validation_failure_update_dataset_tables
 **          09/07/2023 mem - Use default delimiter and max length when calling append_to_text()
 **          12/08/2023 mem - Select a single column when using If Not Exists()
+**          09/17/2025 mem - Update service center use type ID
 **
 *****************************************************/
 DECLARE
@@ -128,6 +129,12 @@ BEGIN
         _returnCode := 'U5203';
         RAISE INFO '%', _message;
     Else
+        -- Update service center use type (service_type_id) if required
+        CALL update_dataset_service_type_if_required (
+                _datasetID        => _datasetID,
+                _infoOnly         => false,
+                _logDebugMessages => false);
+
         If Not Exists (SELECT dataset_id FROM t_dataset_archive WHERE dataset_id = _datasetID) Then
             -- Add the dataset to t_dataset_archive
             CALL public.add_archive_dataset (
@@ -138,7 +145,6 @@ BEGIN
 
         _message := format('Marked dataset as bad in t_dataset: %s', _datasetName);
         RAISE INFO '%', _message;
-
     End If;
 
 END

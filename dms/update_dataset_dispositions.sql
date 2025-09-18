@@ -44,6 +44,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_dispositions(IN _datasetidlist
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          06/27/2025 mem - Use new parameter name when calling schedule_predefined_analysis_jobs
+**          09/17/2025 mem - Update service center use type ID
 **
 *****************************************************/
 DECLARE
@@ -208,7 +209,6 @@ BEGIN
     ---------------------------------------------------
 
     If _mode = 'update' Then
-
         FOR _datasetInfo IN
             SELECT D.DatasetID,
                    D.DatasetName,
@@ -221,7 +221,6 @@ BEGIN
                    ON D.StateID = DSN.dataset_state_id
             ORDER BY D.DatasetID
         LOOP
-
             BEGIN
                 If _datasetInfo.StateID = 5 Then
                     -- Do not allow update to rating of 2 or higher when the dataset state ID is 5 (Capture Failed)
@@ -268,6 +267,12 @@ BEGIN
             SET comment = _datasetInfo.Comment,
                 dataset_rating_id = _ratingID
             WHERE dataset_id = _datasetInfo.DatasetID;
+
+            -- Update service center use type (service_type_id) if required
+            CALL update_dataset_service_type_if_required (
+                    _datasetID        => _datasetInfo.DatasetID,
+                    _infoOnly         => false,
+                    _logDebugMessages => false);
 
             -----------------------------------------------
             -- Recycle request?
@@ -377,9 +382,7 @@ BEGIN
                 -- Break out of the for loop
                 EXIT;
             END;
-
         END LOOP;
-
     End If;
 
     ---------------------------------------------------
