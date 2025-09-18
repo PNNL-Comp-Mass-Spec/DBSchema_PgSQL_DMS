@@ -34,6 +34,7 @@ CREATE OR REPLACE PROCEDURE public.do_dataset_completion_actions(IN _datasetname
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          06/27/2025 mem - Specify parameter name when calling schedule_predefined_analysis_jobs
+**          09/17/2025 mem - Remove unused variable (dataset rating ID)
 **
 *****************************************************/
 DECLARE
@@ -44,7 +45,6 @@ DECLARE
 
     _datasetID int;
     _datasetState int;
-    _datasetRating int;
     _result int;
 BEGIN
     _message := '';
@@ -87,9 +87,8 @@ BEGIN
     _completionState := Coalesce(_completionState, 0);
 
     SELECT dataset_id,
-           dataset_state_id,
-           dataset_rating_id
-    INTO _datasetID, _datasetState, _datasetRating
+           dataset_state_id
+    INTO _datasetID, _datasetState
     FROM t_dataset
     WHERE dataset = _datasetName::citext;
 
