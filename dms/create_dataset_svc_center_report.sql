@@ -14,6 +14,8 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate 
 **      - Dataset state 3 (Complete)
 **      - Created on or before the end date (created any time on the end date)
 **      - Service center report state of 2 (Need to submit to service center) or 4 (Need to refund to service center)
+**      - Service type ID between 100 and 113
+**      - Dataset rating is not -10, -5, -4, -2, -1, 6, or 7 (Unreviewed, Not Released, No Data, Exclude from Service Center, or Method Development)
 **
 **      Added datasets will have their service center report state changed to 3 (Submitting to service center) or 5 (Refunded to service center)
 **
@@ -46,6 +48,7 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate 
 **                         - Use new service center report state column names
 **          08/29/2025 mem - Use doe_burdened_rate_per_run instead of total_per_run
 **          09/10/2025 mem - Change ticket number from EndDate_DatasetID to EntryID
+**          09/17/2025 mem - Exclude datasets with rating -10, -5, -4, -2, -1, 6, or 7
 **
 *****************************************************/
 DECLARE
@@ -231,6 +234,7 @@ BEGIN
                    ON DS.dataset_id = RR.dataset_id
             WHERE DS.dataset_state_id = 3 AND                                       -- Dataset state 3: Complete
                   DS.created BETWEEN _startDate AND _beginningOfNextDay AND
+                  NOT DS.dataset_rating_id IN (-10, -5, -4, -2, -1, 6, 7) AND       -- Dataset rating is not Unreviewed, Not Released, No Data, Exclude from Service Center, or Method Development
                   DS.svc_center_report_state_id = 0 AND                             -- Service center report state 0: Undefined
                   DS.service_type_id BETWEEN 100 AND 113 AND                        -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous)
                   NOT Trim(Coalesce(RR.work_package, '')) IN ('', 'none', 'na', 'n/a', '(lookup)');
@@ -252,6 +256,7 @@ BEGIN
                          ON DS.dataset_id = RR.dataset_id
                   WHERE DS.dataset_state_id = 3 AND                                     -- Dataset state 3: Complete
                         DS.created BETWEEN _startDate AND _beginningOfNextDay AND
+                        NOT DS.dataset_rating_id IN (-10, -5, -4, -2, -1, 6, 7) AND     -- Dataset rating is not Unreviewed, Not Released, No Data, Exclude from Service Center, or Method Development
                         DS.svc_center_report_state_id = 0 AND                           -- Service center report state 0: Undefined
                         DS.service_type_id BETWEEN 100 AND 113 AND                      -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous); limit to the range of valid IDs, for safety
                         NOT Trim(Coalesce(RR.work_package, '')) IN ('', 'none', 'na', 'n/a', '(lookup)')
