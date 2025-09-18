@@ -42,8 +42,11 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **
 **  Logic:
 **      - If dataset rating is -5 or -4 (Not Released), this function returns service_type 1 (None)
+**      - If dataset rating is -2 (Data Files Missing),                               service_type is 1 (None)
 **      - If dataset rating is -1 (No Data aka Blank/Bad),                            service_type is 1 (None)
 **      - If dataset rating is  6 (Exclude From Service Center),                      service_type is 1 (None)
+**      - If dataset rating is  7 (Method Development),                               service_type is 1 (None)
+**      - If dataset type is 'DataFiles' or 'Tracking',                               service_type is 1 (None)
 **      - If experiment name is 'Blank',                                              service_type is 1 (None)
 **      - If campaign name is QC_Mammalian, QC-Standard, or QC-Shew-Standard,         service_type is 1 (None)
 **      - If dataset name or experiment name starts with QC_Mam, QC_Metab, QC_Shew, or QC_BTLE, service_type is 1
@@ -109,6 +112,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **          08/20/2025 mem - Reference schema svc instead of cc
 **          08/21/2025 mem - Rename function
 **          09/17/2025 mem - Change long NanoPOTS to type 103 (Peptides: Long Standard MS)
+**                         - Return service type ID 1 if the dataset rating is 7 (Method Development)
 **
 *****************************************************/
 DECLARE
@@ -192,8 +196,18 @@ BEGIN
         RETURN 1;       -- Service type: None
     End If;
 
-   -- Check for a dataset rating of 'Exclude From Service Center'
+    -- Check for a dataset rating of 'Data Files Missing'
+    If _datasetRatingID = -2 Then
+        RETURN 1;       -- Service type: None
+    End If;
+
+    -- Check for a dataset rating of 'Exclude From Service Center'
     If _datasetRatingID = 6 Then
+        RETURN 1;       -- Service type: None
+    End If;
+
+    -- Check for a dataset rating of 'Method Development'
+    If _datasetRatingID = 7 Then
         RETURN 1;       -- Service type: None
     End If;
 
