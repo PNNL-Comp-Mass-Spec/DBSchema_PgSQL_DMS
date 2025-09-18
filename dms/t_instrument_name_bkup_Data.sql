@@ -73,7 +73,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 225	Arwen	Waters_Acquity_LC	Waters_Acquity_LC	4576	4919	secfso	Active	EMSL 1314	Waters Acquity M-Class LC	2023-11-02 17:25:10
 192	Ascend01	LTQ_FT	Ascend	4440	5132	secfso	Active	BSF 1229	Orbitrap Ascend Tribrid, MS:1003356; Purchased by Leidos	2023-04-18 12:19:15
 254	Astral01	LTQ_FT	Astral	4839	5122	secfso	Active	BSF 2235	Orbitrap Astral, MS:1003378; 50% EBSD, 50% NSD	2024-05-28 18:03:42
-262	AstralZ02	LTQ_FT	Astral	5174	2	secfso	Active	BSF 2233	Orbitrap Astral, MS:1003378; purchased by Tao Liu's Framingham project	2025-08-20 15:17:40.698952
+262	AstralZ02	LTQ_FT	Astral	5174	5178	secfso	Active	BSF 2233	Orbitrap Astral, MS:1003378; purchased by Tao Liu's Framingham project	2025-08-20 15:17:40.698952
 131	BSF_GC01	Agilent_Ion_Trap	Agilent_GC	1754	2	secfso	Offline	BSF 1229	GC with FID	2015-07-06 16:23:30
 139	BSF_GC02	Agilent_Ion_Trap	Agilent_GC	1991	2	secfso	Offline	BSF 1215	GC with FID	2016-01-27 11:33:06
 132	BSF_GCMS01	Agilent_Ion_Trap	Agilent_GC_MS	1755	2	secfso	Offline	BSF 1229	GC-MS	2015-07-06 16:24:23
@@ -116,7 +116,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 242	Exploris05	LTQ_FT	Exploris	4657	5128	secfso	Active	BSF 1229	Katrina's PPI (Predictive Phenomics Initiative) instrument; Orbitrap Exploris 480, MS:1003028	2024-01-09 14:29:09
 246	Exploris06	LTQ_FT	Exploris	4733	5126	secfso	Active	EMSL 1526	Orbitrap Exploris 480 purchased by EMSL; MS:1003028,	2024-03-01 11:00:40
 259	Exploris07	LTQ_FT	Exploris	4948	5129	secfso	Active	BSF 1215	Vlad's Alzheimer projects instrument; Orbitrap Exploris 480, MS:1003028	2024-08-15 11:09:11.441472
-261	ExplorisMSL01	LTQ_FT	Exploris	5088	2	fso	Active	MSL5 118	Orbitrap Exploris 240, in the Marine Sciences Laboratory in Sequim (WD90136); on LabNET with IP 10.70.57.212; Connected to a Thermo Vanquish Flex LC.	2025-04-09 14:59:34.49121
+261	ExplorisMSL01	LTQ_FT	Exploris	5088	5179	fso	Active	MSL5 118	Orbitrap Exploris 240, in the Marine Sciences Laboratory in Sequim (WD90136); on LabNET with IP 10.70.57.212; Connected to a Thermo Vanquish Flex LC.	2025-04-09 14:59:34.49121
 258	ExplorisMX01	LTQ_FT	Exploris	4865	5159	secfso	Active	EMSL 1130	Orbitrap Exploris MX, owned by EMSL	2024-07-03 15:00:57
 175	External_Agilent_QQQ	Agilent_TOF_V2	Agilent_QQQ	3709	3714	fso	Active	Offsite	Agilent triple-quad data acquired offsite	2021-01-19 20:47:37
 185	External_Agilent_QTOF	Agilent_TOF_V2	Agilent_TOF_V2	4073	4079	fso	Active	Offsite	Agilent Q-TOF data acquired offsite	2022-02-25 08:31:43
