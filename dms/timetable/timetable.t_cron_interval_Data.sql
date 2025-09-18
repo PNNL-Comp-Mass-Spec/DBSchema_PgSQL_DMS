@@ -46,6 +46,7 @@ COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description
 52	42 5 * * *	Daily at 5:42 AM
 22	0 6 * * *	Daily at 6:00 AM
 24	0 18 * * *	Daily at 6:00 PM
+94	12 6 * * *	Daily at 6:12 AM
 32	12 18 * * *	Daily at 6:12 PM
 57	15 6 * * *	Daily at 6:15 AM
 18	48 6 * * *	Daily at 6:48 AM
@@ -121,7 +122,7 @@ COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description
 -- Name: t_cron_interval_interval_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.t_cron_interval_interval_id_seq', 93, true);
+SELECT pg_catalog.setval('timetable.t_cron_interval_interval_id_seq', 94, true);
 
 
 --
