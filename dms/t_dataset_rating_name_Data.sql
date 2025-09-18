@@ -21,19 +21,20 @@ SET row_security = off;
 -- Data for Name: t_dataset_rating_name; Type: TABLE DATA; Schema: public; Owner: d3l243
 --
 
-COPY public.t_dataset_rating_name (dataset_rating_id, dataset_rating) FROM stdin;
--10	Unreviewed
--7	Rerun (Superseded)
--6	Rerun (Good Data)
--5	Not Released
--4	Not released (allow analysis)
--2	Data Files Missing
--1	No Data (Blank/Bad)
-1	No Interest
-2	Unknown
-3	Interest
-5	Released
-6	Exclude From Service Center
+COPY public.t_dataset_rating_name (dataset_rating_id, dataset_rating, comment) FROM stdin;
+-10	Unreviewed	
+-7	Rerun (Superseded)	
+-6	Rerun (Good Data)	
+-5	Not Released	Not service center eligible
+-4	Not Released (allow analysis)	Not service center eligible
+-2	Data Files Missing	Not service center eligible
+-1	No Data (Blank/Bad)	Not service center eligible
+1	No Interest	
+2	Unknown	
+3	Interest	
+5	Released	
+6	Exclude From Service Center	Not service center eligible
+7	Method Development	Not service center eligible
 \.
 
 

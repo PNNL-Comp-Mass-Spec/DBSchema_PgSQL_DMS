@@ -4,7 +4,8 @@
 
 CREATE TABLE public.t_dataset_rating_name (
     dataset_rating_id smallint NOT NULL,
-    dataset_rating public.citext NOT NULL
+    dataset_rating public.citext NOT NULL,
+    comment public.citext DEFAULT ''::public.citext NOT NULL
 );
 
 
