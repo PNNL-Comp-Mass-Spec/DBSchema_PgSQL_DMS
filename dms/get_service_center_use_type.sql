@@ -17,10 +17,10 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **      0      Undefined                            Undefined
 **      1      None                                 Not a service center tracked requested run or dataset
 **      25     Ambiguous                            Unable to auto-determine the correct service type
-**      100    Peptides: Short Advanced MS          Astral, nanoPOTS, timsTOF SCP, separation time <= 60 minutes
-**      101    Peptides: Short Standard MS          HFX, Lumos, Eclipse, Exploris, SRM, MRM, separation time <= 60 minutes
-**      102    Peptides: Long Advanced MS           Astral, nanoPOTS, timsTOF SCP, separation time > 60 minutes
-**      103    Peptides: Long Standard MS           HFX, Lumos, Eclipse, Exploris, separation time > 60 minutes
+**      100    Peptides: Short Advanced MS          Astral, nanoPOTS, or timsTOF SCP with separation time <= 60 minutes
+**      101    Peptides: Short Standard MS          HFX, Lumos, Eclipse, or Exploris with separation time <= 60 minutes; all SRM and MRM
+**      102    Peptides: Long Advanced MS           Astral or timsTOF SCP with separation time > 60 minutes
+**      103    Peptides: Long Standard MS           HFX, Lumos, Eclipse, Exploris, or nanoPOTS with separation time > 60 minutes
 **      104    MALDI                                MALDI (run count = hr count)
 **      110    Peptides: Screening MS               All Orbitraps, separation time <= 5 minutes (ultra fast), or infusion
 **      111    Lipids                               Lipids
@@ -108,6 +108,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **                         - Assign 1 for service type if the dataset's instrument is not service center eligible
 **          08/20/2025 mem - Reference schema svc instead of cc
 **          08/21/2025 mem - Rename function
+**          09/17/2025 mem - Change long NanoPOTS to type 103 (Peptides: Long Standard MS)
 **
 *****************************************************/
 DECLARE
@@ -332,7 +333,7 @@ BEGIN
         If _acqLengthMinutes <= 60 Then
             RETURN 100;   -- Peptides: Short Advanced MS
         Else
-            RETURN 102;   -- Peptides: Long Advanced MS
+            RETURN 103;   -- Peptides: Long Standard MS
         End If;
     End If;
 
