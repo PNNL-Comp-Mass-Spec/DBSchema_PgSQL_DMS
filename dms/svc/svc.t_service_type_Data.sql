@@ -25,10 +25,10 @@ COPY svc.t_service_type (service_type_id, service_type, service_description, abb
 0	Undefined	Undefined	Undefined
 1	None	Not a service center tracked requested run or dataset	None
 25	Ambiguous	Unable to auto-determine the correct service type	Ambiguous
-100	Peptides: Short Advanced MS	Astral, nanoPOTS, timsTOF SCP, separation time <= 60 minutes	PepSA
-101	Peptides: Short Standard MS	HFX, Lumos, Eclipse, Exploris, SRM, MRM, separation time <= 60 minutes	PepSS
-102	Peptides: Long Advanced MS	Astral, nanoPOTS, timsTOF SCP, separation time > 60 minutes	PepLA
-103	Peptides: Long Standard MS	HFX, Lumos, Eclipse, Exploris, separation time > 60 minutes	PepLS
+100	Peptides: Short Advanced MS	Astral, nanoPOTS, or timsTOF SCP with separation time <= 60 minutes	PepSA
+101	Peptides: Short Standard MS	HFX, Lumos, Eclipse, or Exploris with separation time <= 60 minutes; all SRM and MRM	PepSS
+102	Peptides: Long Advanced MS	Astral or timsTOF SCP with separation time > 60 minutes	PepLA
+103	Peptides: Long Standard MS	HFX, Lumos, Eclipse, Exploris, or nanoPOTS with separation time > 60 minutes	PepLS
 104	MALDI	MALDI (run count = hr count)	MALDI
 110	Peptides: Screening MS	All Orbitraps, separation time <= 5 minutes (ultra fast), or infusion	PepScreen
 111	Lipids	Lipids	Lipid
