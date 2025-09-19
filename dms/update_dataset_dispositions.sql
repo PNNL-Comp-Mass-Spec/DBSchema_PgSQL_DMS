@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_dispositions(IN _datasetidlist
 **
 **  Arguments:
 **    _datasetIDList    Comma-separated list of dataset IDs
-**    _rating           New dataset rating, e.g. 'Released' or 'No Interest'
+**    _rating           New dataset rating, e.g. 'Released' or 'No Interest'; this procedure removes ' (not service center eligible)' from _rating, if present
 **    _comment          Text to append to the dataset comment
 **    _recycleRequest   If 'yes', call unconsume_scheduled_run() to recycle the request
 **    _mode             Mode: if 'update', update t_dataset and possibly call unconsume_scheduled_run() and schedule_predefined_analysis_jobs()
@@ -45,6 +45,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_dispositions(IN _datasetidlist
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          06/27/2025 mem - Use new parameter name when calling schedule_predefined_analysis_jobs
 **          09/17/2025 mem - Update service center use type ID
+**          09/18/2025 mem - Remove '(not service center eligible)' from _rating, if present
 **
 *****************************************************/
 DECLARE
@@ -55,6 +56,7 @@ DECLARE
 
     _list text;
     _datasetCount int := 0;
+    _ratingName citext;
     _ratingID int;
     _datasetInfo record;
     _usageMessage text;
@@ -104,7 +106,7 @@ BEGIN
         ---------------------------------------------------
 
         _datasetIDList  := Trim(Coalesce(_datasetIDList, ''));
-        _rating         := Trim(Coalesce(_rating, ''));
+        _ratingName     := Trim(Coalesce(_rating, ''));
         _comment        := Trim(Coalesce(_comment, ''));
         _recycleRequest := Trim(Lower(Coalesce(_recycleRequest, '')));
         _mode           := Trim(Lower(Coalesce(_mode, '')));
@@ -118,13 +120,17 @@ BEGIN
         -- Resolve rating name
         ---------------------------------------------------
 
+        If _ratingName LIKE '% (not service center eligible)' Then
+            _ratingName := Trim(Replace(_ratingName, '(not service center eligible)', ''));
+        End If;
+
         SELECT dataset_rating_id
         INTO _ratingID
         FROM t_dataset_rating_name
-        WHERE dataset_rating = _rating::citext;
+        WHERE dataset_rating = _ratingName;
 
         If Not FOUND Then
-            RAISE EXCEPTION 'Invalid dataset rating: %', _rating;
+            RAISE EXCEPTION 'Invalid dataset rating: %', _ratingName;
         End If;
 
         ---------------------------------------------------
@@ -225,7 +231,7 @@ BEGIN
                 If _datasetInfo.StateID = 5 Then
                     -- Do not allow update to rating of 2 or higher when the dataset state ID is 5 (Capture Failed)
                     If _ratingID >= 2 Then
-                        RAISE EXCEPTION 'Cannot set dataset rating to % for dataset "%" since its state is %', _rating, _datasetInfo.DatasetName, _datasetInfo.DatasetStateName;
+                        RAISE EXCEPTION 'Cannot set dataset rating to % for dataset "%" since its state is %', _ratingName, _datasetInfo.DatasetName, _datasetInfo.DatasetStateName;
                     End If;
                 End If;
             EXCEPTION
