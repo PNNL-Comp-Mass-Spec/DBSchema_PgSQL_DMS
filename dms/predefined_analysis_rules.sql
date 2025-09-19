@@ -85,7 +85,7 @@ BEGIN
         Else
             If _datasetRating In (-4, -6) Then
                 -- Either Rating is -4 (Not released, allow analysis)
-                -- or     Rating is -6 (Not released, good data)
+                -- or     Rating is -6 (Rerun, good data)
                 -- Allow the jobs to be created
                 _message := '';
             Else
@@ -558,7 +558,6 @@ BEGIN
     DROP TABLE Tmp_PredefineJobsToCreate;
 
     DROP TABLE Tmp_PredefineRuleEval;
-
 END
 $$;
 

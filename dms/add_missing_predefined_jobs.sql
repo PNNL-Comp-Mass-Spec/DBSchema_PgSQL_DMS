@@ -143,7 +143,7 @@ BEGIN
     INSERT INTO Tmp_DSRating_Exclusion_List (Rating) VALUES (-2);        -- Data Files Missing
 
     If _excludeUnreviewedDatasets Then
-        INSERT INTO Tmp_DSRating_Exclusion_List (Rating) VALUES (-10);        -- Unreviewed
+        INSERT INTO Tmp_DSRating_Exclusion_List (Rating) VALUES (-10);   -- Unreviewed
     End If;
 
     If _excludeDatasetsNotReleased Then
@@ -959,7 +959,6 @@ BEGIN
     DROP TABLE IF EXISTS Tmp_DatasetsToProcess;
     DROP TABLE IF EXISTS Tmp_DSRating_Exclusion_List;
     DROP TABLE IF EXISTS Tmp_DatasetID_Filter_List;
-
 END
 $$;
 

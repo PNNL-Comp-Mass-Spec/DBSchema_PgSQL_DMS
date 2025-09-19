@@ -47,6 +47,8 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **      - If dataset rating is  6 (Exclude From Service Center),                      service_type is 1 (None)
 **      - If dataset rating is  7 (Method Development),                               service_type is 1 (None)
 **      - If dataset type is 'DataFiles' or 'Tracking',                               service_type is 1 (None)
+**      - If instrument name starts with 'External',                                  service_type is 1 (None)
+**      - If the instrument has Service_Center_Eligible = false in t_instrument_name, service_type is 1 (None)
 **      - If experiment name is 'Blank',                                              service_type is 1 (None)
 **      - If campaign name is QC_Mammalian, QC-Standard, or QC-Shew-Standard,         service_type is 1 (None)
 **      - If dataset name or experiment name starts with QC_Mam, QC_Metab, QC_Shew, or QC_BTLE, service_type is 1

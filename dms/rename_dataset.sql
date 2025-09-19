@@ -858,6 +858,8 @@ BEGIN
     --   2: Unknown
     --   3: Interest
     --   5: Released
+    --   6: Exclude From Service Center
+    --   7: Method Development
 
     INSERT INTO Tmp_JobsToUpdate (Job, Script)
     SELECT Job, AnalysisTool

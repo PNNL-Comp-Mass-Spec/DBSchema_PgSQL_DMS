@@ -133,7 +133,7 @@ BEGIN
             If _datasetRating = -10 And _createJobsForUnreviewedDatasets Or _datasetRating In (-4, -6) Then
                 -- Either the dataset is unreviewed, but _createJobsForUnreviewedDatasets is true
                 -- or Rating is -4 (Not released, allow analysis)
-                -- or Rating is -6 (Not released, good data)
+                -- or Rating is -6 (Rerun, good data)
                 -- Allow the jobs to be created
                 _message := '';
             Else

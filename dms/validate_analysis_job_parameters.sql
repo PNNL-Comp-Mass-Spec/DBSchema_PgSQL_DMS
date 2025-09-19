@@ -71,7 +71,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_parameters(IN _toolname
 **          11/12/2010 mem - Now using T_Analysis_Tool_Allowed_Instrument_Class to determine valid instrument classes for a given analysis tool
 **          01/12/2012 mem - Now validating that the analysis tool is active (T_Analysis_Tool.AJT_active > 0)
 **          09/25/2012 mem - Expanded _organismDBName and _organismName to varchar(128)
-**          11/12/2012 mem - Moved dataset validation logic to validate_analysis_job_request_datasets
+**          11/12/2012 mem - Refactored dataset validation logic into procedure validate_analysis_job_request_datasets
 **          11/28/2012 mem - Added candidate code to validate that high res MSn datasets are centroided if using MSGFDB
 **          01/11/2013 mem - Renamed MSGF-DB search tool to MSGFPlus
 **          03/05/2013 mem - Added parameter _autoRemoveNotReleasedDatasets
