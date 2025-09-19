@@ -22,19 +22,19 @@ SET row_security = off;
 --
 
 COPY public.t_dataset_rating_name (dataset_rating_id, dataset_rating, comment) FROM stdin;
--10	Unreviewed	
--7	Rerun (Superseded)	
--6	Rerun (Good Data)	
--5	Not Released	Not service center eligible
--4	Not Released (allow analysis)	Not service center eligible
--2	Data Files Missing	Not service center eligible
--1	No Data (Blank/Bad)	Not service center eligible
-1	No Interest	
-2	Unknown	
-3	Interest	
-5	Released	
-6	Exclude From Service Center	Not service center eligible
-7	Method Development	Not service center eligible
+-10	Unreviewed	Quality of data has not yet been determined
+-7	Rerun (Superseded)	Data acquisition issue, either for this sample or for another sample in the batch
+-6	Rerun (Good Data)	Successful sample analysis, but the sample will be re-analyzed, typically because other samples in a batch had an issue
+-5	Not Released	Instrument acquisition issue, no usable data; not service center eligible; cannot create analysis jobs
+-4	Not Released (allow analysis)	Instrument acquisition issue, but allow data analysis; not service center eligible
+-2	Data Files Missing	Missing data files; not service center eligible; cannot create analysis jobs
+-1	No Data (Blank/Bad)	No usable data (Blank / Bad); not service center eligible; cannot create analysis jobs
+1	No Interest	Legacy dataset rating; rarely used
+2	Unknown	Legacy dataset rating; rarely used
+3	Interest	Legacy dataset rating; last used in 2013
+5	Released	Successful sample analysis
+6	Exclude From Service Center	Successful sample analysis, but should not be billed to the service center
+7	Method Development	Method development analysis, and should not be billed to the service center
 \.
 
 
