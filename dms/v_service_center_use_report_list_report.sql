@@ -6,7 +6,7 @@ CREATE VIEW public.v_service_center_use_report_list_report AS
  SELECT rep.report_id,
     rep.start_time,
     rep.end_time,
-    rep.requestor_employee_id,
+    rep.requester_employee_id,
     state.report_state,
     rep.report_state_id,
     rep.cost_group_id

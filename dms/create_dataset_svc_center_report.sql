@@ -49,6 +49,7 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate 
 **          08/29/2025 mem - Use doe_burdened_rate_per_run instead of total_per_run
 **          09/10/2025 mem - Change ticket number from EndDate_DatasetID to EntryID
 **          09/17/2025 mem - Exclude datasets with rating -10, -5, -4, -2, -1, 6, or 7
+**          09/19/2025 mem - Use renamed column requester_employee_id in t_service_use_report
 **
 *****************************************************/
 DECLARE
@@ -448,8 +449,8 @@ BEGIN
 
         _currentLocation := 'Create a new service center report';
 
-        INSERT INTO svc.t_service_use_report(start_time, end_time, requestor_employee_id, report_state_id, cost_group_id)
         VALUES (_startDate, _beginningOfNextDay, current_user, 1, _costGroupID)
+        INSERT INTO svc.t_service_use_report (start_time, end_time, requester_employee_id, report_state_id, cost_group_id)
         RETURNING report_id
         INTO _reportID;
 

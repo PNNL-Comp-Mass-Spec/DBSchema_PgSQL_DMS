@@ -6,7 +6,7 @@ CREATE VIEW public.v_service_center_use_export AS
  SELECT u.ticket_number,
     cc.sub_account,
     u.service_type_id,
-    rep.requestor_employee_id,
+    rep.requester_employee_id,
     u.charge_code,
     u.transaction_date,
     u.transaction_units,
