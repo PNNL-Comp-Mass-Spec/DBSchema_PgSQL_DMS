@@ -137,7 +137,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **          05/31/2021 mem - Add output parameter _resolvedInstrumentInfo
 **          06/01/2021 mem - Update the message stored in _resolvedInstrumentInfo
 **          10/06/2021 mem - Add _batch, _block, and _runOrder
-**          02/17/2022 mem - Update requestor username warning
+**          02/17/2022 mem - Update requester username warning
 **          05/23/2022 mem - Rename requester username argument and update username warning
 **          11/25/2022 mem - Rename parameter to _wellplateName
 **          12/08/2022 mem - Rename _instrumentName parameter to _instrumentGroup

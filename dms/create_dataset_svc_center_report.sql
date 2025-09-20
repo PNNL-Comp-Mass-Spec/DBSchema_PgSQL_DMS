@@ -333,8 +333,8 @@ BEGIN
                       ON DS.dataset_id = DTU.dataset_id
                WHERE DS.dataset_state_id = 3 AND
                      DS.created BETWEEN _startDate AND _beginningOfNextDay AND
-                     (DS.svc_center_report_state_id IN (2, 4) OR
-                     _infoOnly AND NOT DTU.dataset_id IS NULL   -- Also include datasets that would have had svc_center_report_state_id auto-updated from 0 to 2 (see 'Change service center report state' above)
+                     (DS.svc_center_report_state_id IN (2, 4) OR                -- 2: Need to submit, 4: Need to refund
+                     _infoOnly AND NOT DTU.dataset_id IS NULL                   -- Also include datasets that would have had svc_center_report_state_id auto-updated from 0 to 2 (see 'Change service center report state' above)
                      )
              ) FilterQ
         ORDER BY dataset_id;
@@ -517,8 +517,8 @@ BEGIN
 
         UPDATE t_dataset DS
         SET svc_center_report_state_id = CASE WHEN LookupQ.svc_center_report_state_id = 4
-                                         THEN 5        -- Refunding
-                                         ELSE 3        -- Submitting
+                                         THEN 5        -- Refunding  to service center
+                                         ELSE 3        -- Submitting to service center
                                  END
         FROM ( SELECT dataset_id,
                       svc_center_report_state_id
