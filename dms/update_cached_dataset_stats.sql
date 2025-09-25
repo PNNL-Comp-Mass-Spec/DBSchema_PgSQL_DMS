@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_dataset_stats(IN _processingmod
 **  Date:   05/08/2024 mem - Initial version
 **          05/15/2024 mem - Add PSM stat columns: max_total_psms, max_unique_peptides, max_unique_proteins, and max_unique_peptides_fdr_filter
 **          05/16/2024 mem - Add PSM stat column max_total_psms_fdr_filter and max_unique_proteins_fdr_filter
+**          09/24/2025 mem - Add column service_center_eligible_instrument
 **
 *****************************************************/
 DECLARE
@@ -82,11 +83,13 @@ BEGIN
     INSERT INTO t_cached_dataset_stats (
         dataset_id,
         instrument_id,
-        instrument
+        instrument,
+        service_center_eligible_instrument
     )
     SELECT DS.dataset_id,
            DS.instrument_id,
-           InstName.instrument
+           InstName.instrument,
+           InstName.service_center_eligible
     FROM t_dataset DS
          INNER JOIN t_instrument_name InstName
            ON DS.instrument_id = InstName.instrument_id

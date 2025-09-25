@@ -6,6 +6,7 @@ CREATE TABLE public.t_cached_dataset_stats (
     dataset_id integer NOT NULL,
     instrument_id integer NOT NULL,
     instrument public.citext NOT NULL,
+    service_center_eligible_instrument boolean NOT NULL,
     job_count integer DEFAULT 0 NOT NULL,
     psm_job_count integer DEFAULT 0 NOT NULL,
     max_total_psms integer DEFAULT 0 NOT NULL,

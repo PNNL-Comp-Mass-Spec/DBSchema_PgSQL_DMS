@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_dataset_instruments(IN _process
 /****************************************************
 **
 **  Desc:
-**      Update instrument name and ID in t_cached_dataset_stats
+**      Update cached instrument info in t_cached_dataset_stats
 **
 **  Arguments:
 **    _processingMode   Processing mode: 0 to only add new datasets; 1 to add new datasets and update existing information
@@ -21,6 +21,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_dataset_instruments(IN _process
 **  Date:   04/15/2019 mem - Initial version
 **          10/06/2023 mem - Ported to PostgreSQL
 **          05/08/2024 mem - Update t_cached_dataset_stats instead of t_cached_dataset_instruments
+**          09/24/2025 mem - Add column service_center_eligible_instrument
 **
 *****************************************************/
 DECLARE
@@ -48,8 +49,9 @@ BEGIN
     If _datasetId > 0 And Not _infoOnly Then
         MERGE INTO t_cached_dataset_stats AS t
         USING (SELECT DS.dataset_id,
-                      DS.instrument_id AS Instrument_ID,
-                      InstName.instrument AS Instrument
+                      DS.instrument_id,
+                      InstName.instrument,
+                      InstName.service_center_eligible
                FROM t_dataset DS
                     INNER JOIN t_instrument_name InstName
                       ON DS.instrument_id = InstName.instrument_id
@@ -58,35 +60,36 @@ BEGIN
         ON (t.dataset_id = s.dataset_id)
         WHEN MATCHED AND
              (t.instrument_id <> s.instrument_id OR
-              t.instrument <> s.instrument) THEN
+              t.instrument <> s.instrument OR
+              t.service_center_eligible_instrument <> s.service_center_eligible) THEN
             UPDATE SET
-                instrument_id = s.instrument_id,
-                instrument    = s.instrument
+                instrument_id                      = s.instrument_id,
+                instrument                         = s.instrument,
+                service_center_eligible_instrument = s.service_center_eligible
         WHEN NOT MATCHED THEN
-            INSERT (dataset_id, instrument_id, instrument)
-            VALUES (s.dataset_id, s.instrument_id, s.instrument);
+            INSERT (dataset_id, instrument_id, instrument, service_center_eligible_instrument)
+            VALUES (s.dataset_id, s.instrument_id, s.instrument, s.service_center_eligible);
 
         RETURN;
     End If;
 
     If _processingMode = 0 Or _infoOnly Then
-
         ------------------------------------------------
         -- Add new datasets to t_cached_dataset_stats
         ------------------------------------------------
 
         If _infoOnly Then
-
             -- Preview the addition of new datasets
 
             RAISE INFO '';
 
-            _formatSpecifier := '%-10s %-13s %-25s %-50s';
+            _formatSpecifier := '%-10s %-13s %-25s %-23s %-50s';
 
             _infoHead := format(_formatSpecifier,
                                 'Dataset_ID',
                                 'Instrument_ID',
                                 'Instrument',
+                                'Service Center Eligible',
                                 'Status'
                                );
 
@@ -94,6 +97,7 @@ BEGIN
                                          '----------',
                                          '-------------',
                                          '-------------------------',
+                                         '-----------------------',
                                          '--------------------------------------------------'
                                         );
 
@@ -105,6 +109,7 @@ BEGIN
                 SELECT DS.Dataset_ID,
                        DS.Instrument_ID,
                        InstName.Instrument,
+                       InstName.Service_Center_Eligible,
                        'Dataset to add to t_cached_dataset_stats' AS Status
                 FROM t_dataset DS
                      INNER JOIN t_instrument_name InstName
@@ -118,6 +123,7 @@ BEGIN
                                     _previewData.Dataset_ID,
                                     _previewData.Instrument_ID,
                                     _previewData.Instrument,
+                                    _previewData.Service_Center_Eligible,
                                     _previewData.Status
                                    );
 
@@ -130,9 +136,7 @@ BEGIN
                 RAISE INFO '';
                 RAISE INFO 'No datasets need to be added to t_cached_dataset_stats';
             End If;
-
         Else
-
             ------------------------------------------------
             -- Add new datasets
             ------------------------------------------------
@@ -140,11 +144,13 @@ BEGIN
             INSERT INTO t_cached_dataset_stats (
                 dataset_id,
                 instrument_id,
-                instrument
+                instrument,
+                service_center_eligible_instrument
             )
             SELECT DS.dataset_id,
                    DS.instrument_id,
-                   InstName.instrument
+                   InstName.instrument,
+                   InstName.service_center_eligible
             FROM t_dataset DS
                  INNER JOIN t_instrument_name InstName
                    ON DS.instrument_id = InstName.instrument_id
@@ -161,7 +167,6 @@ BEGIN
             -- Only exit this procedure if _infoOnly is false (which is the case in this branch of the If/Else statement)
             RETURN;
         End If;
-
     End If;
 
     ------------------------------------------------
@@ -169,7 +174,6 @@ BEGIN
     ------------------------------------------------
 
     If _infoOnly Then
-
         ------------------------------------------------
         -- Preview the update of cached info
         ------------------------------------------------
@@ -246,8 +250,9 @@ BEGIN
 
     MERGE INTO t_cached_dataset_stats AS t
     USING (SELECT DS.dataset_id,
-                  DS.instrument_id AS Instrument_ID,
-                  InstName.instrument AS Instrument
+                  DS.instrument_id,
+                  InstName.instrument,
+                  InstName.service_center_eligible
            FROM t_dataset DS
                 INNER JOIN t_instrument_name InstName
                   ON DS.instrument_id = InstName.instrument_id
@@ -255,13 +260,15 @@ BEGIN
     ON (t.dataset_id = s.dataset_id)
     WHEN MATCHED AND
          (t.instrument_id <> s.instrument_id OR
-          t.instrument <> s.instrument) THEN
+          t.instrument <> s.instrument OR
+          t.service_center_eligible_instrument <> s.service_center_eligible) THEN
         UPDATE SET
             instrument_id = s.instrument_id,
-            instrument    = s.instrument
+            instrument    = s.instrument,
+            service_center_eligible_instrument = s.service_center_eligible
     WHEN NOT MATCHED THEN
-        INSERT (dataset_id, instrument_id, instrument)
-        VALUES (s.dataset_id, s.instrument_id, s.instrument);
+        INSERT (dataset_id, instrument_id, instrument, service_center_eligible_instrument)
+        VALUES (s.dataset_id, s.instrument_id, s.instrument, s.service_center_eligible);
     --
     GET DIAGNOSTICS _updateCount = ROW_COUNT;
 
