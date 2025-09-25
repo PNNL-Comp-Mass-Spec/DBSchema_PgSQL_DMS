@@ -41,7 +41,8 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **    _sampleTypeName           Sample type name (see t_secondary_sep_sample_type and sample_type_id in t_secondary_sep)
 **
 **  Logic:
-**      - If dataset rating is -5 or -4 (Not Released), this function returns service_type 1 (None)
+**      - If dataset rating is -7 or -6 (Rerun),                                      service_type is 1 (None)
+**      - If dataset rating is -5 or -4 (Not Released),                               service_type is 1 (None)
 **      - If dataset rating is -2 (Data Files Missing),                               service_type is 1 (None)
 **      - If dataset rating is -1 (No Data aka Blank/Bad),                            service_type is 1 (None)
 **      - If dataset rating is  6 (Exclude From Service Center),                      service_type is 1 (None)
@@ -115,6 +116,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **          08/21/2025 mem - Rename function
 **          09/17/2025 mem - Change long NanoPOTS to type 103 (Peptides: Long Standard MS)
 **                         - Return service type ID 1 if the dataset rating is 7 (Method Development)
+**          09/24/2025 mem - Return service type ID 1 if the dataset rating is -7 (Rerun, superseded) or -6 (Rerun, good data)
 **
 *****************************************************/
 DECLARE
@@ -190,6 +192,11 @@ BEGIN
 
     -- Check for a dataset rating of 'Not Released' or 'Not released (allow analysis)'
     If _datasetRatingID IN (-4, -5) Then
+        RETURN 1;       -- Service type: None
+    End If;
+
+    -- Check for a dataset rating of 'Rerun (Superseded)' or 'Rerun (Good Data)'
+    If _datasetRatingID IN (-6, -7) Then
         RETURN 1;       -- Service type: None
     End If;
 
