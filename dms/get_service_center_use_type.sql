@@ -272,7 +272,7 @@ BEGIN
        _dataset    LIKE 'QC_Shew%'  OR
        _experiment LIKE 'QC_Shew%'  OR
        _dataset    LIKE 'QC_BTLE%'  OR
-       _experiment LIKE 'QC_BTLE%'  OR
+       _experiment LIKE 'QC_BTLE%'
     Then
         RETURN 1;       -- Service type: None
     End If;
