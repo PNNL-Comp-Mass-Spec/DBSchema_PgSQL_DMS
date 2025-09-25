@@ -46,6 +46,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_dispositions(IN _datasetidlist
 **          06/27/2025 mem - Use new parameter name when calling schedule_predefined_analysis_jobs
 **          09/17/2025 mem - Update service center use type ID
 **          09/18/2025 mem - Remove '(not service center eligible)' from _rating, if present
+**          09/24/2025 mem - Replace ', not service center eligible' with an empty string, if present
 **
 *****************************************************/
 DECLARE
@@ -122,6 +123,10 @@ BEGIN
 
         If _ratingName LIKE '% (not service center eligible)' Then
             _ratingName := Trim(Replace(_ratingName, '(not service center eligible)', ''));
+        End If;
+
+        If _ratingName LIKE '%, not service center eligible)' Then
+            _ratingName := Trim(Replace(_ratingName, ', not service center eligible)', ''));
         End If;
 
         SELECT dataset_rating_id
