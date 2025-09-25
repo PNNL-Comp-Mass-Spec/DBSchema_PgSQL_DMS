@@ -49,6 +49,7 @@ FT_ZippedSFolders	Research		0	1	\N	0	1	\N
 GC_QExactive	Metabolomics	\N	1	41	ORB	1	1	\N
 GC_TSQ	Metabolomics		0	9	GC	0	0	\N
 IMS	Ion-mobility LC-IMS-MS		1	6	IMS	1	1	\N
+IQX	LC-HMS with MS/MS		1	13	ORB	1	1	\N
 Illumina	Genomic Sequencing	\N	0	33	SEQ	1	0	\N
 LCMSNet_LC	LCMSNet LCs with no available LC pump data file	If there is a Thermo pump on the LC controlled with SII for Xcalibur, use Thermo_SII_LC instead	1	31	None	0	0	\N
 LCQ	Low res MS/MS		0	2	\N	0	1	\N
