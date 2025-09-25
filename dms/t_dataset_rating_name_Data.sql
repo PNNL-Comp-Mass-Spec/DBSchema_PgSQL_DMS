@@ -23,8 +23,8 @@ SET row_security = off;
 
 COPY public.t_dataset_rating_name (dataset_rating_id, dataset_rating, comment) FROM stdin;
 -10	Unreviewed	Quality of data has not yet been determined
--7	Rerun (Superseded)	Data acquisition issue, either for this sample or for another sample in the batch
--6	Rerun (Good Data)	Successful sample analysis, but the sample will be re-analyzed, typically because other samples in a batch had an issue
+-7	Rerun (Superseded)	Data acquisition issue, either for this sample or for another sample in the batch; not service center eligible
+-6	Rerun (Good Data)	Successful sample analysis, but the sample will be re-analyzed, typically because other samples in a batch had an issue; not service center eligible
 -5	Not Released	Instrument acquisition issue, no usable data; not service center eligible; cannot create analysis jobs
 -4	Not Released (allow analysis)	Instrument acquisition issue, but allow data analysis; not service center eligible
 -2	Data Files Missing	Missing data files; not service center eligible; cannot create analysis jobs
