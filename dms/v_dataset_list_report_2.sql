@@ -15,7 +15,6 @@ CREATE VIEW public.v_dataset_list_report_2 AS
     dtn.dataset_type,
     ds.operator_username AS operator,
     dl.dataset_folder_path,
-    dl.archive_folder_path,
     dl.qc_link,
     COALESCE(ds.acq_time_start, rr.request_run_start) AS acq_start,
     COALESCE(ds.acq_time_end, rr.request_run_finish) AS acq_end,
