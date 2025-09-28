@@ -23,6 +23,7 @@ CREATE OR REPLACE PROCEDURE public.update_service_use_comment(IN _texttofind tex
 **  Auth:   mem
 **  Date:   08/17/2025 mem - Initial version
 **          08/20/2025 mem - Reference schema svc instead of cc
+**          09/27/2025 mem - Cast _textToFind and _replacementText to citext when performing the replacement
 **
 *****************************************************/
 DECLARE
@@ -220,7 +221,7 @@ BEGIN
             SET New_Comment = Trim(Coalesce(public.append_to_text(Comment, _replacementText), ''));
         Else
             UPDATE Tmp_ServiceUseEntriesToUpdate
-            SET New_Comment = Trim(Coalesce(Replace(Comment::citext, _textToFind, _replacementText), ''));
+            SET New_Comment = Trim(Coalesce(Replace(Comment::citext, _textToFind::citext, _replacementText::citext), ''));
         End If;
 
         ----------------------------------------------------------
