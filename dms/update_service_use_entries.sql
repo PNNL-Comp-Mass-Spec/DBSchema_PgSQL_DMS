@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_service_use_entries(IN _mode text, IN 
 /****************************************************
 **
 **  Desc:
-**      Update the dataset rating of the datasets associated with the specified service use entries
+**      If _mode is 'datasetRating', update the dataset rating of the datasets associated with the specified service use entries
 **      Service use entries must be associated with an active service use report
 **
 **      If _mode is 'serviceCenterRefund' and _newValue is 'true', change the service center report state to 'Need to refund to service center' for the specified datasets
@@ -34,6 +34,8 @@ CREATE OR REPLACE PROCEDURE public.update_service_use_entries(IN _mode text, IN 
 **  Date:   08/18/2025 mem - Initial version
 **          08/20/2025 mem - Reference schema svc instead of cc
 **          09/23/2025 mem - Add mode 'serviceCenterRefund'
+**          09/27/2025 mem - Remove '(not service center eligible)' from _newValue, if present
+**                         - Replace ', not service center eligible' with an empty string, if present in _newValue
 **
 *****************************************************/
 DECLARE
@@ -219,11 +221,19 @@ BEGIN
         If _mode::citext = 'datasetRating' Then
             ---------------------------------------------------
             -- Validate the dataset rating
-            -- Mode 'datasetRating' is used by http://dms2.pnl.gov/service_use_admin/report
+            -- Mode 'datasetRating' is used by http://dms2.pnl.gov/service_center_use_admin/report
             ---------------------------------------------------
 
             -- Set the dataset type to _newValue for now
             _newDatasetRating := _newValue;
+
+            If _newDatasetRating LIKE '% (not service center eligible)' Then
+                _newDatasetRating := Trim(Replace(_newDatasetRating, '(not service center eligible)', ''));
+            End If;
+
+            If _newDatasetRating LIKE '%, not service center eligible)' Then
+                _newDatasetRating := Trim(Replace(_newDatasetRating, ', not service center eligible)', ''));
+            End If;
 
             ---------------------------------------------------
             -- Make sure a valid dataset rating was chosen
