@@ -103,6 +103,7 @@ COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description
 30	15 18 * * 5	Weekly, on Friday at 6:15 PM
 44	19 21 * * 5	Weekly, on Friday at 9:19 PM
 41	12 10 * * 6	Weekly, on Saturday at 10:12 AM
+93	05 00 * * 6	Weekly, on Saturday at 12:05 am
 43	15 16 * * 6	Weekly, on Saturday at 4:15 PM
 38	38 16 * * 6	Weekly, on Saturday at 4:38 PM
 74	17 17 * * 6	Weekly, on Saturday at 5:17 PM
@@ -110,7 +111,6 @@ COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description
 63	38 15 * * 7	Weekly, on Sunday at 3:38 PM
 16	9 4 * * 7	Weekly, on Sunday at 4:09 AM
 17	15 5 * * 7	Weekly, on Sunday at 5:15 AM
-93	05 00 * * 4	Weekly, on Thursday at 12:05 am
 29	15 15 * * 4	Weekly, on Thursday at 3:15 PM
 28	16 15 * * 4	Weekly, on Thursday at 3:16 PM
 91	45 23 * * 3	Weekly, on Wednesday at 11:45 PM
