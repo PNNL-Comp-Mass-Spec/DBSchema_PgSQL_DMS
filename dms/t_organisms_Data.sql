@@ -761,6 +761,7 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 1023	Shewanella_sp_MR-7	Shewanella_MR_7_RefSeq_uid58343_2014-08-14	2005-06-20 15:05:36	Shewanella species MR-7	Shewanella_MR-7	\\\\gigasax\\DMS_Organism_Files\\Shewanella_sp_MR-7\\	http://gigasax/DMS_Organism_Files/Shewanella_sp_MR-7/	Bacteria	Prokaryote	Proteobacteria	Gammaproteobacteria	Alteromonadales	Shewanellaceae	Shewanella	sp. MR-7	MR-7	11	0	1	60481	60481	1
 1053	Shewanella_spp	Shewanella_oneidensis_MR1_2010-04-22	2007-03-27 13:56:38	Shewanella, unknown species	Shewanella_spp	\\\\gigasax\\DMS_Organism_Files\\Shewanella_spp\\	http://gigasax/DMS_Organism_Files/Shewanella_spp/	Bacteria	Prokaryote	Proteobacteria	Gammaproteobacteria	Alteromonadales	Shewanellaceae	Shewanella	sp.		11	0	1	50422	50422	1
 1210	Sideroxydans_lithotrophicus_ES-1	Sideroxydans_lithotrophicus_ES-1_SPROT_2011-02-10	2011-02-10 12:26:32	Sideroxydans lithotrophicus strain ES-1,	S_lithotrophicus_ES-1	\\\\gigasax\\dms_organism_Files\\Sideroxydans_lithotrophicus_ES-1\\	http://gigasax/dms_organism_Files/Sideroxydans_lithotrophicus_ES-1/	Bacteria	Prokaryote	Proteobacteria	Betaproteobacteria	Gallionellales	Gallionellaceae	Sideroxydans	lithotrophicus	ES-1	11	0	1	580332	580332	1
+1884	Simplicillium_lamellicola		2025-09-26 19:04:12.311833	Simplicillium lamellicola	S_lamelicola	\\\\gigasax\\DMS_Organism_Files\\Simplicillium_lamellicola\\		Eukaryota	Fungi	Ascomycota	Sordariomycetes	Hypocreales	Cordycipitaceae	Simplicillium	lamellicola	na	0	0	1	93593	93593	1
 1268	Sinorhizobium_medicae	Sinorhizobium_medicae_UniProt_2011-10-19	2011-10-19 14:35:16	Sinorhizobium medicae	S_medicae	\\\\gigasax\\DMS_Organism_Files\\Sinorhizobium_medicae\\	http://gigasax/DMS_Organism_Files/Sinorhizobium_medicae/	Bacteria	Prokaryote	Proteobacteria	Alphaproteobacteria	Rhizobiales	Rhizobiaceae	Sinorhizobium	medicae	na	11	0	1	110321	110321	1
 1190	Sinorhizobium_meliloti	Sinorhizobium_meliloti_PNNL_MSC-2_Str_014_2022-01-06	2010-08-09 15:36:51	Sinorhizobium meliloti	S_meliloti	\\\\gigasax\\DMS_Organism_Files\\Sinorhizobium_meliloti\\	https://gigasax/DMS_Organism_Files/Sinorhizobium_meliloti/	Bacteria	Prokaryote	Pseudomonadota	Alphaproteobacteria	Hyphomicrobiales	Rhizobiaceae	Sinorhizobium	meliloti	na	11	0	1	382	382	1
 1088	Slackia_heliotrinireducens_DSM_20476	Slackia_heliotrinireducens_DSM_20476_RefSeq_uid59051_2014-08-14	2008-03-05 10:55:47	Slackia heliotrinireducens DSM 20476	S_heliotrinireducens	\\\\gigasax\\DMS_Organism_Files\\Slackia_heliotrinireducens_DSM_20476\\	http://gigasax/DMS_Organism_Files/Slackia_heliotrinireducens_DSM_20476/	Bacteria	Prokaryote	Actinobacteria	Coriobacteriia	Eggerthellales	Eggerthellaceae	Slackia	heliotrinireducens	DSM 20476	0	0	1	471855	471855	1
@@ -896,7 +897,7 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 -- Name: t_organisms_organism_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organisms_organism_id_seq', 1883, true);
+SELECT pg_catalog.setval('public.t_organisms_organism_id_seq', 1884, true);
 
 
 --

@@ -216,137 +216,137 @@ Pub-57_CTM_2	ArchiveVerify	3	1		2025-06-17 14:35:09.837903
 Pub-57_CTM_2	DatasetInfo	3	1	Runs MSFileInfoScanner; disabled in June 2019, limiting each Pub to just one instance of MSFileInfoScanner; re-enabled 2024-09-28	2024-10-18 11:37:50.754207
 Pub-57_CTM_2	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-57_CTM_2	DatasetQuality	3	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
-Pub-58_CTM	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-58_CTM	DatasetInfo	4	1	Runs MSFileInfoScanner	2024-10-18 11:37:50.754207
+Pub-58_CTM	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-58_CTM	DatasetInfo	4	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.609433
 Pub-58_CTM	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-58_CTM	DatasetQuality	4	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
 Pub-58_CTM	ImsDeMultiplex	3	1		2025-01-10 18:37:18.506873
-Pub-58_CTM	LCDatasetInfo	4	1	Runs MSFileInfoScanner for LC data files	2024-02-12 14:21:43
-Pub-58_CTM_2	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-58_CTM_2	ArchiveVerify	3	1		2025-06-17 14:35:09.837903
-Pub-58_CTM_2	DatasetInfo	3	1	Runs MSFileInfoScanner; disabled in June 2019, limiting each Pub to just one instance of MSFileInfoScanner; re-enabled 2024-09-28	2024-10-18 11:37:50.754207
+Pub-58_CTM	LCDatasetInfo	4	0	Runs MSFileInfoScanner for LC data filesr; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.623818
+Pub-58_CTM_2	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-58_CTM_2	ArchiveVerify	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-58_CTM_2	DatasetInfo	3	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.629152
 Pub-58_CTM_2	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-58_CTM_2	DatasetQuality	3	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
-Pub-59_CTM	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-59_CTM	DatasetInfo	4	1	Runs MSFileInfoScanner	2024-10-18 11:37:50.754207
+Pub-59_CTM	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-59_CTM	DatasetInfo	4	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.63208
 Pub-59_CTM	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-59_CTM	DatasetQuality	4	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
 Pub-59_CTM	ImsDeMultiplex	3	1		2025-01-10 18:37:18.506873
-Pub-59_CTM	LCDatasetInfo	4	1	Runs MSFileInfoScanner for LC data files	2024-02-12 14:21:43
-Pub-59_CTM_2	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-59_CTM_2	ArchiveVerify	3	1		2025-06-17 14:35:09.837903
-Pub-59_CTM_2	DatasetInfo	3	1	Runs MSFileInfoScanner; disabled in June 2019, limiting each Pub to just one instance of MSFileInfoScanner; re-enabled 2024-09-28	2024-10-18 11:37:50.754207
+Pub-59_CTM	LCDatasetInfo	4	0	Runs MSFileInfoScanner for LC data filesr; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.634179
+Pub-59_CTM_2	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-59_CTM_2	ArchiveVerify	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-59_CTM_2	DatasetInfo	3	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.63626
 Pub-59_CTM_2	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-59_CTM_2	DatasetQuality	3	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
-Pub-60_CTM	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-60_CTM	DatasetInfo	4	1	Runs MSFileInfoScanner	2024-10-18 11:37:50.754207
+Pub-60_CTM	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-60_CTM	DatasetInfo	4	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.638099
 Pub-60_CTM	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-60_CTM	DatasetQuality	4	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
 Pub-60_CTM	ImsDeMultiplex	3	1		2025-01-10 18:37:18.506873
-Pub-60_CTM	LCDatasetInfo	4	1	Runs MSFileInfoScanner for LC data files	2024-02-12 14:21:43
-Pub-60_CTM_2	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-60_CTM_2	ArchiveVerify	3	1		2025-06-17 14:35:09.837903
-Pub-60_CTM_2	DatasetInfo	3	1	Runs MSFileInfoScanner; disabled in June 2019, limiting each Pub to just one instance of MSFileInfoScanner; re-enabled 2024-09-28	2024-10-18 11:37:50.754207
+Pub-60_CTM	LCDatasetInfo	4	0	Runs MSFileInfoScanner for LC data filesr; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.639565
+Pub-60_CTM_2	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-60_CTM_2	ArchiveVerify	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-60_CTM_2	DatasetInfo	3	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.640825
 Pub-60_CTM_2	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-60_CTM_2	DatasetQuality	3	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
-Pub-61_CTM	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-61_CTM	DatasetInfo	4	1	Runs MSFileInfoScanner	2024-10-18 11:37:50.754207
+Pub-61_CTM	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-61_CTM	DatasetInfo	4	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.642259
 Pub-61_CTM	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-61_CTM	DatasetQuality	4	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
 Pub-61_CTM	ImsDeMultiplex	3	1		2025-01-10 18:37:18.506873
-Pub-61_CTM	LCDatasetInfo	4	1	Runs MSFileInfoScanner for LC data files	2024-02-12 14:21:43
-Pub-61_CTM_2	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-61_CTM_2	ArchiveVerify	3	1		2025-06-17 14:35:09.837903
-Pub-61_CTM_2	DatasetInfo	3	1	Runs MSFileInfoScanner; disabled in June 2019, limiting each Pub to just one instance of MSFileInfoScanner; re-enabled 2024-09-28	2024-10-18 11:37:50.754207
+Pub-61_CTM	LCDatasetInfo	4	0	Runs MSFileInfoScanner for LC data filesr; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.643742
+Pub-61_CTM_2	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-61_CTM_2	ArchiveVerify	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-61_CTM_2	DatasetInfo	3	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.645062
 Pub-61_CTM_2	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-61_CTM_2	DatasetQuality	3	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
-Pub-62_CTM	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-62_CTM	DatasetInfo	4	1	Runs MSFileInfoScanner	2024-10-18 11:37:50.754207
+Pub-62_CTM	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-62_CTM	DatasetInfo	4	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.646218
 Pub-62_CTM	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-62_CTM	DatasetQuality	4	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
 Pub-62_CTM	ImsDeMultiplex	3	1		2025-01-10 18:37:18.506873
-Pub-62_CTM	LCDatasetInfo	4	1	Runs MSFileInfoScanner for LC data files	2024-02-12 14:21:43
-Pub-62_CTM_2	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-62_CTM_2	ArchiveVerify	3	1		2025-06-17 14:35:09.837903
-Pub-62_CTM_2	DatasetInfo	3	1	Runs MSFileInfoScanner; disabled in June 2019, limiting each Pub to just one instance of MSFileInfoScanner; re-enabled 2024-09-28	2024-10-18 11:37:50.754207
+Pub-62_CTM	LCDatasetInfo	4	0	Runs MSFileInfoScanner for LC data filesr; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.647836
+Pub-62_CTM_2	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-62_CTM_2	ArchiveVerify	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-62_CTM_2	DatasetInfo	3	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.650542
 Pub-62_CTM_2	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-62_CTM_2	DatasetQuality	3	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
-Pub-63_CTM	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-63_CTM	DatasetInfo	4	1	Runs MSFileInfoScanner	2024-10-18 11:37:50.754207
+Pub-63_CTM	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-63_CTM	DatasetInfo	4	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.651975
 Pub-63_CTM	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-63_CTM	DatasetQuality	4	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
 Pub-63_CTM	ImsDeMultiplex	3	1		2025-01-10 18:37:18.506873
-Pub-63_CTM	LCDatasetInfo	4	1	Runs MSFileInfoScanner for LC data files	2024-02-12 14:21:43
-Pub-63_CTM_2	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-63_CTM_2	ArchiveVerify	3	1		2025-06-17 14:35:09.837903
-Pub-63_CTM_2	DatasetInfo	3	1	Runs MSFileInfoScanner; disabled in June 2019, limiting each Pub to just one instance of MSFileInfoScanner; re-enabled 2024-09-28	2024-10-18 11:37:50.754207
+Pub-63_CTM	LCDatasetInfo	4	0	Runs MSFileInfoScanner for LC data filesr; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.653473
+Pub-63_CTM_2	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-63_CTM_2	ArchiveVerify	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-63_CTM_2	DatasetInfo	3	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.654933
 Pub-63_CTM_2	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-63_CTM_2	DatasetQuality	3	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
-Pub-64_CTM	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-64_CTM	DatasetInfo	4	1	Runs MSFileInfoScanner	2024-10-18 11:37:50.754207
+Pub-64_CTM	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-64_CTM	DatasetInfo	4	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.656356
 Pub-64_CTM	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-64_CTM	DatasetQuality	4	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
-Pub-64_CTM	LCDatasetInfo	4	1	Runs MSFileInfoScanner for LC data files	2024-02-12 14:21:43
-Pub-64_CTM_2	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-64_CTM_2	ArchiveVerify	3	1		2025-06-17 14:35:09.837903
-Pub-64_CTM_2	DatasetInfo	3	1	Runs MSFileInfoScanner; disabled in June 2019, limiting each Pub to just one instance of MSFileInfoScanner; re-enabled 2024-09-28	2024-10-18 11:37:50.754207
+Pub-64_CTM	LCDatasetInfo	4	0	Runs MSFileInfoScanner for LC data filesr; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.657842
+Pub-64_CTM_2	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-64_CTM_2	ArchiveVerify	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-64_CTM_2	DatasetInfo	3	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.660513
 Pub-64_CTM_2	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-64_CTM_2	DatasetQuality	3	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
 Pub-64_CTM_2	ImsDeMultiplex	3	1		2025-01-10 18:37:18.506873
-Pub-65_CTM	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-65_CTM	DatasetInfo	4	1	Runs MSFileInfoScanner	2024-10-18 11:37:50.754207
+Pub-65_CTM	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-65_CTM	DatasetInfo	4	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.661857
 Pub-65_CTM	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-65_CTM	DatasetQuality	4	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
-Pub-65_CTM	LCDatasetInfo	4	1	Runs MSFileInfoScanner for LC data files	2024-02-12 14:21:43
-Pub-65_CTM_2	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-65_CTM_2	ArchiveVerify	3	1		2025-06-17 14:35:09.837903
-Pub-65_CTM_2	DatasetInfo	3	1	Runs MSFileInfoScanner; disabled in June 2019, limiting each Pub to just one instance of MSFileInfoScanner; re-enabled 2024-09-28	2024-10-18 11:37:50.754207
+Pub-65_CTM	LCDatasetInfo	4	0	Runs MSFileInfoScanner for LC data filesr; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.662984
+Pub-65_CTM_2	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-65_CTM_2	ArchiveVerify	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-65_CTM_2	DatasetInfo	3	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.664108
 Pub-65_CTM_2	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-65_CTM_2	DatasetQuality	3	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
 Pub-65_CTM_2	ImsDeMultiplex	3	1		2025-01-10 18:37:18.506873
-Pub-66_CTM	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-66_CTM	DatasetInfo	4	1	Runs MSFileInfoScanner	2024-10-18 11:37:50.754207
+Pub-66_CTM	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-66_CTM	DatasetInfo	4	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.665306
 Pub-66_CTM	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-66_CTM	DatasetQuality	4	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
-Pub-66_CTM	LCDatasetInfo	4	1	Runs MSFileInfoScanner for LC data files	2024-02-12 14:21:43
-Pub-66_CTM_2	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-66_CTM_2	ArchiveVerify	3	1		2025-06-17 14:35:09.837903
-Pub-66_CTM_2	DatasetInfo	3	1	Runs MSFileInfoScanner; disabled in June 2019, limiting each Pub to just one instance of MSFileInfoScanner; re-enabled 2024-09-28	2024-10-18 11:37:50.754207
+Pub-66_CTM	LCDatasetInfo	4	0	Runs MSFileInfoScanner for LC data filesr; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.669343
+Pub-66_CTM_2	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-66_CTM_2	ArchiveVerify	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-66_CTM_2	DatasetInfo	3	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.670482
 Pub-66_CTM_2	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-66_CTM_2	DatasetQuality	3	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
 Pub-66_CTM_2	ImsDeMultiplex	3	1		2025-01-10 18:37:18.506873
-Pub-67_CTM	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-67_CTM	DatasetInfo	4	1	Runs MSFileInfoScanner	2024-10-18 11:37:50.754207
+Pub-67_CTM	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-67_CTM	DatasetInfo	4	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.672356
 Pub-67_CTM	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-67_CTM	DatasetQuality	4	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
 Pub-67_CTM	ImsDeMultiplex	3	1		2025-01-10 18:37:18.506873
-Pub-67_CTM	LCDatasetInfo	4	1	Runs MSFileInfoScanner for LC data files	2024-02-12 14:21:43
-Pub-67_CTM_2	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-67_CTM_2	ArchiveVerify	3	1		2025-06-17 14:35:09.837903
-Pub-67_CTM_2	DatasetInfo	3	1	Runs MSFileInfoScanner; disabled in June 2019, limiting each Pub to just one instance of MSFileInfoScanner; re-enabled 2024-09-28	2024-10-18 11:37:50.754207
+Pub-67_CTM	LCDatasetInfo	4	0	Runs MSFileInfoScanner for LC data filesr; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.673912
+Pub-67_CTM_2	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-67_CTM_2	ArchiveVerify	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-67_CTM_2	DatasetInfo	3	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.675486
 Pub-67_CTM_2	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-67_CTM_2	DatasetQuality	3	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
-Pub-68_CTM	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-68_CTM	DatasetInfo	4	1	Runs MSFileInfoScanner	2024-10-18 11:37:50.754207
+Pub-68_CTM	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-68_CTM	DatasetInfo	4	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.676817
 Pub-68_CTM	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-68_CTM	DatasetQuality	4	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
 Pub-68_CTM	ImsDeMultiplex	3	1		2025-01-10 18:37:18.506873
-Pub-68_CTM	LCDatasetInfo	4	1	Runs MSFileInfoScanner for LC data files	2024-02-12 14:21:43
-Pub-68_CTM_2	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-68_CTM_2	ArchiveVerify	3	1		2025-06-17 14:35:09.837903
-Pub-68_CTM_2	DatasetInfo	3	1	Runs MSFileInfoScanner; disabled in June 2019, limiting each Pub to just one instance of MSFileInfoScanner; re-enabled 2024-09-28	2024-10-18 11:37:50.754207
+Pub-68_CTM	LCDatasetInfo	4	0	Runs MSFileInfoScanner for LC data filesr; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.678228
+Pub-68_CTM_2	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-68_CTM_2	ArchiveVerify	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-68_CTM_2	DatasetInfo	3	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.679631
 Pub-68_CTM_2	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
 Pub-68_CTM_2	DatasetQuality	3	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
-Pub-69_CTM	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-69_CTM	DatasetInfo	4	1	Runs MSFileInfoScanner	2024-10-18 11:37:50.754207
-Pub-69_CTM	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
+Pub-69_CTM	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-69_CTM	DatasetInfo	4	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.680921
+Pub-69_CTM	DatasetIntegrity	4	1	 	2025-09-24 11:37:49.739139
 Pub-69_CTM	DatasetQuality	4	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
 Pub-69_CTM	ImsDeMultiplex	3	1		2025-01-10 18:37:18.506873
-Pub-69_CTM	LCDatasetInfo	4	1	Runs MSFileInfoScanner for LC data files	2024-02-12 14:21:43
-Pub-69_CTM_2	ArchiveStatusCheck	3	1		2025-06-17 14:35:09.837903
-Pub-69_CTM_2	ArchiveVerify	3	1		2025-06-17 14:35:09.837903
-Pub-69_CTM_2	DatasetInfo	3	1	Runs MSFileInfoScanner; disabled in June 2019, limiting each Pub to just one instance of MSFileInfoScanner; re-enabled 2024-09-28	2024-10-18 11:37:50.754207
-Pub-69_CTM_2	DatasetIntegrity	4	1		2025-07-31 18:08:45.826404
+Pub-69_CTM	LCDatasetInfo	4	0	Runs MSFileInfoScanner for LC data filesr; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.682182
+Pub-69_CTM_2	ArchiveStatusCheck	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-69_CTM_2	ArchiveVerify	3	0	Node on Bionet, no archive access	2025-09-22 17:42:48.417293
+Pub-69_CTM_2	DatasetInfo	3	0	Runs MSFileInfoScanner; disabled in September 2025 since Pub-58 thru Pub-93 are now on bionet	2025-09-25 19:13:37.683399
+Pub-69_CTM_2	DatasetIntegrity	4	1	 	2025-09-24 11:37:49.739139
 Pub-69_CTM_2	DatasetQuality	3	1	Runs Quameter and creates the Metadata.xml file	2024-09-12 18:25:34.085152
 \.
 
