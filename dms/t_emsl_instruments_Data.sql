@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.5
+-- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -140,7 +140,7 @@ COPY public.t_emsl_instruments (eus_instrument_id, eus_display_name, eus_instrum
 34298	Proteomic Bottom-up (Global) Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q Exactive LC-MS HFX 2 (2020)	24	\N	\N	2025-08-20 06:16:11.319862	1	1
 34307	Proteomic Bottom-up (Targeted) Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Altis Triple Quad LC-MS 3 (2019)	24	\N	\N	2025-08-20 06:16:11.319862	1	0
 34308	Proteomic Bottom-up (Global) Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q Exactive LC-MS HFX 3 (2019)	24	\N	\N	2025-08-20 06:16:11.319862	1	0
-34313	Proteomic Bottom-up (Labeled) Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Eclipse Orbitrap LC-MS 1 (2020)	24	\N	\N	2025-08-20 06:16:11.319862	1	1
+34313	Metabolomic Liquid State Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Eclipse Orbitrap LC-MS 1 (2020)	24	\N	\N	2025-10-01 06:16:57.391206	1	1
 34314	Mass Spectrometer: AgQToF	Mass Spectrometer: AgQToF	24	\N	\N	2024-08-06 06:15:53	0	1
 34321	Proteomic Bottom-up (Labeled) Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Eclipse Orbitrap LC-MS 2 (2020)	24	\N	\N	2025-08-20 06:16:11.319862	1	0
 34322	Proteomic Bottom-up (Labeled) Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Exploris Orbitrap LC-MS 1 (2020)	10	\N	\N	2025-08-20 06:16:11.319862	1	0
@@ -167,6 +167,7 @@ COPY public.t_emsl_instruments (eus_instrument_id, eus_display_name, eus_instrum
 35038	Fourier-Transform Ion Cyclotron Resonance (FTICR)	Mass Spectrometer: 12T FTICR-MALDI (2004) - DUPLICATE	\N	\N	\N	2024-08-06 06:15:53	0	0
 35046	Aerosol Mass Spectrometry (MS) Nanospray Desorption Electrospray Ionization (nano-DESI)	Mass Spectrometer: nano-DESI Orbitrap MX (2024)	10	\N	\N	2024-08-06 06:15:53	1	0
 35047	Mass Spectrometry (MS) Imaging	Mass Spectrometer: TIMS ToF (2024)	10	\N	\N	2024-08-06 06:15:53	1	0
+35064	Proteomic Bottom-up (Labeled) Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Exploris Orbitrap LC-MS 6 (2023)	24	\N	\N	2025-10-01 06:16:57.391206	1	0
 \.
 
 

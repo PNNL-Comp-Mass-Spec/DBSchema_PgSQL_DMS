@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.5
+-- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -26,6 +26,7 @@ DMS	archiver	2024-04-17 15:08:40.763509-07
 DMS	backends	2024-04-17 15:08:40.768362-07
 DMS	backup_age_pgbackrest	2024-04-17 15:08:40.780148-07
 DMS	bgwriter	2024-04-17 15:08:40.777678-07
+DMS	configuration_changes	2025-10-01 00:31:07.674673-07
 DMS	configured_dbs	2024-04-18 16:21:42.034525-07
 DMS	cpu_load	2024-04-17 15:08:40.774023-07
 DMS	db_size	2024-04-17 15:08:40.781115-07

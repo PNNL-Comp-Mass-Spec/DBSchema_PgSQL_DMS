@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.5
+-- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -257,7 +257,7 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 26	Drosophila_melanogaster	D_melanogaster_UniProt_sprot_2012-01-18	2003-01-30 00:00:00	Drosophila Melanogaster (Fruit Fly)	D_melanogaster	\\\\gigasax\\DMS_Organism_Files\\Drosophila_melanogaster\\	http://gigasax/DMS_Organism_Files/Drosophila_melanogaster/	Eukaryota	Metazoa	Arthropoda	Insecta	Diptera	Drosophilidae	Drosophila	melanogaster		1	5	1	7227	7227	1
 1578	Dunaliella_bardawil		2017-10-12 14:27:49	Dunaliella bardawil	D_bardawil	\\\\gigasax\\DMS_Organism_Files\\Dunaliella_bardawil\\	http://gigasax/DMS_Organism_Files/Dunaliella_bardawil/	Eukaryota	Viridiplantae	Chlorophyta	Chlorophyceae	Chlamydomonadales	Dunaliellaceae	Dunaliella	cf. bardawil CHPD1	na	0	0	1	1227098	1227098	1
 1577	Dunaliella_tertiolecta		2017-10-12 14:23:34	Dunaliella tertiolecta	D_tertiolecta	\\\\gigasax\\DMS_Organism_Files\\Dunaliella_tertiolecta\\	http://gigasax/DMS_Organism_Files/Dunaliella_tertiolecta/	Eukaryota	Viridiplantae	Chlorophyta	Chlorophyceae	Chlamydomonadales	Dunaliellaceae	Dunaliella	tertiolecta	na	0	0	1	3047	3047	1
-1723	Dyadobacter_fermentans		2022-01-03 17:55:38	Dyadobacter fermentans	D_fermentans	\\\\gigasax\\DMS_Organism_Files\\Dyadobacter_fermentans\\		Bacteria	Prokaryote	Bacteroidetes	Cytophagia	Cytophagales	Cytophagaceae	Dyadobacter	fermentans	na	0	0	1	94254	94254	1
+1723	Dyadobacter_sp		2022-01-03 17:55:38	Dyadobacter sp.	Dyadobacter_sp	\\\\gigasax\\DMS_Organism_Files\\Dyadobacter_sp\\	https://gigasax/DMS_Organism_Files/Dyadobacter_sp/	Bacteria	Prokaryote	Bacteroidota	Cytophagia	Cytophagales	Spirosomataceae	Dyadobacter	sp.	na	0	0	1	1914288	1914288	1
 1649	EMSL_49249_Prosser_Soils_Metagenomics		2019-04-04 16:42:21	EMSL proposal 49249 meta genomics and proteomics efforts for Prosser Soils	Prosser_Metagenomics	\\\\proto-4\\DMS_Organism_Files\\EMSL_49249_Prosser_Soils_Metagenomics\\	http://proto-4/DMS_Organism_Files/EMSL_49249_Prosser_Soils_Metagenomics/							na	na	na	0	0	1		\N	1
 1613	EMSL_49521_Rich_Metagenomics		2018-05-04 16:47:33	EMSL proposal 49521 meta genomics and proteomics efforts	Rich_Metagenomics	\\\\proto-4\\DMS_Organism_Files\\EMSL_49521_Rich_Metagenomics\\	http://proto-4/DMS_Organism_Files/EMSL_49521_Rich_Metagenomics/							na	na	na	0	0	1		\N	1
 1647	EMSL_49965_Walsh_Metagenomics		2019-02-14 11:55:40	EMSL proposal 49965 meta genomics and proteomics efforts for Walsh Arctic samples	Walsh_Metagenomics	\\\\proto-4\\DMS_Organism_Files\\EMSL_49965_Walsh_Metagenomics\\	http://proto-4/DMS_Organism_Files/EMSL_49965_Walsh_Metagenomics/							na	na	na	0	0	1		\N	1
@@ -641,6 +641,7 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 1473	Picea_abies		2016-02-04 14:34:00	Picea abies	P_abies	\\\\gigasax\\DMS_Organism_Files\\Picea_abies\\	http://gigasax/DMS_Organism_Files/Picea_abies/	Eukaryota	Viridiplantae	Streptophyta	Pinidae	Pinales	Pinaceae	Picea	abies	na	1	0	1	3329	3329	1
 1625	Pichia_kudriavzevii		2018-08-01 17:16:07		P_kudriavzevii	\\\\gigasax\\DMS_Organism_Files\\Pichia_kudriavzevii\\	http://gigasax/DMS_Organism_Files/Pichia_kudriavzevii/	Eukaryota	Fungi	Ascomycota	Saccharomycetes	Saccharomycetales	Pichiaceae	Pichia	kudriavzevii	na	0	0	1	4909	4909	1
 1528	Pichia_pastoris		2016-11-11 09:12:49	Pichia pastoris (Komagataella pastoris) (yeast)	P_pastoris	\\\\gigasax\\DMS_Organism_Files\\Pichia_pastoris\\	http://gigasax/DMS_Organism_Files/Pichia_pastoris/	Eukaryota	Fungi	Ascomycota	Saccharomycetes	Saccharomycetales	Phaffomycetaceae	Komagataella	pastoris	na	1	3	1	4922	4922	1
+1885	Picochlorum_celeri		2025-10-01 08:24:24.789589	Picochlorum celeri	P_celeri	\\\\Gigasax\\DMS_Organism_Files\\Picochlorum_celeri\\	https://Gigasax/DMS_Organism_Files/Picochlorum_celeri/	Eukaryota	Viridiplantae	Chlorophyta	Trebouxiophyceae	Chlamydomonadales	Chlamydomonadaceae	Picochlorum	reinhardtii	na	0	0	1	249344	249344	1
 1040	Pimephales_promelas		2006-03-31 15:06:20	Pimephales promelas (Fathead minnow)	P_promelas	\\\\gigasax\\DMS_Organism_Files\\Pimephales_promelas\\	http://gigasax/DMS_Organism_Files/Pimephales_promelas/	Eukaryota	Metazoa	Chordata	Actinopteri	Cypriniformes	Cyprinidae	Pimephales	promelas		1	2	1	90988	90988	1
 1674	Pinus_contorta		2020-03-06 18:02:03		P_contorta	\\\\gigasax\\DMS_Organism_Files\\Pinus_contorta\\	http://gigasax/DMS_Organism_Files/Pinus_contorta/	Eukaryota	Viridiplantae	Streptophyta	Pinidae	Pinales	Pinaceae	Pinus	contorta	na	0	0	1	3339	3339	1
 1767	Pinus_radiata		2022-08-31 10:31:49		P_radiata	\\\\gigasax\\DMS_Organism_Files\\Pinus_contorta\\	http://gigasax/DMS_Organism_Files/Pinus_contorta/	Eukaryota	Viridiplantae	Streptophyta	Pinopsida	Pinales	Pinaceae	Pinus	radiata	na	0	0	1	3339	3347	1
@@ -897,7 +898,7 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 -- Name: t_organisms_organism_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organisms_organism_id_seq', 1884, true);
+SELECT pg_catalog.setval('public.t_organisms_organism_id_seq', 1885, true);
 
 
 --
