@@ -35,19 +35,22 @@ CREATE OR REPLACE FUNCTION public.get_dataset_priority(_datasetname text) RETURN
 **          05/22/2023 mem - Capitalize reserved word
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          12/14/2023 mem - Change _datasetName data type to text
+**          10/01/2025 mem - Add QC_BTLE, QC_HeLa, and QC_Metab
 **
 *****************************************************/
 DECLARE
     _result int2;
 BEGIN
-
     If (_datasetName::citext SIMILAR TO 'QC[_][0-9][0-9]%' Or
-        _datasetName::citext SIMILAR TO 'QC[_-]Shew[_-][0-9][0-9]%' Or
+        _datasetName::citext SIMILAR TO 'QC[_-]Shew[_-]%' Or
         _datasetName::citext SIMILAR TO 'QC[_-]ShewIntact%' Or
-        _datasetName::citext SIMILAR TO 'QC[_]Shew[_]TEDDY%' Or
+        _datasetName::citext SIMILAR TO 'QC[_]BTLE%' Or
+        _datasetName::citext SIMILAR TO 'QC[_]HeLa%' Or
         _datasetName::citext SIMILAR TO 'QC[_]Mam%' Or
+        _datasetName::citext SIMILAR TO 'QC[_]Metab%' Or
         _datasetName::citext SIMILAR TO 'QC[_]PP[_]MCF-7%'
-       ) And Not _datasetName ILike '%-bad' Then
+       ) And Not _datasetName ILike '%-bad'
+    Then
         _result := 1;
     Else
         _result := 0;
