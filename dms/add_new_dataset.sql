@@ -85,6 +85,7 @@ CREATE OR REPLACE PROCEDURE public.add_new_dataset(IN _xmldoc text, IN _mode tex
 **          12/14/2023 mem - Ported to PostgreSQL
 **          01/20/2024 mem - Ignore case when resolving dataset name to ID
 **          03/03/2024 mem - Trim whitespace when extracting values from XML
+**          10/01/2025 mem - Force dataset rating to be 'Unreviewed' for non-QC datasets on service center instruments
 **
 *****************************************************/
 DECLARE
@@ -110,7 +111,7 @@ DECLARE
     _datasetType            text := '';
     _operatorUsername       text := '';
     _comment                text := '';
-    _interestRating         text := '';     -- Dataset rating name (tracked by column dataset_rating in t_dataset_rating_name)
+    _rating                 text := '';     -- Dataset rating name (aka interest rating); tracked by column dataset_rating in t_dataset_rating_name
     _requestID              int  := 0 ;     -- Requested run ID; this might get updated by add_update_dataset
     _workPackage            text := '';
     _emslUsageType          text := '';
@@ -119,6 +120,10 @@ DECLARE
     _runStart               text := '';
     _runFinish              text := '';
     _datasetCreatorUsername text := '';     -- Username of the person that created the dataset; it is typically only present in trigger files created due to a dataset manually being created by a user
+
+    _isBlankOrQC             boolean;
+    _isNotReleasedOrNoData   boolean;
+    _serviceCenterInstrument boolean;
 
     _formatSpecifier text;
     _infoHead text;
@@ -280,7 +285,7 @@ BEGIN
     WHERE ParamName = 'Comment';
 
     SELECT Trim(ParamValue)
-    INTO _interestRating
+    INTO _rating
     FROM Tmp_Parameters
     WHERE ParamName = 'Interest Rating';
 
@@ -328,16 +333,32 @@ BEGIN
     -- Check for QC or Blank datasets
     ---------------------------------------------------
 
-    If public.get_dataset_priority(_datasetName) > 0 Or
-       public.get_dataset_priority(_experimentName) > 0 Or
-       (_datasetName ILike 'Blank%' And Not _datasetName ILike '%-bad')
-    Then
-        If Not _interestRating::citext In ('Not Released', 'No Interest') And _interestRating Not ILike 'No Data%' Then
+    _isBlankOrQC := public.get_dataset_priority(_datasetName) > 0 Or
+                    public.get_dataset_priority(_experimentName) > 0 Or
+                    _datasetName ILike 'Blank%' Or
+                    _experimentName::citext = 'Blank';
 
-            -- Auto set interest rating to 5 ('Released')
+    _isNotReleasedOrNoData := _rating::citext In ('Not Released', 'No Interest') Or
+                              _rating ILike 'No Data%';
+
+    SELECT service_center_eligible
+    INTO _serviceCenterInstrument
+    FROM t_instrument_name
+    WHERE instrument = _instrumentName::citext;
+
+    If Not FOUND Then
+        _serviceCenterInstrument := true;
+    End If;
+
+    If _isBlankOrQC Then
+        If Not _isNotReleasedOrNoData And
+           Not (_datasetName ILike 'Blank%' And _datasetName ILike '%-bad')
+        Then
+            -- Auto set dataset rating to 5 ('Released') for QC datasets and Blank datasets that are not "bad"
+            -- However, if the rating is 'Not Released', 'No Interest', or 'No Data (Blank/Bad)', leave as-is
 
             SELECT dataset_rating
-            INTO _interestRating
+            INTO _rating
             FROM t_dataset_rating_name
             WHERE dataset_rating_id = 5;
 
@@ -347,9 +368,29 @@ BEGIN
 
                 CALL post_log_entry ('Error', _logMessage, 'Add_New_Dataset');
 
-                _interestRating := 'Released';
+                _rating := 'Released';
             End If;
+        End If;
 
+    ElsIf Not _serviceCenterInstrument Or _isNotReleasedOrNoData Then
+        -- Leave the dataset rating as-is
+
+    Else
+        -- The dataset is from a service center eligible instrument and is not a QC or Blank dataset (and is not bad or 'Not Released')
+        -- Force dataset rating to be 'Unreviewed' (but leave unchanged if 'Not Released', 'No Interest', or 'No Data (Blank/Bad)')
+
+        SELECT dataset_rating
+        INTO _rating
+        FROM t_dataset_rating_name
+        WHERE dataset_rating_id = -10;
+
+        If Not FOUND Then
+            _logMessage := 'Dataset Rating ID -10 should be "Unreviewed", but ID -10 was not found in t_dataset_rating_name';
+            RAISE WARNING '%', _logMessage;
+
+            CALL post_log_entry ('Error', _logMessage, 'Add_New_Dataset');
+
+            _rating := 'Unreviewed';
         End If;
     End If;
 
@@ -433,7 +474,7 @@ BEGIN
             _secSep                => _separationType,
             _internalStandards     => _internalStandards,
             _comment               => _comment,
-            _rating                => _interestRating,
+            _rating                => _rating,
             _lcCartName            => _lcCartName,
             _eusProposalID         => _emslProposalID,
             _eusUsageType          => _emslUsageType,
@@ -490,7 +531,7 @@ BEGIN
         RAISE INFO 'Dataset Type:         %', _datasetType;
         RAISE INFO 'Operator Username:    %', _operatorUsername;
         RAISE INFO 'Comment:              %', _comment;
-        RAISE INFO 'Interest Rating:      %', _interestRating;
+        RAISE INFO 'Interest Rating:      %', _rating;
         RAISE INFO 'Request ID:           %', _requestID;
         RAISE INFO 'Work Package:         %', _workPackage;
         RAISE INFO 'EMSL UsageType:       %', _emslUsageType;

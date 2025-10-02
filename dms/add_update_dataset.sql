@@ -165,6 +165,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_dataset(IN _datasetname text, IN _
 **          07/02/2025 mem - Update service center use type ID
 **          07/10/2025 mem - Refactor code into procedure update_dataset_service_type_if_required
 **          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
+**          10/01/2025 mem - Force dataset rating to be 'Unreviewed' when adding a non-QC dataset on a service center instrument
 **
 *****************************************************/
 DECLARE
@@ -194,6 +195,9 @@ DECLARE
     _runOrder int;
     _resolvedInstrumentInfo text;
     _badCh text;
+    _isBlankOrQC boolean;
+    _isNotReleasedOrNoData boolean;
+    _serviceCenterInstrument boolean;
     _ratingID int;
     _datasetID int;
     _existingDatasetTypeID int;
@@ -445,6 +449,42 @@ BEGIN
             _mode := 'add';
             _addingDataset := true;
         Else
+            If _addingDataset Then
+
+                -- If the dataset is not a QC or Blank dataset but it is from a service center eligible instrument,
+                -- assure that the dataset rating is 'Unreviewed' since this is a new dataset
+                -- However, leave as-is if the rating is 'Not Released', 'No Interest', or 'No Data (Blank/Bad)'
+
+                _isBlankOrQC := public.get_dataset_priority(_datasetName) > 0 Or
+                                public.get_dataset_priority(_experimentName) > 0 Or
+                                _datasetName ILike 'Blank%' Or
+                                _experimentName::citext = 'Blank';
+
+                _isNotReleasedOrNoData := _rating::citext In ('Not Released', 'No Interest') Or
+                                          _rating ILike 'No Data%';
+
+                SELECT service_center_eligible
+                INTO _serviceCenterInstrument
+                FROM t_instrument_name
+                WHERE instrument = _instrumentName::citext;
+
+                If _serviceCenterInstrument And _rating <> 'Unreviewed' And Not _isBlankOrQC And Not _isNotReleasedOrNoData Then
+                    SELECT dataset_rating
+                    INTO _rating
+                    FROM t_dataset_rating_name
+                    WHERE dataset_rating_id = -10;
+
+                    If Not FOUND Then
+                        _logMessage := 'Dataset Rating ID -10 should be "Unreviewed", but ID -10 was not found in t_dataset_rating_name';
+                        RAISE WARNING '%', _logMessage;
+
+                        CALL post_log_entry ('Error', _logMessage, 'Add_Update_Dataset');
+
+                        _rating := 'Unreviewed';
+                    End If;
+                End If;
+            End If;
+
             _ratingID := public.get_dataset_rating_id(_rating);
 
             If _ratingID = 0 Then
