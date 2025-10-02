@@ -117,18 +117,20 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **          09/17/2025 mem - Change long NanoPOTS to type 103 (Peptides: Long Standard MS)
 **                         - Return service type ID 1 if the dataset rating is 7 (Method Development)
 **          09/24/2025 mem - Return service type ID 1 if the dataset rating is -7 (Rerun, superseded) or -6 (Rerun, good data)
+**          10/01/2025 mem - Return service type ID 1 for QC_HeLa datasets
+**                         - Return service type ID 1 for GCMS_FAMEs and GCMS_Blank datasets
 **
 *****************************************************/
 DECLARE
-    _logErrors boolean := false;
-    _dataset citext;
-    _experiment citext;
-    _campaign citext;
-    _datasetType citext;
-    _instrument citext;
+    _logErrors       boolean := false;
+    _dataset         citext;
+    _experiment      citext;
+    _campaign        citext;
+    _datasetType     citext;
+    _instrument      citext;
     _instrumentGroup citext;
-    _sampleType citext;
-    _separationType citext;
+    _sampleType      citext;
+    _separationType  citext;
     _separationGroup citext;
     _serviceCenterInstrument boolean;
 
@@ -265,14 +267,23 @@ BEGIN
     End If;
 
     -- Check for dataset name or experiment name starting with a QC sample type name
-    If _dataset    LIKE 'QC_Mam%'   OR
+    If _dataset    LIKE 'QC_BTLE%'  OR
+       _experiment LIKE 'QC_BTLE%'  OR
+       _dataset    LIKE 'QC_HeLa%'  OR
+       _experiment LIKE 'QC_HeLa%'  OR
+       _dataset    LIKE 'QC_Mam%'   OR
        _experiment LIKE 'QC_Mam%'   OR
        _dataset    LIKE 'QC_Metab%' OR
        _experiment LIKE 'QC_Metab%' OR
        _dataset    LIKE 'QC_Shew%'  OR
-       _experiment LIKE 'QC_Shew%'  OR
-       _dataset    LIKE 'QC_BTLE%'  OR
-       _experiment LIKE 'QC_BTLE%'
+       _experiment LIKE 'QC_Shew%'
+    Then
+        RETURN 1;       -- Service type: None
+    End If;
+
+    -- Check for dataset name matching a GCMS FAMEs or Blank dataset
+    If _dataset LIKE 'GCMS_FAMEs%' OR
+       _dataset LIKE 'GCMS_Blank%'
     Then
         RETURN 1;       -- Service type: None
     End If;
