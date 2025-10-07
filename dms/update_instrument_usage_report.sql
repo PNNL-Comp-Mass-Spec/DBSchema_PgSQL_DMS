@@ -213,8 +213,8 @@ BEGIN
         ---------------------------------------------------
 
         _startOfMonth     := make_date(_yearValue, _monthValue, 1)                          ; -- Beginning of the month that we are updating
-        _startOfNextMonth := _startOfMonth     + INTERVAL '1 month'                         ; -- Beginning of the next month after _startOfMonth
-        _endOfMonth       := _startOfNextMonth - INTERVAL '1 msec'                          ; -- End of the month that we are editing
+        _startOfNextMonth := _startOfMonth     + Interval '1 month'                         ; -- Beginning of the next month after _startOfMonth
+        _endOfMonth       := _startOfNextMonth - Interval '1 msec'                          ; -- End of the month that we are editing
         _lockDateReload   := _startOfNextMonth + make_interval(days => _reloadThresholdDays); -- Date threshold, afterwhich users can no longer reload this month's data
         _lockDateUpdate   := _startOfNextMonth + make_interval(days => _updateThresholdDays); -- Date threshold, afterwhich users can no longer update this month's data
 
@@ -450,7 +450,6 @@ BEGIN
     If _dropInstrumentsTable Then
         DROP TABLE IF EXISTS Tmp_Instruments;
     End If;
-
 END
 $$;
 

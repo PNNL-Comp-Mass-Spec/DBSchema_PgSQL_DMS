@@ -74,7 +74,7 @@ BEGIN
         INSERT INTO Tmp_Managers (Manager_Description, Manager_Name,  Entry_ID_Min)
         SELECT posted_by, null, MIN(entry_id) AS Entry_ID_Min
         FROM public.t_log_entries
-        WHERE entered >= CURRENT_TIMESTAMP - INTERVAL '48 hours' AND
+        WHERE entered >= CURRENT_TIMESTAMP - Interval '48 hours' AND
               type = 'Error' AND
               posted_by ILIKE 'Analysis Tool Manager%' AND
               message ILIKE '%flag file exists%'
@@ -133,7 +133,7 @@ BEGIN
                ON M.Manager_Name = Status.Processor_Name
         WHERE JS.State = 4 AND
               JS.Tool = 'Mz_Refinery' AND
-              JS.Start < CURRENT_TIMESTAMP - INTERVAL '15 minutes' AND
+              JS.Start < CURRENT_TIMESTAMP - Interval '15 minutes' AND
               Status.Progress < 0.1;
 
         If Not FOUND Then
@@ -260,7 +260,7 @@ BEGIN
 
             UPDATE public.t_log_entries
             SET type = 'ErrorIgnore'
-            WHERE Entered >= CURRENT_TIMESTAMP - INTERVAL '48 hours' AND
+            WHERE Entered >= CURRENT_TIMESTAMP - Interval '48 hours' AND
                   type = 'Error' AND
                   posted_by = format('Analysis Tool Manager: %s', _jobStep.Processor)::citext AND
                   message ILIKE '%flag file exists%';

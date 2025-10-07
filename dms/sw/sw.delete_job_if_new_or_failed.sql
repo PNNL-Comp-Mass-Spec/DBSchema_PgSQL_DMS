@@ -96,7 +96,7 @@ BEGIN
                                  FROM sw.t_job_steps JS
                                  WHERE JS.job = _job AND
                                        JS.state IN (4, 9) AND
-                                       JS.start >= CURRENT_TIMESTAMP - INTERVAL '7 days')
+                                       JS.start >= CURRENT_TIMESTAMP - Interval '7 days')
                   ) Then
 
             ---------------------------------------------------
@@ -113,7 +113,7 @@ BEGIN
                                         FROM sw.t_job_steps JS
                                         WHERE JS.job = _job AND
                                               JS.state IN (4, 9) AND
-                                              JS.start >= CURRENT_TIMESTAMP - INTERVAL '7 days')
+                                              JS.start >= CURRENT_TIMESTAMP - Interval '7 days')
                      ) Then
 
             ---------------------------------------------------
@@ -170,7 +170,7 @@ BEGIN
                       FROM sw.t_job_steps JS
                       WHERE JS.job = _job AND
                             JS.state IN (4, 9) AND
-                            JS.start >= CURRENT_TIMESTAMP - INTERVAL '7 days');
+                            JS.start >= CURRENT_TIMESTAMP - Interval '7 days');
 
     If FOUND Then
         _message := format('Deleted analysis %s from sw.t_jobs', _jobText);
@@ -187,7 +187,7 @@ BEGIN
                                          FROM sw.t_job_steps JS
                                          WHERE JS.job = _job AND
                                                JS.state IN (4, 9) AND
-                                               JS.start >= CURRENT_TIMESTAMP - INTERVAL '7 days')
+                                               JS.start >= CURRENT_TIMESTAMP - Interval '7 days')
     Then
         RAISE WARNING 'Pipeline % not deleted; job is in progress', _jobText;
     ElsIf _jobState IN (4,7,14) Then
@@ -195,7 +195,6 @@ BEGIN
     Else
         RAISE WARNING 'Pipeline % not deleted; job state is not New, Failed, or Holding', _jobText;
     End If;
-
 END
 $$;
 

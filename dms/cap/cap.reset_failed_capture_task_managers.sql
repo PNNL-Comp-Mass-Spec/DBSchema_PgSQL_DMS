@@ -47,7 +47,7 @@ BEGIN
            Status_Date
     FROM cap.V_Processor_Status_Warnings_CTM
     WHERE Most_Recent_Log_Message LIKE '%Flag file%' AND
-          Status_Date > CURRENT_TIMESTAMP - INTERVAL '6 hours';
+          Status_Date > CURRENT_TIMESTAMP - Interval '6 hours';
 
     If Not Exists (SELECT * FROM Tmp_ManagersToReset) Then
         _message := 'No failed managers were found';
@@ -77,7 +77,6 @@ BEGIN
                 _returnCode  => _returnCode);   -- Output
 
     DROP TABLE Tmp_ManagersToReset;
-
 END
 $$;
 

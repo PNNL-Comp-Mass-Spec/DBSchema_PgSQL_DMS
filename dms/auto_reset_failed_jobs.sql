@@ -176,8 +176,8 @@ BEGIN
         WHERE J.job_state_id = 2 AND
               JS.state = 4 AND
               ProcStatus.Mgr_Status = 'Stopped Error' AND
-              JS.start <= CURRENT_TIMESTAMP - INTERVAL '1 hour' AND
-              ProcStatus.Status_Date > CURRENT_TIMESTAMP - INTERVAL '30 minutes';
+              JS.start <= CURRENT_TIMESTAMP - Interval '1 hour' AND
+              ProcStatus.Status_Date > CURRENT_TIMESTAMP - Interval '30 minutes';
 
         If Not Exists (SELECT * FROM Tmp_FailedJobs) Then
             DROP TABLE Tmp_FailedJobs;

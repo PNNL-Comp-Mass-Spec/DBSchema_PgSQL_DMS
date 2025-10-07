@@ -463,7 +463,7 @@ BEGIN
             -- Set a default delayed start for LCDatasetCapture steps; we want to give the 'DatasetArchive' task a chance to run before the 'LCDatasetCapture' task starts
             -- This can just be bulk-applied to all steps for this capture task job
             UPDATE Tmp_Job_Steps
-            SET Next_Try = CURRENT_TIMESTAMP + INTERVAL '30 minutes'
+            SET Next_Try = CURRENT_TIMESTAMP + Interval '30 minutes'
             WHERE Job = _jobInfo.Job;
         End If;
 

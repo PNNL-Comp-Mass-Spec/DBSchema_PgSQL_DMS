@@ -47,7 +47,7 @@ BEGIN
     -----------------------------------------------
 
     _mostRecentDays := Coalesce(_mostRecentDays, 0);
-    _startDate      := Coalesce(_startDate, CURRENT_TIMESTAMP - INTERVAL '2 days');
+    _startDate      := Coalesce(_startDate, CURRENT_TIMESTAMP - Interval '2 days');
 
     _endDate        := Coalesce(_endDate, CURRENT_TIMESTAMP);
     _logErrors      := Coalesce(_logErrors, true);
@@ -118,7 +118,6 @@ BEGIN
         End If;
 
     End If;
-
 END
 $$;
 

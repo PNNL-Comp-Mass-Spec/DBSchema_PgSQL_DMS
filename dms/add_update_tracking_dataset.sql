@@ -165,7 +165,7 @@ BEGIN
 
         _refDate  := CURRENT_TIMESTAMP;
         _acqStart := _runStart;
-        _acqEnd   := _acqStart + INTERVAL '10 minutes';
+        _acqEnd   := _acqStart + Interval '10 minutes';
 
         -- Tracking datasets are 10 minutes long, by default
         -- Override the default if _runDuration has an integer
@@ -566,8 +566,8 @@ BEGIN
         -- Update interval table
         ---------------------------------------------------
 
-        _startDate := _refDate - INTERVAL '1 month';
-        _endDate   := _refDate + INTERVAL '1 month';
+        _startDate := _refDate - Interval '1 month';
+        _endDate   := _refDate + Interval '1 month';
 
         CALL public.update_dataset_interval (
                         _instrumentName,
@@ -593,7 +593,6 @@ BEGIN
             _returnCode := _sqlState;
         End If;
     END;
-
 END
 $$;
 

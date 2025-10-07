@@ -93,17 +93,17 @@ BEGIN
 
         RAISE INFO 'Processing factor_log entries between % and %',
                         public.timestamp_text(_dateFilterStart),
-                        public.timestamp_text(_dateFilterEnd + INTERVAL '86399.999 seconds');
+                        public.timestamp_text(_dateFilterEnd + Interval '86399.999 seconds');
 
         SELECT MIN(event_id) - 1
         INTO _eventIDStart
         FROM t_factor_log
-        WHERE changed_on BETWEEN _dateFilterStart AND _dateFilterEnd + INTERVAL '1 day';
+        WHERE changed_on BETWEEN _dateFilterStart AND _dateFilterEnd + Interval '1 day';
 
         SELECT MAX(event_id)
         INTO _eventIDEnd
         FROM t_factor_log
-        WHERE changed_on BETWEEN _dateFilterStart AND _dateFilterEnd + INTERVAL '1 day';
+        WHERE changed_on BETWEEN _dateFilterStart AND _dateFilterEnd + Interval '1 day';
     End If;
 
     -----------------------------------------------------------

@@ -110,7 +110,7 @@ BEGIN
         --------------------------------------------
 
         DELETE FROM cap.t_dataset_info_xml
-        WHERE Cache_Date < CURRENT_TIMESTAMP - INTERVAL '7 days' AND
+        WHERE Cache_Date < CURRENT_TIMESTAMP - Interval '7 days' AND
               NOT EXISTS (SELECT DS.Dataset_ID
                           FROM public.t_dataset DS
                           WHERE DS.Dataset_ID = cap.t_dataset_info_xml.Dataset_ID);

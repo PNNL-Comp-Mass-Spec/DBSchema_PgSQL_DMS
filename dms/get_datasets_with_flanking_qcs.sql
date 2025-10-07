@@ -26,20 +26,20 @@ DECLARE
     _qcEndDate timestamp;
 BEGIN
 
-    _startDate := Coalesce(_startDate, CURRENT_DATE - INTERVAL '7 days');
-    _endDate   := Coalesce(_endDate, _startDate + INTERVAL '1 day');
+    _startDate := Coalesce(_startDate, CURRENT_DATE - Interval '7 days');
+    _endDate   := Coalesce(_endDate, _startDate + Interval '1 day');
 
     If _endDate < _startDate Then
         RAISE WARNING 'End date % is earlier than start date %; changing end date to %',
                           Left(public.timestamp_text(_endDate), 16),
                           Left(public.timestamp_text(_startDate), 16),
-                          Left(public.timestamp_text(_startDate + INTERVAL '1 day'), 16);
+                          Left(public.timestamp_text(_startDate + Interval '1 day'), 16);
 
-        _endDate := _startDate + INTERVAL '1 day';
+        _endDate := _startDate + Interval '1 day';
     End If;
 
-    _qcStartDate := _startDate - INTERVAL '32 days';
-    _qcEndDate   := _endDate   + INTERVAL '32 days';
+    _qcStartDate := _startDate - Interval '32 days';
+    _qcEndDate   := _endDate   + Interval '32 days';
 
     RETURN QUERY
     SELECT RankQ.Dataset,
@@ -89,7 +89,6 @@ BEGIN
            ON InstName.Instrument_ID = RankQ.instrument_id
     WHERE RankQ.Proximity_Rank <= 4
     ORDER BY RankQ.Dataset, RankQ.Diff_Days;
-
 END
 $$;
 

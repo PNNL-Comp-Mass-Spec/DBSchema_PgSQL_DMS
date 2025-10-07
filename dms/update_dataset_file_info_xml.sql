@@ -614,7 +614,7 @@ BEGIN
                 SET separation_type = _optimalSeparationType
                 WHERE dataset_id = _datasetID;
 
-                If Not Exists (SELECT entry_id FROM t_log_entries WHERE message LIKE 'Auto-updated separation type%' AND Entered >= CURRENT_TIMESTAMP - INTERVAL '2 hours') Then
+                If Not Exists (SELECT entry_id FROM t_log_entries WHERE message LIKE 'Auto-updated separation type%' AND Entered >= CURRENT_TIMESTAMP - Interval '2 hours') Then
                     _msg := format('Auto-updated separation type from %s to %s for dataset %s', _separationType, _optimalSeparationType, _datasetName);
                     CALL post_log_entry ('Normal', _msg, 'Update_Dataset_File_Info_XML');
                 End If;
@@ -851,7 +851,7 @@ BEGIN
 
         If _acqLengthMinutes > 10080 Then
             UPDATE Tmp_DS_Info
-            SET Acq_Time_End = Acq_Time_Start + INTERVAL '1 hour';
+            SET Acq_Time_End = Acq_Time_Start + Interval '1 hour';
 
             _message := format(
                 'Acquisition length for dataset %s is over 7 days; '

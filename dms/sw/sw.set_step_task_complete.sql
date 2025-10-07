@@ -522,7 +522,7 @@ BEGIN
                        FROM sw.t_log_entries
                        WHERE Message = _message AND
                              type = 'Normal' AND
-                             Entered >= CURRENT_TIMESTAMP - INTERVAL '1 day'
+                             Entered >= CURRENT_TIMESTAMP - Interval '1 day'
                       ) Then
 
                 _message := format('has already reported completion code %s (%s) within the last 24 hours',

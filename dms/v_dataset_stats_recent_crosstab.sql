@@ -27,7 +27,7 @@ CREATE VIEW public.v_dataset_stats_recent_crosstab AS
             ON DS.dataset_state_id = DSN.Dataset_state_ID
           INNER JOIN public.t_instrument_name Instrument
             ON DS.instrument_id = Instrument.Instrument_ID
-     WHERE (DS.last_affected >= CURRENT_TIMESTAMP - INTERVAL ''1 month'')
+     WHERE (DS.last_affected >= CURRENT_TIMESTAMP - Interval ''1 month'')
      GROUP BY DSN.Dataset_state_ID, DSN.dataset_state, Instrument.instrument_class
      ORDER BY DSN.dataset_state, Instrument.instrument_class'::text, 'SELECT unnest(''{Agilent_Ion_Trap,Agilent_TOF_V2,
                      BrukerFT_BAF,BrukerMALDI_Imaging_V2,

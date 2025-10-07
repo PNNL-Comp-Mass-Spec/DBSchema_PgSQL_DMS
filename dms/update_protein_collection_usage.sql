@@ -117,7 +117,7 @@ BEGIN
                      MAX(NewestJob) AS Most_Recent_Date
               FROM (SELECT J.protein_collection_list,
                            COUNT(J.job) AS Jobs,
-                           SUM(CASE WHEN COALESCE(J.created, J.start, J.finish) >= CURRENT_TIMESTAMP - INTERVAL '1 year'
+                           SUM(CASE WHEN COALESCE(J.created, J.start, J.finish) >= CURRENT_TIMESTAMP - Interval '1 year'
                                     THEN 1
                                     ELSE 0
                                END) AS Job_Usage_Count_Last12Months,
@@ -154,7 +154,6 @@ BEGIN
             _returnCode := _sqlState;
         End If;
     END;
-
 END
 $$;
 

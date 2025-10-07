@@ -68,7 +68,7 @@ BEGIN
                       actual_start_date AS Proposal_Start_Date,
                       actual_end_date AS Proposal_End_Date,
                       CASE WHEN actual_start_date > CURRENT_TIMESTAMP THEN 1     -- Proposal start date is later than today; mark it active anyway
-                           WHEN CURRENT_TIMESTAMP BETWEEN Coalesce(actual_start_date, CURRENT_TIMESTAMP) AND actual_end_date + INTERVAL '1 day' THEN 1
+                           WHEN CURRENT_TIMESTAMP BETWEEN Coalesce(actual_start_date, CURRENT_TIMESTAMP) AND actual_end_date + Interval '1 day' THEN 1
                            ELSE 0
                       END AS Active
                FROM V_NEXUS_Import_Proposals
@@ -189,7 +189,6 @@ BEGIN
     ---------------------------------------------------
 
     CALL post_usage_log_entry ('update_eus_proposals_from_eus_imports', _usageMessage);
-
 END
 $$;
 

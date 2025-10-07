@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_stats_by_campaign(_mostrecentweeks
 **  Arguments:
 **    _mostRecentWeeks              Summarize datasets created within this many weeks
 **                                  - If this is 0, uses _startDate and _endDate
-**                                  - However, if _startDate is not a valid date, CURRENT_TIMESTAMP - INTERVAL '20 weeks'
+**                                  - However, if _startDate is not a valid date, CURRENT_TIMESTAMP - Interval '20 weeks'
 **                                  - Also, if _endDate is not a valid date, uses CURRENT_TIMESTAMP
 **    _startDate                    Start date; ignored if _mostRecentWeeks is non-zero
 **    _endDate                      End date;   ignored if _mostRecentWeeks is non-zero
@@ -61,7 +61,7 @@ BEGIN
     End If;
 
     If _mostRecentWeeks < 1 Then
-        _startDate := Coalesce(_startDate, CURRENT_TIMESTAMP - INTERVAL '20 weeks');
+        _startDate := Coalesce(_startDate, CURRENT_TIMESTAMP - Interval '20 weeks');
         _endDate   := Coalesce(_endDate,   CURRENT_TIMESTAMP);
 
         If _previewSql Then
@@ -147,7 +147,7 @@ BEGIN
                  'INNER JOIN t_instrument_name InstName ON DS.instrument_id = InstName.instrument_id ';
 
     If _mostRecentWeeks > 0 Then
-        _sql := _sql || format('WHERE DS.Date_Sort_Key > CURRENT_TIMESTAMP - INTERVAL ''%s weeks''', _mostRecentWeeks);
+        _sql := _sql || format('WHERE DS.Date_Sort_Key > CURRENT_TIMESTAMP - Interval ''%s weeks''', _mostRecentWeeks);
     Else
         _sql := _sql || format('WHERE DS.Date_Sort_Key BETWEEN ''%s'' AND ''%s''', _startDate, _endDate);
     End If;

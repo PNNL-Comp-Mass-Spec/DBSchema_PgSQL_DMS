@@ -56,8 +56,8 @@ DECLARE
     _isPreviousHours boolean;
 BEGIN
 
-    _startDate := Coalesce(_startDate, CURRENT_TIMESTAMP - INTERVAL '24 hours');
-    _endDate   := Coalesce(_endDate,   _startDate + INTERVAL '24 hours');
+    _startDate := Coalesce(_startDate, CURRENT_TIMESTAMP - Interval '24 hours');
+    _endDate   := Coalesce(_endDate,   _startDate + Interval '24 hours');
 
     _hoursInRange := Round(Extract(epoch from _endDate - _startDate) / 3600)::int;
     _daysInRange  := Round(Extract(epoch from _endDate - _startDate) / 86400)::int;

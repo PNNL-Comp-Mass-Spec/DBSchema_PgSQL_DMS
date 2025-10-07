@@ -101,7 +101,7 @@ BEGIN
         ------------------------------------------------
 
         _entryDateStart := _currentTime - (format('%s seconds', _entryTimeWindowSeconds))::INTERVAL;
-        _entryDateEnd   := _currentTime + INTERVAL '1 second';
+        _entryDateEnd   := _currentTime + Interval '1 second';
 
         If _infoOnly Then
             RAISE INFO 'Filtering on entries dated between % and % (Window = % seconds)',
@@ -264,7 +264,6 @@ BEGIN
     RAISE INFO '%', _infoData;
 
     _message := format('Would update %s to indicate "%s"', _entryDescription, _enteredByNew);
-
 END
 $_$;
 

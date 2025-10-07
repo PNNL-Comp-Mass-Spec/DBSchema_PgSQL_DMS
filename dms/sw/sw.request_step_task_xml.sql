@@ -1307,7 +1307,7 @@ BEGIN
                    INNER JOIN sw.t_local_processors LP
                      ON JS.processor = LP.processor_name
               WHERE JS.state = 4 AND
-                    JS.start >= CURRENT_TIMESTAMP - INTERVAL '10 minutes'
+                    JS.start >= CURRENT_TIMESTAMP - Interval '10 minutes'
              ) RecentStartQ
         WHERE CJS.dataset_id = RecentStartQ.dataset_id AND
               CJS.machine = RecentStartQ.machine;
@@ -1430,7 +1430,7 @@ BEGIN
                 finish = Null,
                 actual_cpu_load = CASE WHEN _remoteInfoId > 1 THEN 0 ELSE cpu_load END,
                 next_try =        CASE WHEN _remoteInfoId > 1 AND _jobIsRunningRemote = 1 THEN next_try
-                                       ELSE CURRENT_TIMESTAMP + INTERVAL '30 seconds'
+                                       ELSE CURRENT_TIMESTAMP + Interval '30 seconds'
                                   END,
                 Remote_Info_ID =  CASE WHEN _remoteInfoID <= 1 THEN 1 ELSE _remoteInfoID END,
                 Retry_Count =     CASE WHEN _remoteInfoId > 1 AND _jobIsRunningRemote = 1 THEN Retry_Count
@@ -1746,7 +1746,6 @@ BEGIN
 
         DROP TABLE IF EXISTS Tmp_CandidateJobSteps;
     END;
-
 END
 $$;
 

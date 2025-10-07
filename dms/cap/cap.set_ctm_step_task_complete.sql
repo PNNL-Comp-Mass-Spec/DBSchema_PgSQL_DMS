@@ -168,7 +168,7 @@ BEGIN
                 If _evaluationCode = 3 Then
                     -- The captureTaskManager returns 3 (EVAL_CODE_NETWORK_ERROR_RETRY_CAPTURE) when a network error occurs during capture
                     -- Auto-retry the capture again (even if _stepInfo.RetryCount is 0)
-                    _stepInfo.NextTry := CURRENT_TIMESTAMP + INTERVAL '15 minutes';
+                    _stepInfo.NextTry := CURRENT_TIMESTAMP + Interval '15 minutes';
                 Else
                     If _stepInfo.StepTool = 'ArchiveVerify' And _stepInfo.RetryCount > 0 Then
                         _stepInfo.HoldoffIntervalMinutes :=
@@ -320,7 +320,6 @@ BEGIN
             _returnCode := _sqlState;
         End If;
     END;
-
 END
 $$;
 

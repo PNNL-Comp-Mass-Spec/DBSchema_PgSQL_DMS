@@ -47,7 +47,7 @@ BEGIN
     -- Window for sample prep request activity
     ---------------------------------------------------
 
-    _window := _now - INTERVAL '7 days';
+    _window := _now - Interval '7 days';
 
     ---------------------------------------------------
     -- Temp table for events to be added

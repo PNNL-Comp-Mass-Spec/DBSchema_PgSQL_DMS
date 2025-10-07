@@ -396,7 +396,7 @@ BEGIN
                ON TS.Job = T.Job
         WHERE TS.State = 4 AND
               ST.instrument_capacity_limited = 'Y' AND
-              TS.Start >= CURRENT_TIMESTAMP - INTERVAL '18 hours'
+              TS.Start >= CURRENT_TIMESTAMP - Interval '18 hours'
         GROUP BY T.Instrument, T.Max_Simultaneous_Captures;
 
         ---------------------------------------------------
@@ -841,7 +841,6 @@ BEGIN
         DROP TABLE IF EXISTS Tmp_InstrumentProcessor;
         DROP TABLE IF EXISTS Tmp_CandidateJobSteps;
     END;
-
 END
 $_$;
 

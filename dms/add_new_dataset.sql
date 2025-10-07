@@ -450,7 +450,7 @@ BEGIN
            SELECT entry_id
            FROM t_log_entries
            WHERE message LIKE 'Capture subfolder is identical to the dataset name%' AND
-                 Entered > CURRENT_TIMESTAMP - INTERVAL '3 days' )
+                 Entered > CURRENT_TIMESTAMP - Interval '3 days' )
         Then
             CALL post_log_entry ('Debug', _message, 'Add_New_Dataset');
         End If;
@@ -590,7 +590,7 @@ BEGIN
         WHERE Target_ID    = _datasetId AND
               Target_State = 1 AND
               Target_Type  = 4 AND
-              Entered BETWEEN _addUpdateTimeStamp AND _addUpdateTimeStamp + INTERVAL '1 minute';
+              Entered BETWEEN _addUpdateTimeStamp AND _addUpdateTimeStamp + Interval '1 minute';
 
     End If;
 

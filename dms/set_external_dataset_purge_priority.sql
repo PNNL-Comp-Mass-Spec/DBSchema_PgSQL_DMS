@@ -51,7 +51,7 @@ BEGIN
     WHERE DA.instrument_data_purged = 0 AND
           DA.purge_priority = 3 AND
           InstName.operations_role = 'Offsite' AND
-          DA.purge_holdoff_date < CURRENT_TIMESTAMP - INTERVAL '45 days';
+          DA.purge_holdoff_date < CURRENT_TIMESTAMP - Interval '45 days';
 
     If Not Exists (SELECT dataset_id FROM Tmp_DatasetsToUpdate) Then
         _message := 'No applicable datasets were found';

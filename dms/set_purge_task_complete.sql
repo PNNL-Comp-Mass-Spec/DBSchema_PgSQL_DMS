@@ -237,9 +237,9 @@ Code 6 (Purged all data except QC folder)
     UPDATE t_dataset_archive
     SET archive_state_id        = _completionState,
         archive_update_state_id = _currentUpdateState,
-        purge_holdoff_date = CASE WHEN _currentUpdateState = 2   THEN CURRENT_TIMESTAMP + INTERVAL '24 hours'
-                                  WHEN _completionCode IN (2, 3) THEN CURRENT_TIMESTAMP + INTERVAL '90 minutes'
-                                  WHEN _completionCode = 7       THEN CURRENT_TIMESTAMP + INTERVAL '48 hours'
+        purge_holdoff_date = CASE WHEN _currentUpdateState = 2   THEN CURRENT_TIMESTAMP + Interval '24 hours'
+                                  WHEN _completionCode IN (2, 3) THEN CURRENT_TIMESTAMP + Interval '90 minutes'
+                                  WHEN _completionCode = 7       THEN CURRENT_TIMESTAMP + Interval '48 hours'
                                   ELSE purge_holdoff_date
                              END,
         stagemd5_required  = CASE WHEN _completionCode = 3
@@ -286,7 +286,6 @@ Code 6 (Purged all data except QC folder)
 
     _usageMessage := format('Dataset: %s', _datasetName);
     CALL post_usage_log_entry ('set_purge_task_complete', _usageMessage);
-
 END
 $$;
 

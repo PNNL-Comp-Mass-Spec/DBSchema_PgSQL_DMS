@@ -63,7 +63,7 @@ BEGIN
         --------------------------------------------------------------------
 
         If Trim(Coalesce(_endDate, '')) = '' Then
-            _eDateAlternate := date_trunc('day', CURRENT_TIMESTAMP) + INTERVAL '86399.999 seconds';
+            _eDateAlternate := date_trunc('day', CURRENT_TIMESTAMP) + Interval '86399.999 seconds';
 
             -- Convert to text, e.g. 2022-10-21 23:59:59.999
             _endDate := (_eDateAlternate::timestamp without time zone)::text;
@@ -88,7 +88,7 @@ BEGIN
             -- Update _eDateAlternate to span thru 23:59:59.999 on the given day,
             -- then copy that value to _eDate
 
-            _eDateAlternate := _eDateAlternate + INTERVAL '86399.999 seconds';
+            _eDateAlternate := _eDateAlternate + Interval '86399.999 seconds';
             _eDate := _eDateAlternate;
         End If;
 
@@ -97,7 +97,7 @@ BEGIN
         --------------------------------------------------------------------
 
         If Coalesce(_startDate, '') = '' Then
-            _stDate := date_trunc('day', _eDate) - INTERVAL '2 weeks';
+            _stDate := date_trunc('day', _eDate) - Interval '2 weeks';
         Else
             _stDate := public.try_cast(_startDate, null::timestamp);
 
@@ -154,7 +154,6 @@ BEGIN
             _returnCode := _sqlState;
         End If;
     END;
-
 END
 $$;
 

@@ -157,7 +157,7 @@ BEGIN
         ---------------------------------------------------
 
         _currentMonthStart := make_date(_yearValue, _monthValue, 1)::timestamp;
-        _nextMonth := _currentMonthStart + INTERVAL '1 month';  -- Beginning of the next month after _currentMonthStart
+        _nextMonth := _currentMonthStart + Interval '1 month';  -- Beginning of the next month after _currentMonthStart
 
         _daysInMonth := Extract(day from _nextMonth - _currentMonthStart);
         _minutesInMonth := _daysInMonth * 1440;

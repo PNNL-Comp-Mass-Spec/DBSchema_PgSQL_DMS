@@ -121,7 +121,7 @@ BEGIN
 
         _currentLocation := 'Validate inputs';
 
-        _endDate    := Coalesce(_endDate, CURRENT_TIMESTAMP::date - INTERVAL '1 day');
+        _endDate    := Coalesce(_endDate, CURRENT_TIMESTAMP::date - Interval '1 day');
         _dayCount   := Coalesce(_dayCount, 7);
         _infoOnly   := Coalesce(_infoOnly, false);
         _showDebug  := Coalesce(_showDebug, false);
@@ -142,7 +142,7 @@ BEGIN
         _endDate := _endDate::date;
 
         -- Cache the start of the next day after the end date
-        _beginningOfNextDay := _endDate + INTERVAL '1 day';
+        _beginningOfNextDay := _endDate + Interval '1 day';
 
         -- Determine the starting day
         _startDate := _endDate - make_interval(days => _daycount);

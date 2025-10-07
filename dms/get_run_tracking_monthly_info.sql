@@ -130,7 +130,7 @@ BEGIN
     ---------------------------------------------------
 
     _firstDayOfStartingMonth := make_date(_year, _month, 1);
-    _firstDayOfTrailingMonth := _firstDayOfStartingMonth + INTERVAL '1 month';
+    _firstDayOfTrailingMonth := _firstDayOfStartingMonth + Interval '1 month';
 
     ---------------------------------------------------
     -- Get datasets whose start time falls within month
@@ -194,7 +194,7 @@ BEGIN
         FROM t_dataset AS TD
         WHERE TD.instrument_id = _instrumentID AND
               TD.acq_time_start < _firstDayOfStartingMonth AND
-              TD.acq_time_start > _firstDayOfStartingMonth - INTERVAL '90 days'
+              TD.acq_time_start > _firstDayOfStartingMonth - Interval '90 days'
         ORDER BY TD.acq_time_start DESC
         LIMIT 1;
 

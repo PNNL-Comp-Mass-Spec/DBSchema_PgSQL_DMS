@@ -184,7 +184,7 @@ BEGIN
           NOT DSType.Dataset_Type IN ('tracking') AND
           NOT E.experiment in ('tracking') AND
           DS.created BETWEEN CURRENT_TIMESTAMP - make_interval(days => _dayCountForRecentDatasets) AND
-                             CURRENT_TIMESTAMP - INTERVAL '12 hours' AND
+                             CURRENT_TIMESTAMP - Interval '12 hours' AND
           InstName.instrument_class IN (SELECT DISTINCT InstClass.instrument_class
                                         FROM t_predefined_analysis PA
                                              INNER JOIN t_instrument_class InstClass

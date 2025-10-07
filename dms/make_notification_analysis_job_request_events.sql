@@ -52,17 +52,17 @@ BEGIN
     -- Window for job start or finish
     ---------------------------------------------------
 
-    _window := _now - INTERVAL '7 days';
+    _window := _now - Interval '7 days';
 
     ---------------------------------------------------
     -- Window for analysis job request date
     ---------------------------------------------------
 
-    _threshold := _now - INTERVAL '90 days';
+    _threshold := _now - Interval '90 days';
 
     _past := make_date(2000, 1, 1);
 
-    _future := _now + INTERVAL '3 months';
+    _future := _now + Interval '3 months';
 
     ---------------------------------------------------
     -- Temp table for analysis job requests of interest

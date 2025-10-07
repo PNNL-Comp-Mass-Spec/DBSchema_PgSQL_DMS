@@ -56,7 +56,7 @@ BEGIN
     WHERE (Most_Recent_Log_Message = 'Flag file' OR
            _resetAllWithError And Mgr_Status = 'Stopped Error'
           ) AND
-          Status_Date > CURRENT_TIMESTAMP - INTERVAL '6 hours';
+          Status_Date > CURRENT_TIMESTAMP - Interval '6 hours';
 
     If Not FOUND Then
         _message := 'No failed managers were found';

@@ -73,7 +73,7 @@ BEGIN
               sw.t_job_steps JS
                 ON Tmp_Selected_Jobs.job = JS.job
          WHERE JS.state IN (4, 9) AND
-               JS.start >= CURRENT_TIMESTAMP - INTERVAL '48 hours'
+               JS.start >= CURRENT_TIMESTAMP - Interval '48 hours'
         );
 
     If Not Exists (SELECT job FROM Tmp_Selected_Jobs) Then

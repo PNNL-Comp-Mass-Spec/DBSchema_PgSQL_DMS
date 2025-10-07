@@ -67,7 +67,7 @@ BEGIN
     _updateJobRequestStatistics    := Coalesce(_updateJobRequestStatistics, true);
     _showRuntimeStats              := Coalesce(_showRuntimeStats, false);
 
-    _thresholdOneYear := CURRENT_TIMESTAMP - INTERVAL '1 year';
+    _thresholdOneYear := CURRENT_TIMESTAMP - Interval '1 year';
 
     CREATE TEMP TABLE Tmp_Update_Stats (
         Entry_ID        int PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -336,33 +336,33 @@ BEGIN
 
         INSERT INTO Tmp_StatEntries (Category, Label, SQL, UseDecimal)
         VALUES ('Job_Count', 'All',          'SELECT COUNT(job) FROM t_analysis_job;', false),
-               ('Job_Count', 'Last 7 days',  'SELECT COUNT(job) FROM t_analysis_job WHERE created > CURRENT_TIMESTAMP - INTERVAL ''2 days'';', false),
-               ('Job_Count', 'Last 30 days', 'SELECT COUNT(job) FROM t_analysis_job WHERE created > CURRENT_TIMESTAMP - INTERVAL ''30 days'';', false),
+               ('Job_Count', 'Last 7 days',  'SELECT COUNT(job) FROM t_analysis_job WHERE created > CURRENT_TIMESTAMP - Interval ''2 days'';', false),
+               ('Job_Count', 'Last 30 days', 'SELECT COUNT(job) FROM t_analysis_job WHERE created > CURRENT_TIMESTAMP - Interval ''30 days'';', false),
                ('Job_Count', 'New',          'SELECT COUNT(job) FROM t_analysis_job WHERE job_state_id = 1;', false),
 
                ('Campaign_Count', 'All',          'SELECT COUNT(campaign_id) FROM t_campaign;', false),
-               ('Campaign_Count', 'Last 7 days',  'SELECT COUNT(campaign_id) FROM t_campaign WHERE created > CURRENT_TIMESTAMP - INTERVAL ''2 days'';', false),
-               ('Campaign_Count', 'Last 30 days', 'SELECT COUNT(campaign_id) FROM t_campaign WHERE created > CURRENT_TIMESTAMP - INTERVAL ''30 days'';', false),
+               ('Campaign_Count', 'Last 7 days',  'SELECT COUNT(campaign_id) FROM t_campaign WHERE created > CURRENT_TIMESTAMP - Interval ''2 days'';', false),
+               ('Campaign_Count', 'Last 30 days', 'SELECT COUNT(campaign_id) FROM t_campaign WHERE created > CURRENT_TIMESTAMP - Interval ''30 days'';', false),
 
                ('CellCulture_Count', 'All',          'SELECT COUNT(biomaterial_id) FROM t_biomaterial;', false),
-               ('CellCulture_Count', 'Last 7 days',  'SELECT COUNT(biomaterial_id) FROM t_biomaterial WHERE Created > CURRENT_TIMESTAMP - INTERVAL ''2 days'';', false),
-               ('CellCulture_Count', 'Last 30 days', 'SELECT COUNT(biomaterial_id) FROM t_biomaterial WHERE Created > CURRENT_TIMESTAMP - INTERVAL ''30 days'';', false),
+               ('CellCulture_Count', 'Last 7 days',  'SELECT COUNT(biomaterial_id) FROM t_biomaterial WHERE Created > CURRENT_TIMESTAMP - Interval ''2 days'';', false),
+               ('CellCulture_Count', 'Last 30 days', 'SELECT COUNT(biomaterial_id) FROM t_biomaterial WHERE Created > CURRENT_TIMESTAMP - Interval ''30 days'';', false),
 
                ('Dataset_Count', 'All',          'SELECT COUNT(dataset_id) FROM t_dataset;', false),
-               ('Dataset_Count', 'Last 7 days',  'SELECT COUNT(dataset_id) FROM t_dataset WHERE created > CURRENT_TIMESTAMP - INTERVAL ''2 days'';', false),
-               ('Dataset_Count', 'Last 30 days', 'SELECT COUNT(dataset_id) FROM t_dataset WHERE created > CURRENT_TIMESTAMP - INTERVAL ''30 days'';', false),
+               ('Dataset_Count', 'Last 7 days',  'SELECT COUNT(dataset_id) FROM t_dataset WHERE created > CURRENT_TIMESTAMP - Interval ''2 days'';', false),
+               ('Dataset_Count', 'Last 30 days', 'SELECT COUNT(dataset_id) FROM t_dataset WHERE created > CURRENT_TIMESTAMP - Interval ''30 days'';', false),
 
                ('Experiment_Count', 'All',          'SELECT COUNT(exp_id) FROM t_experiments;', false),
-               ('Experiment_Count', 'Last 7 days',  'SELECT COUNT(exp_id) FROM t_experiments WHERE created > CURRENT_TIMESTAMP - INTERVAL ''2 days'';', false),
-               ('Experiment_Count', 'Last 30 days', 'SELECT COUNT(exp_id) FROM t_experiments WHERE created > CURRENT_TIMESTAMP - INTERVAL ''30 days'';', false),
+               ('Experiment_Count', 'Last 7 days',  'SELECT COUNT(exp_id) FROM t_experiments WHERE created > CURRENT_TIMESTAMP - Interval ''2 days'';', false),
+               ('Experiment_Count', 'Last 30 days', 'SELECT COUNT(exp_id) FROM t_experiments WHERE created > CURRENT_TIMESTAMP - Interval ''30 days'';', false),
 
                ('Organism_Count', 'All',          'SELECT COUNT(organism_id) FROM t_organisms;', false),
-               ('Organism_Count', 'Last 7 days',  'SELECT COUNT(organism_id) FROM t_organisms WHERE created > CURRENT_TIMESTAMP - INTERVAL ''2 days'';', false),
-               ('Organism_Count', 'Last 30 days', 'SELECT COUNT(organism_id) FROM t_organisms WHERE created > CURRENT_TIMESTAMP - INTERVAL ''30 days'';', false),
+               ('Organism_Count', 'Last 7 days',  'SELECT COUNT(organism_id) FROM t_organisms WHERE created > CURRENT_TIMESTAMP - Interval ''2 days'';', false),
+               ('Organism_Count', 'Last 30 days', 'SELECT COUNT(organism_id) FROM t_organisms WHERE created > CURRENT_TIMESTAMP - Interval ''30 days'';', false),
 
                ('RawDataTB', 'All',          'SELECT Round(SUM(Coalesce(file_size_bytes,0)) / 1024.0 / 1024.0 / 1024.0 / 1024.0, 2) FROM t_dataset;', true),
-               ('RawDataTB', 'Last 7 days',  'SELECT Round(SUM(Coalesce(file_size_bytes,0)) / 1024.0 / 1024.0 / 1024.0 / 1024.0, 2) FROM t_dataset WHERE created > CURRENT_TIMESTAMP - INTERVAL ''2 days'';', true),
-               ('RawDataTB', 'Last 30 days', 'SELECT Round(SUM(Coalesce(file_size_bytes,0)) / 1024.0 / 1024.0 / 1024.0 / 1024.0, 2) FROM t_dataset WHERE created > CURRENT_TIMESTAMP - INTERVAL ''30 days'';', true);
+               ('RawDataTB', 'Last 7 days',  'SELECT Round(SUM(Coalesce(file_size_bytes,0)) / 1024.0 / 1024.0 / 1024.0 / 1024.0, 2) FROM t_dataset WHERE created > CURRENT_TIMESTAMP - Interval ''2 days'';', true),
+               ('RawDataTB', 'Last 30 days', 'SELECT Round(SUM(Coalesce(file_size_bytes,0)) / 1024.0 / 1024.0 / 1024.0 / 1024.0, 2) FROM t_dataset WHERE created > CURRENT_TIMESTAMP - Interval ''30 days'';', true);
 
         ------------------------------------------------
         -- Use the queries in Tmp_StatEntries to update t_general_statistics

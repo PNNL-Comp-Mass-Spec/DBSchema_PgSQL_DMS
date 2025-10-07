@@ -484,7 +484,7 @@ BEGIN
                           step = _stepInfo.step AND
                           prev_target_state = 1 AND
                           target_state = 3 AND
-                          entered >= CURRENT_TIMESTAMP - INTERVAL '12 hours';
+                          entered >= CURRENT_TIMESTAMP - Interval '12 hours';
 
                     If _stepSkipCount >= 15 Then
                         _msg := format('Job %s, step %s has been skipped %s times in the last 12 hours; setting the step state to 2 to allow results to be regenerated',

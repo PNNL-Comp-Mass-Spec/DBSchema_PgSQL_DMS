@@ -214,13 +214,13 @@ BEGIN
             FROM pnnldata."VW_PUB_CHARGE_CODE" CC
                  LEFT OUTER JOIN pnnldata."VW_PUB_CHARGE_CODE_TRAIL" CT
                    ON Upper(CC."CHARGE_CD") = Upper(CT."CHARGE_CD")
-            WHERE (CC."SETUP_DATE" >= CURRENT_TIMESTAMP - INTERVAL '10 years' AND   -- Filter out charge codes created over 10 years ago
+            WHERE (CC."SETUP_DATE" >= CURRENT_TIMESTAMP - Interval '10 years' AND   -- Filter out charge codes created over 10 years ago
                    CC."AUTH_AMT" > 0 AND                                            -- Ignore charge codes with an authorization amount of $0
                    CC."CHARGE_CD" NOT LIKE 'R%' AND                                 -- Filter out charge codes that are used for purchasing, not labor
                    CC."CHARGE_CD" NOT LIKE 'V%'
                   )
                   OR
-                  (CC."SETUP_DATE" >= CURRENT_TIMESTAMP - INTERVAL '2 years' AND    -- Filter out charge codes created over 2 years ago
+                  (CC."SETUP_DATE" >= CURRENT_TIMESTAMP - Interval '2 years' AND    -- Filter out charge codes created over 2 years ago
                    CC."RESP_HID" IN (                                               -- Filter on charge codes where the Responsible person is an active DMS user; this includes codes with auth_amt = 0
                           SELECT hid_number
                           FROM t_users
@@ -395,8 +395,8 @@ BEGIN
             SET charge_code_state = 1
             WHERE charge_code_state = 0 AND
                   deactivated = 'N' AND
-                  (setup_date > CURRENT_TIMESTAMP - INTERVAL '2 years'
-                    -- Or Sub_Account_Inactive_Date > CURRENT_TIMESTAMP - INTERVAL '2 years'
+                  (setup_date > CURRENT_TIMESTAMP - Interval '2 years'
+                    -- Or Sub_Account_Inactive_Date > CURRENT_TIMESTAMP - Interval '2 years'
                   );
 
             ----------------------------------------------------------
@@ -440,7 +440,7 @@ BEGIN
                            ) B
                        ON A.charge_code = B.charge_code
                  ) UsageQ
-            WHERE Most_Recent_Usage >= CURRENT_TIMESTAMP - INTERVAL '3 years'
+            WHERE Most_Recent_Usage >= CURRENT_TIMESTAMP - Interval '3 years'
             GROUP BY charge_code;
 
             ----------------------------------------------------------
@@ -451,7 +451,7 @@ BEGIN
             UPDATE t_charge_code
             SET charge_code_state = 0
             WHERE charge_code_state IN (1, 2) AND
-                  inactive_date_most_recent < CURRENT_TIMESTAMP - INTERVAL '6 months' AND
+                  inactive_date_most_recent < CURRENT_TIMESTAMP - Interval '6 months' AND
                   Coalesce(usage_sample_prep, 0) = 0 AND
                   Coalesce(usage_requested_run, 0) = 0;
 
@@ -463,10 +463,10 @@ BEGIN
             UPDATE t_charge_code
             SET charge_code_state = 0
             WHERE charge_code_state IN (1, 2) AND
-                  inactive_date_most_recent < CURRENT_TIMESTAMP - INTERVAL '1 year' AND
+                  inactive_date_most_recent < CURRENT_TIMESTAMP - Interval '1 year' AND
                   NOT charge_code IN (SELECT charge_code
                                       FROM Tmp_CCsInUseLast3Years
-                                      WHERE Most_Recent_Usage >= CURRENT_TIMESTAMP - INTERVAL '1 year');
+                                      WHERE Most_Recent_Usage >= CURRENT_TIMESTAMP - Interval '1 year');
 
             ----------------------------------------------------------
             -- Auto-mark Inactive charge codes that were created at least 3 years ago
@@ -477,7 +477,7 @@ BEGIN
             UPDATE t_charge_code
             SET charge_code_state = 0
             WHERE charge_code_state IN (1, 2) AND
-                  setup_date < CURRENT_TIMESTAMP - INTERVAL '3 years' AND
+                  setup_date < CURRENT_TIMESTAMP - Interval '3 years' AND
                   NOT charge_code IN (SELECT charge_code
                                       FROM Tmp_CCsInUseLast3Years);
 

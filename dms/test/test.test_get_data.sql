@@ -34,7 +34,7 @@ BEGIN
 
   Open _resultsA For
     SELECT *
-    FROM (VALUES (1,2,3, 'fruit', current_timestamp - INTERVAL '5 seconds'),
+    FROM (VALUES (1,2,3, 'fruit', current_timestamp - Interval '5 seconds'),
                  (4,5,6, 'veggie', current_timestamp)) AS t(a,b,c,d,e);
 
   Open _resultsB For

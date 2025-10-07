@@ -162,12 +162,12 @@ BEGIN
     _day              := Extract(day   from _endDate);
     _hour             := Extract(hour  from _endDate);
 
-    _prevDate         := _endDate - INTERVAL '1 month';
+    _prevDate         := _endDate - Interval '1 month';
     _prevMonth        := Extract(month from _prevDate);
     _prevYear         := Extract(year  from _prevDate);
 
-    _nextMonth        := Extract(month from _endDate + INTERVAL '1 month');
-    _nextYear         := Extract(year  from _endDate + INTERVAL '1 month');
+    _nextMonth        := Extract(month from _endDate + Interval '1 month');
+    _nextYear         := Extract(year  from _endDate + Interval '1 month');
 
     _startOfNextMonth := make_date(_nextYear, _nextMonth, 1);
 
@@ -438,7 +438,7 @@ BEGIN
                     RAISE INFO '';
                 End If;
 
-                _currentInstrumentUsageMonth := _currentInstrumentUsageMonth - INTERVAL '1 month';
+                _currentInstrumentUsageMonth := _currentInstrumentUsageMonth - Interval '1 month';
             END LOOP;
 
         END LOOP;

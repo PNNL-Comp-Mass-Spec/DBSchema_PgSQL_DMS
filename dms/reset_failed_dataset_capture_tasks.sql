@@ -122,7 +122,7 @@ BEGIN
         FROM t_dataset
         WHERE dataset_state_id = 5 AND          -- Capture Failed
               comment ILIKE '%Authentication failure%password is incorrect%' AND
-              last_affected < CURRENT_TIMESTAMP - INTERVAL '15 minutes'
+              last_affected < CURRENT_TIMESTAMP - Interval '15 minutes'
         UNION
         SELECT T.dataset_id,
                T.dataset,
@@ -135,7 +135,7 @@ BEGIN
               TS.State = 6 AND                  -- Job step failed
               TS.Tool LIKE '%datasetinfo' AND
               TS.Completion_Message LIKE '%The process cannot access the file %sqlite% used by another process%' AND
-              TS.Finish < CURRENT_TIMESTAMP - INTERVAL '15 minutes'
+              TS.Finish < CURRENT_TIMESTAMP - Interval '15 minutes'
         ORDER BY dataset_id
         LIMIT _maxDatasetsToReset;
 

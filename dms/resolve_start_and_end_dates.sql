@@ -36,7 +36,7 @@ BEGIN
     --------------------------------------------------------------------
 
     If Trim(Coalesce(_endDate, '')) = '' Then
-        _eDateAlternate := date_trunc('day', CURRENT_TIMESTAMP) + INTERVAL '86399.999 seconds';
+        _eDateAlternate := date_trunc('day', CURRENT_TIMESTAMP) + Interval '86399.999 seconds';
 
         _endDate := (_eDateAlternate::timestamp without time zone)::text;
     End If;
@@ -59,7 +59,7 @@ BEGIN
         -- _endDate only specified year, month, and day
         -- Update _eDate to span thru 23:59:59.999 on the given day
 
-        _eDate := _eDateAlternate + INTERVAL '86399.999 seconds';
+        _eDate := _eDateAlternate + Interval '86399.999 seconds';
     End If;
 
     --------------------------------------------------------------------
@@ -67,7 +67,7 @@ BEGIN
     --------------------------------------------------------------------
 
     If Trim(Coalesce(_startDate, '')) = '' Then
-        _stDate := date_trunc('day', _eDate) - INTERVAL '2 weeks';
+        _stDate := date_trunc('day', _eDate) - Interval '2 weeks';
     Else
         _stDate := public.try_cast(_startDate, null::timestamp);
 
@@ -78,7 +78,6 @@ BEGIN
         End If;
 
     End If;
-
 END
 $$;
 

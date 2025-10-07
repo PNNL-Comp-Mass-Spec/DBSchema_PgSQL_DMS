@@ -82,7 +82,7 @@ BEGIN
 
     BEGIN
 
-        _targetDate  := Coalesce(_targetDate, CURRENT_TIMESTAMP - INTERVAL '1 month');
+        _targetDate  := Coalesce(_targetDate, CURRENT_TIMESTAMP - Interval '1 month');
         _infoOnly    := Coalesce(_infoOnly, true);
 
         _targetMonth := Extract(month from _targetDate);

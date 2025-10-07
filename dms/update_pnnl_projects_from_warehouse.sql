@@ -187,12 +187,12 @@ BEGIN
                    Proj."LAST_CHANGE_DATE" AS last_change_date,
                    '' AS update_status
             FROM pnnldata."VW_PUB_PROJECT" Proj
-            WHERE (Proj."SETUP_DATE" >= CURRENT_TIMESTAMP - INTERVAL '4 years')       -- Filter out projects created over 4 years ago
+            WHERE (Proj."SETUP_DATE" >= CURRENT_TIMESTAMP - Interval '4 years')       -- Filter out projects created over 4 years ago
                   OR
-                  (Proj."SETUP_DATE" >= CURRENT_TIMESTAMP - INTERVAL '15 years' AND   -- Include active projects created within the last 15 years
+                  (Proj."SETUP_DATE" >= CURRENT_TIMESTAMP - Interval '15 years' AND   -- Include active projects created within the last 15 years
                    Proj."DEACT_SW" = 'N')
                   OR
-                  (Proj."SETUP_DATE" >= CURRENT_TIMESTAMP - INTERVAL '2 years' AND    -- Filter on projects created in the last 2 years
+                  (Proj."SETUP_DATE" >= CURRENT_TIMESTAMP - Interval '2 years' AND    -- Filter on projects created in the last 2 years
                    Proj."RESP_HID" IN (                                               -- where the responsible person is an active DMS user
                           SELECT hid_number
                           FROM t_users

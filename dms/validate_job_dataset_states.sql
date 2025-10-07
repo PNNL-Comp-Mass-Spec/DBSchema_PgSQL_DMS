@@ -72,7 +72,7 @@ BEGIN
                          FROM cap.t_tasks
                          WHERE script = 'DatasetCapture' AND
                                state = 3 AND
-                               finish < CURRENT_TIMESTAMP - INTERVAL '1 hour'
+                               finish < CURRENT_TIMESTAMP - Interval '1 hour'
                         ) PipelineQ
                ON DS.dataset_id = PipelineQ.dataset_id
         WHERE DS.dataset_state_id IN (1, 2);
@@ -92,7 +92,7 @@ BEGIN
              INNER JOIN (SELECT job, state AS NewState
                          FROM sw.t_jobs
                          WHERE state IN (4, 7, 14) AND
-                               finish < CURRENT_TIMESTAMP - INTERVAL '1 hour'
+                               finish < CURRENT_TIMESTAMP - Interval '1 hour'
                         ) PipelineQ
                ON J.job = PipelineQ.job
         WHERE J.job_state_id IN (1, 2, 8);

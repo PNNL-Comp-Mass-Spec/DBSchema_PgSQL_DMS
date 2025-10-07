@@ -46,7 +46,7 @@ BEGIN
                WHERE TD.dataset_rating_id > 1
                      AND RR.eus_usage_type_id IN (16, 19, 20, 21)                          -- User, User_Unknown, User_Onsite, User_Remote
                      AND TD.dataset_state_id = 3                                           -- Complete
-                     AND TD.acq_time_start >= CURRENT_TIMESTAMP - INTERVAL '1 year'        -- The last 12 months (previously used >= get_fiscal_year_start(1))
+                     AND TD.acq_time_start >= CURRENT_TIMESTAMP - Interval '1 year'        -- The last 12 months (previously used >= get_fiscal_year_start(1))
                      AND NOT RR.eus_proposal_id IS NULL
                GROUP BY InstName.instrument_group, RR.eus_proposal_id
             ) AS Source
@@ -72,7 +72,7 @@ BEGIN
                                 WHERE TD.dataset_rating_id > 1
                                       AND RR.eus_usage_type_id IN (16, 19, 20, 21)                          -- User, User_Unknown, User_Onsite, User_Remote
                                       AND TD.dataset_state_id = 3                                           -- Complete
-                                      AND TD.acq_time_start >= CURRENT_TIMESTAMP - INTERVAL '1 year'        -- The last 12 months (previously used >= get_fiscal_year_start(1))
+                                      AND TD.acq_time_start >= CURRENT_TIMESTAMP - Interval '1 year'        -- The last 12 months (previously used >= get_fiscal_year_start(1))
                                       AND NOT RR.eus_proposal_id IS NULL
                                 GROUP BY InstName.instrument_group, RR.eus_proposal_id
                                ) AS Source
@@ -95,7 +95,6 @@ BEGIN
             _returnCode := _sqlState;
         End If;
     END;
-
 END
 $$;
 

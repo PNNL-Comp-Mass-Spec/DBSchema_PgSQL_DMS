@@ -223,7 +223,7 @@ BEGIN
             SELECT Entry_ID
             INTO _entryID
             FROM Tmp_StaleUploads
-            WHERE Entry_ID > _entryID AND Entered < CURRENT_TIMESTAMP - INTERVAL '365 days'
+            WHERE Entry_ID > _entryID AND Entered < CURRENT_TIMESTAMP - Interval '365 days'
             ORDER BY Entry_ID
             LIMIT 1;
 

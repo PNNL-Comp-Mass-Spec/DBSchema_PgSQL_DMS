@@ -193,10 +193,10 @@ BEGIN
         Else
             If _month <= 0 Then
                 _startDate := make_date(_year, 1, 1);
-                _endDate   := _startDate + INTERVAL '1 year';
+                _endDate   := _startDate + Interval '1 year';
             Else
                 _startDate := make_date(_year, _month, 1);
-                _endDate := _startDate + INTERVAL '1 month';
+                _endDate := _startDate + Interval '1 month';
             End If;
 
             INSERT INTO Tmp_DatasetStartTimes (
