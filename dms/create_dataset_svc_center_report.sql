@@ -12,10 +12,10 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate 
 **
 **      Looks for datasets that meet the following conditions
 **      - Dataset state 3 (Complete)
-**      - Created on or before the end date (created any time on the end date)
+**      - Acquisition start time on or before the end date (acquired any time on the end date)
 **      - Service center report state of 2 (Need to submit to service center) or 4 (Need to refund to service center)
 **      - Service type ID between 100 and 113
-**      - Dataset rating is not -10, -7, -6, -5, -4, -2, -1, 6, or 7 (Unreviewed, Rerun, Not Released, No Data, Exclude from Service Center, or Method Development)
+**      - Dataset rating is not -7, -6, -5, -4, -2, -1, 6, or 7 (Rerun, Not Released, No Data, Exclude from Service Center, or Method Development)
 **
 **      Added datasets will have their service center report state changed to 3 (Submitting to service center) or 5 (Refunded to service center)
 **
@@ -33,7 +33,7 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate 
 **      CALL create_dataset_svc_center_report('2025-07-16', _infoOnly => true);
 **      CALL create_dataset_svc_center_report('2025-07-16', _dayCount => 365, _infoOnly => true);
 **      CALL create_dataset_svc_center_report('2025-07-16', 365, _infoOnly => true);
-**      CALL create_dataset_svc_center_report(CURRENT_TIMESTAMP::date - INTERVAL '1 day', _dayCount => 365, _infoOnly => true);
+**      CALL create_dataset_svc_center_report(CURRENT_TIMESTAMP::date - Interval '1 day', _dayCount => 365, _infoOnly => true);
 **      CALL create_dataset_svc_center_report('2024-08-13', 5, _infoOnly => false, _showDebug => true);
 **
 **  Auth:   mem
@@ -52,6 +52,9 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate 
 **          09/19/2025 mem - Use renamed column requester_employee_id in t_service_use_report
 **                         - Use 'D3E154' for the requester employee ID
 **          09/24/2025 mem - Exclude datasets with rating -7 (Rerun, superseded) or -6 (Rerun, good data)
+**          10/02/2025 mem - Filter datasets on acquisition start time instead of DMS creation time
+**                         - Assure that start date is no earlier than 2025-10-01 (the official start date of the service center)
+**          10/06/2025 mem - Include datasets with rating -10 (Unreviewed)
 **
 *****************************************************/
 DECLARE
@@ -147,6 +150,10 @@ BEGIN
         -- Determine the starting day
         _startDate := _endDate - make_interval(days => _daycount);
 
+        If _startDate < '2025-10-01'::date Then
+            _startDate := '2025-10-01'::date;
+        End If;
+
         If _showDebug Then
             RAISE INFO 'Start date:              %', _startDate;
             RAISE INFO 'End date:                %', _endDate::date;
@@ -236,17 +243,18 @@ BEGIN
             FROM t_dataset DS
                  INNER JOIN t_requested_run RR
                    ON DS.dataset_id = RR.dataset_id
-            WHERE DS.dataset_state_id = 3 AND                                               -- Dataset state 3: Complete
-                  DS.created BETWEEN _startDate AND _beginningOfNextDay AND
-                  NOT DS.dataset_rating_id IN (-10, -7, -6, -5, -4, -2, -1, 6, 7) AND       -- Dataset rating is not Unreviewed, Rerun (Superseded), Rerun (Good Data) Not Released, No Data, Exclude from Service Center, or Method Development
-                  DS.svc_center_report_state_id = 0 AND                                     -- Service center report state 0: Undefined
-                  DS.service_type_id BETWEEN 100 AND 113 AND                                -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous)
+            WHERE DS.dataset_state_id = 3 AND                                           -- Dataset state 3: Complete
+                  DS.acq_time_start >= _startDate AND
+                  DS.acq_time_start <  _beginningOfNextDay AND
+                  NOT DS.dataset_rating_id IN (-7, -6, -5, -4, -2, -1, 6, 7) AND        -- Dataset rating is not Rerun (Superseded), Rerun (Good Data) Not Released, No Data, Exclude from Service Center, or Method Development
+                  DS.svc_center_report_state_id = 0 AND                                 -- Service center report state 0: Undefined
+                  DS.service_type_id BETWEEN 100 AND 113 AND                            -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous)
                   NOT Trim(Coalesce(RR.work_package, '')) IN ('', 'none', 'na', 'n/a', '(lookup)');
             --
             GET DIAGNOSTICS _datasetCount = ROW_COUNT;
 
             If _datasetCount = 0 Then
-                RAISE INFO 'Every dataset created between % and % already has a non-zero service center report state', _startDate, _beginningOfNextDay;
+                RAISE INFO 'Every dataset acquired between "% 12:00 am" and "% 11:59:59 pm" already has a non-zero service center report state', _startDate, _endDate::date;
             Else
                 RAISE INFO 'Would change the service center report state from 0 (Undefined) to 2 (Need to submit to service center) for % %',
                            _datasetCount, check_plural(_datasetCount, 'dataset', 'datasets');
@@ -258,11 +266,12 @@ BEGIN
                   FROM t_dataset DS
                        INNER JOIN t_requested_run RR
                          ON DS.dataset_id = RR.dataset_id
-                  WHERE DS.dataset_state_id = 3 AND                                             -- Dataset state 3: Complete
-                        DS.created BETWEEN _startDate AND _beginningOfNextDay AND
-                        NOT DS.dataset_rating_id IN (-10, -7, -6, -5, -4, -2, -1, 6, 7) AND     -- Dataset rating is not Unreviewed, Rerun (Superseded), Rerun (Good Data) Not Released, No Data, Exclude from Service Center, or Method Development
-                        DS.svc_center_report_state_id = 0 AND                                   -- Service center report state 0: Undefined
-                        DS.service_type_id BETWEEN 100 AND 113 AND                              -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous); limit to the range of valid IDs, for safety
+                  WHERE DS.dataset_state_id = 3 AND                                         -- Dataset state 3: Complete
+                        DS.acq_time_start >= _startDate AND
+                        DS.acq_time_start <  _beginningOfNextDay AND
+                        NOT DS.dataset_rating_id IN (-7, -6, -5, -4, -2, -1, 6, 7) AND      -- Dataset rating is not Rerun (Superseded), Rerun (Good Data) Not Released, No Data, Exclude from Service Center, or Method Development
+                        DS.svc_center_report_state_id = 0 AND                               -- Service center report state 0: Undefined
+                        DS.service_type_id BETWEEN 100 AND 113 AND                          -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous); limit to the range of valid IDs, for safety
                         NOT Trim(Coalesce(RR.work_package, '')) IN ('', 'none', 'na', 'n/a', '(lookup)')
                   ) FilterQ
             WHERE t_dataset.dataset_id = FilterQ.dataset_id;
@@ -271,12 +280,12 @@ BEGIN
 
             If _datasetCount = 0 Then
                 If _showDebug Then
-                    RAISE INFO 'Every dataset created between % and % already has a non-zero service center report state (or an undefined work package)', _startDate, _beginningOfNextDay;
+                    RAISE INFO 'Every dataset acquired between "% 12:00 am" and "% 11:59:59 pm" already has a non-zero service center report state (or an undefined work package)', _startDate, _endDate::date;
                 End If;
             Else
-                _logMsg := format('Changed service center report state from 0 to 2 for %s %s created between %s and %s',
+                _logMsg := format('Changed service center report state from 0 to 2 for %s %s acquired between "%s 12:00 am" and "%s 11:59:59 pm"',
                                   _datasetCount, check_plural(_datasetCount, 'dataset', 'datasets'),
-                                  _startDate, _beginningOfNextDay);
+                                  _startDate, _endDate::date);
 
                 If _showDebug Then
                     RAISE INFO '%', _logMsg;
@@ -326,14 +335,15 @@ BEGIN
                       DS.acq_length_minutes,
                       Round(extract(epoch FROM RR.request_run_finish - RR.request_run_start) / 60.0, 0)::int AS req_run_acq_length_minutes,
                       RR.work_package AS charge_code,
-                      Coalesce(DS.acq_time_start, DS.Created) AS transaction_date
+                      DS.acq_time_start AS transaction_date
                FROM t_dataset DS
                     LEFT OUTER JOIN t_requested_run RR
                       ON DS.dataset_id = RR.dataset_id
                     LEFT OUTER JOIN Tmp_Datasets_to_Update DTU
                       ON DS.dataset_id = DTU.dataset_id
                WHERE DS.dataset_state_id = 3 AND
-                     DS.created BETWEEN _startDate AND _beginningOfNextDay AND
+                     DS.acq_time_start >= _startDate AND
+                     DS.acq_time_start <  _beginningOfNextDay AND
                      (DS.svc_center_report_state_id IN (2, 4) OR                -- 2: Need to submit, 4: Need to refund
                      _infoOnly AND NOT DTU.dataset_id IS NULL                   -- Also include datasets that would have had svc_center_report_state_id auto-updated from 0 to 2 (see 'Change service center report state' above)
                      )
@@ -343,10 +353,10 @@ BEGIN
         GET DIAGNOSTICS _datasetCount = ROW_COUNT;
 
         If _datasetCount = 0 Then
-            RAISE INFO 'Did not find any datasets created between % and % with a service center report state of 2 or 4',
+            RAISE INFO 'Did not find any datasets acquired between "% 12:00 am" and "% 11:59:59 pm" with a service center report state of 2 or 4',
                        -- to_char(_startDate, 'yyyy-mm-dd'),
                        -- to_char(_beginningOfNextDay, 'yyyy-mm-dd');
-                       _startDate, _beginningOfNextDay;
+                       _startDate, _endDate::date;
 
             DROP TABLE Tmp_Datasets_to_Update;
             DROP TABLE Tmp_Datasets_to_Add;
@@ -354,14 +364,14 @@ BEGIN
         End If;
 
         _logMsg = format('a new service center report using %s %s that %s a service center report state of 2 (Need to submit) or 4 (Need to refund), '
-                       'filtering on dataset_state_id = 3 and dataset created between %s and %s',
+                       'filtering on dataset_state_id = 3 and acquisition start time between "%s 12:00 am" and "%s 11:59:59 pm"',
                        _datasetCount,
                        check_plural(_datasetCount, 'dataset', 'datasets'),
                        check_plural(_datasetCount, 'has', 'have'),
-                       _startDate, _beginningOfNextDay);
+                       _startDate, _endDate::date);
 
         If _infoOnly Then
-            -- Would create a new service center report using 1473 datasets that have a service center report state of 2 (Need to submit) or 4 (Need to refund), filtering on dataset_state_id = 3 and dataset created between 2024-07-30 and 2025-07-31
+            -- Would create a new service center report using 1473 datasets that have a service center report state of 2 (Need to submit) or 4 (Need to refund), filtering on dataset_state_id = 3 and acquisition start time between 2024-07-30 and 2025-07-31
             _logMsg := format('Would create %s', _logMsg);
 
             RAISE INFO '%', _logMsg;
@@ -380,7 +390,7 @@ BEGIN
         End If;
 
         If _showDebug Then
-            -- Creating a new service center report using 1473 datasets that have a service center report state of 2 (Need to submit) or 4 (Need to refund), filtering on dataset_state_id = 3 and dataset created between 2024-07-30 and 2025-07-31
+            -- Creating a new service center report using 1473 datasets that have a service center report state of 2 (Need to submit) or 4 (Need to refund), filtering on dataset_state_id = 3 and acquisition start time between 2024-07-30 and 2025-07-31
             RAISE INFO 'Creating %', _logMsg;
         End If;
 
@@ -463,7 +473,7 @@ BEGIN
         _currentLocation := 'Create a new service center report';
 
         INSERT INTO svc.t_service_use_report (start_time, end_time, requester_employee_id, report_state_id, cost_group_id)
-        VALUES (_startDate, _beginningOfNextDay, _requesterUsername, 1, _costGroupID)
+        VALUES (_startDate, _beginningOfNextDay - Interval '1 millisecond', _requesterUsername, 1, _costGroupID)
         RETURNING report_id
         INTO _reportID;
 
