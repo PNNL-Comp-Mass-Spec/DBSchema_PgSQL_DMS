@@ -148,7 +148,7 @@ COPY public.t_emsl_instruments (eus_instrument_id, eus_display_name, eus_instrum
 34332	Fourier-Transform Ion Cyclotron Resonance (FTICR)	Mass Spectrometer: 7T FTICR-SciMax (2021)	10	\N	\N	2024-08-06 06:15:53	1	0
 35000	Mass Spectrometer: SciMax	Mass Spectrometer: SciMax01	10	\N	\N	2021-11-30 06:15:04	0	0
 35007	Metabolomic Gas Chromatography-Mass Spectrometry (GC-MS)	Mass Spectrometer: Agilent GC-MS 3 (2021)	24	\N	\N	2024-12-05 06:16:46.760634	1	0
-35015	Proteomic Bottom-up (NanoScale) Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: TIMS ToF (2023)	24	\N	\N	2025-08-20 06:16:11.319862	0	0
+35015	Proteomic Bottom-up (NanoScale) Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: TIMS ToF SCP (2023)	24	\N	\N	2025-10-04 06:16:28.198837	0	0
 35022	Inductively Coupled Plasma (ICP-MS) 	Mass Spectrometer: ICP-MS (2023)	10	\N	\N	2024-08-07 06:16:00.891027	1	0
 35024	Liquid Chromatography - Ion Mobility Spectrometry - Mass Spectrometry (LC-IMS-MS)	Mass Spectrometer: Q-ToF LC-IMS 9 (2023)	10	\N	\N	2025-06-14 06:16:50.71039	1	0
 35025	Lipidomics Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q-ToF LC-MS 3 (2010) - DUPLICATE	\N	\N	\N	2024-08-06 06:15:53	0	0

@@ -73,7 +73,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 225	Arwen	Waters_Acquity_LC	Waters_Acquity_LC	4576	4919	secfso	Active	EMSL 1314	Waters Acquity M-Class LC	2023-11-02 17:25:10
 192	Ascend01	LTQ_FT	Ascend	4440	5191	secfso	Active	BSF 1229	Orbitrap Ascend Tribrid, MS:1003356; Purchased by Leidos	2023-04-18 12:19:15
 254	Astral01	LTQ_FT	Astral	4839	5183	secfso	Active	BSF 2235	Orbitrap Astral, MS:1003378; 50% EBSD, 50% NSD	2024-05-28 18:03:42
-262	AstralZ02	LTQ_FT	Astral	5174	5178	secfso	Active	BSF 2233	Orbitrap Astral Zoom, MS:1003442; purchased by Tao Liu's Framingham project	2025-08-20 15:17:40.698952
+262	AstralZ02	LTQ_FT	Astral	5174	5200	secfso	Active	BSF 2233	Orbitrap Astral Zoom, MS:1003442; purchased by Tao Liu's Framingham project	2025-08-20 15:17:40.698952
 131	BSF_GC01	Agilent_Ion_Trap	Agilent_GC	1754	2	secfso	Offline	BSF 1229	GC with FID	2015-07-06 16:23:30
 139	BSF_GC02	Agilent_Ion_Trap	Agilent_GC	1991	2	secfso	Offline	BSF 1215	GC with FID	2016-01-27 11:33:06
 132	BSF_GCMS01	Agilent_Ion_Trap	Agilent_GC_MS	1755	2	secfso	Offline	BSF 1229	GC-MS	2015-07-06 16:24:23
@@ -223,7 +223,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 28	QC_MM_TOF	Waters_TOF	Waters_TOF	118	117	fso	Inactive	EMSL 1553	Micromass TOF-type instrument for QC Process	2006-11-08 00:00:00
 158	QEHFX01	LTQ_FT	QEHFX	2996	5131	secfso	Active	EMSL 1444	Q Exactive HF-X, MS:1002877	2019-01-16 16:21:27
 159	QEHFX02	LTQ_FT	QEHFX	2997	5192	secfso	Active	EMSL 1444	Q Exactive HF-X, MS:1002877	2019-01-16 16:21:38
-169	QEHFX03	LTQ_FT	QEHFX	3318	5138	secfso	Active	EMSL 1444	Q Exactive HF-X, MS:1002877	2020-01-14 15:05:55
+169	QEHFX03	LTQ_FT	QEHFX	3318	5201	secfso	Active	EMSL 1444	Q Exactive HF-X, MS:1002877	2020-01-14 15:05:55
 103	QExact01	LTQ_FT	QExactive	1232	2859	secfso	Inactive	EMSL 1526	Q-Exactive 1	2012-12-07 14:32:20
 127	QExactHF03	LTQ_FT	QExactive	1633	5181	secfso	Active	EMSL 1526	Q Exactive HF, MS:1002523\t	2015-02-19 10:12:31
 130	QExactHF05	LTQ_FT	QExactive	1706	5163	secfso	Active	EMSL 1621	Q Exactive HF, MS:1002523. Has HMR/UHMR configuration (boards swapped). Supports MALDI (Spectroglyph), UVPD, and ECD/ETD, depending on the connected hardware. While the MALDI source is attached, use instrument QExactHF05_Imaging for new datasets.	2015-06-29 10:54:50
@@ -281,7 +281,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 90	WashU_TripleTOF5600	Sciex_TripleTOF	Sciex_TripleTOF	1133	1134	fso	Inactive	WUSL (Washington University in St. Louis)	Data acquired under the CPTAC project	2012-05-14 20:28:39
 174	XevoG2_01	Waters_TOF	Waters_TOF	3536	5173	secfso	Inactive	BSF 1215	Transfer/Moved from BSEL in September 2020; Excessed 2024	2020-09-23 12:48:22
 255	timsTOFFlex02	BrukerTOF_TDF	timsTOF_Flex	4863	5168	secfso	Active	EMSL 1444	Bruker timsTOF Flex with ESI source. Also has MALDI imaging capability; Owned by EBSD	2024-07-03 13:46:33
-256	timsTOFFlex02_Imaging	timsTOF_MALDI_Imaging	MALDI_timsTOF_Imaging	4863	5142	secfso	Active	EMSL 1444	Bruker timsTOF Flex with MALDI imaging capability; Owned by EBSD	2024-07-03 13:47:58
+256	timsTOFFlex02_Imaging	timsTOF_MALDI_Imaging	MALDI_timsTOF_Imaging	4863	5202	secfso	Active	EMSL 1444	Bruker timsTOF Flex with MALDI imaging capability; Owned by EBSD	2024-07-03 13:47:58
 194	timsTOFScp01	BrukerTOF_TDF	timsTOF_SCP	4442	5188	secfso	Active	EMSL 1314	Bruker timsTOF for single cell proteomics; for MassIVE, use timsTOF SCP, MS:1003231; EBSD/EMSD owned	2023-04-19 16:36:27
 \.
 

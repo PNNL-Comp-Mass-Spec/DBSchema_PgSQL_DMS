@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.5
+-- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -419,6 +419,18 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 2155	Bacterial_proteomes_48organisms_2017-03-10.fasta	31	Combination of 48 protein collections from a diverse set of bacteria	1	199576	64539665	1	85358	2017-03-10 14:07:00	f
 2949	Bacteroides_fragilis_638R_RefProt_Uniprot_2015-07-06_TrimProtMet.fasta	1431	Bacteroides_fragilis_638R_RefProt_Uniprot_2015-07-06.fasta with the N-terminal methionine removed from each protein	1	4300	1573828	1	2003	2018-03-20 16:13:00	f
 2950	Bacteroides_thetaiotaomicron_ATCC29148_RefProt_Uniprot_2015-07-06_TrimProtMet.fasta	1432	Bacteroides_thetaiotaomicron_ATCC29148_RefProt_Uniprot_2015-07-06.fasta with the N-terminal methionine removed from each protein	1	4798	1864405	1	2673	2018-03-20 16:13:00	f
+9159	Baldrian_BAVARIAN_metaGENOME_TrypPigBov_2025-09-30.fasta	1557	https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=BWMetCoAssembly_FD; 55311 duplicates collapsed	1	28696413	4808004830	1	7.218835e+06	2025-10-02 16:36:30.602811	f
+9160	Baldrian_BAVARIAN_metaTRANSCRIPTOME_TrypPigBov_2025-09-30.fasta	1557	https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=BWMetCoAssembly_2_FD; 899 duplicates collapsed	1	972767	150443358	1	227741	2025-10-02 16:36:30.618086	f
+9157	Baldrian_BAVARIA_ROOTS_metaGENOME_TrypPigBov_2025-09-30.fasta	1557	https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=BavForMetaGenome_FD; 116915 duplicates collapsed	1	940069	144710958	1	219266	2025-10-02 16:03:04.558465	f
+9158	Baldrian_BAVARIA_ROOTS_metaTRANSCRIPTOME_TrypPigBov_2025-09-30.fasta	1557	https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=BavForRoTipMetaT_FD; 952 duplicates collapsed	1	311755	41874501	1	64437	2025-10-02 16:09:00.761976	f
+9163	Baldrian_FRANCONIAN_ROOTS_metaGENOME_TrypPigBov_2025-09-30.fasta	1557	https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=FraForMetaGenome_FD; 137809 duplicates collapsed	1	1120321	152656468	1	240004	2025-10-02 16:42:34.237486	f
+9164	Baldrian_FRANCONIAN_ROOTS_metaTRANSCRIPTOME_TrypPigBov_2025-09-30.fasta	1557	https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=FraForRoTipMetaT_FD; 8 duplicates collapsed	1	360526	43100131	1	5279	2025-10-02 16:43:27.492999	f
+9161	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30.fasta	1557	https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=FWMetCoAssembly_2_FD; 5318 duplicates collapsed	1	23287379	3634152705	1	5.558905e+06	2025-10-02 16:37:53.612559	f
+9162	Baldrian_FRANCONIAN_metaTRANSCRIPTOME_TrypPigBov_2025-09-30.fasta	1557	https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=FWMetCoAssembly_FD; 5318 duplicates collapsed	1	3450484	545554013	1	833025	2025-10-02 16:39:58.258577	f
+9167	Baldrian_RAN_ASSIKALA_ROOTS_metaGENOME_TrypPigBov_2025-09-30.fasta	1557	https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=AssFinMetaGenome_FD; 157014 duplicates collapsed	1	2872985	406562788	1	620501	2025-10-02 16:46:34.248561	f
+9168	Baldrian_RAN_ASSIKALA_ROOTS_metaTRANSCRIPTOME_TrypPigBov_2025-09-30.fasta	1557	https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=AssFinRoTipMetaT_FD; 804 duplicates collapsed	1	360526	43100131	1	68938	2025-10-02 16:47:22.776626	f
+9165	Baldrian_RAN_ASSIKALA_metaG_TrypPigBov_2025-09-30.fasta	1557	https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=RANMetCoAssembly_2_FD; 44561 duplicates collapsed	1	24800327	4559900920	1	6.715789e+06	2025-10-02 16:44:48.188515	f
+9166	Baldrian_RAN_ASSIKALA_metaTRANSCRIPTOME_TrypPigBov_2025-09-30.fasta	1557	baldrian@biomed.cas.cz; 9806 duplicates collapsed	1	3598904	366715394	1	669344	2025-10-02 16:45:37.068188	f
 6740	Baldrian_metagenome_Ga0401275_WithIsolates_TrypPigBov_2021-02-17.fasta	1557	sequences supplied by Petr Baldrian <baldrian@biomed.cas.cz> from Ga0401275 metagenome and 257,809 isolate sequences plus Tryp_Pig_Bov contaminants	1	10061652	1667872178	1	2.504689e+06	2021-02-17 20:17:00	f
 6860	Baldrian_metagenome_Ga0401275_WithIsolates_TrypPigBov_2021-02-17_25x_01.fasta	1557	Auto-created	0	402136	66714835	1	97821	2021-04-12 17:59:00	f
 6861	Baldrian_metagenome_Ga0401275_WithIsolates_TrypPigBov_2021-02-17_25x_02.fasta	1557	Auto-created	0	402691	66714904	1	97847	2021-04-12 17:59:00	f
@@ -6818,6 +6830,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 7535	Proteobacteria_UniProt_2022-03-02.fasta	1748	https://www.uniprot.org/uniprot/?query=proteobacteria+AND+reviewed%3Ayes&sort=score	1	149964	49033779	1	71369	2022-05-02 14:09:00	f
 2981	Pseudomonas_putida_KT2440_2015-09-16_TrimProtMet.fasta	1395	Pseudomonas_putida_KT2440_2015-09-16.fasta with the N-terminal methionine removed from each protein	1	5330	1769041	1	2575	2018-03-20 16:13:00	f
 382	QXXFXK.fasta	16		0	6860	89154	1	222	2005-01-19 18:20:00	f
+9169	Quercus_UniProt_SPROT_Tryp_Pig_Bov_2025-10-03.fasta	1887	Proteins for genus Quercus (oak trees) found in UniProtKB under the taxon ID 3511, prepared for DMS by Nikola Tolic	1	120156	48353688	1	62392	2025-10-03 19:09:48.463956	f
 1703	RF-CoAs-final_contigs_converted_2016-06-14.fasta	1307	stop to stop contigs converted by Angela Norbeck	1	4387443	627489270	1	1.090047e+06	2016-06-15 11:35:00	f
 1707	RF-CoAs-final_contigs_converted_2016-06-14_15x_01.fasta	1307	Auto-created	0	292538	41832613	1	70971	2016-06-15 11:35:00	f
 1708	RF-CoAs-final_contigs_converted_2016-06-14_15x_02.fasta	1307	Auto-created	0	291944	41832604	1	70912	2016-06-15 11:35:00	f
@@ -8831,7 +8844,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 -- Name: t_organism_db_file_org_db_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9156, true);
+SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9169, true);
 
 
 --

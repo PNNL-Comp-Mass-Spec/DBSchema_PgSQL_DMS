@@ -486,6 +486,8 @@ COPY public.t_user_operations_permissions (user_id, operation_id) FROM stdin;
 3664	17
 3666	38
 3668	25
+3669	17
+3670	25
 \.
 
 

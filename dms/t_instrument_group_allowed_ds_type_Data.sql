@@ -50,7 +50,7 @@ Agilent_TOF_V2	HMS		489	71
 Agilent_TOF_V2	HMS-HMSn	Typical mode	397	0
 Agilent_TOF_V2	MS	\N	0	0
 Altis	MRM		0	0
-Ascend	DIA-HMS-HCD-HMSn		1375	808
+Ascend	DIA-HMS-HCD-HMSn		1375	800
 Ascend	HMS		15	4
 Ascend	HMS-CID/ETD-HMSn		0	0
 Ascend	HMS-CID/ETD-MSn		0	0
@@ -68,7 +68,7 @@ Ascend	HMS-HCD-CID/ETD-HMSn		0	0
 Ascend	HMS-HCD-CID/ETD-MSn		0	0
 Ascend	HMS-HCD-ETD-HMSn		8	0
 Ascend	HMS-HCD-ETD-MSn		0	0
-Ascend	HMS-HCD-HMSn		3361	1475
+Ascend	HMS-HCD-HMSn		3393	1491
 Ascend	HMS-HCD-MSn		52	0
 Ascend	HMS-HMSn		0	0
 Ascend	HMS-MSn		0	0
@@ -99,7 +99,7 @@ Ascend_Frac	HMS-MSn		0	0
 Ascend_Frac	HMS-PQD-CID/ETD-MSn		0	0
 Ascend_Frac	HMS-PQD-ETD-MSn		0	0
 Ascend_Frac	MS-MSn		0	0
-Astral	DIA-HMS-HCD-HMSn		7507	6904
+Astral	DIA-HMS-HCD-HMSn		7589	6936
 Astral	HMS		22	22
 Astral	HMS-CID/ETD-HMSn		0	0
 Astral	HMS-CID/ETD-MSn		0	0
@@ -128,13 +128,13 @@ Bruker_Amazon_Ion_Trap	MS-CID/ETD-MSn		0	0
 Bruker_Amazon_Ion_Trap	MS-ETD-MSn		5	0
 Bruker_Amazon_Ion_Trap	MS-MSn		5	0
 Bruker_FTMS	C60-SIMS-HMS	Single-scan C60 SIMS	1683	0
-Bruker_FTMS	HMS	Typical mode	169417	12115
+Bruker_FTMS	HMS	Typical mode	169458	12156
 Bruker_FTMS	HMS-HMSn		1898	4
 Bruker_FTMS	MALDI-HMS	Single-scan MALDI (not imaging)	13242	693
 Bruker_QTOF	HMS		3228	0
 Bruker_QTOF	HMS-HMSn		180	0
 Bruker_QTOF	MALDI-HMS		0	0
-DataFolders	DataFiles		1647	193
+DataFolders	DataFiles		1648	194
 Eclipse	DIA-HMS-HCD-HMSn		1293	191
 Eclipse	HMS		795	227
 Eclipse	HMS-CID/ETD-HMSn		1	0
@@ -153,7 +153,7 @@ Eclipse	HMS-HCD-CID/ETD-HMSn		0	0
 Eclipse	HMS-HCD-CID/ETD-MSn		0	0
 Eclipse	HMS-HCD-ETD-HMSn		159	0
 Eclipse	HMS-HCD-ETD-MSn		1	0
-Eclipse	HMS-HCD-HMSn		13840	2171
+Eclipse	HMS-HCD-HMSn		13865	2166
 Eclipse	HMS-HCD-MSn		5135	728
 Eclipse	HMS-HMSn		20	0
 Eclipse	HMS-MSn		71	44
@@ -185,9 +185,9 @@ Eclipse_Frac	HMS-PQD-CID/ETD-MSn		0	0
 Eclipse_Frac	HMS-PQD-ETD-MSn		0	0
 Eclipse_Frac	MS-MSn		0	0
 Exactive	HMS		17040	0
-Exploris	DIA-HMS-HCD-HMSn		11211	6799
+Exploris	DIA-HMS-HCD-HMSn		11241	6777
 Exploris	HMS		1201	1177
-Exploris	HMS-HCD-HMSn		21144	11655
+Exploris	HMS-HCD-HMSn		21385	11775
 Exploris	HMS-HMSn		12	1
 Exploris_Frac	HMS		0	0
 Exploris_Frac	HMS-HCD-HMSn		0	0
@@ -237,13 +237,13 @@ Lumos	HMS-ETciD-MSn		12	0
 Lumos	HMS-EThcD-HMSn		224	0
 Lumos	HMS-EThcD-MSn		0	0
 Lumos	HMS-HCD-CID-HMSn		830	212
-Lumos	HMS-HCD-CID-MSn		29930	13105
+Lumos	HMS-HCD-CID-MSn		29930	12876
 Lumos	HMS-HCD-CID/ETD-HMSn		84	0
 Lumos	HMS-HCD-CID/ETD-MSn		0	0
 Lumos	HMS-HCD-ETD-HMSn		1033	1
 Lumos	HMS-HCD-ETD-MSn		0	0
-Lumos	HMS-HCD-HMSn		29532	602
-Lumos	HMS-HCD-MSn		10792	2051
+Lumos	HMS-HCD-HMSn		29557	627
+Lumos	HMS-HCD-MSn		10798	2057
 Lumos	HMS-HMSn		933	82
 Lumos	HMS-MSn		530	0
 Lumos	HMS-PQD-CID/ETD-MSn		0	0
@@ -274,9 +274,9 @@ Lumos_Frac	HMS-PQD-CID/ETD-MSn		0	0
 Lumos_Frac	HMS-PQD-ETD-MSn		0	0
 Lumos_Frac	MS-MSn		0	0
 MALDI_Imaging	C60-SIMS-HMS	Imaging datasets using C60 SIMS	52	0
-MALDI_Imaging	MALDI-HMS	Typical mode	2322	139
+MALDI_Imaging	MALDI-HMS	Typical mode	2322	135
 MALDI_TOF	MALDI-HMS		359	0
-MALDI_timsTOF_Imaging	MALDI-HMS		296	263
+MALDI_timsTOF_Imaging	MALDI-HMS		297	259
 NMR	1D-C		0	0
 NMR	1D-H		0	0
 NMR	2D		0	0
@@ -292,14 +292,14 @@ Other	MS-MSn		0	0
 PrepHPLC	UV		73	0
 QEHFX	DIA-HMS-HCD-HMSn		671	309
 QEHFX	HMS		242	14
-QEHFX	HMS-HCD-HMSn		39101	4340
+QEHFX	HMS-HCD-HMSn		39225	4383
 QEHFX	HMS-HMSn		0	0
 QEHFX_Frac	HMS		0	0
 QEHFX_Frac	HMS-HCD-HMSn		0	0
 QEHFX_Frac	HMS-HMSn		0	0
 QExactive	DIA-HMS-HCD-HMSn		627	7
-QExactive	HMS		32632	2250
-QExactive	HMS-HCD-HMSn		147863	22442
+QExactive	HMS		32632	1570
+QExactive	HMS-HCD-HMSn		148010	22558
 QExactive	HMS-HMSn		15	0
 QExactive_Frac	HMS		0	0
 QExactive_Frac	HMS-HCD-HMSn		0	0
@@ -316,7 +316,7 @@ SLIM	IMS-HMS-HMSn	\N	0	0
 SLIM	IMS-HMS-MSn	\N	0	0
 Sciex_TripleTOF	HMS-HMSn		26	0
 Shimadzu_GC	GC-MS		326	0
-TSQ	MRM	Use for MRM	164815	16893
+TSQ	MRM	Use for MRM	165001	16382
 TSQ	MS		166	0
 TSQ	MS-MSn	Use for MSn	2935	0
 TSQ_Frac	MRM		0	0
@@ -361,7 +361,7 @@ timsTOF	IMS-HMS-HMSn		42	0
 timsTOF_Flex	IMS-HMS		0	0
 timsTOF_Flex	IMS-HMS-HMSn		11	0
 timsTOF_SCP	IMS-HMS		0	0
-timsTOF_SCP	IMS-HMS-HMSn		3734	1210
+timsTOF_SCP	IMS-HMS-HMSn		3739	1215
 \.
 
 

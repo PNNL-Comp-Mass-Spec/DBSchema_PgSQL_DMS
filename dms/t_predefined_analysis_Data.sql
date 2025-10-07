@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.5
+-- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -880,6 +880,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 1887	85	10	LTQ_FT	Astral%		Structural_Proteomics		83250_DTRA_Mers_LiP_MVE%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_NTermAcet_Stat_CysAlk_Precursor380-980.txt	DiaNN_Standard.xml	8	na	H_sapiens_UniProt_SPROT_2024-09-12,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		1		2025-06-25 10:31:16.924921	D3L243	86	1	0	2025-06-25 10:31:16.924921
 1888	90	59	LTQ_FT	%		MoTrPAC		MoTrPAC[_]T[0-9][_]%[_]P[_]%						%HCD%			TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynSTYPhos_Stat_CysAlk_TMT_16Plex_Protocol1_20ppmParTol.txt	MzML_StatCysAlk_S_Phospho_Dyn_TY_Phospho_16plexTMT.xml	8	na	H_sapiens_UniProt_SPROT_2021-06-20,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	3		1	For MoTrPAC human muscle (HM) and human adipose (HA) samples, phospho; similar to predefine 1835	2025-08-19 16:24:07.17816	D3L243	91	1	0	2025-08-19 16:32:41.972309
 1889	85	10	LTQ_FT	Astral%		HCMI_Organoid		HCMI[_]Organoid[_]%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_NTermAcet_Precursor380-980.txt	DiaNN_Standard.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01,iRT_Fusion	seq_direction=forward,filetype=fasta	1		1		2025-09-26 20:09:06.318806	D3L243	86	1	0	2025-09-26 20:09:06.318806
+1890	85	13	LTQ_FT	Astral%				HMC3-SCPC							%HCD-HMSn%					0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_NTermAcet_Precursor400-900.txt	DiaNN_Standard.xml	8	na	H_sapiens_UniProt_SPROT_2024-09-12,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		1		2025-10-06 17:34:10.001477	D3L243	86	1	0	2025-10-06 17:47:03.786253
 \.
 
 
@@ -887,7 +888,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 -- Name: t_predefined_analysis_predefine_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1889, true);
+SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1890, true);
 
 
 --
