@@ -15,7 +15,7 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate 
 **      - Acquisition start time on or before the end date (acquired any time on the end date)
 **      - Service center report state of 2 (Need to submit to service center) or 4 (Need to refund to service center)
 **      - Service type ID between 100 and 113
-**      - Dataset rating is not -7, -6, -5, -4, -2, -1, 6, or 7 (Rerun, Not Released, No Data, Exclude from Service Center, or Method Development)
+**      - Dataset rating is not -10, -7, -6, -5, -4, -2, -1, 6, or 7 (Unreviewed, Rerun, Not Released, No Data, Exclude from Service Center, or Method Development)
 **
 **      Added datasets will have their service center report state changed to 3 (Submitting to service center) or 5 (Refunded to service center)
 **
@@ -54,7 +54,6 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate 
 **          09/24/2025 mem - Exclude datasets with rating -7 (Rerun, superseded) or -6 (Rerun, good data)
 **          10/02/2025 mem - Filter datasets on acquisition start time instead of DMS creation time
 **                         - Assure that start date is no earlier than 2025-10-01 (the official start date of the service center)
-**          10/06/2025 mem - Include datasets with rating -10 (Unreviewed)
 **
 *****************************************************/
 DECLARE
@@ -243,12 +242,12 @@ BEGIN
             FROM t_dataset DS
                  INNER JOIN t_requested_run RR
                    ON DS.dataset_id = RR.dataset_id
-            WHERE DS.dataset_state_id = 3 AND                                           -- Dataset state 3: Complete
+            WHERE DS.dataset_state_id = 3 AND                                               -- Dataset state 3: Complete
                   DS.acq_time_start >= _startDate AND
                   DS.acq_time_start <  _beginningOfNextDay AND
-                  NOT DS.dataset_rating_id IN (-7, -6, -5, -4, -2, -1, 6, 7) AND        -- Dataset rating is not Rerun (Superseded), Rerun (Good Data) Not Released, No Data, Exclude from Service Center, or Method Development
-                  DS.svc_center_report_state_id = 0 AND                                 -- Service center report state 0: Undefined
-                  DS.service_type_id BETWEEN 100 AND 113 AND                            -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous)
+                  NOT DS.dataset_rating_id IN (-10, -7, -6, -5, -4, -2, -1, 6, 7) AND       -- Dataset rating is not Unreviewed, Rerun (Superseded), Rerun (Good Data) Not Released, No Data, Exclude from Service Center, or Method Development
+                  DS.svc_center_report_state_id = 0 AND                                     -- Service center report state 0: Undefined
+                  DS.service_type_id BETWEEN 100 AND 113 AND                                -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous)
                   NOT Trim(Coalesce(RR.work_package, '')) IN ('', 'none', 'na', 'n/a', '(lookup)');
             --
             GET DIAGNOSTICS _datasetCount = ROW_COUNT;
@@ -266,12 +265,12 @@ BEGIN
                   FROM t_dataset DS
                        INNER JOIN t_requested_run RR
                          ON DS.dataset_id = RR.dataset_id
-                  WHERE DS.dataset_state_id = 3 AND                                         -- Dataset state 3: Complete
+                  WHERE DS.dataset_state_id = 3 AND                                             -- Dataset state 3: Complete
                         DS.acq_time_start >= _startDate AND
                         DS.acq_time_start <  _beginningOfNextDay AND
-                        NOT DS.dataset_rating_id IN (-7, -6, -5, -4, -2, -1, 6, 7) AND      -- Dataset rating is not Rerun (Superseded), Rerun (Good Data) Not Released, No Data, Exclude from Service Center, or Method Development
-                        DS.svc_center_report_state_id = 0 AND                               -- Service center report state 0: Undefined
-                        DS.service_type_id BETWEEN 100 AND 113 AND                          -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous); limit to the range of valid IDs, for safety
+                        NOT DS.dataset_rating_id IN (-10, -7, -6, -5, -4, -2, -1, 6, 7) AND     -- Dataset rating is not Unreviewed, Rerun (Superseded), Rerun (Good Data) Not Released, No Data, Exclude from Service Center, or Method Development
+                        DS.svc_center_report_state_id = 0 AND                                   -- Service center report state 0: Undefined
+                        DS.service_type_id BETWEEN 100 AND 113 AND                              -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous); limit to the range of valid IDs, for safety
                         NOT Trim(Coalesce(RR.work_package, '')) IN ('', 'none', 'na', 'n/a', '(lookup)')
                   ) FilterQ
             WHERE t_dataset.dataset_id = FilterQ.dataset_id;
