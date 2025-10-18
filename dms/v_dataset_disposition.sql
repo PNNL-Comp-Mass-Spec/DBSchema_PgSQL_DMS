@@ -16,6 +16,7 @@ CREATE VIEW public.v_dataset_disposition AS
     dsn.dataset_state AS state,
     instname.instrument,
     ds.acq_time_start,
+    rr.work_package,
     ds.operator_username AS operator,
     ds.created
    FROM (((public.t_lc_cart lcc

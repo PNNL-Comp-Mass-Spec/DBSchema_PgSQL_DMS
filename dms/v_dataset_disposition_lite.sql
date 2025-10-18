@@ -15,6 +15,7 @@ CREATE VIEW public.v_dataset_disposition_lite AS
     state,
     instrument,
     acq_time_start,
+    work_package,
     operator,
     created
    FROM public.v_dataset_disposition;
