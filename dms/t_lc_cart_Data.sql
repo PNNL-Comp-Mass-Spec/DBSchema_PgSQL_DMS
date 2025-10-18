@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.5
+-- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -115,6 +115,7 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 87	RapidFire365-01	2	Agilent RapidFire 365 SPE	2015-11-12 09:48:00
 19	Raptor	10		2007-06-08 14:17:00
 114	Remus	2	Thermo Dionex Ultimate 3000 with autosampler, gradient pump, loading pump, and column heating / trapping compartment	2019-01-29 08:56:00
+148	Rio	2	Thermo Vanquish Duo Horizon. With two binary pumps, two column compartments and two injectors. High flow.	2025-10-11 20:02:47.003501
 20	Roc	10	Metabolomics Cart	2006-03-10 09:52:00
 67	Rogue	2	Used to be Lion, changed naming convention	2013-01-18 11:14:00
 113	Romulus	2	Thermo Dionex Ultimate 3000 with autosampler, gradient pump, loading pump, and column heating / trapping compartment	2019-01-29 08:55:00
@@ -146,7 +147,7 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 -- Name: t_lc_cart_cart_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_lc_cart_cart_id_seq', 147, true);
+SELECT pg_catalog.setval('public.t_lc_cart_cart_id_seq', 148, true);
 
 
 --

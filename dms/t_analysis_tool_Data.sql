@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.5
+-- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -61,7 +61,7 @@ COPY public.t_analysis_tool (analysis_tool_id, analysis_tool, tool_base_name, pa
 74	MODPlus_NoRefine	MODPlus	1028	\\\\gigasax\\DMS_Parameter_Files\\MODPlus	G:\\DMS_Parameter_Files\\MODPlus	\N	MODPlus_Peptide_Hit	no	0	mzML	1	Y	Search MS/MS	0	1	1
 64	MODa	MODa	1023	\\\\gigasax\\DMS_Parameter_Files\\MODa	G:\\DMS_Parameter_Files\\MODa	IonTrapDefSettings_DeconMSN.xml	MODa_Peptide_Hit	no	1	Concat_DTA	1	Y	Search MS/MS spectra with MODa	0	1	1
 65	MODa_DTARefinery	MODa_DTARefinery	1023	\\\\gigasax\\DMS_Parameter_Files\\MODa	G:\\DMS_Parameter_Files\\MODa	IonTrapDefSettings_DeconMSN_DTARef_NoMods.xml	MODa_Peptide_Hit	no	0	Concat_DTA	1	Y	Search MS/MS spectra with MODa	0	1	1
-38	MSAlign	MSAlign	1019	\\\\gigasax\\DMS_Parameter_Files\\MSAlign	G:\\DMS_Parameter_Files\\MSAlign	??	MSA_Peptide_Hit	no	1	msalign	1	N	\N	0	1	1
+38	MSAlign	MSAlign	1019	\\\\gigasax\\DMS_Parameter_Files\\MSAlign	G:\\DMS_Parameter_Files\\MSAlign	??	MSA_Peptide_Hit	no	0	msalign	1	N	Top down, blind search. Set to Inactive in October 2025 since last used in 2021 and the CyberSecurity people are unhappy that the MSAlign directory has a .jar file with a vulnerability (log4j-1.2.15.jar)	0	1	1
 40	MSAlign_Bruker	MSAlign	1019	\\\\gigasax\\DMS_Parameter_Files\\MSAlign	G:\\DMS_Parameter_Files\\MSAlign	??	MSA_Peptide_Hit	no	0	mzXML	1	N	\N	0	1	1
 59	MSAlign_Histone	MSAlign_Histone	1022	\\\\gigasax\\DMS_Parameter_Files\\MSAlign_Histone	G:\\DMS_Parameter_Files\\MSAlign_Histone	??	MSA_Peptide_Hit	no	0	mzXML	1	N	\N	0	1	1
 23	MSClusterDAT_Gen	MSClusterDAT_Gen	1	\\\\gigasax\\DMS_Parameter_Files\\MSClusterDAT_Gen	G:\\DMS_Parameter_Files\\MSClusterDAT_Gen	MSClusterDAT_ExtractMSn.xml	MSClusterDAT	no	0	(na)	0	N	\N	0	1	0

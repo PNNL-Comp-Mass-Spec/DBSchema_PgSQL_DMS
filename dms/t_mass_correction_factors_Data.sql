@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.5
+-- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -205,6 +205,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1369	Gly1170	Glycan Man3-Xyl-GlcNAc2-Fuc	1170.4174	\N	-	PNNL		Glycan 1170	C45 H74 O33 N2
 1466	GlyG0F	Glycosylation G0F	1444.5338442	\N	-	UniMod	dHex(1)Hex(3)HexNAc(4)	\N	C(56) H(92) O(39) N(4)
 1467	GlyG1F	Glycosylation G1F	1606.5866652	\N	-	UniMod	dHex(1)Hex(4)HexNAc(4)	\N	C(62) H(102) O(44) N(4)
+1582	GlyPE	Glycerylphosphorylethanolamine	197.04531	197.1262	-	UniMod	GlycerylPE	\N	H12 C5 N O5 P
 1050	Guanid	Guanidination	42.021797	42.04	-	UniMod	Guanidinyl	Guanid	H(2) C N(2)
 1423	H1HNAc	Hex HexNAc	365.132196	\N	-	UniMod	Hex(1)HexNAc(1)	Hex HexNAc	\N
 1424	H2HNac	Hex(2) HexNAc	527.185	\N	-	PNNL	Hex(2)HexNAc(1)	Hex(2) HexNAc	\N
@@ -475,7 +476,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 -- Name: t_mass_correction_factors_mass_correction_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1581, true);
+SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1582, true);
 
 
 --
