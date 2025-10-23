@@ -50,7 +50,11 @@ CREATE VIEW sw.v_job_step_processing_stats2 AS
             ssn.step_state AS current_state_name,
             js.state AS current_state,
             js.transfer_folder_path,
-            (((('\\'::text || (lp.machine)::text) || '\DMS_Programs\AnalysisToolManager'::text) ||
+            ((((('\\'::text || (lp.machine)::text) ||
+                CASE
+                    WHEN m.bionet_only THEN '.bionet'::text
+                    ELSE ''::text
+                END) || '\DMS_Programs\AnalysisToolManager'::text) ||
                 CASE
                     WHEN (js.processor OPERATOR(public.~) similar_to_escape('%-[1-9]'::text)) THEN "right"((js.processor)::text, 1)
                     ELSE ''::text
@@ -58,8 +62,9 @@ CREATE VIEW sw.v_job_step_processing_stats2 AS
             (EXTRACT(year FROM js.start))::text AS theyear,
             to_char(EXTRACT(month FROM js.start), 'fm00'::text) AS themonth,
             to_char(EXTRACT(day FROM js.start), 'fm00'::text) AS theday
-           FROM ((sw.t_job_step_processing_stats jsps
+           FROM (((sw.t_job_step_processing_stats jsps
              LEFT JOIN sw.t_local_processors lp ON ((lp.processor_name OPERATOR(public.=) jsps.processor)))
+             LEFT JOIN sw.t_machines m ON ((lp.machine OPERATOR(public.=) m.machine)))
              LEFT JOIN ((sw.t_jobs j
              JOIN sw.v_job_steps js ON ((j.job = js.job)))
              JOIN sw.t_job_step_state_name ssn ON ((js.state = ssn.step_state_id))) ON (((jsps.job = js.job) AND (jsps.step = js.step))))) dataq;

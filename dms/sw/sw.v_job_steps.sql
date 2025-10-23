@@ -69,12 +69,16 @@ CREATE VIEW sw.v_job_steps AS
     js.dataset_id,
     js.data_pkg_id,
     js.transfer_folder_path,
-    (((('\\'::text || (lp.machine)::text) || '\DMS_Programs\AnalysisToolManager'::text) ||
+    ((((('\\'::text || (lp.machine)::text) ||
+        CASE
+            WHEN m.bionet_only THEN '.bionet'::text
+            ELSE ''::text
+        END) || '\DMS_Programs\AnalysisToolManager'::text) ||
         CASE
             WHEN (js.processor OPERATOR(public.~) similar_to_escape('%-[1-9]'::text)) THEN "right"((js.processor)::text, 1)
             ELSE ''::text
         END) || '\Logs\'::text) AS log_file_path
-   FROM ((( SELECT jobsteps.job,
+   FROM (((( SELECT jobsteps.job,
             j.dataset,
             j.dataset_id,
             j.data_pkg_id,
@@ -125,7 +129,8 @@ CREATE VIEW sw.v_job_steps AS
              LEFT JOIN sw.t_step_tool_versions stv ON ((jobsteps.tool_version_id = stv.tool_version_id)))
              LEFT JOIN sw.t_remote_info ri ON ((jobsteps.remote_info_id = ri.remote_info_id)))) js
      LEFT JOIN sw.t_processor_status ps ON ((js.processor OPERATOR(public.=) ps.processor_name)))
-     LEFT JOIN sw.t_local_processors lp ON ((js.processor OPERATOR(public.=) lp.processor_name)));
+     LEFT JOIN sw.t_local_processors lp ON ((js.processor OPERATOR(public.=) lp.processor_name)))
+     LEFT JOIN sw.t_machines m ON ((lp.machine OPERATOR(public.=) m.machine)));
 
 
 ALTER VIEW sw.v_job_steps OWNER TO d3l243;

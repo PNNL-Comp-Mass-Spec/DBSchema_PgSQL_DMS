@@ -82,7 +82,11 @@ CREATE VIEW cap.v_task_steps2 AS
             ts.dataset_folder_path,
             ts.capture_subfolder,
             ts.job_state,
-            (((('\\'::text || (lp.machine)::text) || '\DMS_Programs\CaptureTaskManager'::text) ||
+            ((((('\\'::text || (lp.machine)::text) ||
+                CASE
+                    WHEN m.bionet_only THEN '.bionet'::text
+                    ELSE ''::text
+                END) || '\DMS_Programs\CaptureTaskManager'::text) ||
                 CASE
                     WHEN (ts.processor OPERATOR(public.~) similar_to_escape('%[-_][1-9]'::text)) THEN "right"((ts.processor)::text, 2)
                     ELSE ''::text
@@ -90,8 +94,9 @@ CREATE VIEW cap.v_task_steps2 AS
             to_char(EXTRACT(year FROM ts.start), 'fm0000'::text) AS theyear,
             to_char(EXTRACT(month FROM ts.start), 'fm00'::text) AS themonth,
             to_char(EXTRACT(day FROM ts.start), 'fm00'::text) AS theday
-           FROM (cap.v_task_steps ts
-             LEFT JOIN cap.t_local_processors lp ON ((ts.processor OPERATOR(public.=) lp.processor_name)))) lookupq;
+           FROM ((cap.v_task_steps ts
+             LEFT JOIN cap.t_local_processors lp ON ((ts.processor OPERATOR(public.=) lp.processor_name)))
+             LEFT JOIN cap.t_machines m ON ((lp.machine OPERATOR(public.=) m.machine)))) lookupq;
 
 
 ALTER VIEW cap.v_task_steps2 OWNER TO d3l243;

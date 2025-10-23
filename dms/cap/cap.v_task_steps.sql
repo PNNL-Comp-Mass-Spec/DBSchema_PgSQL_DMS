@@ -50,12 +50,16 @@ CREATE VIEW cap.v_task_steps AS
     ts.dataset_folder_path,
     ts.capture_subfolder,
     ts.job_state,
-    (((('\\'::text || (lp.machine)::text) || '\DMS_Programs\CaptureTaskManager'::text) ||
+    ((((('\\'::text || (lp.machine)::text) ||
+        CASE
+            WHEN m.bionet_only THEN '.bionet'::text
+            ELSE ''::text
+        END) || '\DMS_Programs\CaptureTaskManager'::text) ||
         CASE
             WHEN (ts.processor OPERATOR(public.~) similar_to_escape('%_[2-9]'::text)) THEN ('_'::text || "right"((ts.processor)::text, 1))
             ELSE ''::text
         END) || '\Logs\'::text) AS log_file_path
-   FROM ((( SELECT ts_1.job,
+   FROM (((( SELECT ts_1.job,
             t.dataset,
             t.dataset_id,
             ts_1.step,
@@ -94,7 +98,8 @@ CREATE VIEW cap.v_task_steps AS
              LEFT JOIN cap.t_step_tool_versions stv ON ((ts_1.tool_version_id = stv.tool_version_id)))
           WHERE (t.state <> 101)) ts
      LEFT JOIN cap.t_processor_status ps ON ((ts.processor OPERATOR(public.=) ps.processor_name)))
-     LEFT JOIN cap.t_local_processors lp ON ((ts.processor OPERATOR(public.=) lp.processor_name)));
+     LEFT JOIN cap.t_local_processors lp ON ((ts.processor OPERATOR(public.=) lp.processor_name)))
+     LEFT JOIN cap.t_machines m ON ((lp.machine OPERATOR(public.=) m.machine)));
 
 
 ALTER VIEW cap.v_task_steps OWNER TO d3l243;
