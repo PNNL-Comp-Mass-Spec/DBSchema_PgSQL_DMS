@@ -10,7 +10,8 @@ CREATE TABLE sw.t_machines (
     memory_available integer DEFAULT 4000 NOT NULL,
     proc_tool_group_id integer DEFAULT 0 NOT NULL,
     comment public.citext,
-    enabled smallint DEFAULT 1 NOT NULL
+    enabled smallint DEFAULT 1 NOT NULL,
+    bionet_only boolean DEFAULT false NOT NULL
 );
 
 
