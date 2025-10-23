@@ -119,6 +119,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **          09/24/2025 mem - Return service type ID 1 if the dataset rating is -7 (Rerun, superseded) or -6 (Rerun, good data)
 **          10/01/2025 mem - Return service type ID 1 for QC_HeLa datasets
 **                         - Return service type ID 1 for GCMS_FAMEs and GCMS_Blank datasets
+**          10/22/2025 mem - Return service type 101 or 103 for IMS datasets that are not metabolites, lipids, or separation time <= 5 minutes
 **
 *****************************************************/
 DECLARE
@@ -380,8 +381,8 @@ BEGIN
         End If;
     End If;
 
-    -- Check for Orbitrap datasets
-    If _instrumentGroup IN ('Ascend', 'Eclipse', 'Exploris', 'Lumos', 'QEHFX', 'QExactive', 'VelosOrbi') Then
+    -- Check for Orbitrap or IMS datasets
+    If _instrumentGroup IN ('Ascend', 'Eclipse', 'Exploris', 'IMS', 'Lumos', 'QEHFX', 'QExactive', 'VelosOrbi') Then
         If _acqLengthMinutes <= 60 Then
             RETURN 101;   -- Peptides: Short Standard MS
         Else
