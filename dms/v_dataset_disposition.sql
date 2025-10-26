@@ -10,13 +10,13 @@ CREATE VIEW public.v_dataset_disposition AS
     ('http://prismsupport.pnl.gov/smaqc/index.php/smaqc/instrument/'::text || (instname.instrument)::text) AS smaqc,
     lcc.cart_name AS lc_cart,
     rr.batch_id AS batch,
-    rr.request_id AS request,
+    rr.work_package,
     drn.dataset_rating AS rating,
     ds.comment,
     dsn.dataset_state AS state,
     instname.instrument,
     ds.acq_time_start,
-    rr.work_package,
+    rr.request_id AS request,
     ds.operator_username AS operator,
     ds.created
    FROM (((public.t_lc_cart lcc

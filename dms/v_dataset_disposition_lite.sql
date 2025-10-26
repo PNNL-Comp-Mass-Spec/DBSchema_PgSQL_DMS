@@ -9,13 +9,13 @@ CREATE VIEW public.v_dataset_disposition_lite AS
     smaqc,
     lc_cart,
     batch,
-    request,
+    work_package,
     rating,
     comment,
     state,
     instrument,
     acq_time_start,
-    work_package,
+    request,
     operator,
     created
    FROM public.v_dataset_disposition;
