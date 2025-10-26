@@ -19,6 +19,13 @@ CREATE OR REPLACE PROCEDURE cap.update_missed_dms_file_info(IN _deletefromtableo
 **    _returnCode                   Return code
 **    _infoOnly                     When true, preview updates
 **
+**  Example usage:
+**      CALL update_missed_dms_file_info (
+**               _deleteFromTableOnSuccess => true,
+**               _replaceExistingData => true,
+**               _datasetIDs => '1422894, 1422895, 1422896, 1422897',
+**               _infoOnly => true);
+**
 **  Auth:   mem
 **  Date:   12/19/2011 mem - Initial version
 **          02/24/2015 mem - Now skipping deleted datasets

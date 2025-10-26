@@ -29,12 +29,12 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate 
 **    _message          Status message
 **    _returnCode       Return code
 **
-**  Example Usage:
-**      CALL create_dataset_svc_center_report('2025-07-16', _infoOnly => true);
-**      CALL create_dataset_svc_center_report('2025-07-16', _dayCount => 365, _infoOnly => true);
-**      CALL create_dataset_svc_center_report('2025-07-16', 365, _infoOnly => true);
-**      CALL create_dataset_svc_center_report(CURRENT_TIMESTAMP::date - Interval '1 day', _dayCount => 365, _infoOnly => true);
-**      CALL create_dataset_svc_center_report('2024-08-13', 5, _infoOnly => false, _showDebug => true);
+**  Example usage:
+**      CALL create_dataset_svc_center_report ('2025-07-16', _infoOnly => true);
+**      CALL create_dataset_svc_center_report ('2025-07-16', _dayCount => 365, _infoOnly => true);
+**      CALL create_dataset_svc_center_report ('2025-07-16', 365, _infoOnly => true);
+**      CALL create_dataset_svc_center_report (CURRENT_TIMESTAMP::date - Interval '1 day', _dayCount => 365, _infoOnly => true);
+**      CALL create_dataset_svc_center_report ('2024-08-13', 5, _infoOnly => false, _showDebug => true);
 **
 **  Auth:   mem
 **  Date:   07/22/2025 mem - Initial release

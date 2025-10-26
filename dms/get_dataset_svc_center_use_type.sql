@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_svc_center_use_type(_datasetid int
 **  Arguments:
 **    _datasetID        Dataset ID
 **
-**  Example Usage:
+**  Example usage:
 **      SELECT dataset,
 **             get_dataset_svc_center_use_type(dataset_id)
 **      FROM t_dataset

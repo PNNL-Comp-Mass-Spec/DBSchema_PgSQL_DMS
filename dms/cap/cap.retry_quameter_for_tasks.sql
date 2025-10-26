@@ -20,7 +20,7 @@ CREATE OR REPLACE FUNCTION cap.retry_quameter_for_tasks(_jobs text, _infoonly bo
 **    _infoOnly   True to preview the changes,
 **
 ** Example usage:
-**   SELECT * FROM cap.retry_quameter_for_tasks('6016807, 6016805, 6016798', _infoOnly => true, _ignoreQuameterErrors => false);
+**     SELECT * FROM cap.retry_quameter_for_tasks('6016807, 6016805, 6016798', _infoOnly => true, _ignoreQuameterErrors => false);
 **
 **  Auth:   mem
 **  Date:   07/11/2019 mem - Initial version

@@ -22,7 +22,7 @@ CREATE OR REPLACE PROCEDURE public.update_datasets(IN _datasetlist text, IN _sta
 **    _returnCode       Return code
 **    _callingUser      Username of the calling user
 **
-**  Example Usage:
+**  Example usage:
 **      CALL update_datasets (
 **              'QC_Mam_23_01_R02_11Sep5_Remus_BEHCoA-25-08-02, QC_Mam_23_01_R02_11Sep25_Ned_BEHCoA-25-04-29',
 **              _state       => '[no change]',

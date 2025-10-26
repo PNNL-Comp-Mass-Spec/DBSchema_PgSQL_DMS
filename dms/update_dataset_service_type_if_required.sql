@@ -17,10 +17,10 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_service_type_if_required(IN _d
 **    _infoOnly             When true, show the old and new values for service_type_id
 **    _logDebugMessages     When true, show additional status messages
 **
-**  Example Usage:
-**      CALL update_dataset_service_type_if_required(1100000, _infoOnly => true);
-**      CALL update_dataset_service_type_if_required(1100000, _infoOnly => false);
-**      CALL update_dataset_service_type_if_required(1100000, _logDebugMessages => true);
+**  Example usage:
+**      CALL update_dataset_service_type_if_required (1100000, _infoOnly => true);
+**      CALL update_dataset_service_type_if_required (1100000, _infoOnly => false);
+**      CALL update_dataset_service_type_if_required (1100000, _logDebugMessages => true);
 **
 **  Auth:   mem
 **  Date:   07/10/2025 mem - Initial release

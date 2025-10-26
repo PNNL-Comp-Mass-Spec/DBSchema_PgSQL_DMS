@@ -18,10 +18,6 @@ CREATE OR REPLACE PROCEDURE cap.copy_task_to_history(IN _job integer, IN _jobsta
 **    _message              Status message
 **    _returnCode           Return code
 **
-**  Example usage:
-**    Call remove_old_tasks(_intervalDaysForSuccess => 60, _intervalDaysForFail => 135, _logDeletions => false, _maxTasksToRemove => 5, _validateJobStepSuccess => false, _infoOnly => true);
-**    Call remove_old_tasks(_intervalDaysForSuccess => 60, _intervalDaysForFail => 135, _logDeletions => false, _maxTasksToRemove => 5, _validateJobStepSuccess => false, _infoOnly => false);
-**
 **  Auth:   grk
 **  Date:   09/12/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          05/25/2011 mem - Removed priority column from t_task_steps

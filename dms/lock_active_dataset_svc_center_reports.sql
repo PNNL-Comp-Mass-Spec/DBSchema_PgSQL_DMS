@@ -15,9 +15,9 @@ CREATE OR REPLACE PROCEDURE public.lock_active_dataset_svc_center_reports(IN _in
 **    _message          Status message
 **    _returnCode       Return code
 **
-**  Example Usage:
-**      CALL lock_active_dataset_svc_center_reports(_infoOnly => true);
-**      CALL lock_active_dataset_svc_center_reports(_infoOnly => false);
+**  Example usage:
+**      CALL lock_active_dataset_svc_center_reports (_infoOnly => true);
+**      CALL lock_active_dataset_svc_center_reports (_infoOnly => false);
 **
 **  Auth:   mem
 **  Date:   08/06/2025 mem - Initial release

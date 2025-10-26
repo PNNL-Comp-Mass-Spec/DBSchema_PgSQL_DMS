@@ -20,7 +20,7 @@ CREATE OR REPLACE PROCEDURE public.update_pnnl_projects_from_warehouse(IN _infoo
 **    _message                  Status message
 **    _returnCode               Return code
 **
-**  Example Usage:
+**  Example usage:
 **      CALL update_pnnl_projects_from_warehouse (_infoOnly => true, _onlyShowChanged => true);
 **      CALL update_pnnl_projects_from_warehouse (_infoOnly => true, _onlyShowChanged => false);
 **      CALL update_pnnl_projects_from_warehouse (_infoOnly => true, _onlyShowChanged => false, _explicitProjectList => '');

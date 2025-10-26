@@ -16,10 +16,10 @@ CREATE OR REPLACE FUNCTION cap.enable_disable_ctm_step_tool_for_debugging(_tool 
 **    _infoOnly         View step tools that would be updated
 **
 **  Example usage:
-**    SELECT * FROM cap.enable_disable_ctm_step_tool_for_debugging('DatasetInfo', _debugMode => true, _infoOnly => true);
-**    SELECT * FROM cap.enable_disable_ctm_step_tool_for_debugging('DatasetInfo', _debugMode => true, _infoOnly => false);
-**    SELECT * FROM cap.enable_disable_ctm_step_tool_for_debugging('DatasetInfo', _debugMode => false, _infoOnly => true);
-**    SELECT * FROM cap.enable_disable_ctm_step_tool_for_debugging('DatasetInfo', _debugMode => false, _infoOnly => false);
+**      SELECT * FROM cap.enable_disable_ctm_step_tool_for_debugging('DatasetInfo', _debugMode => true, _infoOnly => true);
+**      SELECT * FROM cap.enable_disable_ctm_step_tool_for_debugging('DatasetInfo', _debugMode => true, _infoOnly => false);
+**      SELECT * FROM cap.enable_disable_ctm_step_tool_for_debugging('DatasetInfo', _debugMode => false, _infoOnly => true);
+**      SELECT * FROM cap.enable_disable_ctm_step_tool_for_debugging('DatasetInfo', _debugMode => false, _infoOnly => false);
 **
 **  Auth:   mem
 **  Date:   10/29/2013 mem - Initial version
@@ -96,7 +96,6 @@ BEGIN
                    0::smallint AS enabled,
                    ''::citext AS "comment",
                    CURRENT_TIMESTAMP::timestamp AS last_affected;
-
         Else
             RETURN QUERY
             SELECT 'Set enabled to 1' AS task, T.processor_name, T.tool_name, T.priority, T.enabled, T.comment, T.last_affected
@@ -114,7 +113,6 @@ BEGIN
                 WHERE T.tool_name = _tool::citext AND T.enabled > 0;
             End If;
         End If;
-
     Else
         -- Enable debugging
 
@@ -149,7 +147,6 @@ BEGIN
                    1::smallint AS enabled,
                    ''::citext AS "comment",
                    CURRENT_TIMESTAMP::timestamp AS last_affected;
-
         Else
             RETURN QUERY
             SELECT 'Set enabled to -1' AS task, T.processor_name, T.tool_name, T.priority, T.enabled, T.comment, T.last_affected
@@ -168,7 +165,6 @@ BEGIN
             End If;
         End If;
     End If;
-
 END
 $$;
 

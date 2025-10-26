@@ -22,19 +22,19 @@ CREATE OR REPLACE PROCEDURE public.schedule_predefined_analysis_jobs(IN _dataset
 **    _message                      Status message
 **    _returnCode                   Return code
 **
-**  Example Usage:
-**      call schedule_predefined_analysis_jobs(
+**  Example usage:
+**      CALL schedule_predefined_analysis_jobs (
 **               'QC_Mam_23_01_R06_03July25_Monty_ES906_1602_70SPD, QC_Mam_23_01_R02_03July25_Ned_BEHCoA-25-04-29, QC_Mam_23_01_4xdilu_WV_R3_04Jul25_Barney_BEHCoA-Tu-24-12-12',
 **               _infoOnly => true);
 **
-**      call schedule_predefined_analysis_jobs(
+**      CALL schedule_predefined_analysis_jobs (
 **               '1401188, 1401186, 1400776, 1400771, 1400750, 1400749',
 **               _analysisToolNameFilter => '',
 **               _excludeDatasetsNotReleased => true,
 **               _preventDuplicateJobs => true,
 **               _infoOnly => true);
 **
-**      call add_datasets_to_predefined_scheduling_queue('1401188, 1401186, 1400776, 1400771, 1400750, 1400749', _infoOnly => true);
+**      CALL add_datasets_to_predefined_scheduling_queue ('1401188, 1401186, 1400776, 1400771, 1400750, 1400749', _infoOnly => true);
 **
 **  Auth:   grk
 **  Date:   06/29/2005 grk - Supersedes procedure ScheduleDefaultAnalyses

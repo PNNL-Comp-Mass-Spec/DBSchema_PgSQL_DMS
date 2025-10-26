@@ -23,6 +23,17 @@ CREATE OR REPLACE PROCEDURE public.rename_dataset(IN _datasetnameold text DEFAUL
 **    _message                          Status message
 **    _returnCode                       Return code
 **
+**  Example usage:
+**      CALL rename_dataset ('C4_H2_Leaf_MET_S25_RP_Pos_20Oct25', 'C4_H2_Leaf_MET_S24_RP_Pos_20Oct25', _newRequestedRunID => 1508742, _infoOnly => true);
+**
+**      CALL rename_dataset ('Xenium-0052498_20250813_BG', 'Xenium-0052498_5_20250813_BG', _newRequestedRunID => -1, _infoOnly => true);
+**
+**      CALL cap.make_new_archive_update_task(
+**                   'Xenium-0052498_5_20250813_BG',
+**                   _resultsDirectoryName => '',
+**                   _allowBlankResultsDirectory => true,
+**                   _infoOnly => false);
+**
 **  Auth:   mem
 **  Date:   01/25/2013 mem - Initial version
 **          07/08/2016 mem - Now show old/new names and jobs even when _infoOnly is false

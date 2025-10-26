@@ -22,6 +22,17 @@ CREATE OR REPLACE PROCEDURE cap.remove_old_tasks(IN _intervaldaysforsuccess inte
 **    _message                  Status message
 **    _returnCode               Return code
 **
+**  Example usage:
+**      CALL remove_old_tasks (
+**               _intervalDaysForSuccess => 60,    _intervalDaysForFail => 135,
+**               _logDeletions => false,           _maxTasksToRemove => 5,
+**               _validateJobStepSuccess => false, _infoOnly => true);
+**
+**      CALL remove_old_tasks (
+**               _intervalDaysForSuccess => 60,    _intervalDaysForFail => 135,
+**               _logDeletions => false,           _maxTasksToRemove => 5,
+**               _validateJobStepSuccess => false, _infoOnly => false);
+**
 **  Auth:   grk
 **  Date:   09/12/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          06/21/2010 mem - Increased retention to 60 days for successful capture task jobs

@@ -19,10 +19,10 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_svc_center_report(IN _reportid
 **    _message          Status message
 **    _returnCode       Return code
 **
-**  Example Usage:
-**      CALL update_dataset_svc_center_report(1001, _setComplete => true, _infoOnly => true);
-**      CALL update_dataset_svc_center_report(1001, _setComplete => true, _infoOnly => false);
-**      CALL update_dataset_svc_center_report(1002, _setInactive => true, _infoOnly => true);
+**  Example usage:
+**      CALL update_dataset_svc_center_report (1001, _setComplete => true, _infoOnly => true);
+**      CALL update_dataset_svc_center_report (1001, _setComplete => true, _infoOnly => false);
+**      CALL update_dataset_svc_center_report (1002, _setInactive => true, _infoOnly => true);
 **
 **  Auth:   mem
 **  Date:   08/06/2025 mem - Initial release

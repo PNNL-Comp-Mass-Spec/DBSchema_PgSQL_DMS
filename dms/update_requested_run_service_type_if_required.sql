@@ -17,10 +17,10 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_service_type_if_required
 **    _infoOnly             When true, show the old and new values for service_type_id
 **    _logDebugMessages     When true, show additional status messages
 **
-**  Example Usage:
-**      CALL update_requested_run_service_type_if_required(1250021, _infoOnly => true);
-**      CALL update_requested_run_service_type_if_required(1250021, _infoOnly => false);
-**      CALL update_requested_run_service_type_if_required(1250021, _logDebugMessages => true);
+**  Example usage:
+**      CALL update_requested_run_service_type_if_required (1250021, _infoOnly => true);
+**      CALL update_requested_run_service_type_if_required (1250021, _infoOnly => false);
+**      CALL update_requested_run_service_type_if_required (1250021, _logDebugMessages => true);
 **
 **  Auth:   mem
 **  Date:   07/25/2025 mem - Initial release

@@ -13,7 +13,7 @@ CREATE OR REPLACE FUNCTION public.get_requested_run_svc_center_use_type(_request
 **  Arguments:
 **    _requestID        Requested run ID
 **
-**  Example Usage:
+**  Example usage:
 **      SELECT request_id,
 **             request_name,
 **             get_requested_run_svc_center_use_type(request_id)
