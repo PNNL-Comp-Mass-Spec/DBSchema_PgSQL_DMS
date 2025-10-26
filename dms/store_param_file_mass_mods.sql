@@ -161,6 +161,7 @@ CREATE OR REPLACE PROCEDURE public.store_param_file_mass_mods(IN _paramfileid in
 **          01/08/2024 mem - Use the default value for _maxRows when calling parse_delimited_list_ordered()
 **          09/27/2024 mem - Add support for FragPipe mod defs
 **          10/24/2024 mem - Fix bug that stored n^ as protein N-terminus instead of peptide N-terminus for MSFragger and FragPipe mod defs
+**          10/23/2025 mem - When parsing DIA-NN mods, allow DynamicMod=UniMod:4 (but report an error if StaticMod=UniMod:4)
 **
 *****************************************************/
 DECLARE
@@ -482,7 +483,7 @@ BEGIN
         SELECT Value
         INTO _dynamicModList
         FROM public.parse_delimited_list_ordered(_mods, _delimiter)
-        WHERE Value Like 'msfragger.table.var-mods%';
+        WHERE Value LIKE 'msfragger.table.var-mods%';
 
         If FOUND Then
             -- Remove 'msfragger.table.var-mods=' from the start of _dynamicModList
@@ -497,7 +498,7 @@ BEGIN
         SELECT Value
         INTO _staticModList
         FROM public.parse_delimited_list_ordered(_mods, _delimiter)
-        WHERE Value Like 'msfragger.table.fix-mods%';
+        WHERE Value LIKE 'msfragger.table.fix-mods%';
 
         If FOUND Then
             -- Remove 'msfragger.table.fix-mods=' from the start of _staticModList
@@ -1062,7 +1063,7 @@ BEGIN
                         EXIT;
                     End If;
 
-                    If _uniModID = 4 And Not _staticCysCarbamidomethyl Then
+                    If _uniModID = 4 And Not _staticCysCarbamidomethyl And _row Like '%StaticMod%=%UniMod:4' Then
                         _message := format('Define static Cys Carbamidomethyl using "StaticCysCarbamidomethyl=True", not using "StaticMod=UniMod:4"; see row: %s', _row);
                         _returnCode := 'U5316';
 
