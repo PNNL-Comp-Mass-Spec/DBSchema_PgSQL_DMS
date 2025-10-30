@@ -118,6 +118,7 @@ CREATE OR REPLACE PROCEDURE public.validate_analysis_job_parameters(IN _toolname
 **          10/29/2024 mem - Use function get_split_fasta_settings() to determine the split FASTA settings
 **          11/23/2024 mem - Update messages to use "Organism DB File" instead of "Legacy FASTA file"
 **                         - Fix bug that failed to cast _organismDBName to citext
+**          10/29/2025 mem - Allow searches of large FASTA files using parameter files that include 'PartTryp_Stat_CysAlk' in the name (in addition to 'PartTryp_StatCysAlk')
 **
 *****************************************************/
 DECLARE
@@ -786,7 +787,9 @@ BEGIN
                 Then
                     If Not (_paramFileName ILike '%PartTryp_NoMods%' Or
                             _paramFileName ILike '%PartTryp_StatCysAlk.txt' Or
+                            _paramFileName ILike '%PartTryp_Stat_CysAlk.txt' Or
                             _paramFileName::citext SIMILAR TO '%PartTryp_StatCysAlk_[0-9]%ppm%' Or
+                            _paramFileName::citext SIMILAR TO '%PartTryp_Stat_CysAlk_[0-9]%ppm%' Or
                             _paramFileName::citext SIMILAR TO '%[_]Tryp[_]%')
                     Then
                         _message := format('Organism DB file "%s" is very large (%s); you must choose a parameter file that is fully tryptic (MSGFPlus_Tryp_) '
