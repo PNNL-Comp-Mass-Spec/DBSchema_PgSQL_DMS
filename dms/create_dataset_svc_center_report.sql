@@ -54,6 +54,7 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate 
 **          09/24/2025 mem - Exclude datasets with rating -7 (Rerun, superseded) or -6 (Rerun, good data)
 **          10/02/2025 mem - Filter datasets on acquisition start time instead of DMS creation time
 **                         - Assure that start date is no earlier than 2025-10-01 (the official start date of the service center)
+**          10/29/2025 mem - Round transaction units for MALDI datasets to the nearest tenth of an hour
 **
 *****************************************************/
 DECLARE
@@ -396,21 +397,23 @@ BEGIN
         ---------------------------------------------------
         -- Populate columns transaction_units and transaction_cost_est in Tmp_Datasets_to_Add
         --
-        -- For MALDI datasets, the transaction_unit is the run length, in hours
+        -- For MALDI datasets, the transaction_unit is the run length, in hours, rounded to the nearest tenth of an hour (minimum value 0.1)
         -- For non-MALDI datasets, the transaction unit is one
         --
         -- Column transaction_cost_est is the estimated cost of the run, determined by multiplying the transaction_units by total_rate_per_run
         ---------------------------------------------------
 
+        -- First populate column transaction_units
+        --
         UPDATE Tmp_Datasets_to_Add DS
-        SET transaction_units    = CASE WHEN DS.service_type_id = 104
-                                        THEN (DS.acq_length_minutes / 60.0)::numeric(1000, 2)::real    -- MALDI dataset, use acq_length_hours
-                                        ELSE 1                                                         -- Non-MALDI dataset
-                                   END,
-            transaction_cost_est = CASE WHEN DS.service_type_id = 104
-                                        THEN (DS.acq_length_minutes / 60.0 * CR.total_rate_per_run)::numeric(1000, 2)::real    -- MALDI dataset
-                                        ELSE CR.total_rate_per_run                                                             -- Non-MALDI dataset
-                                   END
+        SET transaction_units = CASE WHEN DS.service_type_id = 104
+                                     THEN    -- MALDI dataset, use acq_length_hours for the transaction units
+                                         CASE WHEN (DS.acq_length_minutes / 60.0)::numeric(1000, 1) < 0.1
+                                              THEN 0.1
+                                              ELSE (DS.acq_length_minutes / 60.0)::numeric(1000, 1)
+                                         END
+                                     ELSE 1  -- Non-MALDI datasets use 1 for the transaction unit
+                                END
         FROM ( SELECT service_type_id,
                       doe_burdened_rate_per_run AS total_rate_per_run
                FROM svc.t_service_cost_rate
@@ -424,27 +427,45 @@ BEGIN
             RAISE INFO 'Defined the transaction_units for % % in the service center report', _affectedCount, check_plural(_affectedCount, 'dataset', 'datasets');
         End If;
 
+        -- Now that transaction_units is defined, populate transaction_units_est
+        --
+        UPDATE Tmp_Datasets_to_Add DS
+        SET transaction_cost_est = (transaction_units * CR.total_rate_per_run)::numeric(1000, 2)::real
+        FROM ( SELECT service_type_id,
+                      doe_burdened_rate_per_run AS total_rate_per_run
+               FROM svc.t_service_cost_rate
+               WHERE cost_group_id = _costGroupID
+             ) CR
+        WHERE DS.service_type_id = CR.service_type_id;
+
         /*
             -- The following query can be helpful when manually replicating the population of Tmp_Datasets_to_Add
 
-            SELECT DS.service_type_id,
-                   CR.total_rate_per_run,
-                   CASE WHEN DS.service_type_id = 104
-                        THEN (DS.acq_length_minutes / 60.0)::numeric(1000, 2)::real   -- For MALDI datasets, use acq_length_hours
-                        ELSE 1
-                   END AS transaction_units
-                   CASE WHEN DS.service_type_id = 104
-                        THEN (DS.acq_length_minutes / 60.0 * CR.total_rate_per_run)::numeric(1000, 2)::real   -- For MALDI datasets, use total_rate_per_run times acq_length_hours
-                        ELSE CR.total_rate_per_run::real
-                   END AS transaction_cost_est
-            FROM Tmp_Datasets_to_Add DS
-                 INNER JOIN ( SELECT service_type_id,
-                                     doe_burdened_rate_per_run AS total_rate_per_run
-                              FROM svc.t_service_cost_rate
-                              WHERE cost_group_id = 100
-                            ) CR
-                  ON DS.service_type_id = CR.service_type_id
-            ORDER BY DS.service_type_id, DS.dataset_id;
+            SELECT ComputeQ.dataset_id,
+                   ComputeQ.service_type_id,
+                   ComputeQ.total_rate_per_run,
+                   ComputeQ.transaction_units,
+                   (ComputeQ.transaction_units * ComputeQ.total_rate_per_run)::numeric(1000, 2)::real AS transaction_cost_est
+            FROM ( SELECT DS.dataset_id,
+                          DS.service_type_id,
+                          CR.total_rate_per_run,
+                          CASE WHEN DS.service_type_id = 104
+                               THEN    -- MALDI dataset, use acq_length_hours for the transaction units
+                                   CASE WHEN (DS.acq_length_minutes / 60.0)::numeric(1000, 1) < 0.1
+                                        THEN 0.1
+                                        ELSE (DS.acq_length_minutes / 60.0)::numeric(1000, 1)
+                                   END
+                               ELSE 1  -- Non-MALDI datasets use 1 for the transaction unit
+                          END AS transaction_units
+                   FROM Tmp_Datasets_to_Add DS
+                        INNER JOIN ( SELECT service_type_id,
+                                            doe_burdened_rate_per_run AS total_rate_per_run
+                                     FROM svc.t_service_cost_rate
+                                     WHERE cost_group_id = 101       -- This is the value for _costGroupID in FY26
+                                   ) CR
+                         ON DS.service_type_id = CR.service_type_id
+                 ) ComputeQ
+            ORDER BY ComputeQ.service_type_id, ComputeQ.dataset_id;
         */
 
         ---------------------------------------------------
