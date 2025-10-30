@@ -1,15 +1,16 @@
 --
--- Name: update_service_use_entries(text, text, text, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: update_service_use_entries(text, text, text, text, boolean, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.update_service_use_entries(IN _mode text, IN _newvalue text, IN _entryidlist text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.update_service_use_entries(IN _mode text, IN _newvalue text, IN _entryidlist text, IN _datasetcomment text, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
 **
 **  Desc:
-**      If _mode is 'datasetRating', update the dataset rating of the datasets associated with the specified service use entries
+**      If _mode is 'datasetRating', update the dataset rating of the datasets associated with the specified service use entries (_newValue defines the new dataset rating)
 **      Service use entries must be associated with an active service use report
+**      Text to append to the dataset comment can optionally be defined using _datasetComment
 **
 **      If _mode is 'serviceCenterRefund' and _newValue is 'true', change the service center report state to 'Need to refund to service center' for the specified datasets
 **      The service use entry IDs must be associated with a completed service use report, and the datasets must have a service center report state of 'Submitted to service center' or 'Need to refund to service center'
@@ -25,6 +26,7 @@ CREATE OR REPLACE PROCEDURE public.update_service_use_entries(IN _mode text, IN 
 **    _mode             Mode: 'datasetRating', 'serviceCenterRefund'
 **    _newValue         When mode is 'datasetRating', this is the dataset rating name; when mode is 'serviceCenterRefund', this is either 'true' or 'false'
 **    _entryIdList      Comma-separated list of service use entry IDs
+**    _datasetComment   Text to append to the dataset comment
 **    _infoOnly         When true, preview updates
 **    _message          Status message
 **    _returnCode       Return code
@@ -36,6 +38,7 @@ CREATE OR REPLACE PROCEDURE public.update_service_use_entries(IN _mode text, IN 
 **          09/23/2025 mem - Add mode 'serviceCenterRefund'
 **          09/27/2025 mem - Remove '(not service center eligible)' from _newValue, if present
 **                         - Replace ', not service center eligible' with an empty string, if present in _newValue
+**          10/29/2025 mem - Add parameter _datasetComment
 **
 *****************************************************/
 DECLARE
@@ -115,11 +118,12 @@ BEGIN
         -- Validate the inputs
         ---------------------------------------------------
 
-        _mode         := Trim(Lower(Coalesce(_mode, '')));
-        _newValue     := Trim(Coalesce(_newValue, ''));
-        _entryIdList  := Trim(Coalesce(_entryIdList, ''));
-        _infoOnly     := Coalesce(_infoOnly, false);
-        _callingUser  := Trim(Coalesce(_callingUser, ''));
+        _mode           := Trim(Lower(Coalesce(_mode, '')));
+        _newValue       := Trim(Coalesce(_newValue, ''));
+        _entryIdList    := Trim(Coalesce(_entryIdList, ''));
+        _datasetComment := Trim(Coalesce(_datasetComment, ''));
+        _infoOnly       := Coalesce(_infoOnly, false);
+        _callingUser    := Trim(Coalesce(_callingUser, ''));
 
         If Not _mode::citext IN ('datasetRating', 'serviceCenterRefund') Then
             _returnCode := 'U5201';
@@ -378,7 +382,11 @@ BEGIN
                 _message := _logMessage;
             Else
                 UPDATE t_dataset DS
-                SET dataset_rating_id = _newDatasetRatingID
+                SET dataset_rating_id = _newDatasetRatingID,
+                    comment = CASE WHEN _datasetComment = ''
+                                   THEN DS.comment
+                                   ELSE public.append_to_text(DS.comment, _datasetComment)
+                              END
                 FROM Tmp_ServiceUseIDs src
                      INNER JOIN svc.t_service_use U
                        ON U.entry_id = src.entry_id
@@ -557,11 +565,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.update_service_use_entries(IN _mode text, IN _newvalue text, IN _entryidlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+ALTER PROCEDURE public.update_service_use_entries(IN _mode text, IN _newvalue text, IN _entryidlist text, IN _datasetcomment text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE update_service_use_entries(IN _mode text, IN _newvalue text, IN _entryidlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE update_service_use_entries(IN _mode text, IN _newvalue text, IN _entryidlist text, IN _datasetcomment text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.update_service_use_entries(IN _mode text, IN _newvalue text, IN _entryidlist text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateServiceUseEntries';
+COMMENT ON PROCEDURE public.update_service_use_entries(IN _mode text, IN _newvalue text, IN _entryidlist text, IN _datasetcomment text, IN _infoonly boolean, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'UpdateServiceUseEntries';
 
