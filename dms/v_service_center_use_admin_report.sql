@@ -20,6 +20,7 @@ CREATE VIEW public.v_service_center_use_admin_report AS
             WHEN ((rep.report_state_id = ANY (ARRAY[1, 2])) AND (ds.svc_center_report_state_id = 5)) THEN 'Refunding to service center'::public.citext
             ELSE repstate.svc_center_report_state
         END AS dataset_svc_center_state,
+    ds.comment AS dataset_comment,
     rep.report_state_id
    FROM ((((((svc.t_service_use u
      JOIN svc.t_service_use_report rep ON ((rep.report_id = u.report_id)))
