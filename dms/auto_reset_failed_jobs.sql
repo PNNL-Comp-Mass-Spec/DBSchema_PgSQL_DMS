@@ -52,6 +52,7 @@ CREATE OR REPLACE PROCEDURE public.auto_reset_failed_jobs(IN _windowhours intege
 **          01/27/2024 mem - Ported to PostgreSQL
 **          06/13/2025 mem - Use new parameter name when calling procedure mc.set_manager_error_cleanup_mode()
 **                         - Reset failed jobs with error 'cyclic redundancy check'
+**          11/05/2025 mem - Include _message and _returnCode when calling mc.set_manager_error_cleanup_mode
 **
 *****************************************************/
 DECLARE
@@ -474,11 +475,15 @@ BEGIN
 
             If _setProcessorAutoRecover Then
                 If Not _infoOnly Then
-                    _logMessage := format('%s reports "Stopped Error"; setting ManagerErrorCleanupMode to 1 in the Manager_Control DB', _jobInfo.Processor);
+                    _logMessage := format('%s reports "Stopped Error"; setting ManagerErrorCleanupMode to 1 in mc.t_param_value', _jobInfo.Processor);
 
                     CALL post_log_entry ('Warning', _logMessage, 'Auto_Reset_Failed_Jobs');
 
-                    CALL mc.set_manager_error_cleanup_mode (_mgrlist => _jobInfo.Processor, _cleanupMode => 1);
+                    CALL mc.set_manager_error_cleanup_mode (
+                              _mgrlist     => _jobInfo.Processor,
+                              _cleanupMode => 1,
+                              _message     => _message,         -- Output
+                              _returnCode  => _returnCode);     -- Output
                 Else
                     RAISE INFO 'Call mc.set_manager_error_cleanup_mode (_mgrlist => %, _cleanupMode => 1)', _jobInfo.Processor;
                 End If;
