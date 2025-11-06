@@ -1,8 +1,8 @@
 --
--- Name: remove_old_tasks(integer, integer, boolean, integer, boolean, boolean, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
+-- Name: remove_old_tasks(integer, integer, boolean, integer, boolean, integer, boolean, text, text); Type: PROCEDURE; Schema: cap; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE cap.remove_old_tasks(IN _intervaldaysforsuccess integer DEFAULT 60, IN _intervaldaysforfail integer DEFAULT 135, IN _logdeletions boolean DEFAULT false, IN _maxtaskstoremove integer DEFAULT 0, IN _validatejobstepsuccess boolean DEFAULT false, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE cap.remove_old_tasks(IN _intervaldaysforsuccess integer DEFAULT 60, IN _intervaldaysforfail integer DEFAULT 135, IN _logdeletions boolean DEFAULT false, IN _maxtaskstoremove integer DEFAULT 0, IN _validatejobstepsuccess boolean DEFAULT false, IN _jobstatefilter integer DEFAULT 0, IN _infoonly boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -18,6 +18,7 @@ CREATE OR REPLACE PROCEDURE cap.remove_old_tasks(IN _intervaldaysforsuccess inte
 **    _logDeletions             When true, logs each deleted job number in cap.t_log_entries
 **    _maxTasksToRemove         When non-zero, limit the number of tasks deleted to this value (order by job)
 **    _validateJobStepSuccess   When true, do not delete tasks with any Failed, In Progress, or Holding task steps
+**    _jobStateFilter           When non-zero, only remove capture task jobs with the given state (must be 3, 4, 5, 14, 15, or 101, otherwise, no jobs will be matched)
 **    _infoOnly                 When true, preview the tasks that would be deleted
 **    _message                  Status message
 **    _returnCode               Return code
@@ -33,6 +34,12 @@ CREATE OR REPLACE PROCEDURE cap.remove_old_tasks(IN _intervaldaysforsuccess inte
 **               _logDeletions => false,           _maxTasksToRemove => 5,
 **               _validateJobStepSuccess => false, _infoOnly => false);
 **
+**      CALL remove_old_tasks (
+**               _intervalDaysForSuccess => 30,
+**               _intervalDaysForFail => 0,
+**               _jobStateFilter => 15,
+**               _infoOnly => true);
+**
 **  Auth:   grk
 **  Date:   09/12/2009 grk - Initial release (http://prismtrac.pnl.gov/trac/ticket/746)
 **          06/21/2010 mem - Increased retention to 60 days for successful capture task jobs
@@ -47,6 +54,7 @@ CREATE OR REPLACE PROCEDURE cap.remove_old_tasks(IN _intervaldaysforsuccess inte
 **                         - Add argument _returnCode when calling copy_task_to_history
 **          03/31/2024 mem - Assure that the newest 50 capture tasks with state Complete, Inactive, Skipped, or Ignore are not deleted
 **          05/16/2025 mem - When finding old tasks, use the Imported date if Start and Finish are null
+**          11/05/2025 mem - Add parameter _jobStateFilter
 **
 *****************************************************/
 DECLARE
@@ -94,6 +102,7 @@ BEGIN
     _logDeletions           := Coalesce(_logDeletions, false);
     _maxTasksToRemove       := Coalesce(_maxTasksToRemove, 0);
     _validateJobStepSuccess := Coalesce(_validateJobStepSuccess, false);
+    _jobStateFilter         := Coalesce(_jobStateFilter, 0);
     _infoOnly               := Coalesce(_infoOnly, false);
 
     ---------------------------------------------------
@@ -121,6 +130,7 @@ BEGIN
         SELECT Job, State
         FROM cap.t_tasks
         WHERE State IN (3, 4, 15, 101) AND    -- Complete, Inactive, Skipped, or Ignore
+              (_jobStateFilter <= 0 OR State = _jobStateFilter) AND
               Coalesce(Finish, Start, Imported) < _cutoffDateTimeForSuccess AND
               NOT job IN (SELECT T.job
                           FROM cap.t_tasks T
@@ -163,6 +173,7 @@ BEGIN
         SELECT Job, State
         FROM cap.t_tasks
         WHERE State IN (5, 14) AND            -- 'Failed' or 'Failed, Ignore Job Step States'
+              (_jobStateFilter <= 0 OR State = _jobStateFilter) AND
               Coalesce(Finish, Start) < _cutoffDateTimeForFail
         ORDER BY job;
     End If;
@@ -210,7 +221,10 @@ BEGIN
             ORDER BY Job
         LOOP
             If _infoOnly Then
-                RAISE INFO 'Call copy_task_to_history for capture task job % with state % and date %', _jobInfo.JobToAdd, _jobInfo.State, _jobInfo.SaveTimeOverride;
+                RAISE INFO 'Call copy_task_to_history for capture task job % with state % and date %',
+                           _jobInfo.JobToAdd,
+                           _jobInfo.State,
+                           to_char(_jobInfo.SaveTimeOverride, 'yyyy-mm-dd hh24:mi:ss');
             Else
                 CALL cap.copy_task_to_history (
                             _jobInfo.JobToAdd,
@@ -246,11 +260,11 @@ END
 $$;
 
 
-ALTER PROCEDURE cap.remove_old_tasks(IN _intervaldaysforsuccess integer, IN _intervaldaysforfail integer, IN _logdeletions boolean, IN _maxtaskstoremove integer, IN _validatejobstepsuccess boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE cap.remove_old_tasks(IN _intervaldaysforsuccess integer, IN _intervaldaysforfail integer, IN _logdeletions boolean, IN _maxtaskstoremove integer, IN _validatejobstepsuccess boolean, IN _jobstatefilter integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE remove_old_tasks(IN _intervaldaysforsuccess integer, IN _intervaldaysforfail integer, IN _logdeletions boolean, IN _maxtaskstoremove integer, IN _validatejobstepsuccess boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
+-- Name: PROCEDURE remove_old_tasks(IN _intervaldaysforsuccess integer, IN _intervaldaysforfail integer, IN _logdeletions boolean, IN _maxtaskstoremove integer, IN _validatejobstepsuccess boolean, IN _jobstatefilter integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: cap; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE cap.remove_old_tasks(IN _intervaldaysforsuccess integer, IN _intervaldaysforfail integer, IN _logdeletions boolean, IN _maxtaskstoremove integer, IN _validatejobstepsuccess boolean, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'RemoveOldTasks or RemoveOldJobs';
+COMMENT ON PROCEDURE cap.remove_old_tasks(IN _intervaldaysforsuccess integer, IN _intervaldaysforfail integer, IN _logdeletions boolean, IN _maxtaskstoremove integer, IN _validatejobstepsuccess boolean, IN _jobstatefilter integer, IN _infoonly boolean, INOUT _message text, INOUT _returncode text) IS 'RemoveOldTasks or RemoveOldJobs';
 
