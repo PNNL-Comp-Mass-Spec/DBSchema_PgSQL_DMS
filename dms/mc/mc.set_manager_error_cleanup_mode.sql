@@ -165,8 +165,8 @@ BEGIN
 
     If _insertCount <> 0 Then
         _message := format('Added entry for "ManagerErrorCleanupMode" to mc.t_param_value for %s %s',
-                            _insertCount,
-                            public.check_plural(_insertCount, 'manager', 'managers'));
+                           _insertCount,
+                           public.check_plural(_insertCount, 'manager', 'managers'));
 
         RAISE INFO '';
         RAISE INFO '%', _message;
@@ -234,9 +234,9 @@ BEGIN
         END LOOP;
 
         _message := format('Would set ManagerErrorCleanupMode to %s for %s %s; see the Output window for details',
-                            _cleanupMode,
-                            _countToUpdate,
-                            public.check_plural(_countToUpdate, 'manager', 'managers'));
+                           _cleanupMode,
+                           _countToUpdate,
+                           public.check_plural(_countToUpdate, 'manager', 'managers'));
 
         DROP TABLE Tmp_ManagerList;
         RETURN;
@@ -256,9 +256,9 @@ BEGIN
 
     If _insertCount > 0 Then
         _message := format('Set "ManagerErrorCleanupMode" to %s for %s %s',
-                            _cleanupModeString,
-                            _insertCount,
-                            public.check_plural(_insertCount, 'manager', 'managers'));
+                           _cleanupModeString,
+                           _insertCount,
+                           public.check_plural(_insertCount, 'manager', 'managers'));
 
         RAISE INFO '';
         RAISE INFO '%', _message;
