@@ -58,7 +58,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **      - If instrument group is Agilent_QQQ, service_type is 113
 **      - If dataset type contains GC or is EI-HMS, service_type is 113
 **      - If dataset type contains MALDI, service_type is 104
-**      - If instrument group contains MALDI or is QExactive_Imaging, service_type is 104 (this includes MALDI_timsTOF_Imaging)
+**      - If instrument group contains MALDI or is EMSL_QExactive_Imaging, service_type is 104 (this includes MALDI_timsTOF_Imaging)
 **      - If instrument group is timsTOF_Flex, service_type is 104
 **      - If instrument group is timsTOF_SCP, service_type is 100 or 102, depending on separation time (<= 60 minutes or > 60)
 **      - If sample_type for the separation type is Lipids, service_type is 111
@@ -120,6 +120,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **          10/01/2025 mem - Return service type ID 1 for QC_HeLa datasets
 **                         - Return service type ID 1 for GCMS_FAMEs and GCMS_Blank datasets
 **          10/22/2025 mem - Return service type 101 or 103 for IMS datasets that are not metabolites, lipids, or separation time <= 5 minutes
+**          11/07/2025 mem - Rename intrument group to EMSL_QExactive_Imaging
 **
 *****************************************************/
 DECLARE
@@ -315,7 +316,7 @@ BEGIN
     End If;
 
     -- Check for a MALDI instrument group (this includes MALDI_timsTOF_Imaging)
-    If _instrumentGroup LIKE '%MALDI%' OR _instrumentGroup = 'QExactive_Imaging' Then
+    If _instrumentGroup LIKE '%MALDI%' OR _instrumentGroup = 'EMSL_QExactive_Imaging' Then
         RETURN 104;       -- MALDI
     End If;
 
