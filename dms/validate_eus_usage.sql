@@ -55,6 +55,7 @@ CREATE OR REPLACE PROCEDURE public.validate_eus_usage(INOUT _eususagetype text, 
 **          06/15/2023 mem - Add support for usage type 'RESOURCE_OWNER'
 **          10/02/2023 mem - Ported to PostgreSQL
 **          10/09/2023 mem - Use a backslash when looking for parentheses using SIMILAR TO
+**          11/06/2025 mem - Validate EUS proposal type with EUS Usage Type
 **
 *****************************************************/
 DECLARE
@@ -65,13 +66,13 @@ DECLARE
     _eusUsageTypeName text;
     _originalProposalID text;
     _numericID int;
-    _proposalType text;
+    _proposalType citext;
     _autoSupersedeProposalID text;
     _checkSuperseded int;
     _iterations int;
     _logMessage text;
     _validateEUSData boolean;
-    _eusUsageTypeCampaign text;
+    _eusUsageTypeCampaign citext;
     _msg text;
     _eusUserIDList text;
 
@@ -192,8 +193,9 @@ BEGIN
 
     If _samplePrepRequest And Not _enabledForPrepRequests Then
         If _eusUsageType::citext = 'USER' Then
-            _message := 'Please choose usage type USER_ONSITE if processing a sample from an onsite user or a sample for a Resource Owner project; '
-                        'choose USER_REMOTE if processing a sample for an EMSL user';
+            _message := 'Please choose usage type USER_ONSITE if processing a sample from an onsite user; '
+                        'choose USER_REMOTE if processing a sample for an EMSL user; '
+                        'choose RESOURCE_OWNER if processing a sample for a Resource Owner project';
         Else
             _message := format('EUS usage type "%s" is not allowed for Sample Prep Requests', _eusUsageType);
         End If;
@@ -205,12 +207,11 @@ BEGIN
     _eusUsageType := _eusUsageTypeName;
 
     ---------------------------------------------------
-    -- Validate EUS proposal and user
-    -- if EUS usage type requires them
+    -- Validate EUS proposal and user if EUS usage type requires them
     ---------------------------------------------------
 
     If Not _eusUsageType::citext In ('USER', 'USER_ONSITE', 'USER_REMOTE') Then
-        -- Make sure no proposal ID or users are specified
+        -- Make sure no proposal ID or users are specified; this includes usage type RESOURCE_OWNER
         If Coalesce(_eusProposalID, '') <> '' Or _eusUsersList <> '' Then
             _message := format('Warning: Cleared proposal ID and/or users since usage type is "%s"', _eusUsageType);
         End If;
@@ -222,7 +223,6 @@ BEGIN
     _proposalType := '';
 
     If _eusUsageType::citext In ('USER', 'USER_ONSITE', 'USER_REMOTE') Then
-
         ---------------------------------------------------
         -- Proposal and user list cannot be blank when the usage type is 'USER', 'USER_ONSITE', or 'USER_REMOTE'
         ---------------------------------------------------
@@ -294,7 +294,6 @@ BEGIN
 
                     _checkSuperseded := 0;
                 Else
-
                     If Not Exists (SELECT proposal_id FROM t_eus_proposals WHERE proposal_id = _autoSupersedeProposalID) Then
                         _logMessage := format('Proposal %s in t_eus_proposals has proposal_id_auto_supersede set to %s, but that proposal does not exist in t_eus_proposals',
                                               Coalesce(_eusProposalID, '??'), Coalesce(_autoSupersedeProposalID, '??'));
@@ -352,7 +351,6 @@ BEGIN
         END LOOP;
 
         If _infoOnly And Exists (SELECT * from Tmp_Proposal_Stack) Then
-
             RAISE INFO '';
 
             _formatSpecifier := '%-10s %-11s %-11s';
@@ -409,6 +407,11 @@ BEGIN
             If Not _autoPopulateUserListIfBlank Then
                 _message := format('Associated users must be selected for usage type "%s"', _eusUsageType);
                 _returnCode := 'U5375';
+
+                If _createdProposalStackTable Then
+                    DROP TABLE Tmp_Proposal_Stack;
+                End If;
+
                 RETURN;
             End If;
 
@@ -436,7 +439,6 @@ BEGIN
         ---------------------------------------------------
 
         If _eusUsersList <> '' Then
-
             If _eusUsersList SIMILAR TO '%[A-Z]%' And _eusUsersList SIMILAR TO '%\([0-9]%' And _eusUsersList SIMILAR TO '%[0-9]\)%' Then
                 If _infoOnly Then
                     RAISE INFO 'Parsing:   %', _eusUsersList;
@@ -451,7 +453,6 @@ BEGIN
 
                 If Coalesce(_eusUserIDList, '') = '' Then
                     _message := format('Unable to convert "person (ID)" entries to integers; integers not found in "%s"', _eusUsersList);
-
                     _returnCode := 'U5376';
 
                     If _createdProposalStackTable Then
@@ -520,7 +521,6 @@ BEGIN
             WHERE public.try_cast(item, null::int) IS NULL;
 
             If _invalidCount > 0 Then
-
                 If _invalidCount = 1 Then
                     _message := 'EMSL User ID is not numeric';
                 Else
@@ -553,7 +553,6 @@ BEGIN
                 -- Invalid users were found
                 --
                 If Not _autoPopulateUserListIfBlank Then
-
                     If _invalidCount = 1 Then
                         _message := format('%s user is not associated with the specified proposal', _invalidCount);
                     Else
@@ -641,7 +640,7 @@ BEGIN
             WHERE E.exp_id = _experimentID;
         End If;
 
-        If _eusUsageTypeCampaign::citext = 'USER_REMOTE' And _eusUsageType::citext In ('USER_ONSITE', 'USER') And _proposalType::citext <> 'Resource Owner' Then
+        If _eusUsageTypeCampaign = 'USER_REMOTE' And _eusUsageType::citext In ('USER_ONSITE', 'USER') And _proposalType <> 'Resource Owner' Then
             If _addingItem Then
                 _eusUsageType := 'USER_REMOTE';
                 _msg := 'Auto-updated EUS Usage Type to USER_REMOTE since the campaign has USER_REMOTE';
@@ -653,18 +652,24 @@ BEGIN
             _message := public.append_to_text(_message, _msg);
         End If;
 
-        If _eusUsageTypeCampaign::citext = 'USER_ONSITE' And _eusUsageType::citext = 'USER' And _proposalType::citext <> 'Resource Owner' Then
+        If _eusUsageTypeCampaign = 'USER_ONSITE' And _eusUsageType::citext = 'USER' And _proposalType <> 'Resource Owner' Then
             _eusUsageType := 'USER_ONSITE';
             _msg := 'Auto-updated EUS Usage Type to USER_ONSITE since the campaign has USER_ONSITE';
             _usageTypeUpdated := true;
         End If;
     End If;
 
-    If _proposalType::citext = 'Resource Owner' And _eusUsageType::citext In ('USER_REMOTE', 'USER') Then
-        -- Requested runs for Resource Owner projects should always have EUS Usage Type 'USER_ONSITE'
+    ---------------------------------------------------
+    -- If the proposal type is 'Resource Owner', auto-switch to 'USER_ONSITE' if the usage type is 'USER_REMOTE' or 'USER'
+    ---------------------------------------------------
+
+    If _proposalType = 'Resource Owner' And _eusUsageType::citext In ('USER_REMOTE', 'USER') Then
+        -- Starting in FY 24, requested runs for Resource Owner projects should always have EUS Usage Type 'USER_ONSITE'
         _eusUsageType := 'USER_ONSITE';
         _msg := 'Auto-updated EUS Usage Type to USER_ONSITE since associated with a Resource Owner project';
         _usageTypeUpdated := true;
+
+        -- Note that when the EUS Usage Type is RESOURCE_OWNER, the EUS Proposal ID cannot be defined (see logic below)
     End If;
 
     If _usageTypeUpdated Then
@@ -683,6 +688,20 @@ BEGIN
             -- Only append _msg to _message if an error occurs
             _message := public.append_to_text(_message, _msg);
         End If;
+    End If;
+
+    ---------------------------------------------------
+    -- Validate the EUS proposal type with the EUS Usage Type
+    ---------------------------------------------------
+
+    If _eusUsageType = 'USER_ONSITE' And _proposalType = 'Contracted Time' Then
+        _message    := 'When the usage type is USER_ONSITE, you cannot select a "Contracted Time" EUS Proposal; typically you would select a DASH, Intramural S&T, or Staff Time proposal';
+        _returnCode := 'U5379';
+    End If;
+
+    If _eusUsageType = 'USER_REMOTE' And _proposalType = 'Staff Time' Then
+        _message    := 'When the usage type is USER_REMOTE, you cannot select a "Staff Time" EUS Proposal; typically you would select a Contracted Time, Limited Scope, or research campaign proposal';
+        _returnCode := 'U5380';
     End If;
 
     If _createdProposalStackTable Then
