@@ -30,6 +30,7 @@ CREATE OR REPLACE FUNCTION cap.get_dataset_capture_priority(_datasetname text, _
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          01/21/2024 mem - Change data type of function arguments to text
 **          07/23/2024 mem - Add/update imaging instrument groups
+**          11/07/2025 mem - Rename instrument groups to EMSL_Bruker_FTMS, EMSL_MALDI_Imaging, and EMSL_QExactive_Imaging
 **
 *****************************************************/
 DECLARE
@@ -44,7 +45,7 @@ BEGIN
         _datasetName::citext SIMILAR TO 'QC[_]PP[_]MCF-7%'
        ) AND NOT _datasetName ILIKE '%-bad' Then
          _priority := 2;
-    ElsIf _instrumentGroup::citext In ('TSQ', 'Bruker_FTMS', 'MALDI_Imaging', 'MALDI_timsTOF_Imaging', 'QExactive_Imaging') Then
+    ElsIf _instrumentGroup::citext In ('TSQ', 'EMSL_Bruker_FTMS', 'EMSL_MALDI_Imaging', 'MALDI_timsTOF_Imaging', 'EMSL_QExactive_Imaging') Then
         _priority := 6;
     Else
         _priority := 4;
