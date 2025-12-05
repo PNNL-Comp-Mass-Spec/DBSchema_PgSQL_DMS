@@ -56,6 +56,7 @@ CREATE OR REPLACE PROCEDURE public.validate_eus_usage(INOUT _eususagetype text, 
 **          10/02/2023 mem - Ported to PostgreSQL
 **          10/09/2023 mem - Use a backslash when looking for parentheses using SIMILAR TO
 **          11/06/2025 mem - Validate EUS proposal type with EUS Usage Type
+**          12/03/2025 mem - Append additional messages to _message
 **
 *****************************************************/
 DECLARE
@@ -281,7 +282,6 @@ BEGIN
             If Coalesce(_autoSupersedeProposalID, '') = '' Then
                 _checkSuperseded := 0;
             Else
-
                 If _eusProposalID = _autoSupersedeProposalID Then
                     _logMessage := format('Proposal %s in t_eus_proposals has proposal_id_auto_supersede set to itself; this is invalid',
                                           Coalesce(_eusProposalID, '??'));
@@ -328,10 +328,9 @@ BEGIN
                             ORDER BY Numeric_ID DESC, Proposal_ID DESC
                             LIMIT 1;
 
-                            If _originalProposalID = _eusProposalID Then
-                                _message := '';
-                            Else
-                                _message := format('Proposal %s is superseded by %s', _originalProposalID, _eusProposalID);
+                            If _originalProposalID <> _eusProposalID Then
+                                _msg := format('Proposal %s is superseded by %s', _originalProposalID, _eusProposalID);
+                                _message := public.append_to_text(_message, _msg);
                             End If;
 
                             _checkSuperseded := 0;
@@ -339,9 +338,8 @@ BEGIN
                             INSERT INTO Tmp_Proposal_Stack (Proposal_ID, Numeric_ID)
                             VALUES (_autoSupersedeProposalID, Coalesce(_numericID, 0));
 
-                            _message := public.append_to_text(
-                                                _message,
-                                                format('Proposal %s is superseded by %s', _eusProposalID, _autoSupersedeProposalID));
+                            _msg := format('Proposal %s is superseded by %s', _eusProposalID, _autoSupersedeProposalID);
+                            _message := public.append_to_text(_message, _msg);
 
                             _eusProposalID := _autoSupersedeProposalID;
                         End If;
@@ -405,7 +403,8 @@ BEGIN
             -- Blank user list
             --
             If Not _autoPopulateUserListIfBlank Then
-                _message := format('Associated users must be selected for usage type "%s"', _eusUsageType);
+                _msg := format('Associated users must be selected for usage type "%s"', _eusUsageType);
+                _message := public.append_to_text(_message, _msg);
                 _returnCode := 'U5375';
 
                 If _createdProposalStackTable Then
@@ -428,9 +427,8 @@ BEGIN
 
             If Coalesce(_personID, 0) > 0 Then
                 _eusUsersList := _personID;
-                _message := public.append_to_text(
-                                    _message,
-                                    format('Warning: EUS User list was empty; auto-selected user "%s"', _eusUsersList));
+                _msg := format('Warning: EUS User list was empty; auto-selected user "%s"', _eusUsersList);
+                _message := public.append_to_text(_message, _msg);
             End If;
         End If;
 
@@ -452,7 +450,8 @@ BEGIN
                 FROM (SELECT regexp_matches(_eusUsersList, '[0-9]+', 'g') AS UserID) MatchQ;
 
                 If Coalesce(_eusUserIDList, '') = '' Then
-                    _message := format('Unable to convert "person (ID)" entries to integers; integers not found in "%s"', _eusUsersList);
+                    _msg := format('Unable to convert "person (ID)" entries to integers; integers not found in "%s"', _eusUsersList);
+                    _message := public.append_to_text(_message, _msg);
                     _returnCode := 'U5376';
 
                     If _createdProposalStackTable Then
@@ -522,11 +521,12 @@ BEGIN
 
             If _invalidCount > 0 Then
                 If _invalidCount = 1 Then
-                    _message := 'EMSL User ID is not numeric';
+                    _msg := 'EMSL User ID is not numeric';
                 Else
-                    _message := format('%s EMSL User IDs are not numeric', _invalidCount);
+                    _msg := format('%s EMSL User IDs are not numeric', _invalidCount);
                 End If;
 
+                _message := public.append_to_text(_message, _msg);
                 _returnCode := 'U5377';
 
                 If _createdProposalStackTable Then
@@ -554,11 +554,12 @@ BEGIN
                 --
                 If Not _autoPopulateUserListIfBlank Then
                     If _invalidCount = 1 Then
-                        _message := format('%s user is not associated with the specified proposal', _invalidCount);
+                        _msg := format('%s user is not associated with the specified proposal', _invalidCount);
                     Else
-                        _message := format('%s users are not associated with the specified proposal', _invalidCount);
+                        _msg := format('%s users are not associated with the specified proposal', _invalidCount);
                     End If;
 
+                    _message := public.append_to_text(_message, _msg);
                     _returnCode := 'U5378';
 
                     If _createdProposalStackTable Then
@@ -612,11 +613,8 @@ BEGIN
                 End If;
 
                 _eusUsersList := Trim(Coalesce(_newUserList, ''));
-
-                _message := public.append_to_text(
-                                    _message,
-                                    format('Warning: Removed users from EUS User list that are not associated with proposal "%s"', _eusProposalID));
-
+                _msg := format('Warning: Removed users from EUS User list that are not associated with proposal "%s"', _eusProposalID);
+                _message := public.append_to_text(_message, _msg);
             End If;
         End If;
     End If;
@@ -656,6 +654,8 @@ BEGIN
             _eusUsageType := 'USER_ONSITE';
             _msg := 'Auto-updated EUS Usage Type to USER_ONSITE since the campaign has USER_ONSITE';
             _usageTypeUpdated := true;
+
+            _message := public.append_to_text(_message, _msg);
         End If;
     End If;
 
@@ -669,12 +669,12 @@ BEGIN
         _msg := 'Auto-updated EUS Usage Type to USER_ONSITE since associated with a Resource Owner project';
         _usageTypeUpdated := true;
 
+        _message := public.append_to_text(_message, _msg);
+
         -- Note that when the EUS Usage Type is RESOURCE_OWNER, the EUS Proposal ID cannot be defined (see logic below)
     End If;
 
     If _usageTypeUpdated Then
-        _message := public.append_to_text(_message, _msg);
-
         SELECT eus_usage_type_id
         INTO _eusUsageTypeID
         FROM t_eus_usage_type
@@ -695,12 +695,14 @@ BEGIN
     ---------------------------------------------------
 
     If _eusUsageType = 'USER_ONSITE' And _proposalType = 'Contracted Time' Then
-        _message    := 'When the usage type is USER_ONSITE, you cannot select a "Contracted Time" EUS Proposal; typically you would select a DASH, Intramural S&T, or Staff Time proposal';
+        _msg        := 'When the usage type is USER_ONSITE, you cannot select a "Contracted Time" EUS Proposal; typically you would select a DASH, Intramural S&T, or Staff Time proposal';
+        _message    := public.append_to_text(_message, _msg);
         _returnCode := 'U5379';
     End If;
 
     If _eusUsageType = 'USER_REMOTE' And _proposalType = 'Staff Time' Then
-        _message    := 'When the usage type is USER_REMOTE, you cannot select a "Staff Time" EUS Proposal; typically you would select a Contracted Time, Limited Scope, or research campaign proposal';
+        _msg        := 'When the usage type is USER_REMOTE, you cannot select a "Staff Time" EUS Proposal; typically you would select a Contracted Time, Limited Scope, or research campaign proposal';
+        _message    := public.append_to_text(_message, _msg);
         _returnCode := 'U5380';
     End If;
 
