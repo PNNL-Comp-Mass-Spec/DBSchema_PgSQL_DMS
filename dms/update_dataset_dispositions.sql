@@ -47,6 +47,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_dispositions(IN _datasetidlist
 **          09/17/2025 mem - Update service center use type ID
 **          09/18/2025 mem - Remove '(not service center eligible)' from _rating, if present
 **          09/24/2025 mem - Replace ', not service center eligible' with an empty string, if present
+**          11/13/2025 mem - Exit the procedure if an exception occurs while validating the inputs or populating Tmp_DatasetInfo
 **
 *****************************************************/
 DECLARE
@@ -213,6 +214,9 @@ BEGIN
         If Coalesce(_returnCode, '') = '' Then
             _returnCode := _sqlState;
         End If;
+
+        DROP TABLE IF EXISTS Tmp_DatasetInfo;
+        RETURN;
     END;
 
     ---------------------------------------------------
