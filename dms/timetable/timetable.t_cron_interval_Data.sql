@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.5
+-- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -110,6 +110,7 @@ COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description
 77	28 18 * * 6	Weekly, on Saturday at 6:28 PM
 63	38 15 * * 7	Weekly, on Sunday at 3:38 PM
 16	9 4 * * 7	Weekly, on Sunday at 4:09 AM
+95	39 4 * * 7	Weekly, on Sunday at 4:39 AM
 17	15 5 * * 7	Weekly, on Sunday at 5:15 AM
 29	15 15 * * 4	Weekly, on Thursday at 3:15 PM
 28	16 15 * * 4	Weekly, on Thursday at 3:16 PM
@@ -122,7 +123,7 @@ COPY timetable.t_cron_interval (interval_id, cron_interval, interval_description
 -- Name: t_cron_interval_interval_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.t_cron_interval_interval_id_seq', 94, true);
+SELECT pg_catalog.setval('timetable.t_cron_interval_interval_id_seq', 95, true);
 
 
 --

@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
+-- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -109,6 +109,8 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 21	LC-KoreaU-Standard	Datasets acquired at Korea University	0	Other	0	2009-07-28 18:58:49
 63	LC-MIT-Standard	Datasets acquired at Forest White's lab at MIT	0	Other	0	2012-06-05 21:52:46
 94	LC-NU-Standard	Datasets acquired in the Kelleher lab at Northwestern	0	Other	0	2015-11-05 11:10:50
+151	LC-Nano-Lipidomics		1	LC-Nano-Lipidomics	0	2025-12-01 11:19:11.370735
+150	LC-Nano-Metabolomics		1	LC-Nano-Metabolomics	0	2025-12-01 11:18:36.328054
 143	LC-Neo-Formic_10Min	Neo, formic acid, 10 min separation	1	LC-Formic_10min	1	2024-05-30 10:29:32
 127	LC-Neo-Formic_1hr	Neo, formic acid, 1 hour separation	1	LC-Formic_1hr	1	2022-12-20 12:46:10
 144	LC-Neo-Formic_20Min	Neo, formic acid, 20 Min separation	1	LC-Formic_20min	1	2024-05-30 10:30:01

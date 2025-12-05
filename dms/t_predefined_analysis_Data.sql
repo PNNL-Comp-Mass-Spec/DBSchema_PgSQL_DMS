@@ -883,6 +883,9 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 1890	85	13	LTQ_FT	Astral%				HMC3-SCPC					QC_Shew%		%HCD-HMSn%					0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_NTermAcet_Precursor400-900.txt	DiaNN_Standard.xml	8	na	H_sapiens_UniProt_SPROT_2024-09-12,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	2		1		2025-10-06 17:34:10.001477	D3L243	86	1	0	2025-10-17 10:14:47.345729
 1891	85	13	LTQ_FT	Astral%				HMC3-SCPC				QC_Shew%	%[_]DDA[_]%		%DIA-HCD-HMSn%					0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_NTermAcet_Precursor400-900.txt	DiaNN_Standard.xml	4	na	Shewanella_oneidensis_MR1_2010-04-22,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		0	This predefine is similar to predefine 1890 but matches QC_Shew datasets with experiment HMC3-SCPC. Disabled since the correct fix was to change the experiment name for the QC_Shew_23_01_Dfly_nanoPOTS_07Oct25 datasets	2025-10-08 14:01:28.096075	D3L243	86	1	0	2025-10-17 10:12:10.348089
 1892	85	13	LTQ_FT	Astral%								nanoPOTS_microglia_nanoSPLITS%	QC_Shew%		%HCD-HMSn%					0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_NTermAcet_Precursor400-900.txt	DiaNN_Standard.xml	8	na	H_sapiens_UniProt_SPROT_2024-09-12,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	2		1		2025-10-17 10:16:27.308079	D3L243	86	1	0	2025-10-17 10:17:03.498209
+1893	85	10	LTQ_FT	AstralZ02		CPTAC4		SKCM_SP_10cases												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_NTermAcet_Precursor380-980.txt	DiaNN_Standard.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	2		1		2025-10-22 16:24:09.232058	D3L243	86	1	0	2025-10-22 16:24:09.232058
+1894	91	57	LTQ_FT	Exploris%		Alzheimer and Parkinson Diseases		Alz_Buch_SMA%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_Stat_CysAlk_TMT_16Plex_20ppmParTol.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_UniProt_SPROT_2023-09-01,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	3		1		2025-11-03 09:56:05.337131	D3L243	92	1	0	2025-11-03 09:56:05.337131
+1895	85	10	LTQ_FT	Astral%		Cancer Moonshot - Framingham		MNST[_]F2[_]SEER%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_NTermAcet_Precursor380-980.txt	DiaNN_Standard.xml	8	na	H_sapiens_UniProt_SPROT_2025-09-30,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	2		1		2025-12-01 19:40:45.503326	D3L243	86	1	0	2025-12-01 19:40:45.503326
 \.
 
 
@@ -890,7 +893,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 -- Name: t_predefined_analysis_predefine_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1892, true);
+SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1895, true);
 
 
 --

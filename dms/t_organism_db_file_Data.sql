@@ -441,6 +441,31 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 9210	Baldrian_FRANCONIAN_ROOTS_metaGENOME_TrypPigBov_2025-09-30_5x_5.fasta	1557	Auto-created	0	224618	30531311	1	47689	2025-10-17 11:54:51.519384	f
 9164	Baldrian_FRANCONIAN_ROOTS_metaTRANSCRIPTOME_TrypPigBov_2025-09-30.fasta	1557	https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=FraForRoTipMetaT_FD; 8 duplicates collapsed	1	360526	43100131	1	5279	2025-10-02 16:43:27.492999	f
 9161	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30.fasta	1557	https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=FWMetCoAssembly_2_FD; 5318 duplicates collapsed	1	23287379	3634152705	1	5.558905e+06	2025-10-02 16:37:53.612559	f
+9341	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_01.fasta	1557	Auto-created	0	931650	145366176	1	220931	2025-11-14 10:59:50.033283	f
+9342	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_02.fasta	1557	Auto-created	0	931970	145366135	1	220956	2025-11-14 10:59:50.051723	f
+9343	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_03.fasta	1557	Auto-created	0	931845	145365921	1	220954	2025-11-14 10:59:50.056466	f
+9344	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_04.fasta	1557	Auto-created	0	931301	145365933	1	220913	2025-11-14 10:59:50.06095	f
+9345	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_05.fasta	1557	Auto-created	0	931089	145365934	1	220901	2025-11-14 10:59:50.06534	f
+9346	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_06.fasta	1557	Auto-created	0	932383	145365878	1	221002	2025-11-14 10:59:50.069552	f
+9347	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_07.fasta	1557	Auto-created	0	931268	145366528	1	220870	2025-11-14 10:59:50.074071	f
+9348	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_08.fasta	1557	Auto-created	0	931053	145366565	1	220893	2025-11-14 10:59:50.078605	f
+9349	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_09.fasta	1557	Auto-created	0	931319	145365935	1	220888	2025-11-14 10:59:50.083062	f
+9350	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_10.fasta	1557	Auto-created	0	931681	145366128	1	220926	2025-11-14 10:59:50.087303	f
+9351	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_11.fasta	1557	Auto-created	0	930917	145366579	1	220884	2025-11-14 10:59:50.091715	f
+9352	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_12.fasta	1557	Auto-created	0	930605	145365964	1	220867	2025-11-14 10:59:50.09592	f
+9353	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_13.fasta	1557	Auto-created	0	931998	145365877	1	220949	2025-11-14 10:59:50.100281	f
+9354	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_14.fasta	1557	Auto-created	0	931796	145365915	1	220954	2025-11-14 10:59:50.104552	f
+9355	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_15.fasta	1557	Auto-created	0	931232	145365913	1	220909	2025-11-14 10:59:50.10882	f
+9356	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_16.fasta	1557	Auto-created	0	932114	145365947	1	220954	2025-11-14 10:59:50.11297	f
+9357	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_17.fasta	1557	Auto-created	0	931920	145366152	1	220956	2025-11-14 10:59:50.11721	f
+9358	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_18.fasta	1557	Auto-created	0	931310	145366545	1	220907	2025-11-14 10:59:50.121376	f
+9359	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_19.fasta	1557	Auto-created	0	931607	145365903	1	220916	2025-11-14 10:59:50.125594	f
+9360	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_20.fasta	1557	Auto-created	0	931493	145366458	1	220908	2025-11-14 10:59:50.12971	f
+9361	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_21.fasta	1557	Auto-created	0	931109	145365980	1	220884	2025-11-14 10:59:50.133886	f
+9362	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_22.fasta	1557	Auto-created	0	931893	145366586	1	220932	2025-11-14 10:59:50.138109	f
+9363	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_23.fasta	1557	Auto-created	0	931908	145365931	1	220956	2025-11-14 10:59:50.142315	f
+9364	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_24.fasta	1557	Auto-created	0	930692	145365894	1	220861	2025-11-14 10:59:50.14654	f
+9365	Baldrian_FRANCONIAN_metaGENOME_TrypPigBov_2025-09-30_25x_25.fasta	1557	Auto-created	0	931226	145365928	1	220919	2025-11-14 10:59:50.150782	f
 9162	Baldrian_FRANCONIAN_metaTRANSCRIPTOME_TrypPigBov_2025-09-30.fasta	1557	https://genome.jgi.doe.gov/portal/pages/dynamicOrganismDownload.jsf?organism=FWMetCoAssembly_FD; 5318 duplicates collapsed	1	3450484	545554013	1	833025	2025-10-02 16:39:58.258577	f
 9216	Baldrian_FRANCONIAN_metaTRANSCRIPTOME_TrypPigBov_2025-09-30_5x_1.fasta	1557	Auto-created	0	691106	109110106	1	165595	2025-10-17 11:56:27.60131	f
 9217	Baldrian_FRANCONIAN_metaTRANSCRIPTOME_TrypPigBov_2025-09-30_5x_2.fasta	1557	Auto-created	0	689630	109110785	1	165508	2025-10-17 11:56:27.611732	f
@@ -6571,6 +6596,116 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 2240	Organic_all_gDNA_contigs_1k_prodigal_TryPigBov_2017-02-21_15x_13.fasta	31	Auto-created	0	109393	23335229	1	36625	2017-04-28 11:57:00	f
 2241	Organic_all_gDNA_contigs_1k_prodigal_TryPigBov_2017-02-21_15x_14.fasta	31	Auto-created	0	109843	23334679	1	36680	2017-04-28 11:57:00	f
 2242	Organic_all_gDNA_contigs_1k_prodigal_TryPigBov_2017-02-21_15x_15.fasta	31	Auto-created	0	109759	23334834	1	36667	2017-04-28 11:57:00	f
+9230	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21.fasta	1888	Metaproteome for soil microbial communities from Ozarks prairies (native prairie soil from Ozarks Complex 37.1069, -93.9030, bottom layer) sequenced at JGI provided by Song Young (young.song@pnnl.gov)	1	4832965	838850889	1	1.245666e+06	2025-10-25 16:59:04.153275	f
+9266	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_01.fasta	1888	Auto-created	0	193223	33554104	1	49836	2025-10-30 08:47:47.77704	f
+9267	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_02.fasta	1888	Auto-created	0	193363	33554474	1	49824	2025-10-30 08:47:47.791867	f
+9268	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_03.fasta	1888	Auto-created	0	192642	33553886	1	49799	2025-10-30 08:47:47.797278	f
+9269	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_04.fasta	1888	Auto-created	0	192913	33553856	1	49788	2025-10-30 08:47:47.802368	f
+9270	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_05.fasta	1888	Auto-created	0	193158	33553760	1	49813	2025-10-30 08:47:47.807315	f
+9271	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_06.fasta	1888	Auto-created	0	193308	33554341	1	49833	2025-10-30 08:47:47.812452	f
+9272	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_07.fasta	1888	Auto-created	0	193714	33553902	1	49887	2025-10-30 08:47:47.8175	f
+9273	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_08.fasta	1888	Auto-created	0	193330	33553930	1	49842	2025-10-30 08:47:47.822692	f
+9274	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_09.fasta	1888	Auto-created	0	193138	33553818	1	49840	2025-10-30 08:47:47.827904	f
+9275	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_10.fasta	1888	Auto-created	0	193275	33554526	1	49833	2025-10-30 08:47:47.833095	f
+9276	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_11.fasta	1888	Auto-created	0	193542	33553870	1	49832	2025-10-30 08:47:47.838163	f
+9277	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_12.fasta	1888	Auto-created	0	193396	33553746	1	49847	2025-10-30 08:47:47.843222	f
+9278	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_13.fasta	1888	Auto-created	0	193362	33553981	1	49813	2025-10-30 08:47:47.848365	f
+9279	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_14.fasta	1888	Auto-created	0	193240	33553936	1	49830	2025-10-30 08:47:47.853553	f
+9280	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_15.fasta	1888	Auto-created	0	193422	33553800	1	49847	2025-10-30 08:47:47.858645	f
+9281	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_16.fasta	1888	Auto-created	0	193141	33554503	1	49808	2025-10-30 08:47:47.863876	f
+9282	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_17.fasta	1888	Auto-created	0	193182	33553840	1	49800	2025-10-30 08:47:47.869148	f
+9283	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_18.fasta	1888	Auto-created	0	193246	33554490	1	49808	2025-10-30 08:47:47.874339	f
+9284	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_19.fasta	1888	Auto-created	0	193733	33553929	1	49851	2025-10-30 08:47:47.879523	f
+9285	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_20.fasta	1888	Auto-created	0	193189	33553895	1	49816	2025-10-30 08:47:47.884825	f
+9286	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_21.fasta	1888	Auto-created	0	193295	33553866	1	49825	2025-10-30 08:47:47.890222	f
+9287	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_22.fasta	1888	Auto-created	0	193516	33554071	1	49810	2025-10-30 08:47:47.895464	f
+9288	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_23.fasta	1888	Auto-created	0	193994	33554504	1	49873	2025-10-30 08:47:47.900697	f
+9289	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_24.fasta	1888	Auto-created	0	193779	33553797	1	49829	2025-10-30 08:47:47.90593	f
+9290	Ozarks_Prairie_Bottom_5_JGI_TrypPigBov_2025-10-21_25x_25.fasta	1888	Auto-created	0	192864	33554064	1	49783	2025-10-30 08:47:47.911248	f
+9226	Ozarks_Prairie_Top_1_JGI_TrypPigBov_2025-10-21.fasta	1888	Metaproteome for soil microbial communities from Ozarks prairies (restored prairie peninsula 38.6738, -90.3975, top layer) sequenced at JGI provided by Song Young (young.song@pnnl.gov)	1	1844327	314340505	1	484753	2025-10-25 16:59:04.153275	f
+9261	Ozarks_Prairie_Top_1_JGI_TrypPigBov_2025-10-21_5x_1.fasta	1888	Auto-created	0	368554	62868127	1	96920	2025-10-28 09:03:34.499442	f
+9262	Ozarks_Prairie_Top_1_JGI_TrypPigBov_2025-10-21_5x_2.fasta	1888	Auto-created	0	368927	62868463	1	96946	2025-10-28 09:03:34.509671	f
+9263	Ozarks_Prairie_Top_1_JGI_TrypPigBov_2025-10-21_5x_3.fasta	1888	Auto-created	0	368431	62867400	1	96924	2025-10-28 09:03:34.514536	f
+9264	Ozarks_Prairie_Top_1_JGI_TrypPigBov_2025-10-21_5x_4.fasta	1888	Auto-created	0	369234	62867983	1	96999	2025-10-28 09:03:34.519022	f
+9265	Ozarks_Prairie_Top_1_JGI_TrypPigBov_2025-10-21_5x_5.fasta	1888	Auto-created	0	369181	62868532	1	96963	2025-10-28 09:03:34.523101	f
+9227	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21.fasta	1888	Metaproteome for soil microbial communities from Ozarks prairies (native prairie soil from Ozarks Complex 37.5630, -93.4118, top layer) sequenced at JGI provided by Song Young (young.song@pnnl.gov)	1	6915838	1192657886	1	1.789208e+06	2025-10-25 16:59:04.153275	f
+9236	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_01.fasta	1888	Auto-created	0	276196	47706700	1	71518	2025-10-27 16:49:12.716998	f
+9237	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_02.fasta	1888	Auto-created	0	276270	47706355	1	71542	2025-10-27 16:49:12.733698	f
+9238	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_03.fasta	1888	Auto-created	0	276555	47706055	1	71555	2025-10-27 16:49:12.738516	f
+9239	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_04.fasta	1888	Auto-created	0	276717	47706165	1	71598	2025-10-27 16:49:12.744071	f
+9240	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_05.fasta	1888	Auto-created	0	276481	47706143	1	71554	2025-10-27 16:49:12.748374	f
+9241	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_06.fasta	1888	Auto-created	0	276488	47706128	1	71563	2025-10-27 16:49:12.753155	f
+9242	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_07.fasta	1888	Auto-created	0	276733	47706099	1	71584	2025-10-27 16:49:12.757981	f
+9243	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_08.fasta	1888	Auto-created	0	276966	47706164	1	71594	2025-10-27 16:49:12.762415	f
+9244	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_09.fasta	1888	Auto-created	0	276495	47706754	1	71563	2025-10-27 16:49:12.767161	f
+9245	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_10.fasta	1888	Auto-created	0	276906	47706332	1	71585	2025-10-27 16:49:12.777554	f
+9246	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_11.fasta	1888	Auto-created	0	276437	47706050	1	71566	2025-10-27 16:49:12.784158	f
+9247	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_12.fasta	1888	Auto-created	0	276734	47706658	1	71546	2025-10-27 16:49:12.78881	f
+9248	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_13.fasta	1888	Auto-created	0	277167	47706151	1	71594	2025-10-27 16:49:12.793244	f
+9249	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_14.fasta	1888	Auto-created	0	276693	47706762	1	71571	2025-10-27 16:49:12.798084	f
+9250	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_15.fasta	1888	Auto-created	0	276897	47706167	1	71566	2025-10-27 16:49:12.802468	f
+9251	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_16.fasta	1888	Auto-created	0	276117	47706167	1	71583	2025-10-27 16:49:12.807519	f
+9252	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_17.fasta	1888	Auto-created	0	277216	47706797	1	71576	2025-10-27 16:49:12.811927	f
+9253	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_18.fasta	1888	Auto-created	0	276942	47706350	1	71599	2025-10-27 16:49:12.816515	f
+9254	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_19.fasta	1888	Auto-created	0	276665	47706170	1	71565	2025-10-27 16:49:12.820778	f
+9255	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_20.fasta	1888	Auto-created	0	276517	47706212	1	71588	2025-10-27 16:49:12.825061	f
+9256	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_21.fasta	1888	Auto-created	0	276662	47706221	1	71586	2025-10-27 16:49:12.829371	f
+9257	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_22.fasta	1888	Auto-created	0	276581	47706266	1	71550	2025-10-27 16:49:12.833747	f
+9258	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_23.fasta	1888	Auto-created	0	276873	47706682	1	71545	2025-10-27 16:49:12.837999	f
+9259	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_24.fasta	1888	Auto-created	0	276365	47706192	1	71564	2025-10-27 16:49:12.842673	f
+9260	Ozarks_Prairie_Top_3_JGI_TrypPigBov_2025-10-21_25x_25.fasta	1888	Auto-created	0	276165	47706146	1	71553	2025-10-27 16:49:12.847541	f
+9228	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21.fasta	1888	Metaproteome for soil microbial communities from Ozarks prairies (native prairie soil from Ozarks Complex 37.3530, -94.1419, top layer) sequenced at JGI provided by Song Young (young.song@pnnl.gov)	1	3078489	516108735	1	779236	2025-10-25 16:59:04.153275	f
+9291	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_01.fasta	1888	Auto-created	0	123202	20644288	1	31180	2025-10-31 14:46:33.254839	f
+9292	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_02.fasta	1888	Auto-created	0	122846	20644817	1	31128	2025-10-31 14:46:33.265512	f
+9293	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_03.fasta	1888	Auto-created	0	123116	20644111	1	31161	2025-10-31 14:46:33.27085	f
+9294	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_04.fasta	1888	Auto-created	0	123108	20644130	1	31159	2025-10-31 14:46:33.275908	f
+9295	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_05.fasta	1888	Auto-created	0	123124	20644181	1	31154	2025-10-31 14:46:33.280836	f
+9296	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_06.fasta	1888	Auto-created	0	123366	20644891	1	31186	2025-10-31 14:46:33.285728	f
+9297	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_07.fasta	1888	Auto-created	0	123191	20644739	1	31169	2025-10-31 14:46:33.290889	f
+9298	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_08.fasta	1888	Auto-created	0	123274	20644249	1	31176	2025-10-31 14:46:33.29602	f
+9299	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_09.fasta	1888	Auto-created	0	123145	20644769	1	31187	2025-10-31 14:46:33.301211	f
+9300	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_10.fasta	1888	Auto-created	0	123369	20644014	1	31187	2025-10-31 14:46:33.306299	f
+9301	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_11.fasta	1888	Auto-created	0	123238	20644173	1	31178	2025-10-31 14:46:33.311502	f
+9302	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_12.fasta	1888	Auto-created	0	123338	20644172	1	31169	2025-10-31 14:46:33.316559	f
+9303	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_13.fasta	1888	Auto-created	0	122917	20644345	1	31156	2025-10-31 14:46:33.321744	f
+9304	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_14.fasta	1888	Auto-created	0	123064	20644825	1	31148	2025-10-31 14:46:33.32687	f
+9305	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_15.fasta	1888	Auto-created	0	123447	20644161	1	31184	2025-10-31 14:46:33.332103	f
+9306	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_16.fasta	1888	Auto-created	0	122970	20644122	1	31152	2025-10-31 14:46:33.337146	f
+9307	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_17.fasta	1888	Auto-created	0	122920	20644143	1	31154	2025-10-31 14:46:33.342324	f
+9308	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_18.fasta	1888	Auto-created	0	123196	20644298	1	31218	2025-10-31 14:46:33.347422	f
+9309	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_19.fasta	1888	Auto-created	0	122958	20644253	1	31145	2025-10-31 14:46:33.352778	f
+9310	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_20.fasta	1888	Auto-created	0	123193	20644120	1	31180	2025-10-31 14:46:33.357867	f
+9311	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_21.fasta	1888	Auto-created	0	123177	20644345	1	31184	2025-10-31 14:46:33.363123	f
+9312	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_22.fasta	1888	Auto-created	0	123102	20644790	1	31165	2025-10-31 14:46:33.368125	f
+9313	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_23.fasta	1888	Auto-created	0	123169	20644408	1	31168	2025-10-31 14:46:33.373309	f
+9314	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_24.fasta	1888	Auto-created	0	123181	20644212	1	31169	2025-10-31 14:46:33.378345	f
+9315	Ozarks_Prairie_Top_6_JGI_TrypPigBov_2025-10-21_25x_25.fasta	1888	Auto-created	0	122878	20644179	1	31180	2025-10-31 14:46:33.38354	f
+9229	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21.fasta	1888	Metaproteome for soil microbial communities from Ozarks prairies (native prairie soil from Ozarks Complex 37.0588, -89.4955, top layer) sequenced at JGI provided by Song Young (young.song@pnnl.gov)	1	3918289	655692929	1	1.000184e+06	2025-10-25 16:59:04.153275	f
+9316	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_01.fasta	1888	Auto-created	0	156842	26227721	1	40045	2025-11-03 09:46:53.129026	f
+9317	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_02.fasta	1888	Auto-created	0	157008	26228197	1	40022	2025-11-03 09:46:53.142856	f
+9318	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_03.fasta	1888	Auto-created	0	156875	26227569	1	39993	2025-11-03 09:46:53.151469	f
+9319	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_04.fasta	1888	Auto-created	0	156804	26227568	1	40020	2025-11-03 09:46:53.157083	f
+9320	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_05.fasta	1888	Auto-created	0	156689	26227794	1	40029	2025-11-03 09:46:53.162631	f
+9321	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_06.fasta	1888	Auto-created	0	156825	26227460	1	40022	2025-11-03 09:46:53.167731	f
+9322	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_07.fasta	1888	Auto-created	0	156983	26228183	1	40039	2025-11-03 09:46:53.173239	f
+9323	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_08.fasta	1888	Auto-created	0	156616	26227545	1	39991	2025-11-03 09:46:53.178378	f
+9324	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_09.fasta	1888	Auto-created	0	156559	26227556	1	39985	2025-11-03 09:46:53.183684	f
+9325	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_10.fasta	1888	Auto-created	0	156740	26227754	1	40004	2025-11-03 09:46:53.189029	f
+9326	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_11.fasta	1888	Auto-created	0	156557	26227552	1	40001	2025-11-03 09:46:53.194425	f
+9327	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_12.fasta	1888	Auto-created	0	156890	26227583	1	40023	2025-11-03 09:46:53.199779	f
+9328	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_13.fasta	1888	Auto-created	0	156642	26227531	1	40020	2025-11-03 09:46:53.205534	f
+9329	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_14.fasta	1888	Auto-created	0	157149	26228112	1	39999	2025-11-03 09:46:53.210644	f
+9330	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_15.fasta	1888	Auto-created	0	156604	26228164	1	39984	2025-11-03 09:46:53.216075	f
+9331	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_16.fasta	1888	Auto-created	0	156645	26227551	1	39984	2025-11-03 09:46:53.22152	f
+9332	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_17.fasta	1888	Auto-created	0	156846	26227422	1	39989	2025-11-03 09:46:53.227255	f
+9333	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_18.fasta	1888	Auto-created	0	156848	26228177	1	40003	2025-11-03 09:46:53.232394	f
+9334	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_19.fasta	1888	Auto-created	0	156514	26227552	1	40011	2025-11-03 09:46:53.237759	f
+9335	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_20.fasta	1888	Auto-created	0	156634	26227694	1	40013	2025-11-03 09:46:53.243179	f
+9336	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_21.fasta	1888	Auto-created	0	156533	26227554	1	39980	2025-11-03 09:46:53.248615	f
+9337	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_22.fasta	1888	Auto-created	0	156520	26227530	1	39996	2025-11-03 09:46:53.254154	f
+9338	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_23.fasta	1888	Auto-created	0	157214	26227474	1	40066	2025-11-03 09:46:53.259889	f
+9339	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_24.fasta	1888	Auto-created	0	156644	26228189	1	40011	2025-11-03 09:46:53.265225	f
+9340	Ozarks_Prairie_Top_9_JGI_TrypPigBov_2025-10-21_25x_25.fasta	1888	Auto-created	0	156108	26227497	1	39954	2025-11-03 09:46:53.270897	f
 3969	P6005_RefGenomesMetagenes_100_H_sapiens_SPROT_2017_04_TrypPigBov_2018-09-05.fasta	1596	files from proteins found to be in stool samples, David Casero <dcasero@g.ucla.edu>	1	3304767	611159586	1	699758	2018-09-04 13:12:00	f
 4853	P6005_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_1.fasta	1596	Auto-created	0	411552	98867314	1	119994	2018-09-07 18:55:00	f
 4854	P6005_RefGenomesMetagenes_100_HsapiensSPROT2017_04_TrypPigBov_2018-09-05_5x_2.fasta	1596	Auto-created	0	412209	98868101	1	120038	2018-09-07 18:55:00	f
@@ -8652,11 +8787,16 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 5047	Wrighton_metagenomes_All_315bins_concatenated_faa_TrypPigBov_2019-02-21_5x_5.fasta	1482	Auto-created	0	149226	47798591	1	67972	2019-02-21 20:12:00	f
 7536	Wrighton_metagenomes_all_ColumbiaRiver_assemblies_ge2point5kb_clean_TrypPigBov_2022-05-02.fasta	1482	Rodriguez Ramos,Josue <Josue.Rodriguez_Ramos@colostate.edu>;SBR proteome to unbinned scaffolds? We have concatenated all the assembled scaffolds >2.5k	1	1594717	407685857	1	466183	2022-05-02 16:38:00	f
 9079	YNP_CB_003_JGI_TrypPigBov_2025-01-20.fasta	1795	Metaproteome for hot spring (CB-003) sediment microbial community from Yellowstone National Park, WY, United States provided by Joelie Van Beek <joeliemvb@gmail.com> from Montana State University.	1	592069	97337940	1	137216	2025-01-21 15:46:20.231531	f
+9231	YNP_CB_003_JGI_TrypPigBov_2025-10-24.fasta	1795	Updated metaproteome for hot spring (CB-003) sediment microbial communities from Yellowstone National Park, WY, United States provided by Joelie Van Beek <joeliemvb@gmail.com> from Montana State University	1	443054	126932134	1	175613	2025-10-27 16:33:11.950823	f
 9080	YNP_CB_020_JGI_TrypPigBov_2025-01-20.fasta	1795	Metaproteome for hot spring (CB-020) sediment microbial community from Yellowstone National Park, WY, United States provided by Joelie Van Beek <joeliemvb@gmail.com> from Montana State University.	1	1016188	221361084	1	301056	2025-01-21 15:46:20.231531	f
+9232	YNP_CB_020_JGI_TrypPigBov_2025-10-24.fasta	1795	Updated metaproteome for hot spring (CB-020) sediment microbial communities from Yellowstone National Park, WY, United States provided by Joelie Van Beek <joeliemvb@gmail.com> from Montana State University	1	726733	218228873	1	309250	2025-10-27 16:33:11.950823	f
 9081	YNP_CB_052_JGI_Illumina_TrypPigBov_2025-01-20.fasta	1795	Metaproteome for hot spring (CB-052) sediment microbial community from Yellowstone National Park, WY, United States provided by Joelie Van Beek <joeliemvb@gmail.com> from Montana State University. (Illumina sequencing)	1	458751	91701990	1	126976	2025-01-21 15:46:20.231531	f
 9082	YNP_CB_052_JGI_PacBio_TrypPigBov_2025-01-20.fasta	1795	Metaproteome for hot spring (CB-052) sediment microbial community from Yellowstone National Park, WY, United States provided by Joelie Van Beek <joeliemvb@gmail.com> from Montana State University. (PacBio sequencing)	1	193941	51804371	1	68506	2025-01-21 15:46:20.231531	f
+9233	YNP_CB_052_JGI_TrypPigBov_2025-10-24.fasta	1795	Updated metaproteome for hot spring (CB-052) sediment microbial community from Yellowstone National Park, WY, United States provided by Joelie Van Beek <joeliemvb@gmail.com> from Montana State University	1	468501	123357630	1	177708	2025-10-27 16:33:11.950823	f
 9083	YNP_CB_058_JGI_TrypPigBov_2025-01-20.fasta	1795	Metaproteome for hot spring (CB-058) sediment microbial community from Yellowstone National Park, WY, United States provided by Joelie Van Beek <joeliemvb@gmail.com> from Montana State University.	1	795898	149655462	1	210944	2025-01-21 15:46:20.231531	f
+9234	YNP_CB_058_JGI_TrypPigBov_2025-10-24.fasta	1795	Updated metaproteome for hot spring (CB-058) sediment microbial community from Yellowstone National Park, WY, United States provided by Joelie Van Beek <joeliemvb@gmail.com> from Montana State University	1	757508	206416377	1	292041	2025-10-27 16:33:11.950823	f
 9084	YNP_CB_070_JGI_TrypPigBov_2025-01-20.fasta	1795	Metaproteome for hot spring (CB-070) sediment microbial community from Yellowstone National Park, WY, United States provided by Joelie Van Beek <joeliemvb@gmail.com> from Montana State University.	1	760101	167591826	1	227328	2025-01-21 15:46:20.231531	f
+9235	YNP_CB_070_JGI_TrypPigBov_2025-10-24.fasta	1795	Updated metaproteome for hot spring (CB-070) sediment microbial community from Yellowstone National Park, WY, United States provided by Joelie Van Beek <joeliemvb@gmail.com> from Montana State University	1	687637	217468971	1	301994	2025-10-27 16:33:11.950823	f
 7579	YNP_MS_Metagenome_TrypPigBov_2022-06-03.fasta	1579	Metagenome from dominant species of Mushroom and Octopus Springs of YNP; compiled as requested by David Ward (umbdw@montana.edu)	1	67169	21347110	1	29304	2022-06-07 14:26:00	f
 7585	YNP_MS_Metagenome_TrypPigBov_2022-06-21.fasta	1579	Metagenome from dominant species of Mushroom and Octopus Springs of YNP; compiled as requested by David Ward (umbdw@montana.edu); same proteins as YNP_MS_Metagenome_TrypPigBov_2022-06-03.fasta but with new protein names	1	67169	21347110	1	29566	2022-06-21 20:46:00	f
 216	YXXFXK.fasta	16		0	6860	89154	1	229	2004-09-03 17:23:00	f
@@ -8900,7 +9040,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 -- Name: t_organism_db_file_org_db_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9225, true);
+SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9365, true);
 
 
 --

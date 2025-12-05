@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.5
+-- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -212,6 +212,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 201	107	10	Lock active dataset service center reports	SQL	CALL lock_active_dataset_svc_center_reports(_infoOnly => false);	\N	\N	f	t	0
 202	108	10	\N	SQL	CALL create_dataset_svc_center_report(CURRENT_TIMESTAMP::date - Interval '1 day', _dayCount => 365, _infoOnly => false);	\N	\N	f	t	0
 203	109	10	\N	SQL	CALL update_pnnl_projects_from_warehouse (_infoOnly => false);	\N	\N	f	t	0
+204	110	10	Remove old, skipped capture tasks	SQL	CALL archive_skipped_capture_tasks (_jobAgeWeeks => 3, _infoOnly => false);	\N	\N	f	t	0
 \.
 
 
@@ -219,7 +220,7 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 -- Name: task_task_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.task_task_id_seq', 203, true);
+SELECT pg_catalog.setval('timetable.task_task_id_seq', 204, true);
 
 
 --

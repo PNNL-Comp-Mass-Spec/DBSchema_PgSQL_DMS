@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.5
+-- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -78,6 +78,8 @@ LC-MicroHpH-6	Use for placeholder requested runs that can be converted into requ
 LC-MicroHpH-96	Use for placeholder requested runs that can be converted into requested run fractions	1	0	96	0
 LC-MicroSCX-12	Use for placeholder requested runs that can be converted into requested run fractions	1	0	12	0
 LC-MicroSCX-6	Use for placeholder requested runs that can be converted into requested run fractions	1	0	6	0
+LC-Nano-Lipidomics		1	1	0	45
+LC-Nano-Metabolomics		1	1	0	45
 LC-NanoHpH-12	Use for placeholder requested runs that can be converted into requested run fractions	1	0	12	0
 LC-NanoHpH-24	Use for placeholder requested runs that can be converted into requested run fractions	1	0	24	0
 LC-NanoHpH-6	Use for placeholder requested runs that can be converted into requested run fractions	1	0	6	0

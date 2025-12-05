@@ -85,6 +85,7 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 134	Lisa	2	Thermo Vanquish Neo system - Autosampler, Binary Pump, Column Compartment	2023-04-24 11:42:00
 89	Lola	2	Waters H-Class UHPLC	2016-08-30 09:27:00
 45	Lynx	3	2nd ARRA Next-Gen 3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2010-04-16 22:17:00
+149	Maggie	2	Thermo Vanquish Neo system - Autosampler and Binary Pump	2025-11-08 17:21:08.535472
 95	Magnolia	2	Micro-flow infusion cart	2017-03-15 12:15:00
 136	Maple	2	Thermo/Dionex pump (800 bar) with Loading Pump. Long armed pal. LCMSnet controlled. EMSL owned.	2023-08-23 13:27:00
 139	Marge	2	Thermo Vanquish Neo system - Autosampler, Binary Pump, Column Compartment	2024-01-12 12:06:00
@@ -147,7 +148,7 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 -- Name: t_lc_cart_cart_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_lc_cart_cart_id_seq', 148, true);
+SELECT pg_catalog.setval('public.t_lc_cart_cart_id_seq', 149, true);
 
 
 --

@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
+-- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -209,7 +209,7 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 1208	Human_Mars_14_50mm_26	Multi Affinity Removal Column	5188-6557	101514206G	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Active	D3M765	Macaque Project. See Jon Jacobs before using.	2023-10-17 05:11:00
 1209	Human_Mars_14_50mm_27	Multi Affinity Removal Column	5188-6557	101514206M	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Active	D3M765	Macaque Project. See Jon Jacobs before using.	2023-10-17 05:11:13
 1210	ZORBAX_012	ZORBAX	custom	USDHP01240	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	KidsFirst_POC- M.Gritsenko	2024-01-03 12:26:30
-1211	XBridge_020	Waters XBridge	186003943	02493324013808	Waters	Silica	5 um	C18	4.6 mm	10 mm	250 mm	Active	D3L365		2024-01-03 13:57:03
+1211	XBridge_020	Waters XBridge	186003943	02493324013808	Waters	Silica	3.5 um	C18	4.6 mm	mm	250 mm	Active	D3L365		2024-01-03 13:57:03
 1212	XBridge_021	Waters XBridge	186003581	02533402413311	Waters	Silica	5 um, 130A	BEH C18	4.6 mm	10 mm	250 mm	Active	D3J704	Lot. No.  0253340241, Acquired 04/2024	2024-04-30 12:57:18
 1213	ZORBAX_013	ZORBAX	custom	USDHP01254	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	Exclusively for MoTrPAC. POC- M. Gritsenko	2024-08-07 11:57:02.601112
 1214	ZORBAX_014	ZORBAX	custom	USDHP01255	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	Exclusively for CPTAC4. POC- M. Gritsenko	2024-08-07 11:57:44.862537
