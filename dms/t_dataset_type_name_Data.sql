@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
+-- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -30,6 +30,7 @@ COPY public.t_dataset_type_name (dataset_type_id, dataset_type, description, act
 35	Chip_Seq	DNA Sequencing Reads	1
 57	DIA-HMS-HCD-CID-MSn	High res MS with HCD-HMSn and DIA-CID-MSn	1
 55	DIA-HMS-HCD-HMSn	High res MS with DIA HCD HMSn	1
+101	DIA-HMS-PTR-HMSn	High res MS with DIA PTR HMSn	1
 27	DataFiles	DMS Pipeline Data or Data Packages	0
 41	EI-HMS	GC EI coupled with high res MS	1
 39	GC	GC with FID, ECD, TCD, etc. (no MS)	1
