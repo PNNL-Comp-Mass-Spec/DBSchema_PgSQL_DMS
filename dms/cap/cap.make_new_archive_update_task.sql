@@ -12,11 +12,15 @@ CREATE OR REPLACE PROCEDURE cap.make_new_archive_update_task(IN _datasetname tex
 **
 **  Arguments:
 **    _datasetName                  Dataset name
-**    _resultsdirectoryname         Results directory name
+**    _resultsDirectoryName         Results directory name
 **    _allowBlankResultsDirectory   Set to true if you need to update the dataset file; the downside is that the archive update will involve a byte-to-byte comparison of all data in both the dataset directory and all subdirectories
 **    _infoOnly                     True to preview the capture task job that would be created
 **    _message                      Status message
 **    _returnCode                   Return code
+**
+**  Example usage:
+**      CALL cap.make_new_archive_update_task ('QC_Mam_23_01_11Nov25_Romulus', _resultsDirectoryName => 'MSG202511121808_Auto2531159', _infoOnly => false);
+**      CALL cap.make_new_archive_update_task ('QC_Mam_23_01_11Nov25_Romulus', _allowBlankResultsDirectory => true, _infoOnly => false);
 **
 **  Auth:   mem
 **  Date:   05/07/2010 mem - Initial version
@@ -164,9 +168,7 @@ BEGIN
             If _resultsDirectoryName <> '' Then
                 _message := format('%s, results folder %s', _message, _resultsDirectoryName);
             End If;
-
         Else
-
             INSERT INTO cap.t_tasks (
                 script,
                 dataset,
