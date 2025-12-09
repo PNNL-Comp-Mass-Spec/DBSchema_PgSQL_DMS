@@ -17,6 +17,11 @@ CREATE OR REPLACE PROCEDURE public.validate_dataset_type(IN _datasetid integer, 
 **    _infoOnly                     When true, preview updates
 **    _autoDefineOnAllMismatches    When true, auto-update the dataset type
 **
+**  Example usage:
+**      CALL validate_dataset_type (1451741, _infoOnly => true);
+**      CALL validate_dataset_type (1451741, _infoOnly => false);
+**      CALL validate_dataset_type (1451790, _infoOnly => true);
+**
 **  Auth:   mem
 **  Date:   05/13/2010 mem - Initial version
 **          05/14/2010 mem - Added support for the generic scan types MSn and HMSn
@@ -45,6 +50,7 @@ CREATE OR REPLACE PROCEDURE public.validate_dataset_type(IN _datasetid integer, 
 **          01/10/2024 mem - Add support for DIA datasets
 **          01/30/2024 mem - Auto-switch from HMS-CID-HMSn to HMS-HMSn
 **          07/10/2025 bcg - Auto-switch from DIA-* to * when there are no DIA scans
+**          12/05/2025 mem - Add support for DIA-PTR-HMSn
 **
 *****************************************************/
 DECLARE
@@ -123,6 +129,8 @@ BEGIN
            SUM(CASE WHEN Scan_Type LIKE '%EThcD-MSn'  Then scan_count Else 0 End) AS ActualCountEThcDMSn,
            SUM(CASE WHEN Scan_Type LIKE '%EThcD-HMSn' Then scan_count Else 0 End) AS ActualCountEThcDHMSn,
 
+           SUM(CASE WHEN Scan_Type LIKE '%PTR-HMSn' Then scan_count Else 0 End) AS ActualCountPtrHMSn,
+
            SUM(CASE WHEN Scan_Type LIKE 'DIA%' Then scan_count Else 0 End)                                                             AS ActualCountDIA,
            SUM(CASE WHEN Scan_Type LIKE '%SRM' Or Scan_Type LIKE '%MRM' OR Scan_Type SIMILAR TO 'Q[1-3]MS' Then scan_count Else 0 End) AS ActualCountMRM,
            SUM(CASE WHEN Scan_Type LIKE '%PQD%' Then scan_count Else 0 End)                                                            AS ActualCountPQD
@@ -135,13 +143,13 @@ BEGIN
         RAISE INFO '';
         RAISE INFO 'Actual scan counts for % (Dataset ID %)', _dataset, _datasetID;
         RAISE INFO '%', format('      MS:  %6s,        HMS: %6s, GCMS: %6s', _scanCounts.ActualCountMS, _scanCounts.ActualCountHMS, _scanCounts.ActualCountGCMS);
-        RAISE INFO '%', format('      MRM: %6s,        PQD: %6s, DIA:  %6s', _scanCounts.ActualCountMRM, _scanCounts.ActualCountPQD, _scanCounts.ActualCountDIA);
-        RAISE INFO '%', format('  Any MSn: %6s,   Any HMSn: %6s',            _scanCounts.ActualCountAnyMSn, _scanCounts.ActualCountAnyHMSn);
-        RAISE INFO '%', format('  CID MSn: %6s,   CID HMSn: %6s',            _scanCounts.ActualCountCIDMSn, _scanCounts.ActualCountCIDHMSn);
-        RAISE INFO '%', format('  ETD MSn: %6s,   ETD HMSn: %6s',            _scanCounts.ActualCountETDMSn, _scanCounts.ActualCountETDHMSn);
-        RAISE INFO '%', format('  HCD MSn: %6s,   HCD HMSn: %6s',            _scanCounts.ActualCountHCDMSn, _scanCounts.ActualCountHCDHMSn);
-        RAISE INFO '%', format('ETciD MSn: %6s, ETciD HMSn: %6s',            _scanCounts.ActualCountETciDMSn, _scanCounts.ActualCountETciDHMSn);
-        RAISE INFO '%', format('EThcD MSn: %6s, EThcD HMSn: %6s',            _scanCounts.ActualCountEThcDMSn, _scanCounts.ActualCountEThcDHMSn);
+        RAISE INFO '%', format('      MRM: %6s,        PQD: %6s, DIA:  %6s',     _scanCounts.ActualCountMRM, _scanCounts.ActualCountPQD, _scanCounts.ActualCountDIA);
+        RAISE INFO '%', format('  Any MSn: %6s,   Any HMSn: %6s',                _scanCounts.ActualCountAnyMSn, _scanCounts.ActualCountAnyHMSn);
+        RAISE INFO '%', format('  CID MSn: %6s,   CID HMSn: %6s',                _scanCounts.ActualCountCIDMSn, _scanCounts.ActualCountCIDHMSn);
+        RAISE INFO '%', format('  ETD MSn: %6s,   ETD HMSn: %6s',                _scanCounts.ActualCountETDMSn, _scanCounts.ActualCountETDHMSn);
+        RAISE INFO '%', format('  HCD MSn: %6s,   HCD HMSn: %6s, PTR HMSn: %6s', _scanCounts.ActualCountHCDMSn, _scanCounts.ActualCountHCDHMSn, _scanCounts.ActualCountPtrHMSn);
+        RAISE INFO '%', format('ETciD MSn: %6s, ETciD HMSn: %6s',                _scanCounts.ActualCountETciDMSn, _scanCounts.ActualCountETciDHMSn);
+        RAISE INFO '%', format('EThcD MSn: %6s, EThcD HMSn: %6s',                _scanCounts.ActualCountEThcDMSn, _scanCounts.ActualCountEThcDHMSn);
         RAISE INFO '';
     End If;
 
@@ -164,7 +172,6 @@ BEGIN
                ) Then
 
             _newDatasetType := 'MRM';
-
         End If;
 
         _requiredAction := 'FixDSType';
@@ -201,7 +208,7 @@ BEGIN
                 RAISE INFO 'Set _autoDefineDSType to true because ActualCountHMS > 0 And Not (_currentDatasetType Like ''HMS%%'' Or _currentDatasetType Like ''%%-HMS'')';
             End If;
         Else
-            _newDatasetType := ' an HMS-based dataset type';
+            _newDatasetType := 'an HMS-based dataset type';
         End If;
 
         _requiredAction := 'AutoDefineDSType';
@@ -223,7 +230,7 @@ BEGIN
             End If;
 
         Else
-            _newDatasetType := ' an HMS-based dataset type';
+            _newDatasetType := 'an HMS-based dataset type';
         End If;
 
         _requiredAction := 'AutoDefineDSType';
@@ -244,7 +251,7 @@ BEGIN
             End If;
 
         Else
-            _newDatasetType := ' an MSn-based dataset type';
+            _newDatasetType := 'an MSn-based dataset type';
         End If;
 
         _requiredAction := 'AutoDefineDSType';
@@ -261,7 +268,7 @@ BEGIN
             End If;
 
         Else
-            _newDatasetType := ' an ETD-based dataset type';
+            _newDatasetType := 'an ETD-based dataset type';
         End If;
 
         _requiredAction := 'AutoDefineDSType';
@@ -278,7 +285,7 @@ BEGIN
             End If;
 
         Else
-            _newDatasetType := ' an HCD-based dataset type';
+            _newDatasetType := 'an HCD-based dataset type';
         End If;
 
         _requiredAction := 'AutoDefineDSType';
@@ -294,7 +301,7 @@ BEGIN
             End If;
 
         Else
-            _newDatasetType := ' a PQD-based dataset type';
+            _newDatasetType := 'a PQD-based dataset type';
         End If;
 
         _requiredAction := 'AutoDefineDSType';
@@ -344,7 +351,7 @@ BEGIN
             End If;
 
         Else
-            _newDatasetType := ' an MSn-based dataset type';
+            _newDatasetType := 'an MSn-based dataset type';
         End If;
 
         _requiredAction := 'AutoDefineDSType';
@@ -426,14 +433,13 @@ BEGIN
             End If;
 
         Else
-            _newDatasetType := ' an HMSn-based dataset type';
+            _newDatasetType := 'an HMSn-based dataset type';
         End If;
 
         _requiredAction := 'AutoDefineDSType';
     End If;
 
     If _requiredAction In ('', 'AutoDefineDSType') Then
-
         -----------------------------------------------------------
         -- Possibly auto-generate the dataset type
         -- If _autoDefineDSType is true, will update the dataset type to this value
@@ -501,6 +507,10 @@ BEGIN
 
                 If _scanCounts.ActualCountPQD > 0 Then
                     _datasetTypeAutoGen := _datasetTypeAutoGen || '-PQD';
+                End If;
+
+                If _scanCounts.ActualCountPtrHMSn > 0 Then
+                    _datasetTypeAutoGen := _datasetTypeAutoGen || '-PTR-HMSn';
                 End If;
 
                 If (_scanCounts.ActualCountCIDHMSn + _scanCounts.ActualCountETDHMSn + _scanCounts.ActualCountHCDHMSn) > 0 Then
@@ -574,7 +584,6 @@ BEGIN
                 End If;
 
             End If;
-
         End If;
 
         If _datasetTypeAutoGen <> '' And _autoDefineOnAllMismatches Then
@@ -669,7 +678,6 @@ BEGIN
         RAISE INFO '%', _message;
         RAISE INFO 'Dataset: %', _dataset;
     End If;
-
 END
 $$;
 
