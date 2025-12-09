@@ -16,13 +16,18 @@ CREATE VIEW sw.v_job_step_processing_log AS
     jspl.entered,
     jse.entered AS entered_state,
     jse.target_state,
-    (((((((((('\\'::text || (lp.machine)::text) || '\DMS_Programs\AnalysisToolManager'::text) || (lp.proc_tool_mgr_id)::text) || '\Logs\AnalysisMgr_'::text) || (EXTRACT(year FROM jspl.entered))::text) || '-'::text) || to_char(EXTRACT(month FROM jspl.entered), 'fm00'::text)) || '-'::text) || to_char(EXTRACT(day FROM jspl.entered), 'fm00'::text)) || '.txt'::text) AS logfilepath
-   FROM ((((sw.t_job_step_processing_log jspl
+    ((((((((((('\\'::text || (lp.machine)::text) ||
+        CASE
+            WHEN m.bionet_only THEN '.bionet'::text
+            ELSE ''::text
+        END) || '\DMS_Programs\AnalysisToolManager'::text) || (lp.proc_tool_mgr_id)::text) || '\Logs\AnalysisMgr_'::text) || (EXTRACT(year FROM jspl.entered))::text) || '-'::text) || to_char(EXTRACT(month FROM jspl.entered), 'fm00'::text)) || '-'::text) || to_char(EXTRACT(day FROM jspl.entered), 'fm00'::text)) || '.txt'::text) AS logfilepath
+   FROM (((((sw.t_job_step_processing_log jspl
      JOIN sw.t_job_step_events jse ON (((jspl.job = jse.job) AND (jspl.step = jse.step) AND (jse.entered >= (jspl.entered - '00:00:01'::interval)))))
      JOIN rankq thisjspl ON (((jspl.job = thisjspl.job) AND (jspl.step = thisjspl.step) AND (jspl.entered = thisjspl.jobstart))))
      LEFT JOIN rankq nextjspl ON (((jspl.job = nextjspl.job) AND (jspl.step = nextjspl.step) AND ((thisjspl.jslrank + 1) = nextjspl.jslrank))))
      JOIN sw.t_local_processors lp ON ((jspl.processor OPERATOR(public.=) lp.processor_name)))
-  WHERE ((jse.entered < COALESCE((nextjspl.jobstart)::timestamp with time zone, CURRENT_TIMESTAMP)) AND (jse.target_state <> ALL (ARRAY[0, 1, 2])));
+     LEFT JOIN sw.t_machines m ON ((lp.machine OPERATOR(public.=) m.machine)))
+  WHERE ((jse.entered < COALESCE((nextjspl.jobstart)::timestamp with time zone, CURRENT_TIMESTAMP)) AND (NOT (jse.target_state = ANY (ARRAY[0, 1, 2]))));
 
 
 ALTER VIEW sw.v_job_step_processing_log OWNER TO d3l243;
