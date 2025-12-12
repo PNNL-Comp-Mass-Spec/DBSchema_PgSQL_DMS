@@ -53,6 +53,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_run_to_existing_dataset(IN _dat
 **          12/04/2023 mem - Fix log message bug in the exception handler
 **                         - Fix invalid variable names
 **                         - Set _addUpdateMode to 'check_add' when _mode is 'preview'
+**          12/11/2025 mem - Store the message returned by add_update_requested_run in _msg
 **
 *****************************************************/
 DECLARE
@@ -332,7 +333,7 @@ BEGIN
                         _logDebugMessages            => false,
                         _request                     => _requestID,                 -- Output
                         _resolvedInstrumentInfo      => _resolvedInstrumentInfo,    -- Output
-                        _message                     => _message,                   -- Output
+                        _message                     => _msg,                       -- Output
                         _returnCode                  => _returnCode);               -- Output
 
         If _returnCode <> '' Then
