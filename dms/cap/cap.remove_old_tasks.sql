@@ -9,7 +9,6 @@ CREATE OR REPLACE PROCEDURE cap.remove_old_tasks(IN _intervaldaysforsuccess inte
 **
 **  Desc:
 **      Delete capture task jobs past their expiration date from tables t_tasks, t_task_steps, t_task_parameters, and t_task_step_dependencies
-**
 **      Assures that the capture task jobs are in the history tables before deleting
 **
 **  Arguments:

@@ -8,8 +8,8 @@ CREATE OR REPLACE PROCEDURE cap.archive_skipped_capture_tasks(IN _jobageweeks in
 /****************************************************
 **
 **  Desc:
-**      Removes old, skipped capture tasks from cap.t_tasks
-**      Prior to removal, makes sure that they are in cap.t_tasks_history
+**      Removes old, skipped capture tasks from cap.t_tasks by calling procedure remove_old_tasks, setting _jobStateFilter to 15
+**      Prior to removal, makes sure that the tasks are in cap.t_tasks_history
 **
 **  Arguments:
 **    _jobAgeWeeks          Capture task job age threshold, minimum 3 weeks
