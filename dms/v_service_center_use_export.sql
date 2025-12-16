@@ -6,7 +6,7 @@ CREATE VIEW public.v_service_center_use_export AS
  SELECT u.ticket_number,
     ''::text AS sub_account,
     u.service_type_id,
-    "substring"((rep.requester_employee_id)::text, 2, 100) AS requester_employee_id,
+    (''''::text || "substring"((rep.requester_employee_id)::text, 2, 100)) AS requester_employee_id,
     u.charge_code,
     (u.transaction_date)::date AS transaction_date,
     u.transaction_units,
