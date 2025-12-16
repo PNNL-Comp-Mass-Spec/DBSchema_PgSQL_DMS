@@ -53,9 +53,9 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 37	25	30	Cleanup operating logs, sw	SQL	CALL sw.cleanup_operating_logs (\r\n        _infoHoldoffWeeks => 3,\r\n        _logRetentionIntervalDays => 365);	\N	\N	f	t	0
 38	25	40	Cleanup operating logs, cap	SQL	CALL cap.cleanup_operating_logs (\r\n        _infoHoldoffWeeks => 3, \r\n        _logRetentionIntervalDays => 180);	\N	\N	f	t	0
 39	25	50	Cleanup operating logs, dpkg	SQL	CALL dpkg.move_historic_log_entries (\r\n        _infoHoldoffWeeks => 3);	\N	\N	f	t	0
-40	26	10	Cleanup old tasks	SQL	CALL cap.remove_old_tasks (_infoOnly => false);	\N	\N	f	t	0
+40	26	10	Remove old capture tasks from cap.t_tasks (and related tables); tasks are removed if they succeeded and are at least 60 days old, or if they failed and are at least 135 days old	SQL	CALL cap.remove_old_tasks (_infoOnly => false);	\N	\N	f	t	0
 42	26	20	Update capture task stats	SQL	CALL cap.update_capture_task_stats (_infoOnly => false);	\N	\N	f	t	0
-43	26	30	Delete old tasks from history	SQL	CALL cap.delete_old_tasks_from_history (_infoOnly => false);	\N	\N	f	t	0
+43	26	30	Delete capture tasks from t_tasks_history if over three years old	SQL	CALL cap.delete_old_tasks_from_history (_infoOnly => false);	\N	\N	f	t	0
 44	27	10	Sleep 35 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 45	27	20	Cleanup old jobs	SQL	CALL sw.remove_old_jobs (_validateJobStepSuccess => true);	\N	\N	f	t	0
 46	27	30	Update pipeline job stats	SQL	CALL sw.update_pipeline_job_stats (_infoOnly => false);	\N	\N	f	t	0
@@ -210,9 +210,9 @@ COPY timetable.task (task_id, chain_id, task_order, task_name, kind, command, ru
 199	106	10	Sleep 8 seconds	BUILTIN	Sleep	\N	\N	f	f	0
 200	106	20	Update pending jobs	SQL	CALL update_pending_jobs(_requestID => 0, _infoOnly => false);	\N	\N	f	t	0
 201	107	10	Lock active dataset service center reports	SQL	CALL lock_active_dataset_svc_center_reports(_infoOnly => false);	\N	\N	f	t	0
-202	108	10	\N	SQL	CALL create_dataset_svc_center_report(CURRENT_TIMESTAMP::date - Interval '1 day', _dayCount => 365, _infoOnly => false);	\N	\N	f	t	0
-203	109	10	\N	SQL	CALL update_pnnl_projects_from_warehouse (_infoOnly => false);	\N	\N	f	t	0
-204	110	10	Remove old, skipped capture tasks	SQL	CALL archive_skipped_capture_tasks (_jobAgeWeeks => 3, _infoOnly => false);	\N	\N	f	t	0
+202	108	10	Create weekly dataset service center report	SQL	CALL create_dataset_svc_center_report(CURRENT_TIMESTAMP::date - Interval '1 day', _dayCount => 365, _infoOnly => false);	\N	\N	f	t	0
+203	109	10	Update PNNL projects from warehouse	SQL	CALL update_pnnl_projects_from_warehouse (_infoOnly => false);	\N	\N	f	t	0
+204	110	10	Remove skipped capture tasks from cap.t_tasks (and related tables) if at least 3 weeks old	SQL	CALL archive_skipped_capture_tasks (_jobAgeWeeks => 3, _infoOnly => false);	\N	\N	f	t	0
 \.
 
 

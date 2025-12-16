@@ -38,7 +38,7 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 23	Check data integrity	19 17 * * *	\N	0	t	f	f	\N	\N
 24	Check for MyEMSL upload errors	27 0 * * *	\N	0	t	f	f	\N	\N
 25	Clean up operating logs	0 0 * * *	\N	0	t	f	f	\N	\N
-26	Cleanup capture tasks	9 4 * * 7	\N	0	t	f	f	\N	\N
+26	Remove old capture tasks from cap.t_tasks (and related tables); tasks are removed if they succeeded and are at least 60 days old, or if they failed and are at least 135 days old. Also delete capture tasks from t_tasks_history if over three years old.	9 4 * * 7	\N	0	t	f	f	\N	\N
 27	Cleanup pipeline jobs	15 5 * * 7	\N	0	t	f	f	\N	\N
 28	Clear data package manager errors	48 6 * * *	\N	0	t	f	f	\N	\N
 29	Create pending predefined jobs	3/5 * * * *	\N	0	t	f	f	\N	\N
@@ -121,7 +121,7 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 107	Lock active dataset service center reports	45 23 * * 3	\N	0	t	f	f	\N	\N
 108	Create weekly dataset service center report	05 00 * * 6	\N	0	t	f	f	\N	\N
 109	Update PNNL projects from warehouse	12 6 * * *	\N	0	t	f	f	\N	\N
-110	Remove old, skipped capture tasks	39 4 * * 7	\N	0	t	f	f	\N	\N
+110	Remove skipped capture tasks from cap.t_tasks (and related tables) if at least 3 weeks old	39 4 * * 7	\N	0	t	f	f	\N	\N
 \.
 
 
