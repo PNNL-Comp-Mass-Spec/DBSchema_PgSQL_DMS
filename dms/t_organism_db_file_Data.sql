@@ -4748,6 +4748,11 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 9140	KILPIS_MAGs_TrypPigBov_2025-06-04_5x_4.fasta	1860	Auto-created	0	395676	118161322	1	135484	2025-06-09 14:02:07.772478	f
 9141	KILPIS_MAGs_TrypPigBov_2025-06-04_5x_5.fasta	1860	Auto-created	0	396526	118161320	1	135516	2025-06-09 14:02:07.776492	f
 9150	KILPIS_and_PALLAS_MAGs_TrypPigBov_2025-08-19.fasta	1860	Metaproteome compilation for Finland Kilpisjärvi tundra and Pallas forest and peatland for EMSL project # 61290 provided by Välikangas Tommi <tommi.valikangas@luke.fi> from Finland Natural Resources Institute	1	2573002	762007198	1	1.298172e+06	2025-08-19 16:54:05.483186	f
+9366	KILPIS_and_PALLAS_MAGs_TrypPigBov_2025-08-19_5x_1.fasta	1860	Auto-created	0	513934	152401498	1	259493	2025-12-05 15:17:52.542228	f
+9367	KILPIS_and_PALLAS_MAGs_TrypPigBov_2025-08-19_5x_2.fasta	1860	Auto-created	0	514943	152401213	1	259654	2025-12-05 15:17:52.554771	f
+9368	KILPIS_and_PALLAS_MAGs_TrypPigBov_2025-08-19_5x_3.fasta	1860	Auto-created	0	514161	152401784	1	259644	2025-12-05 15:17:52.55994	f
+9369	KILPIS_and_PALLAS_MAGs_TrypPigBov_2025-08-19_5x_4.fasta	1860	Auto-created	0	514353	152401263	1	259546	2025-12-05 15:17:52.564936	f
+9370	KILPIS_and_PALLAS_MAGs_TrypPigBov_2025-08-19_5x_5.fasta	1860	Auto-created	0	515611	152401440	1	259835	2025-12-05 15:17:52.569631	f
 1972	KNP_Hybrid_contigs_prodigal_TrypPigBov_2016-11-04.fasta	16	Rick White generated community files	1	845546	236882186	1	363503	2016-11-04 14:59:00	f
 1982	KNP_Hybrid_contigs_prodigal_TrypPigBov_2016-11-04_15x_01.fasta	16	Auto-created	0	56300	15792654	1	23998	2016-11-04 18:25:00	f
 1983	KNP_Hybrid_contigs_prodigal_TrypPigBov_2016-11-04_15x_02.fasta	16	Auto-created	0	56627	15791825	1	24040	2016-11-04 18:25:00	f
@@ -9040,7 +9045,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 -- Name: t_organism_db_file_org_db_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9365, true);
+SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9370, true);
 
 
 --

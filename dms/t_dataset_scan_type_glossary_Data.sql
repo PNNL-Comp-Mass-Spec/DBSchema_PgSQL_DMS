@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
+-- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -27,7 +27,11 @@ CID-MSn	41
 CID-SRM	52	
 DIA-CID-HMSn	2	
 DIA-CID-MSn	3	
+DIA-ETD-HMSn	4	
 DIA-HCD-HMSn	1	
+DIA-PTR-HMSn	5	
+DIA-SA_CID-HMSn	6	
+DIA-UVPD-HMSn	7	
 ETD-HMSn	30	
 ETD-MSn	31	
 ETciD-HMSn	36	

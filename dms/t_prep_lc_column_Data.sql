@@ -217,6 +217,7 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 1216	XBridge_023	Waters XBridge	186003117	02493405212488	Waters	Silica	5 um	C18	4.6 mm	10 mm	250 mm	Active	D3M765	Athena's new column. Please ask before using.	2024-09-03 12:45:18.569008
 1217	ZORBAX_015	ZORBAX	custom	USDHP01257	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	For Clinical Projects; POC-Marina Gritsenko	2025-01-29 16:30:27.389084
 1218	ZORBAX_016	ZORBAX	custom	USDHP01256	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	Alz Buchman project	2025-02-17 16:30:30.556229
+1219	ZORBAX_017	ZORBAX	custom	USDHP01278	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	CCDI Organoids work	2026-01-07 15:02:42.905146
 \.
 
 
@@ -224,7 +225,7 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 -- Name: t_prep_lc_column_prep_column_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_prep_lc_column_prep_column_id_seq', 1218, true);
+SELECT pg_catalog.setval('public.t_prep_lc_column_prep_column_id_seq', 1219, true);
 
 
 --
