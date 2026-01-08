@@ -8,7 +8,8 @@ CREATE VIEW ont.v_ncbi_taxonomy_cached AS
     rank,
     parent_tax_id,
     synonyms,
-    synonym_list
+    synonym_list,
+    children
    FROM ont.t_ncbi_taxonomy_cached;
 
 

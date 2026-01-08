@@ -8,7 +8,8 @@ CREATE TABLE ont.t_ncbi_taxonomy_cached (
     rank public.citext NOT NULL,
     parent_tax_id integer NOT NULL,
     synonyms integer DEFAULT 0 NOT NULL,
-    synonym_list public.citext
+    synonym_list public.citext,
+    children integer DEFAULT 0 NOT NULL
 );
 
 
