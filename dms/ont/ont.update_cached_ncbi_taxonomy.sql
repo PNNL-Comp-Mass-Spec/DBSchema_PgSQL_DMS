@@ -26,6 +26,7 @@ CREATE OR REPLACE FUNCTION ont.update_cached_ncbi_taxonomy(_deleteextras boolean
 **          05/12/2023 mem - Rename variables
 **          05/19/2023 mem - Remove redundant parentheses
 **          07/11/2023 mem - Use COUNT(NameList.entry_id) instead of COUNT(*)
+**          01/07/2026 mem - Populate children using function get_taxid_child_count()
 **
 *****************************************************/
 DECLARE
@@ -41,12 +42,13 @@ BEGIN
 
     If _infoOnly Then
         RETURN QUERY
-        SELECT 'Preview updates'::citext as Task,
+        SELECT 'Preview updates'::citext AS Task,
                SUM(CASE
                        WHEN t.Name <> s.Name OR
                             t.Rank <> s.Rank OR
                             t.Parent_Tax_ID <> s.Parent_Tax_ID OR
-                            t.Synonyms <> s.Synonyms THEN 1
+                            t.Synonyms <> s.Synonyms OR
+                            t.Children <> s.Children THEN 1
                        ELSE 0
                        End)::int AS Updated_Tax_IDs,
                SUM(CASE WHEN t.tax_id IS NULL THEN 1 ELSE 0 END)::int AS New_Tax_IDs
@@ -54,7 +56,8 @@ BEGIN
                      NodeNames.name,
                      Nodes.rank,
                      Nodes.parent_tax_id,
-                     Coalesce(SynonymStats.synonyms, 0) AS synonyms
+                     Coalesce(SynonymStats.synonyms, 0) AS synonyms,
+                     ont.get_taxid_child_count(Nodes.tax_id) AS children
               FROM ont.t_ncbi_taxonomy_names NodeNames
                    INNER JOIN ont.t_ncbi_taxonomy_nodes Nodes
                      ON NodeNames.tax_id = Nodes.tax_id
@@ -87,22 +90,28 @@ BEGIN
            name citext,
            rank citext,
            parent_tax_id int,
-           synonyms int);
+           synonyms int,
+           children int);
 
     CREATE INDEX IX_Tmp_SourceData ON Tmp_SourceData (tax_id);
+
+    RAISE INFO '';
+    RAISE INFO 'Populating table Tmp_SourceData';
 
     INSERT INTO Tmp_SourceData (
         tax_id,
         name,
         rank,
         parent_tax_id,
-        synonyms
+        synonyms,
+        children
     )
     SELECT Nodes.tax_id,
            NodeNames.name,
            Nodes.rank,
            Nodes.parent_tax_id,
-           Coalesce(SynonymStats.synonyms, 0) AS synonyms
+           Coalesce(SynonymStats.synonyms, 0) AS synonyms,
+           ont.get_taxid_child_count(Nodes.tax_id) AS children
     FROM ont.t_ncbi_taxonomy_names NodeNames
          INNER JOIN ont.t_ncbi_taxonomy_nodes Nodes
            ON NodeNames.tax_id = Nodes.tax_id
@@ -131,35 +140,38 @@ BEGIN
     SET name = s.name,
         rank = s.rank,
         parent_tax_id = s.parent_tax_id,
-        synonyms = s.synonyms
+        synonyms = s.synonyms,
+        children = s.children
     FROM Tmp_SourceData s
     WHERE t.tax_id = s.tax_id AND
           (
             t.name <> s.name OR
             t.rank <> s.rank OR
             t.parent_tax_id <> s.parent_tax_id OR
-            t.synonyms <> s.synonyms
+            t.synonyms <> s.synonyms OR
+            t.children <> s.children
           );
     --
     GET DIAGNOSTICS _countUpdated = ROW_COUNT;
 
     If _countUpdated > 0 Then
-        RAISE INFO 'Updated % existing rows', _countUpdated;
+        RAISE INFO 'Updated % existing rows in t_ncbi_taxonomy_cached', _countUpdated;
     Else
-        RAISE INFO 'Existing rows are already up-to-date';
+        RAISE INFO 'Existing rows in t_ncbi_taxonomy_cached are already up-to-date';
     End If;
 
     ---------------------------------------------------
     -- Add new rows
     ---------------------------------------------------
 
-    INSERT INTO ont.t_ncbi_taxonomy_cached (tax_id, name, rank, parent_tax_id, synonyms, synonym_list)
+    INSERT INTO ont.t_ncbi_taxonomy_cached (tax_id, name, rank, parent_tax_id, synonyms, synonym_list, children)
     SELECT s.tax_id,
            s.name,
            s.rank,
            s.parent_tax_id,
            s.synonyms,
-           '' as synonym_list
+           '' AS synonym_list,
+           s.children
     FROM Tmp_SourceData s
          LEFT OUTER JOIN ont.t_ncbi_taxonomy_cached t
            ON s.tax_id = t.tax_id
@@ -232,7 +244,7 @@ BEGIN
     DROP TABLE Tmp_SourceData;
 
     RETURN QUERY
-    SELECT 'Update cached data'::citext as Task,
+    SELECT 'Update cached data'::citext AS Task,
            _countUpdated,
            _countAdded;
 END

@@ -18,8 +18,13 @@ CREATE OR REPLACE PROCEDURE ont.update_cached_ncbi_taxonomy_proc(IN _deleteextra
 **    _message          Status message
 **    _returnCode       Return code
 **
+**  Usage:
+**      CALL ont.update_cached_ncbi_taxonomy_proc(_deleteExtras => false, _infoOnly => true);
+**      CALL ont.update_cached_ncbi_taxonomy_proc(_deleteExtras => false, _infoOnly => false);
+**
 **  Auth:   mem
 **  Date:   03/25/2024 mem - Initial version
+**          01/07/2025 mem - Customize messages based on _infoOnly
 **
 *****************************************************/
 DECLARE
@@ -64,10 +69,18 @@ BEGIN
         FROM Tmp_UpdateResults
         LIMIT 1;
 
-        _message := format('%s: updated %s %s', _task, _updatedTaxIdCount, public.check_plural(_updatedTaxIdCount, 'taxonomy ID', 'taxonomy IDs'));
+        _message := format('%s: %s %s %s',
+                        _task,
+                        CASE WHEN _infoOnly THEN 'would update' ELSE 'updated' END,
+                        _updatedTaxIdCount,
+                        public.check_plural(_updatedTaxIdCount, 'taxonomy ID', 'taxonomy IDs'));
 
         If _newTaxIdCount > 0 Then
-            _message := format('%s: added %s new %s', _message, _newTaxIdCount, public.check_plural(_newTaxIdCount, 'taxonomy ID', 'taxonomy IDs'));
+            _message := format('%s: %s %s new %s',
+                            _message,
+                            CASE WHEN _infoOnly THEN 'would add' ELSE 'added' END,
+                            _newTaxIdCount,
+                            public.check_plural(_newTaxIdCount, 'taxonomy ID', 'taxonomy IDs'));
         End If;
 
         RAISE INFO '%', _message;
