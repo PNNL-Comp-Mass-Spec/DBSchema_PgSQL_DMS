@@ -22,7 +22,12 @@ CREATE OR REPLACE FUNCTION ont.add_new_bto_terms(_sourcetable text DEFAULT 'T_Tm
 **        grandparent_term_id
 **
 **  Arguments:
-**    _previewDeleteExtras   Set to true to preview deleting extra terms; false to actually delete them
+**    _sourceTable          Source table name
+**    _infoOnly             When true, preview updates
+**    _previewDeleteExtras  When true, preview deleting extra terms; false to actually delete them
+**
+**  Usage:
+**      SELECT * FROM ont.add_new_bto_terms (_sourcetable => 'T_Tmp_BTO', _infoOnly => true, _previewDeleteExtras => true);
 **
 **  Auth:   mem
 **  Date:   08/24/2017 mem - Initial Version

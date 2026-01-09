@@ -17,6 +17,9 @@ CREATE OR REPLACE PROCEDURE ont.update_cached_bto_names_proc(IN _infoonly boolea
 **    _message          Status message
 **    _returnCode       Return code
 **
+**  Usage:
+**      CALL ont.update_cached_bto_names_proc (_infoOnly => true);
+**
 **  Auth:   mem
 **  Date:   03/28/2024 mem - Initial version
 **

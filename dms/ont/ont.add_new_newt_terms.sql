@@ -30,9 +30,9 @@ CREATE OR REPLACE FUNCTION ont.add_new_newt_terms(_sourcetable text DEFAULT 'T_T
 **    _previewDeleteExtras  When true, preview the rows that would be deleted from t_cv_newt (ignored if _infoOnly is true)
 **
 **  Example usage:
-**        SELECT * FROM add_new_newt_terms(_infoOnly => true);
-**        SELECT * FROM add_new_newt_terms(_infoOnly => false, _previewDeleteExtras => true);
-**        SELECT * FROM add_new_newt_terms(_infoOnly => false, _previewDeleteExtras => false);
+**        SELECT * FROM add_new_newt_terms(_sourcetable => 'T_Tmp_NEWT', _infoOnly => true);
+**        SELECT * FROM add_new_newt_terms(_sourcetable => 'T_Tmp_NEWT', _infoOnly => false, _previewDeleteExtras => true);
+**        SELECT * FROM add_new_newt_terms(_sourcetable => 'T_Tmp_NEWT', _infoOnly => false, _previewDeleteExtras => false);
 **
 **        -- Update the Children column in ont.t_cv_newt
 **        SELECT * FROM add_new_newt_terms('');
@@ -526,7 +526,6 @@ BEGIN
                    _updateCount,
                    public.check_plural(_updateCount, 'row', 'rows');
     End If;
-
 END
 $$;
 

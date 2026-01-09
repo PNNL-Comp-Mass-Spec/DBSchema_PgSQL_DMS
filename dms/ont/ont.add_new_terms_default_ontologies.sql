@@ -25,7 +25,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_terms_default_ontologies(_infoonly boolea
 **    _previewSql     When true, preview the SQL (but do not execute it)
 **
 **  Usage:
-**      SELECT * FROM ont.add_new_terms_default_ontologies(_infoOnly => false, _previewSql => false);
+**      SELECT * FROM ont.add_new_terms_default_ontologies (_infoOnly => false, _previewSql => false);
 **
 **  Auth:   mem
 **  Date:   05/13/2013 mem - Initial Version
