@@ -41,6 +41,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_bto_terms(_sourcetable text DEFAULT 'T_Tm
 **          09/07/2023 mem - Align assignment statements
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          01/21/2024 mem - Change data type of argument _sourceTable to text
+**          01/08/2026 mem - Use an empty string for null synonym lists
 **
 *****************************************************/
 DECLARE
@@ -119,7 +120,7 @@ BEGIN
     );
 
     _s := ' INSERT INTO Tmp_SourceData'
-          ' SELECT term_pk, term_name, identifier, is_leaf, synonyms,'
+          ' SELECT term_pk, term_name, identifier, is_leaf, Coalesce(synonyms, ''''),'
           '   parent_term_name, parent_term_id,'
           '   grandparent_term_name, grandparent_term_id, 0 AS matches_existing'
           ' FROM %I.%I'
@@ -249,7 +250,7 @@ BEGIN
             RAISE INFO 'No invalid term names were found';
         End If;
 
-        If Exists (SELECT entry_id FROM Tmp_InvalidTermNames) Then
+        If Exists (SELECT s.entry_id FROM Tmp_InvalidTermNames s) Then
 
             RETURN QUERY
             SELECT 'Extra term name to delete'::citext AS Item_Type,
