@@ -38,6 +38,12 @@ CREATE INDEX ix_t_term_identifier ON ont.t_term USING btree (identifier);
 CREATE INDEX ix_t_term_is_leaf ON ont.t_term USING btree (is_leaf);
 
 --
+-- Name: ix_t_term_is_obsolete; Type: INDEX; Schema: ont; Owner: d3l243
+--
+
+CREATE INDEX ix_t_term_is_obsolete ON ont.t_term USING btree (is_obsolete);
+
+--
 -- Name: ix_t_term_namespace; Type: INDEX; Schema: ont; Owner: d3l243
 --
 
