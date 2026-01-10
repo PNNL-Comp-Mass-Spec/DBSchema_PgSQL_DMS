@@ -22,7 +22,12 @@ CREATE OR REPLACE FUNCTION ont.add_new_envo_terms(_sourcetable text DEFAULT 'T_T
 **        grandparent_term_id
 **
 **  Arguments:
-**    _previewDeleteExtras   Set to true to preview deleting extra terms; false to actually delete them
+**    _sourceTable          Source table name
+**    _infoOnly             When true, preview updates
+**    _previewDeleteExtras  When true, preview deleting extra terms; false to actually delete them
+**
+**  Usage:
+**      SELECT * FROM ont.add_new_envo_terms (_sourcetable => 'T_Tmp_ENVO', _infoOnly => true, _previewDeleteExtras => true);
 **
 **  Auth:   mem
 **  Date:   08/24/2017 mem - Initial Version
@@ -37,6 +42,7 @@ CREATE OR REPLACE FUNCTION ont.add_new_envo_terms(_sourcetable text DEFAULT 'T_T
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/14/2023 mem - Trim leading and trailing whitespace from procedure arguments
 **          01/21/2024 mem - Change data type of argument _sourceTable to text
+**          01/08/2026 mem - Use SELECT DISTINCT when populating Tmp_SourceData
 **
 *****************************************************/
 DECLARE
@@ -116,11 +122,11 @@ BEGIN
     );
 
     _s := ' INSERT INTO Tmp_SourceData'
-          ' SELECT term_pk, term_name, identifier, is_leaf, synonyms,'
+          ' SELECT DISTINCT term_pk, term_name, identifier, is_leaf, Coalesce(synonyms, ''''),'
           '   parent_term_name, parent_term_id,'
           '   grandparent_term_name, grandparent_term_id, 0 AS matches_existing'
           ' FROM %I.%I'
-          ' WHERE parent_term_name <> '''' AND term_pk SIMILAR TO ''ENVO%''';
+          ' WHERE parent_term_name <> '''' AND term_pk SIMILAR TO ''ENVO%%''';
 
     EXECUTE format(_s, _sourceSchema, _sourceTable);
 
@@ -146,9 +152,7 @@ BEGIN
           s.Parent_term_ID = t.Parent_term_ID AND
           Coalesce(s.grandparent_term_id, '') = Coalesce(t.grandparent_term_id, '');
 
-
     If Not _infoOnly Then
-
         ---------------------------------------------------
         -- Update existing rows
         ---------------------------------------------------
@@ -245,8 +249,7 @@ BEGIN
             RAISE INFO 'No invalid term names were found';
         End If;
 
-        If Exists (SELECT entry_id FROM Tmp_InvalidTermNames) Then
-
+        If Exists (SELECT s.entry_id FROM Tmp_InvalidTermNames s) Then
             RETURN QUERY
             SELECT 'Extra term name to delete'::citext AS Item_Type,
                    s.entry_id,
@@ -288,14 +291,11 @@ BEGIN
                 FROM ont.t_cv_envo t
                 WHERE t.entry_id IN (SELECT s.entry_id
                                      FROM Tmp_IDsToDelete s);
-
             Else
-
                 FOR _invalidTerm In
                     SELECT s.identifier, s.term_name
                     FROM Tmp_InvalidTermNames s
                 LOOP
-
                     If Exists (SELECT t.identifier
                                FROM ont.t_cv_envo t
                                WHERE t.identifier = _invalidTerm.identifier AND
@@ -327,7 +327,6 @@ BEGIN
                                null::timestamp AS updated;
 
                     End If;
-
                 END LOOP;
             End If;
         End If;
@@ -356,9 +355,7 @@ BEGIN
                 FROM ont.t_cv_envo s
                 GROUP BY s.parent_term_ID) AND
               NOT t.Children IS NULL;
-
     Else
-
         ---------------------------------------------------
         -- Preview existing rows that would be updated
         ---------------------------------------------------
@@ -406,7 +403,6 @@ BEGIN
                NULL::timestamp AS updated
         FROM Tmp_SourceData s
         WHERE matches_existing = 0;
-
     End If;
 
     DROP TABLE Tmp_SourceData;
