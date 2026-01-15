@@ -102,18 +102,18 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 253	Dragonfly	Thermo_SII_LC	Thermo_SII_LC	4838	4942	secfso	Active	BSF 2235	NanoPOTS with Vanquish Neo Binary Pump. Used for LCDatasetCapture tasks. The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets. Not EMSL owned	2024-05-21 20:18:19
 199	EMSL-NMR-LC	PrepHPLC	PrepHPLC	4502	4893	secfso	Active	EMSL 1430	EMSL-NMR-LC, or Tonga; for uploading occasional files with DAD data	2023-09-22 10:23:35
 171	Eclipse01	LTQ_FT	EMSL_Eclipse	3525	5235	secfso	Active	EMSL 1444	Orbitrap Eclipse Tribrid, MS:1003029	2020-09-04 17:54:11
-178	Eclipse02	LTQ_FT	Eclipse	3789	5186	secfso	Active	EMSL 1526	Orbitrap Eclipse Tribrid - CPTAC loan, MS:1003029	2021-04-29 14:55:13
+178	Eclipse02	LTQ_FT	Eclipse	3789	5255	secfso	Active	EMSL 1526	Orbitrap Eclipse Tribrid - CPTAC loan, MS:1003029	2021-04-29 14:55:13
 205	Elm	Thermo_SII_LC	Thermo_SII_LC	4556	4899	secfso	Active	EMSL 1444	LCMSNet LC with Thermo RSLCnano NCS-3200RS nano/loading pump	2023-11-01 10:09:23
 150	Emory_Lumos01	LTQ_FT	Lumos	2680	2681	fso	Inactive	Emory (Atlanta, GA)	Emory School of Medicine Orbitrap Fusion Lumos	2018-01-15 15:46:16
 54	Exact01	Thermo_Exactive	Exactive	244	1306	secfso	Inactive	EMSL 1621	Fast scanning high resolution mass spectrometer	2009-04-22 00:00:00
 55	Exact02	Thermo_Exactive	Exactive	250	249	secfso	Inactive	EMSL 1526	Fast scanning high resolution mass spectrometer	2009-06-01 00:00:00
 57	Exact03	Thermo_Exactive	Exactive	255	2848	secfso	Inactive	EMSL 1526	Fast scanning high resolution mass spectrometer	2009-06-24 00:00:00
 82	Exact04	Thermo_Exactive	Exactive	314	3062	secfso	Inactive	EMSL 1426	Coupled to IMS06 in 2016, Given to BYU	2011-03-18 10:40:45
-173	Exploris01	LTQ_FT	EMSL_21T	3535	5218	secfso	Active	EMSL 1621	Thermo Exploris 480. Prior to March 2024, Exloris01 was coupled with an Agilent 12T magnet. In March 2024, it was coupled with the Agilent 21T, replacing an Orbitrap Velos Pro.	2020-09-18 00:25:51
+173	Exploris01	LTQ_FT	EMSL_21T	3535	5218	secfso	Active	EMSL 1621	Orbitrap Exploris 480, MS:1003028. Prior to March 2024, Exloris01 was coupled with an Agilent 12T magnet. In March 2024, it was coupled with the Agilent 21T, replacing an Orbitrap Velos Pro.	2020-09-18 00:25:51
 193	Exploris02	LTQ_FT	Exploris	4441	5243	secfso	Active	BSF 1229	Orbitrap Exploris 240, MS:1003094	2023-04-18 12:19:29
-197	Exploris03	LTQ_FT	Exploris	4496	5185	secfso	Active	BSF 1229	Orbitrap Exploris 480, MS:1003028	2023-07-27 16:14:06
+197	Exploris03	LTQ_FT	Exploris	4496	5252	secfso	Active	BSF 1229	Orbitrap Exploris 480, MS:1003028	2023-07-27 16:14:06
 239	Exploris04	LTQ_FT	Exploris	4631	5247	secfso	Active	BSF 1229	Orbitrap Exploris 480, MS:1003028	2023-11-28 15:37:15
-242	Exploris05	LTQ_FT	Exploris	4657	5184	secfso	Active	BSF 1229	Katrina's PPI (Predictive Phenomics Initiative) instrument; Orbitrap Exploris 480, MS:1003028	2024-01-09 14:29:09
+242	Exploris05	LTQ_FT	Exploris	4657	5250	secfso	Active	BSF 1229	Katrina's PPI (Predictive Phenomics Initiative) instrument; Orbitrap Exploris 480, MS:1003028	2024-01-09 14:29:09
 246	Exploris06	LTQ_FT	EMSL_Exploris	4733	5244	secfso	Active	EMSL 1526	Orbitrap Exploris 480 purchased by EMSL; MS:1003028,	2024-03-01 11:00:40
 259	Exploris07	LTQ_FT	Exploris	4948	5241	secfso	Active	BSF 1215	Vlad's Alzheimer projects instrument; Orbitrap Exploris 480, MS:1003028	2024-08-15 11:09:11.441472
 261	ExplorisMSL01	LTQ_FT	Exploris	5088	5219	fso	Active	MSL5 118	Orbitrap Exploris 240, in the Marine Sciences Laboratory in Sequim (WD90136); on LabNET with IP 10.70.57.212; Connected to a Thermo Vanquish Flex LC.	2025-04-09 14:59:34.49121
@@ -158,7 +158,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 172	IMS11_AgQTOF08	IMS_Agilent_TOF_DotD	IMS	3526	4548	secfso	Inactive	EMSL 1430	Agilent 6560B IM-QTOF; replaced under warranty. Powered down, packaged, and shipped back to Agilent by Agilent technicians as of February 23rd, 2023. Warranty replacement instrument is IMS12-AgQTOF09	2020-09-04 18:01:52
 191	IMS12-AgQTOF09	IMS_Agilent_TOF_DotD	EMSL_IMS	4399	5198	secfso	Active	EMSL 1430	Agilent 6560C IM-QTOF; warranty replacement for IMS11_AgQTOF08	2023-03-02 14:43:27
 45	IMS_TOF_1	IMS_Agilent_TOF_UIMF	IMS	200	199	secfso	Inactive	EMSL 1430	IMS AGILENT TOF	2009-04-01 00:00:00
-263	IQX01	LTQ_FT	IQX	5175	5207	secfso	Active	BSF 1215	Orbitrap IQ-X, MS:1003411; Purchased by EBSD	2025-08-20 16:08:53.320151
+263	IQX01	LTQ_FT	IQX	5175	5254	secfso	Active	BSF 1215	Orbitrap IQ-X, MS:1003411; Purchased by EBSD	2025-08-20 16:08:53.320151
 114	JCVI_VPro01	LTQ_FT	VelosPro	1394	1471	fso	Inactive	JCVI (Rockville, MD)	J. Craig Venter Institute Velos Pro	2013-11-22 12:43:41
 149	JHU_QExactP01	LTQ_FT	QExactive	2629	2630	fso	Inactive	JHU (Baltimore)	Johns Hopkins University Q Exactive Orbitrap	2017-12-15 14:02:55
 91	JHU_VOrbiETD01	LTQ_FT	VelosOrbi	1136	2631	fso	Inactive	JHU (Baltimore)	Johns Hopkins University LTQ-Velos Orbitrap and Orbitrap Lumos	2012-06-05 21:16:51
@@ -221,11 +221,11 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 40	QC_LTQ_FT	LTQ_FT	LTQ_FT	158	191	fso	Inactive	EMSL 1553	QC Process LTQ_FT	2005-06-28 00:00:00
 41	QC_LTQ_Orbitrap	LTQ_FT	Orbitrap	165	192	fso	Inactive	EMSL 1553	Orbitrap Test Data	2005-07-22 00:00:00
 28	QC_MM_TOF	Waters_TOF	Waters_TOF	118	117	fso	Inactive	EMSL 1553	Micromass TOF-type instrument for QC Process	2006-11-08 00:00:00
-158	QEHFX01	LTQ_FT	EMSL_QEHFX	2996	5203	secfso	Active	EMSL 1444	Q Exactive HF-X, MS:1002877	2019-01-16 16:21:27
+158	QEHFX01	LTQ_FT	EMSL_QEHFX	2996	5253	secfso	Active	EMSL 1444	Q Exactive HF-X, MS:1002877	2019-01-16 16:21:27
 159	QEHFX02	LTQ_FT	EMSL_QEHFX	2997	5192	secfso	Active	EMSL 1444	Q Exactive HF-X, MS:1002877	2019-01-16 16:21:38
 169	QEHFX03	LTQ_FT	QEHFX	3318	5201	secfso	Active	EMSL 1444	Q Exactive HF-X, MS:1002877	2020-01-14 15:05:55
 103	QExact01	LTQ_FT	QExactive	1232	2859	secfso	Inactive	EMSL 1526	Q-Exactive 1	2012-12-07 14:32:20
-127	QExactHF03	LTQ_FT	QExactive	1633	5181	secfso	Active	EMSL 1526	Q Exactive HF, MS:1002523\t	2015-02-19 10:12:31
+127	QExactHF03	LTQ_FT	QExactive	1633	5256	secfso	Active	EMSL 1526	Q Exactive HF, MS:1002523\t	2015-02-19 10:12:31
 130	QExactHF05	LTQ_FT	EMSL_QExactive	1706	5223	secfso	Active	EMSL 1621	Q Exactive HF, MS:1002523. Has HMR/UHMR configuration (boards swapped). Supports MALDI (Spectroglyph), UVPD, and ECD/ETD, depending on the connected hardware. While the MALDI source is attached, use instrument QExactHF05_Imaging for new datasets.	2015-06-29 10:54:50
 180	QExactHF05_Imaging	LTQ_FT	EMSL_QExactive_Imaging	1706	5177	secfso	Active	EMSL 1621	Q Exactive HF, MS:1002523. Has HMR/UHMR configuration (boards swapped). Supports MALDI (Spectroglyph), UVPD, and ECD/ETD, depending on the connected hardware. When the MALDI source is attached, use instrument QExactHF05_Imaging for new datasets.	2021-06-24 16:09:22
 121	QExactP02	LTQ_FT	EMSL_QExactive	1497	5224	secfso	Active	EMSL 1526	Q Exactive Plus, MS:1002634	2014-05-29 11:08:29
@@ -281,7 +281,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 90	WashU_TripleTOF5600	Sciex_TripleTOF	Sciex_TripleTOF	1133	1134	fso	Inactive	WUSL (Washington University in St. Louis)	Data acquired under the CPTAC project	2012-05-14 20:28:39
 174	XevoG2_01	Waters_TOF	Waters_TOF	3536	5173	secfso	Inactive	BSF 1215	Transfer/Moved from BSEL in September 2020; Excessed 2024	2020-09-23 12:48:22
 255	timsTOFFlex02	BrukerTOF_TDF	timsTOF_Flex	4863	5230	secfso	Active	EMSL 1444	Bruker timsTOF Flex with ESI source. Also has MALDI imaging capability; Owned by EBSD	2024-07-03 13:46:33
-256	timsTOFFlex02_Imaging	timsTOF_MALDI_Imaging	MALDI_timsTOF_Imaging	4863	5202	secfso	Active	EMSL 1444	Bruker timsTOF Flex with MALDI imaging capability; Owned by EBSD	2024-07-03 13:47:58
+256	timsTOFFlex02_Imaging	timsTOF_MALDI_Imaging	MALDI_timsTOF_Imaging	4863	5251	secfso	Active	EMSL 1444	Bruker timsTOF Flex with MALDI imaging capability; Owned by EBSD	2024-07-03 13:47:58
 194	timsTOFScp01	BrukerTOF_TDF	timsTOF_SCP	4442	5240	secfso	Active	EMSL 1314	Bruker timsTOF for single cell proteomics; for MassIVE, use timsTOF SCP, MS:1003231; EBSD/EMSD owned	2023-04-19 16:36:27
 \.
 

@@ -886,6 +886,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 1893	85	10	LTQ_FT	AstralZ02		CPTAC4		SKCM_SP_10cases												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_NTermAcet_Precursor380-980.txt	DiaNN_Standard.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	2		1		2025-10-22 16:24:09.232058	D3L243	86	1	0	2025-10-22 16:24:09.232058
 1894	91	57	LTQ_FT	Exploris%		Alzheimer and Parkinson Diseases		Alz_Buch_SMA%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_Stat_CysAlk_TMT_16Plex_20ppmParTol.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_UniProt_SPROT_2023-09-01,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	3		1		2025-11-03 09:56:05.337131	D3L243	92	1	0	2025-11-03 09:56:05.337131
 1895	85	10	LTQ_FT	Astral%		Cancer Moonshot - Framingham		MNST[_]F2[_]SEER%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_NTermAcet_Precursor380-980.txt	DiaNN_Standard.xml	8	na	H_sapiens_UniProt_SPROT_2025-09-30,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	2		1		2025-12-01 19:40:45.503326	D3L243	86	1	0	2025-12-01 19:40:45.503326
+1896	85	14	LTQ_FT	Ascend%				QC_Mam%					%QC_Shew%		DIA%					0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_Stat_CysAlk_Precursor374-949.txt	DiaNN_Standard.xml	24	na	M_musculus_UniProt_SPROT_2023-03-01,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		1	Changed trigger mode to "Before Disposition" in May 2024	2026-01-13 11:19:38.964821	D3L243	86	1	0	2026-01-13 11:26:51.02723
 \.
 
 
@@ -893,7 +894,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 -- Name: t_predefined_analysis_predefine_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1895, true);
+SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1896, true);
 
 
 --
