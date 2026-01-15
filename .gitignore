@@ -15,3 +15,4 @@ t_schema_change_log_data.sql
 /dms/sw/sw.t_tmp_new_job_steps.sql
 /dms/sw/sw.t_tmp_new_jobs.sql
 Replaced_PgDump_Files
+/dms/ont/ont.t_tmp*.sql
