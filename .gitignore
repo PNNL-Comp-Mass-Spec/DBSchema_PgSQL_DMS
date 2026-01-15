@@ -1,4 +1,3 @@
-_AllObjects_.sql
 t_schema_change_log_data.sql
 /pgwatch2_metrics/subpartitions/*
 /d3l243/[a-zA-Z]*
@@ -14,5 +13,4 @@ t_schema_change_log_data.sql
 /dms/sw/sw.t_tmp_new_job_step_dependencies.sql
 /dms/sw/sw.t_tmp_new_job_steps.sql
 /dms/sw/sw.t_tmp_new_jobs.sql
-Replaced_PgDump_Files
 /dms/ont/ont.t_tmp*.sql
