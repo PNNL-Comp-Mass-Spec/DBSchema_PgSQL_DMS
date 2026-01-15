@@ -1,6 +1,8 @@
 --
 -- PostgreSQL manual dump
 --
+-- Note: DBeaver initially only shows the first 1000 rows; press Ctrl+End several times to retrieve the entire result set
+--
 
 SELECT object_schema, object_type, object_name, grantor, grantee, privilege_type
 FROM v_role_privileges
@@ -169,6 +171,7 @@ cap	procedure	add_update_capture_step_tools	d3l243	public	EXECUTE
 cap	procedure	add_update_local_task_in_broker	d3l243	public	EXECUTE
 cap	procedure	add_update_task_parameter	d3l243	public	EXECUTE
 cap	function	add_update_task_parameter_xml	d3l243	public	EXECUTE
+cap	procedure	archive_skipped_capture_tasks	d3l243	public	EXECUTE
 cap	procedure	cache_dataset_info_xml	d3l243	public	EXECUTE
 cap	procedure	check_for_myemsl_errors	d3l243	public	EXECUTE
 cap	procedure	cleanup_operating_logs	d3l243	public	EXECUTE
@@ -1061,6 +1064,7 @@ public	procedure	update_notification_user_registration	d3l243	public	EXECUTE
 public	procedure	update_organism_db_file_for_job	d3l243	public	EXECUTE
 public	procedure	update_organism_list_for_biomaterial	d3l243	public	EXECUTE
 public	procedure	update_pending_jobs	d3l243	public	EXECUTE
+public	procedure	update_pnnl_projects_from_warehouse	d3l243	public	EXECUTE
 public	procedure	update_prep_lc_run_work_package_list	d3l243	public	EXECUTE
 public	procedure	update_protein_collection_usage	d3l243	public	EXECUTE
 public	procedure	update_requested_run_admin	d3l243	public	EXECUTE
@@ -1585,6 +1589,10 @@ ont	sequence	t_ontology_version_history_entry_id_seq	d3l243	readaccess	SELECT
 ont	table	t_term	d3l243	readaccess	SELECT
 ont	table	t_term_relationship	d3l243	readaccess	SELECT
 ont	table	t_term_synonym	d3l243	readaccess	SELECT
+ont	table	t_tmp_bto	d3l243	readaccess	SELECT
+ont	table	t_tmp_envo	d3l243	readaccess	SELECT
+ont	table	t_tmp_newt	d3l243	readaccess	SELECT
+ont	table	t_tmp_psims_import	d3l243	readaccess	SELECT
 ont	table	t_unimod_amino_acids	d3l243	readaccess	SELECT
 ont	table	t_unimod_bricks	d3l243	readaccess	SELECT
 ont	table	t_unimod_mods	d3l243	readaccess	SELECT
@@ -2001,6 +2009,7 @@ public	sequence	t_param_file_mass_mods_mod_entry_id_seq	d3l243	readaccess	SELECT
 public	table	t_param_file_types	d3l243	readaccess	SELECT
 public	table	t_param_files	d3l243	readaccess	SELECT
 public	sequence	t_param_files_param_file_id_seq	d3l243	readaccess	SELECT
+public	table	t_pnnl_projects	d3l243	readaccess	SELECT
 public	table	t_predefined_analysis	d3l243	readaccess	SELECT
 public	sequence	t_predefined_analysis_predefine_id_seq	d3l243	readaccess	SELECT
 public	table	t_predefined_analysis_scheduling_queue	d3l243	readaccess	SELECT
@@ -2277,6 +2286,7 @@ public	view	v_dataset_qc_metric_instruments	d3l243	readaccess	SELECT
 public	view	v_dataset_qc_metrics	d3l243	readaccess	SELECT
 public	view	v_dataset_qc_metrics_detail_report	d3l243	readaccess	SELECT
 public	view	v_dataset_qc_metrics_export	d3l243	readaccess	SELECT
+public	view	v_dataset_rating_list_report	d3l243	readaccess	SELECT
 public	view	v_dataset_report	d3l243	readaccess	SELECT
 public	view	v_dataset_scan_type_crosstab	d3l243	readaccess	SELECT
 public	view	v_dataset_scan_types	d3l243	readaccess	SELECT
@@ -2318,7 +2328,9 @@ public	view	v_eus_import_proposal_participants	d3l243	readaccess	SELECT
 public	view	v_eus_import_proposals	d3l243	readaccess	SELECT
 public	view	v_eus_import_requested_allocated_hours	d3l243	readaccess	SELECT
 public	view	v_eus_instrument_id_lookup	d3l243	readaccess	SELECT
+public	view	v_eus_instruments_list_report	d3l243	readaccess	SELECT
 public	view	v_eus_project_picklist	d3l243	readaccess	SELECT
+public	view	v_eus_proposal_type_list_report	d3l243	readaccess	SELECT
 public	view	v_eus_proposal_user_lookup	d3l243	readaccess	SELECT
 public	view	v_eus_proposal_users	d3l243	readaccess	SELECT
 public	view	v_eus_proposal_users_list_report	d3l243	readaccess	SELECT
@@ -2584,6 +2596,8 @@ public	view	v_param_file_mass_mods_padded	d3l243	readaccess	SELECT
 public	view	v_param_file_picklist	d3l243	readaccess	SELECT
 public	view	v_param_file_report	d3l243	readaccess	SELECT
 public	view	v_param_file_type_picklist	d3l243	readaccess	SELECT
+public	view	v_pnnl_projects_detail_report	d3l243	readaccess	SELECT
+public	view	v_pnnl_projects_list_report	d3l243	readaccess	SELECT
 public	view	v_predefined_analysis_dataset_info	d3l243	readaccess	SELECT
 public	view	v_predefined_analysis_detail_report	d3l243	readaccess	SELECT
 public	view	v_predefined_analysis_disabled_list_report	d3l243	readaccess	SELECT
@@ -2722,6 +2736,7 @@ public	view	v_storage_entry	d3l243	readaccess	SELECT
 public	view	v_storage_list_report	d3l243	readaccess	SELECT
 public	view	v_storage_path_export	d3l243	readaccess	SELECT
 public	view	v_storage_summary	d3l243	readaccess	SELECT
+public	view	v_svc_center_instrument_datasets	d3l243	readaccess	SELECT
 public	view	v_system_activity	d3l243	readaccess	SELECT
 public	view	v_system_activity_long_running	d3l243	readaccess	SELECT
 public	view	v_system_blocking_queries	d3l243	readaccess	SELECT
@@ -3410,6 +3425,10 @@ ont	table	t_term_relationship	d3l243	writeaccess	INSERT
 ont	table	t_term_relationship	d3l243	writeaccess	SELECT
 ont	table	t_term_relationship	d3l243	writeaccess	UPDATE
 ont	table	t_term_synonym	d3l243	writeaccess	SELECT
+ont	table	t_tmp_bto	d3l243	writeaccess	SELECT
+ont	table	t_tmp_envo	d3l243	writeaccess	SELECT
+ont	table	t_tmp_newt	d3l243	writeaccess	SELECT
+ont	table	t_tmp_psims_import	d3l243	writeaccess	SELECT
 ont	table	t_unimod_amino_acids	d3l243	writeaccess	SELECT
 ont	table	t_unimod_bricks	d3l243	writeaccess	SELECT
 ont	table	t_unimod_mods	d3l243	writeaccess	SELECT
@@ -4291,6 +4310,10 @@ public	table	t_param_files	d3l243	writeaccess	INSERT
 public	table	t_param_files	d3l243	writeaccess	SELECT
 public	table	t_param_files	d3l243	writeaccess	UPDATE
 public	sequence	t_param_files_param_file_id_seq	d3l243	writeaccess	SELECT
+public	table	t_pnnl_projects	d3l243	writeaccess	DELETE
+public	table	t_pnnl_projects	d3l243	writeaccess	INSERT
+public	table	t_pnnl_projects	d3l243	writeaccess	SELECT
+public	table	t_pnnl_projects	d3l243	writeaccess	UPDATE
 public	table	t_predefined_analysis	d3l243	writeaccess	DELETE
 public	table	t_predefined_analysis	d3l243	writeaccess	INSERT
 public	table	t_predefined_analysis	d3l243	writeaccess	SELECT
@@ -4699,6 +4722,7 @@ public	view	v_dataset_qc_metric_instruments	d3l243	writeaccess	SELECT
 public	view	v_dataset_qc_metrics	d3l243	writeaccess	SELECT
 public	view	v_dataset_qc_metrics_detail_report	d3l243	writeaccess	SELECT
 public	view	v_dataset_qc_metrics_export	d3l243	writeaccess	SELECT
+public	view	v_dataset_rating_list_report	d3l243	writeaccess	SELECT
 public	view	v_dataset_report	d3l243	writeaccess	SELECT
 public	view	v_dataset_scan_type_crosstab	d3l243	writeaccess	SELECT
 public	view	v_dataset_scan_types	d3l243	writeaccess	SELECT
@@ -4740,7 +4764,9 @@ public	view	v_eus_import_proposal_participants	d3l243	writeaccess	SELECT
 public	view	v_eus_import_proposals	d3l243	writeaccess	SELECT
 public	view	v_eus_import_requested_allocated_hours	d3l243	writeaccess	SELECT
 public	view	v_eus_instrument_id_lookup	d3l243	writeaccess	SELECT
+public	view	v_eus_instruments_list_report	d3l243	writeaccess	SELECT
 public	view	v_eus_project_picklist	d3l243	writeaccess	SELECT
+public	view	v_eus_proposal_type_list_report	d3l243	writeaccess	SELECT
 public	view	v_eus_proposal_user_lookup	d3l243	writeaccess	SELECT
 public	view	v_eus_proposal_users	d3l243	writeaccess	SELECT
 public	view	v_eus_proposal_users_list_report	d3l243	writeaccess	SELECT
@@ -5006,6 +5032,8 @@ public	view	v_param_file_mass_mods_padded	d3l243	writeaccess	SELECT
 public	view	v_param_file_picklist	d3l243	writeaccess	SELECT
 public	view	v_param_file_report	d3l243	writeaccess	SELECT
 public	view	v_param_file_type_picklist	d3l243	writeaccess	SELECT
+public	view	v_pnnl_projects_detail_report	d3l243	writeaccess	SELECT
+public	view	v_pnnl_projects_list_report	d3l243	writeaccess	SELECT
 public	view	v_predefined_analysis_dataset_info	d3l243	writeaccess	SELECT
 public	view	v_predefined_analysis_detail_report	d3l243	writeaccess	SELECT
 public	view	v_predefined_analysis_disabled_list_report	d3l243	writeaccess	SELECT
@@ -5144,6 +5172,7 @@ public	view	v_storage_entry	d3l243	writeaccess	SELECT
 public	view	v_storage_list_report	d3l243	writeaccess	SELECT
 public	view	v_storage_path_export	d3l243	writeaccess	SELECT
 public	view	v_storage_summary	d3l243	writeaccess	SELECT
+public	view	v_svc_center_instrument_datasets	d3l243	writeaccess	SELECT
 public	view	v_system_activity	d3l243	writeaccess	SELECT
 public	view	v_system_activity_long_running	d3l243	writeaccess	SELECT
 public	view	v_system_blocking_queries	d3l243	writeaccess	SELECT
