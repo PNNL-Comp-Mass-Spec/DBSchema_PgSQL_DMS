@@ -17,12 +17,12 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **      0      Undefined                            Undefined
 **      1      None                                 Not a service center tracked requested run or dataset
 **      25     Ambiguous                            Unable to auto-determine the correct service type
-**      100    Peptides: Short Advanced MS          Astral, nanoPOTS, or timsTOF SCP with separation time <= 60 minutes
+**      100    Peptides: Short Advanced MS          Astral, nanoPOTS, or timsTOF with separation time <= 60 minutes
 **      101    Peptides: Short Standard MS          HFX, Lumos, Eclipse, or Exploris with separation time <= 60 minutes; all SRM and MRM
-**      102    Peptides: Long Advanced MS           Astral or timsTOF SCP with separation time > 60 minutes
+**      102    Peptides: Long Advanced MS           Astral or timsTOF with separation time > 60 minutes
 **      103    Peptides: Long Standard MS           HFX, Lumos, Eclipse, Exploris, or nanoPOTS with separation time > 60 minutes
-**      104    MALDI                                MALDI (run count = hr count)
-**      110    Peptides: Screening MS               All Orbitraps, separation time <= 5 minutes (ultra fast), or infusion
+**      104    MALDI                                MALDI (run count = hr count); includes timsTOFFlex02_Imaging
+**      110    Peptides: Screening MS               All Orbitraps (including timsTOF_Flex and timsTOF_SCP), separation time <= 5 minutes (ultra fast), or infusion
 **      111    Lipids                               Lipids
 **      112    Metabolites                          Metabolites
 **      113    GC-MS                                GC-MS
@@ -35,7 +35,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **    _datasetRatingID          Dataset rating ID (see t_dataset_rating_name)
 **    _instrumentName           Instrument name
 **    _instrumentGroupName      Instrument group name
-**    _acqLengthMinutes         Acquisition time, in minutes (only available for datasets, not requested runs)
+**    _acqLengthMinutes         Acquisition time, in minutes (for requested runs, this is based on the expected acquisition length, as defined by the request's separation group)
 **    _separationTypeName       Separation type name
 **    _separationGroupName      Separation group name
 **    _sampleTypeName           Sample type name (see t_secondary_sep_sample_type and sample_type_id in t_secondary_sep)
@@ -59,15 +59,13 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **      - If dataset type contains GC or is EI-HMS, service_type is 113
 **      - If dataset type contains MALDI, service_type is 104
 **      - If instrument group contains MALDI or is EMSL_QExactive_Imaging, service_type is 104 (this includes MALDI_timsTOF_Imaging)
-**      - If instrument group is timsTOF_Flex, service_type is 104
-**      - If instrument group is timsTOF_SCP, service_type is 100 or 102, depending on separation time (<= 60 minutes or > 60)
 **      - If sample_type for the separation type is Lipids, service_type is 111
 **      - If sample_type for the separation type is Metabolites, service_type is 112
 **      - If sample_type for the separation type is Glycans, service_type is 103 (long standard peptides)
 **      - If acquisition time is 5 minutes or shorter, type is 110
 **      - If separation_type name or separation group name has "-NanoPot", service_type is 100 or 102, depending on separation time (<= 60 minutes or > 60)
-**      - If instrument group is Astral and separation time is > 60 minutes, service_type is 102
-**      - If instrument group is Astral and separation time is <= 60 minutes, service_type is 100
+**      - If instrument group is Astral, timsTOF_Flex, or timsTOF_SCP, and separation time is > 60 minutes, service_type is 102
+**      - If instrument group is Astral, timsTOF_Flex, or timsTOF_SCP, and separation time is <= 60 minutes, service_type is 100
 **      - If instrument group is Ascend, Eclipse, Exploris, Lumos, QEHFX, QExactive, VelosOrbi and separation time is > 60 minutes, service_type is 103
 **      - If instrument group is Ascend, Eclipse, Exploris, Lumos, QEHFX, QExactive, VelosOrbi and separation time is <= 60 minutes, service_type is 101
 **      - Otherwise, set service_type to Ambiguous
@@ -121,6 +119,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **                         - Return service type ID 1 for GCMS_FAMEs and GCMS_Blank datasets
 **          10/22/2025 mem - Return service type 101 or 103 for IMS datasets that are not metabolites, lipids, or separation time <= 5 minutes
 **          11/07/2025 mem - Rename intrument group to EMSL_QExactive_Imaging
+**          02/02/2026 mem - Treat timsTOF_Flex and timsTOF_SCP the same as Astral (previously, timsTOF_Flex was always service type 104, but now it is 100, 102, or 110)
 **
 *****************************************************/
 DECLARE
@@ -320,25 +319,6 @@ BEGIN
         RETURN 104;       -- MALDI
     End If;
 
-    -- Check for the timsTOF_Flex instrument group
-    If _instrumentGroup = 'timsTOF_Flex' Then
-        RETURN 104;       -- MALDI
-    End If;
-
-    -- Check for the timsTOF_SCP instrument group
-    If _instrumentGroup = 'timsTOF_SCP' Then
-        If _acqLengthMinutes <= 60 Then
-            RETURN 100;   -- Peptides: Short advanced MS
-        Else
-            RETURN 102;   -- Peptides: Long advanced MS
-        End If;
-    End If;
-
-    -- Check for an unrecognized timsTOF instrument group
-    If _instrumentGroup LIKE '%timsTOF%' Then
-        RETURN 25;      -- Ambiguous
-    End If;
-
     -- Check for a lipid sample
     If _sampleType IN ('Lipids') Then
         RETURN 111;       -- Lipids
@@ -373,13 +353,18 @@ BEGIN
         End If;
     End If;
 
-    -- Check for Astral datasets
-    If _instrumentGroup LIKE '%Astral%' Then
+    -- Check for Astral, timsTOF_Flex, or timsTOF_SCP datasets
+    If _instrumentGroup LIKE '%Astral%' OR _instrumentGroup IN ('timsTOF_Flex', 'timsTOF_SCP') Then
         If _acqLengthMinutes <= 60 Then
             RETURN 100;   -- Peptides: Short Advanced MS
         Else
             RETURN 102;   -- Peptides: Long Advanced MS
         End If;
+    End If;
+
+    -- Check for an unrecognized timsTOF instrument group
+    If _instrumentGroup LIKE '%timsTOF%' Then
+        RETURN 25;      -- Ambiguous
     End If;
 
     -- Check for Orbitrap or IMS datasets
