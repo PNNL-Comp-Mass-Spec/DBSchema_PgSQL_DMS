@@ -39,74 +39,74 @@ CREATE VIEW public.v_instrument_actual_montly_list_report AS
             count(DISTINCT c.campaign) AS campaigns,
             public.min(c.campaign) AS campaign_first,
             public.max(c.campaign) AS campaign_last,
-            round(((sum(
-                CASE
-                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'FT'::public.citext) THEN ds.acq_length_minutes
-                    ELSE 0
-                END))::numeric / 60.0), 1) AS ft_actual,
-            round(((sum(
-                CASE
-                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'IMS'::public.citext) THEN ds.acq_length_minutes
-                    ELSE 0
-                END))::numeric / 60.0), 1) AS ims_actual,
-            round(((sum(
-                CASE
-                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'ORB'::public.citext) THEN ds.acq_length_minutes
-                    ELSE 0
-                END))::numeric / 60.0), 1) AS orb_actual,
-            round(((sum(
-                CASE
-                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'EXA'::public.citext) THEN ds.acq_length_minutes
-                    ELSE 0
-                END))::numeric / 60.0), 1) AS exa_actual,
-            round(((sum(
-                CASE
-                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'LTQ'::public.citext) THEN ds.acq_length_minutes
-                    ELSE 0
-                END))::numeric / 60.0), 1) AS ltq_actual,
-            round(((sum(
-                CASE
-                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'GC'::public.citext) THEN ds.acq_length_minutes
-                    ELSE 0
-                END))::numeric / 60.0), 1) AS gc_actual,
-            round(((sum(
-                CASE
-                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'QQQ'::public.citext) THEN ds.acq_length_minutes
-                    ELSE 0
-                END))::numeric / 60.0), 1) AS qqq_actual,
             round((sum(
                 CASE
-                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'FT'::public.citext) THEN ((ds.acq_length_minutes)::numeric * c.fraction_emsl_funded)
+                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'FT'::public.citext) THEN ds.acq_length_minutes
+                    ELSE (0)::numeric
+                END) / 60.0), 1) AS ft_actual,
+            round((sum(
+                CASE
+                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'IMS'::public.citext) THEN ds.acq_length_minutes
+                    ELSE (0)::numeric
+                END) / 60.0), 1) AS ims_actual,
+            round((sum(
+                CASE
+                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'ORB'::public.citext) THEN ds.acq_length_minutes
+                    ELSE (0)::numeric
+                END) / 60.0), 1) AS orb_actual,
+            round((sum(
+                CASE
+                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'EXA'::public.citext) THEN ds.acq_length_minutes
+                    ELSE (0)::numeric
+                END) / 60.0), 1) AS exa_actual,
+            round((sum(
+                CASE
+                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'LTQ'::public.citext) THEN ds.acq_length_minutes
+                    ELSE (0)::numeric
+                END) / 60.0), 1) AS ltq_actual,
+            round((sum(
+                CASE
+                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'GC'::public.citext) THEN ds.acq_length_minutes
+                    ELSE (0)::numeric
+                END) / 60.0), 1) AS gc_actual,
+            round((sum(
+                CASE
+                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'QQQ'::public.citext) THEN ds.acq_length_minutes
+                    ELSE (0)::numeric
+                END) / 60.0), 1) AS qqq_actual,
+            round((sum(
+                CASE
+                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'FT'::public.citext) THEN (ds.acq_length_minutes * c.fraction_emsl_funded)
                     ELSE (0)::numeric
                 END) / 60.0), 1) AS ft_emsl_actual,
             round((sum(
                 CASE
-                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'IMS'::public.citext) THEN ((ds.acq_length_minutes)::numeric * c.fraction_emsl_funded)
+                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'IMS'::public.citext) THEN (ds.acq_length_minutes * c.fraction_emsl_funded)
                     ELSE (0)::numeric
                 END) / 60.0), 1) AS ims_emsl_actual,
             round((sum(
                 CASE
-                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'ORB'::public.citext) THEN ((ds.acq_length_minutes)::numeric * c.fraction_emsl_funded)
+                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'ORB'::public.citext) THEN (ds.acq_length_minutes * c.fraction_emsl_funded)
                     ELSE (0)::numeric
                 END) / 60.0), 1) AS orb_emsl_actual,
             round((sum(
                 CASE
-                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'EXA'::public.citext) THEN ((ds.acq_length_minutes)::numeric * c.fraction_emsl_funded)
+                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'EXA'::public.citext) THEN (ds.acq_length_minutes * c.fraction_emsl_funded)
                     ELSE (0)::numeric
                 END) / 60.0), 1) AS exa_emsl_actual,
             round((sum(
                 CASE
-                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'LTQ'::public.citext) THEN ((ds.acq_length_minutes)::numeric * c.fraction_emsl_funded)
+                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'LTQ'::public.citext) THEN (ds.acq_length_minutes * c.fraction_emsl_funded)
                     ELSE (0)::numeric
                 END) / 60.0), 1) AS ltq_emsl_actual,
             round((sum(
                 CASE
-                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'GC'::public.citext) THEN ((ds.acq_length_minutes)::numeric * c.fraction_emsl_funded)
+                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'GC'::public.citext) THEN (ds.acq_length_minutes * c.fraction_emsl_funded)
                     ELSE (0)::numeric
                 END) / 60.0), 1) AS gc_emsl_actual,
             round((sum(
                 CASE
-                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'QQQ'::public.citext) THEN ((ds.acq_length_minutes)::numeric * c.fraction_emsl_funded)
+                    WHEN (instgroup.allocation_tag OPERATOR(public.=) 'QQQ'::public.citext) THEN (ds.acq_length_minutes * c.fraction_emsl_funded)
                     ELSE (0)::numeric
                 END) / 60.0), 1) AS qqq_emsl_actual
            FROM (((((public.t_dataset ds

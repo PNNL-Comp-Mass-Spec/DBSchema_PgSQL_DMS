@@ -46,7 +46,7 @@ CREATE VIEW public.v_dataset_detail_report_ex AS
     rr.request_run_finish AS run_finish,
     ds.scan_count,
     public.get_dataset_scan_type_list(ds.dataset_id) AS scan_types,
-    ds.acq_length_minutes AS acq_length,
+    ds.acq_length_minutes,
     (round((((ds.file_size_bytes)::numeric / 1024.0) / 1024.0)))::integer AS file_size_mb,
     ds.file_info_last_modified AS file_info_updated,
     df.file_path AS dataset_file,
