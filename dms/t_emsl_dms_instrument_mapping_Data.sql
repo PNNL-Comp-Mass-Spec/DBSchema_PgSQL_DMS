@@ -79,6 +79,7 @@ COPY public.t_emsl_dms_instrument_mapping (eus_instrument_id, dms_instrument_id)
 34230	124
 34231	127
 34232	128
+34233	163
 34234	126
 34235	105
 34236	96
@@ -123,6 +124,7 @@ COPY public.t_emsl_dms_instrument_mapping (eus_instrument_id, dms_instrument_id)
 35047	255
 35047	256
 35064	246
+35067	247
 \.
 
 

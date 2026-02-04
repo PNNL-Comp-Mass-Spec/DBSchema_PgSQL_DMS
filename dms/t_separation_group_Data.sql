@@ -101,6 +101,7 @@ LC-Ubiquitylome		1	1	0	0
 LC-Waters-NH4HCO2		1	0	0	0
 LC-Waters_High_pH		1	1	0	0
 LC-Waters_Neutral		1	1	0	0
+LC-metabolomics_Hormones		1	1	0	20
 Other		1	1	0	0
 RapidFire-SPE		1	1	0	0
 \.

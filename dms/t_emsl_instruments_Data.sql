@@ -151,7 +151,7 @@ COPY public.t_emsl_instruments (eus_instrument_id, eus_display_name, eus_instrum
 35007	Metabolomic Gas Chromatography-Mass Spectrometry (GC-MS)	Mass Spectrometer: Agilent GC-MS 3 (2021)	24	\N	\N	2024-12-05 06:16:46.760634	1	0
 35015	Proteomic Bottom-up (NanoScale) Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: TIMS ToF SCP 1 (2023)	24	\N	\N	2025-11-25 06:16:47.846159	1	0
 35022	Inductively Coupled Plasma (ICP-MS) 	Mass Spectrometer: ICP-MS (2023)	10	\N	\N	2024-08-07 06:16:00.891027	1	0
-35024	Liquid Chromatography - Ion Mobility Spectrometry - Mass Spectrometry (LC-IMS-MS)	Mass Spectrometer: IMS 4 Ag-ToF 5 (2009)	10	\N	\N	2025-11-25 06:16:47.846159	0	0
+35024	Liquid Chromatography - Ion Mobility Spectrometry - Mass Spectrometry (LC-IMS-MS)	Mass Spectrometer: IMS 12 Ag-QToF 9 (2023)	10	\N	\N	2026-01-30 06:16:50.156536	1	0
 35025	Lipidomics Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q-ToF LC-MS 3 (2010) - DUPLICATE	\N	\N	\N	2024-08-06 06:15:53	0	0
 35026	Lipidomics Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Q-ToF LC-MS 2 (2010) - DUPLICATE	\N	\N	\N	2024-08-06 06:15:53	0	0
 35027	Proteomic Bottom-up (Labeled) Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: Ascend Orbitrap 1 (2023)	10	\N	\N	2025-11-25 06:16:47.846159	1	0

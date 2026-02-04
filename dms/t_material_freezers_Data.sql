@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.4
+-- Dumped from database version 17.6
 -- Dumped by pg_dump version 17.2
 
 SET statement_timeout = 0;
@@ -44,7 +44,7 @@ COPY public.t_material_freezers (freezer_id, freezer, freezer_tag, comment, stat
 16	-80 BSF1208A	1208A	Stirling Ultracold, model SU780XLE, property WD83575, serial 19080-10442	Active
 43	-80 BSF1208A_Old	1208A_Old	Revco Model ULT2586-5-A39	Active
 17	-80 BSF1208B	1208B	Eppendorf / New Brunswick U700, model U9280-0000, property WD56280	Active
-32	-80 BSF1208C	1208C	Thermo Scientific / REVCO, model ULT 2586-10-A48, property PT27095 (backup freezer)	Active
+32	-80 BSF1208C	1208C	Thermo Scientific / REVCO, model ULT 2586-10-A48, property PT27095	Active
 31	-80 BSF1208D	1208D	Stirling Ultracold, model SU780XLE, property WD91947, serial 23090-22693 (replaces WD85272, serial 17080-01164)	Active
 38	-80 BSF1208E	1208E	Stirling Ultracold, model SU780XLE, property WD38275, serial 18031-11205	Active
 49	-80 BSF1208F	1208F	Stirling Ultracold, model SU780XLE, property WD85280, serial 21090-16621	Active

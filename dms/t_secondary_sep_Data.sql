@@ -93,7 +93,7 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 86	LC-IMER_5hr	LC system with online trypsin digestion, 5 hour separation	0	LC-IMER_5hr	1	2015-06-09 14:15:17
 18	LC-ISCO-Formic_100minute	ISCO system, formic acid solvent, 100 minute separation (exponential dilution gradient)	0	LC-Formic_100min	1	2007-11-07 23:13:01
 12	LC-ISCO-Formic_15minute	ISCO system, formic acid solvent, 15 minute separation	0	Other	1	2007-03-06 08:23:16
-11	LC-ISCO-Formic_35minute	ISCO system, formic acid solvent, 35 minute separation	0	LC-Formic_30min	0	2006-12-18 11:26:56
+11	LC-ISCO-Formic_35minute	ISCO system, formic acid solvent, 35 minute separation	0	LC-Formic_30min	1	2006-12-18 11:26:56
 74	LC-ISCO-Formic_50minute	ISCO system, formic acid solvent, 50 minute separation (exponential dilution gradient)	0	LC-Formic_1hr	1	2013-02-14 13:25:17
 20	LC-ISCO-Formic_80minute	ISCO system, formic acid solvent, 80 minute separation	0	LC-Formic_80min	1	2008-05-15 09:23:58
 15	LC-ISCO-Metabolomics_LipidSoluble	ISCO system, mobile phase optimized for lipid soluble metabolites	0	LC-Metabolomics_LipidSoluble	4	2007-01-23 14:33:45
@@ -109,8 +109,8 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 21	LC-KoreaU-Standard	Datasets acquired at Korea University	0	Other	0	2009-07-28 18:58:49
 63	LC-MIT-Standard	Datasets acquired at Forest White's lab at MIT	0	Other	0	2012-06-05 21:52:46
 94	LC-NU-Standard	Datasets acquired in the Kelleher lab at Northwestern	0	Other	0	2015-11-05 11:10:50
-151	LC-Nano-Lipidomics		1	LC-Nano-Lipidomics	0	2025-12-01 11:19:11.370735
-150	LC-Nano-Metabolomics		1	LC-Nano-Metabolomics	0	2025-12-01 11:18:36.328054
+151	LC-Nano-Lipidomics		1	LC-Nano-Lipidomics	4	2025-12-01 11:19:11.370735
+150	LC-Nano-Metabolomics		1	LC-Nano-Metabolomics	3	2025-12-01 11:18:36.328054
 143	LC-Neo-Formic_10Min	Neo, formic acid, 10 min separation	1	LC-Formic_10min	1	2024-05-30 10:29:32
 127	LC-Neo-Formic_1hr	Neo, formic acid, 1 hour separation	1	LC-Formic_1hr	1	2022-12-20 12:46:10
 144	LC-Neo-Formic_20Min	Neo, formic acid, 20 Min separation	1	LC-Formic_20min	1	2024-05-30 10:30:01
@@ -132,9 +132,9 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 53	LC-Vanderbilt-Standard	Datasets acquired at Vanderbilt University	0	Other	0	2012-03-20 21:48:13
 96	LC-Vanquish-AA	Vanquish high flow LC, optimized for amino acid separation	1	LC-HiFlow	0	2015-11-15 11:10:50
 89	LC-Vanquish-Formic_100min	Vanquish high flow LC, formic acid, 100 minute separation	1	LC-HiFlow	1	2014-08-28 16:56:48
-90	LC-Vanquish-Formic_300min	Vanquish high flow LC, formic acid, 300 minute (5 hr) separation	1	LC-HiFlow	0	2016-08-17 15:03:32
+90	LC-Vanquish-Formic_300min	Vanquish high flow LC, formic acid, 300 minute (5 hr) separation	1	LC-HiFlow	1	2016-08-17 15:03:32
 92	LC-Vanquish-Formic_30min	Vanquish high flow LC, formic acid, 30 minute separation	1	LC-HiFlow	1	2015-03-24 14:42:23
-91	LC-Vanquish-Formic_60min	Vanquish high flow LC, formic acid, 60 minute separation	1	LC-HiFlow	0	2015-01-29 17:41:35
+91	LC-Vanquish-Formic_60min	Vanquish high flow LC, formic acid, 60 minute separation	1	LC-HiFlow	1	2015-01-29 17:41:35
 93	LC-Vanquish-HILIC	Vanquish high flow LC, HILIC	1	LC-HiFlow	0	2015-08-06 16:26:53
 98	LC-Vanquish-Lipids_35min	Vanquish high flow LC, optimized for lipid separation	1	LC-HiFlow	4	2016-08-17 13:48:43
 103	LC-Vanquish_Pentylammonium_highflow_High_pH	Vanquish constant high flow, ion pairing pentylamine plus HFIP, high pH	1	LC-IonPairing	0	2017-02-24 16:34:20
@@ -144,13 +144,13 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 37	LC-Waters-Formic_100min	Waters constant flow, formic acid, 100 minute separation	0	LC-Formic_2hr	1	2010-08-26 12:24:53
 45	LC-Waters-Formic_10hr	Waters constant flow, formic acid, 600 minute (10 hr) separation	0	Other	1	2011-11-10 07:38:11
 130	LC-Waters-Formic_150min	Waters constant flow, formic acid, 150 minute separation	1	LC-Formic_150min	1	2023-01-31 16:11:11
-34	LC-Waters-Formic_20min	Waters constant flow, formic acid, 20 minute separation	0	LC-Formic_30min	0	2010-09-07 22:08:49
+34	LC-Waters-Formic_20min	Waters constant flow, formic acid, 20 minute separation	0	LC-Formic_30min	1	2010-09-07 22:08:49
 100	LC-Waters-Formic_2hr	Waters constant flow, formic acid, 120 minute (2 hr) separation	1	LC-Formic_2hr	1	2017-02-01 20:33:12
-35	LC-Waters-Formic_30min	Waters constant flow, formic acid, 30 minute separation	1	LC-Formic_30min	0	2010-08-28 13:03:43
+35	LC-Waters-Formic_30min	Waters constant flow, formic acid, 30 minute separation	1	LC-Formic_30min	1	2010-08-28 13:03:43
 47	LC-Waters-Formic_3hr	Waters constant flow, formic acid, 180 minute (3 hr) separation	1	LC-Formic_3hr	1	2010-09-12 14:04:19
 39	LC-Waters-Formic_40min	Waters constant flow, formic acid, 40 minute separation	1	LC-Formic_1hr	1	2010-10-04 10:22:04
 48	LC-Waters-Formic_4hr	Waters constant flow, formic acid, 240 minute (4 hr) separation	1	LC-Formic_4hr	1	2012-01-17 11:06:41
-36	LC-Waters-Formic_52min	Waters constant flow, formic acid, 52 minute separation	0	LC-Formic_1hr	0	2010-08-23 11:24:50
+36	LC-Waters-Formic_52min	Waters constant flow, formic acid, 52 minute separation	0	LC-Formic_1hr	1	2010-08-23 11:24:50
 56	LC-Waters-Formic_5hr	Waters constant flow, formic acid, 300 minute (5 hr) separation	1	LC-Formic_5hr	1	2012-04-25 10:36:56
 40	LC-Waters-Formic_60min	Waters constant flow, formic acid, 60 minute separation	1	LC-Formic_1hr	1	2010-10-07 13:46:25
 119	LC-Waters-Formic_90min	Waters constant flow, formic acid, 90 minute separation	1	LC-Formic_90min	1	2020-10-09 11:18:56
@@ -163,11 +163,12 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 122	LC-Waters-Metabolomics_Sonnenburg	Waters system, gradient optimized for mammalian polar metabolites	1	LC-Metabolomics_Sonnenburg	4	2022-02-16 11:09:19
 42	LC-Waters-Metabolomics_WaterSoluble	Waters system, mobile phase optimized for water soluble metabolites	1	LC-Metabolomics_WaterSoluble	3	2013-01-21 08:58:06
 71	LC-Waters-NH4HCO2_100min	Waters constant flow, 10 mM ammonium bicarbonate, 100 minute separation	1	LC-Waters-NH4HCO2	0	2016-06-15 14:32:59
-112	LC-Waters-Oxylipids_30min		1	LC-Metabolomics_Oxylipids	0	2019-11-14 08:23:43
+112	LC-Waters-Oxylipids_30min		1	LC-Metabolomics_Oxylipids	4	2019-11-14 08:23:43
 54	LC-Waters-PRISM	Generic separation for fractionation	1	LC-PRISM	0	2012-03-22 15:10:57
 60	LC-Waters-Phospho	Phosphopeptide separations using a Waters LC pump	1	LC-Phospho	1	2012-06-13 11:35:17
 57	LC-Waters_High_pH	Waters constant flow, high pH	1	LC-Waters_High_pH	1	2012-04-26 12:20:20
 76	LC-Waters_Neutral_pH_100min	Waters constant flow, neutral pH	1	LC-Waters_Neutral	1	2013-12-10 07:16:12
+152	LC-metabolomics_Hormones		1	LC-Metabolomics_Oxylipids	4	2026-01-21 19:21:00
 64	Prep_HPLC	Prep HPLC separation; see associated Prep_LC_Run entry for column details	1	Other	0	2012-09-21 15:20:20
 24	RPLC_HILIC	Online 2D separation using RPLC then HILIC	0	LC-2D-HILIC	0	2010-01-01 10:12:29
 111	RapidFire-SPE	RapidFire device	1	RapidFire-SPE	0	2018-09-14 20:03:24
