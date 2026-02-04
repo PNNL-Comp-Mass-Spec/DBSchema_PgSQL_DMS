@@ -15,6 +15,7 @@ CREATE VIEW public.v_dataset_disposition AS
     ds.comment,
     dsn.dataset_state AS state,
     instname.instrument,
+    ds.service_type_id AS svc_center_use_type,
     ds.acq_time_start,
     rr.request_id AS request,
     ds.operator_username AS operator,

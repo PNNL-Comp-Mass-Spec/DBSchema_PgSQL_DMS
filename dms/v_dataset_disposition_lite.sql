@@ -14,6 +14,7 @@ CREATE VIEW public.v_dataset_disposition_lite AS
     comment,
     state,
     instrument,
+    svc_center_use_type,
     acq_time_start,
     request,
     operator,
