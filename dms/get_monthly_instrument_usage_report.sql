@@ -17,6 +17,10 @@ CREATE OR REPLACE FUNCTION public.get_monthly_instrument_usage_report(_instrumen
 **    _month                Month (as text)
 **    _outputFormat         Output format: 'report', 'details', 'rollup', 'check', 'debug1', 'debug2', 'debug3'
 **
+**  Example usage:
+**      SELECT *
+**      FROM get_monthly_instrument_usage_report('Ascend01', 0, '2026', '1', 'report');
+**
 **  Auth:   grk
 **  Date:   03/06/2012 grk - Rename _mode to _outputFormat
 **          03/06/2012 grk - Add long interval comment to 'detail' output format
@@ -54,6 +58,7 @@ CREATE OR REPLACE FUNCTION public.get_monthly_instrument_usage_report(_instrumen
 **          10/09/2024 mem - When determining the instrument name for the Instrument ID specified by _eusInstrumentId, preferably choose the first active instrument, sorted alphabetically by name
 **          11/27/2024 mem - Filter on usage type when parsing long interval usage info
 **                         - Fix bug that failed to show interval length when _outputFormat is 'Details'
+**          02/03/2026 mem - Change Duration to numeric (represents acquisition length, in minutes)
 **
 *****************************************************/
 DECLARE
@@ -70,7 +75,7 @@ DECLARE
     _actualInstrument text;
 
     _startMin timestamp;
-    _durationSum int;
+    _durationSum numeric;
     _intervalSum int;
     _percentInUse numeric;
 
@@ -174,7 +179,7 @@ BEGIN
             Dataset_ID int,
             Type citext,
             Start timestamp,
-            Duration int,
+            Duration numeric,
             Interval int,
             Proposal citext NULL,
             Usage citext NULL,
@@ -205,7 +210,7 @@ BEGIN
                    0 AS EMSL_Inst_ID,
                    U.Start,
                    U.Type,
-                   U.Duration AS Minutes,
+                   U.Duration::int AS Minutes,
                    null::numeric AS Percentage,
                    U.Proposal,
                    U.Usage,
@@ -813,7 +818,7 @@ BEGIN
                    -- to_char(Start, 'Mon dd yyyy hh12:mi AM') AS Start,
                    U.Start,
                    U.Type,
-                   CASE WHEN U.Type = 'Interval' THEN U.Interval ELSE U.Duration END AS Minutes,
+                   CASE WHEN U.Type = 'Interval' THEN U.Interval ELSE U.Duration::int END AS Minutes,
                    null::numeric AS Percentage,
                    U.Proposal,
                    U.Usage,
@@ -843,7 +848,7 @@ BEGIN
                    _eusInstrumentId AS EMSL_Inst_ID,
                    U.Start,
                    U.Type,
-                   CASE WHEN U.Type = 'Interval' THEN U.Interval ELSE U.Duration END AS Minutes,
+                   CASE WHEN U.Type = 'Interval' THEN U.Interval ELSE U.Duration::int END AS Minutes,
                    null::numeric AS Percentage,
                    U.Proposal,
                    U.Usage,
@@ -889,7 +894,7 @@ BEGIN
                          U.Type,
                          SUM(CASE
                                  WHEN U.Type = 'Interval' THEN U.Interval
-                                 ELSE U.Duration
+                                 ELSE U.Duration::int
                              END) AS Minutes,
                          U.Proposal,
                          U.Usage
@@ -924,7 +929,7 @@ BEGIN
                    _eusInstrumentId AS EMSL_Inst_ID,
                    _startMin AS Start,
                    'Check'::citext AS Type,
-                   _durationSum + _intervalSum AS Minutes,
+                   (_durationSum + _intervalSum)::int AS Minutes,
                    Round(_percentInUse, 1) AS Percentage,
                    ''::citext AS Proposal,
                    format('Duration: %s, Interval: %s, total: %s',

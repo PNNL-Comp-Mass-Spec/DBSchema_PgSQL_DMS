@@ -2,7 +2,7 @@
 -- Name: get_dataset_instrument_runtime(timestamp without time zone, timestamp without time zone, text, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval timestamp without time zone, _endinterval timestamp without time zone, _instrument text DEFAULT 'VOrbiETD04'::text, _options text DEFAULT 'Show All'::text) RETURNS TABLE(seq integer, id integer, dataset public.citext, state public.citext, rating public.citext, duration integer, "interval" integer, time_start timestamp without time zone, time_end timestamp without time zone, request integer, eus_proposal public.citext, eus_usage public.citext, eus_proposal_type public.citext, work_package public.citext, lc_column public.citext, instrument public.citext, campaign_id integer, fraction_emsl_funded numeric, campaign_proposals public.citext)
+CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval timestamp without time zone, _endinterval timestamp without time zone, _instrument text DEFAULT 'VOrbiETD04'::text, _options text DEFAULT 'Show All'::text) RETURNS TABLE(seq integer, id integer, dataset public.citext, state public.citext, rating public.citext, duration numeric, "interval" integer, time_start timestamp without time zone, time_end timestamp without time zone, request integer, eus_proposal public.citext, eus_usage public.citext, eus_proposal_type public.citext, work_package public.citext, lc_column public.citext, instrument public.citext, campaign_id integer, fraction_emsl_funded numeric, campaign_proposals public.citext)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -38,6 +38,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval 
 **                         - Include schema name when calling function verify_sp_authorized()
 **          01/20/2024 mem - Ignore case when finding datasets for the given instrument
 **          01/21/2024 mem - Change data type of function arguments to text
+**          02/03/2026 mem - Change Duration to numeric (represents acquisition length, in minutes)
 **
 *****************************************************/
 DECLARE
@@ -117,7 +118,7 @@ BEGIN
         Dataset citext,
         State citext,
         Rating citext,
-        Duration int NULL,
+        Duration numeric NULL,
         "interval" int NULL,
         Time_Start timestamp,
         Time_End timestamp,

@@ -2,7 +2,7 @@
 -- Name: get_instrument_run_datasets(integer, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_instrument_run_datasets(_mostrecentweeks integer DEFAULT 4, _instrument text DEFAULT 'Lumos03'::text) RETURNS TABLE(seq integer, id integer, dataset text, state text, rating text, duration integer, time_start timestamp without time zone, time_end timestamp without time zone, request integer, eus_proposal text, eus_usage text, work_package text, lc_column text, instrument text)
+CREATE OR REPLACE FUNCTION public.get_instrument_run_datasets(_mostrecentweeks integer DEFAULT 4, _instrument text DEFAULT 'Lumos03'::text) RETURNS TABLE(seq integer, id integer, dataset text, state text, rating text, duration numeric, time_start timestamp without time zone, time_end timestamp without time zone, request integer, eus_proposal text, eus_usage text, work_package text, lc_column text, instrument text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION public.get_instrument_run_datasets(_mostrecentweeks i
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          01/20/2024 mem - Ignore case when filtering by instrument name
 **          03/04/2024 mem - Include units in the summary state line (seq = 0)
+**          02/03/2026 mem - Change Duration to numeric (represents acquisition length, in minutes)
 **
 *****************************************************/
 DECLARE
@@ -40,9 +41,9 @@ DECLARE
     _earliestStart timestamp;
     _latestFinish timestamp;
     _totalMinutes int;
-    _acquisitionMinutes int;
-    _normalIntervalMinutes int;
-    _longIntervalMinutes int;
+    _acquisitionMinutes numeric;
+    _normalIntervalMinutes numeric;
+    _longIntervalMinutes numeric;
     _s text := '';
 BEGIN
     ---------------------------------------------------
@@ -55,7 +56,7 @@ BEGIN
         Dataset text,
         State text,
         Rating text,
-        Duration int NULL,
+        Duration numeric NULL,
         Time_Start timestamp,
         Time_End timestamp,
         Request int,
@@ -168,17 +169,17 @@ BEGIN
 
     _totalMinutes := Round(Extract(epoch from (_latestFinish - _earliestStart)) / 60)::int;
 
-    SELECT SUM(Coalesce(Tmp_TX.Duration, 0))
+    SELECT Round(SUM(Coalesce(Tmp_TX.Duration, 0)), 2)
     INTO _acquisitionMinutes
     FROM Tmp_TX
     WHERE Tmp_TX.ID <> 0;
 
-    SELECT SUM(Coalesce(Tmp_TX.Duration, 0))
+    SELECT Round(SUM(Coalesce(Tmp_TX.Duration, 0)), 2)
     INTO _normalIntervalMinutes
     FROM Tmp_TX
     WHERE Tmp_TX.ID = 0 AND Tmp_TX.Duration < 10;
 
-    SELECT SUM(Coalesce(Tmp_TX.Duration, 0))
+    SELECT Round(SUM(Coalesce(Tmp_TX.Duration, 0)), 2)
     INTO _longIntervalMinutes
     FROM Tmp_TX
     WHERE Tmp_TX.ID = 0 AND Tmp_TX.Duration >= 10;

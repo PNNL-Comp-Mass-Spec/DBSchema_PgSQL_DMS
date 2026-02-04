@@ -2,7 +2,7 @@
 -- Name: get_run_tracking_monthly_info(text, integer, integer, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_run_tracking_monthly_info(_instrument text, _year integer, _month integer, _options text DEFAULT ''::text) RETURNS TABLE(seq integer, id integer, dataset text, day integer, duration integer, "interval" integer, time_start timestamp without time zone, time_end timestamp without time zone, instrument text, comment_state text, comment text)
+CREATE OR REPLACE FUNCTION public.get_run_tracking_monthly_info(_instrument text, _year integer, _month integer, _options text DEFAULT ''::text) RETURNS TABLE(seq integer, id integer, dataset text, day integer, duration numeric, "interval" integer, time_start timestamp without time zone, time_end timestamp without time zone, instrument text, comment_state text, comment text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -47,6 +47,7 @@ CREATE OR REPLACE FUNCTION public.get_run_tracking_monthly_info(_instrument text
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          03/26/2024 mem - Fix bug referencing the start and end times of the previous dataset
 **                         - Rename columns in temp table and record to avoid using reserved words
+**          02/03/2026 mem - Change Duration to numeric (represents acquisition length, in minutes)
 **
 *****************************************************/
 DECLARE
@@ -73,7 +74,7 @@ BEGIN
         ID int NULL,
         Dataset text,
         Day int NULL,
-        Duration int NULL,              -- Acquisition length, in minutes
+        Duration numeric NULL,              -- Acquisition length, in minutes
         Interval_Minutes int NULL,      -- Interval from the end of one dataset to the start of next dataset, in minutes
         Time_Start timestamp NULL,
         Time_End timestamp NULL,
