@@ -10,6 +10,7 @@ CREATE VIEW public.v_requested_run_admin_report AS
     ds.dataset,
     COALESCE(datasetinstrument.instrument, ''::public.citext) AS instrument,
     rr.instrument_group AS inst_group,
+    ds.acq_time_start,
     dtn.dataset_type AS type,
     rr.separation_group,
     rr.origin,
