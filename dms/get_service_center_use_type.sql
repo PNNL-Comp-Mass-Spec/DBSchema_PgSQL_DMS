@@ -1,8 +1,8 @@
 --
--- Name: get_service_center_use_type(text, text, text, text, integer, text, text, integer, text, text, text); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_service_center_use_type(text, text, text, text, integer, text, text, numeric, text, text, text); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text, _experimentname text, _campaignname text, _datasettypename text, _datasetratingid integer, _instrumentname text, _instrumentgroupname text, _acqlengthminutes integer, _separationtypename text, _separationgroupname text, _sampletypename text) RETURNS smallint
+CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text, _experimentname text, _campaignname text, _datasettypename text, _datasetratingid integer, _instrumentname text, _instrumentgroupname text, _acqlengthminutes numeric, _separationtypename text, _separationgroupname text, _sampletypename text) RETURNS smallint
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -120,6 +120,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **          10/22/2025 mem - Return service type 101 or 103 for IMS datasets that are not metabolites, lipids, or separation time <= 5 minutes
 **          11/07/2025 mem - Rename intrument group to EMSL_QExactive_Imaging
 **          02/02/2026 mem - Treat timsTOF_Flex and timsTOF_SCP the same as Astral (previously, timsTOF_Flex was always service type 104, but now it is 100, 102, or 110)
+**          02/03/2026 mem - Change _acqLengthMinutes to numeric
 **
 *****************************************************/
 DECLARE
@@ -413,5 +414,5 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_service_center_use_type(_datasetname text, _experimentname text, _campaignname text, _datasettypename text, _datasetratingid integer, _instrumentname text, _instrumentgroupname text, _acqlengthminutes integer, _separationtypename text, _separationgroupname text, _sampletypename text) OWNER TO d3l243;
+ALTER FUNCTION public.get_service_center_use_type(_datasetname text, _experimentname text, _campaignname text, _datasettypename text, _datasetratingid integer, _instrumentname text, _instrumentgroupname text, _acqlengthminutes numeric, _separationtypename text, _separationgroupname text, _sampletypename text) OWNER TO d3l243;
 

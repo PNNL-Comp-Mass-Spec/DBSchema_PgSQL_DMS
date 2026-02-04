@@ -55,6 +55,7 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate 
 **          10/02/2025 mem - Filter datasets on acquisition start time instead of DMS creation time
 **                         - Assure that start date is no earlier than 2025-10-01 (the official start date of the service center)
 **          10/29/2025 mem - Round transaction units for MALDI datasets to the nearest tenth of an hour
+**          02/03/2026 mem - Change acq_length_minutes to numeric
 **
 *****************************************************/
 DECLARE
@@ -306,7 +307,7 @@ BEGIN
             dataset                     citext NOT NULL,
             service_type_id             smallint NOT NULL,
             svc_center_report_state_id  smallint NOT NULL,
-            acq_length_minutes          int NOT NULL DEFAULT 0,
+            acq_length_minutes          numeric NOT NULL DEFAULT 0,
             charge_code                 citext DEFAULT '' NOT NULL,
             transaction_date            timestamp,
             transaction_units           real,
@@ -333,7 +334,7 @@ BEGIN
                       DS.svc_center_report_state_id,
                       DS.acq_time_start,
                       DS.acq_length_minutes,
-                      Round(extract(epoch FROM RR.request_run_finish - RR.request_run_start) / 60.0, 0)::int AS req_run_acq_length_minutes,
+                      Round(extract(epoch FROM RR.request_run_finish - RR.request_run_start) / 60.0, 2)::numeric AS req_run_acq_length_minutes,
                       RR.work_package AS charge_code,
                       DS.acq_time_start AS transaction_date
                FROM t_dataset DS

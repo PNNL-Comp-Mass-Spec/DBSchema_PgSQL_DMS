@@ -24,12 +24,13 @@ CREATE OR REPLACE FUNCTION public.get_dataset_svc_center_use_type(_datasetid int
 **          07/10/2025 mem - Use requested run start and finish times when the dataset acquisition start/end times are null
 **          08/21/2025 mem - Rename function
 **          02/02/2026 mem - Use an acquisition length of 1 minute for short datasets (e.g. if the acquisition length is 0.15 minutes, round up to 1 minute)
+**          02/03/2026 mem - Change _acqLengthMinutes to numeric
 **
 *****************************************************/
 DECLARE
     _logErrors boolean := false;
     _datasetInfo record;
-    _acqLengthMinutes int;
+    _acqLengthMinutes numeric;
     _serviceTypeID smallint;
 
     _sqlState text;
@@ -59,8 +60,11 @@ BEGIN
            InstName.instrument,
            InstName.instrument_group,
            DS.acq_time_start,
+           DS.acq_time_end,
            DS.acq_length_minutes,
-           Round(extract(epoch FROM RR.request_run_finish - RR.request_run_start) / 60.0, 0)::int AS req_run_acq_length_minutes,
+           RR.request_run_start,
+           RR.request_run_finish,
+           Round(extract(epoch FROM RR.request_run_finish - RR.request_run_start) / 60.0, 2)::numeric AS req_run_acq_length_minutes,
            DS.separation_type,
            SS.separation_group,
            SampType.name AS sampleTypeName
@@ -107,6 +111,7 @@ BEGIN
     THEN
         _acqLengthMinutes := 1;
     End If;
+
     ---------------------------------------------------
     -- Determine the service type
     ---------------------------------------------------
