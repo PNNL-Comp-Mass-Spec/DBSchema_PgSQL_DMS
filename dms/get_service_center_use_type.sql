@@ -121,6 +121,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **          11/07/2025 mem - Rename intrument group to EMSL_QExactive_Imaging
 **          02/02/2026 mem - Treat timsTOF_Flex and timsTOF_SCP the same as Astral (previously, timsTOF_Flex was always service type 104, but now it is 100, 102, or 110)
 **          02/03/2026 mem - Change _acqLengthMinutes to numeric
+**                         - Round acq length minutes to the nearest minute if at least 5 minutes long
 **
 *****************************************************/
 DECLARE
@@ -174,6 +175,14 @@ BEGIN
     _separationType  := _separationTypeName;
     _separationGroup := _separationGroupName;
     _sampleType      := _sampleTypeName;
+
+    ---------------------------------------------------
+    -- Round acq length minutes to the nearest minute if at least 5 minutes long
+    ---------------------------------------------------
+
+    If _acqLengthMinutes >= 5 Then
+        _acqLengthMinutes = Round(_acqLengthMinutes, 0);
+    End If;
 
     ---------------------------------------------------
     -- Lookup sample type name if not defined, but separation type is defined
