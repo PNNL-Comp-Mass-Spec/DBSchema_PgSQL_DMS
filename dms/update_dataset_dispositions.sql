@@ -48,6 +48,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_dispositions(IN _datasetidlist
 **          09/18/2025 mem - Remove '(not service center eligible)' from _rating, if present
 **          09/24/2025 mem - Replace ', not service center eligible' with an empty string, if present
 **          11/13/2025 mem - Exit the procedure if an exception occurs while validating the inputs or populating Tmp_DatasetInfo
+**          01/16/2026 mem - Fix bug replacing ', not service center eligible' with an empty string
 **
 *****************************************************/
 DECLARE
@@ -127,7 +128,7 @@ BEGIN
         End If;
 
         If _ratingName LIKE '%, not service center eligible)' Then
-            _ratingName := Trim(Replace(_ratingName, ', not service center eligible)', ''));
+            _ratingName := Trim(Replace(_ratingName, ')', ''));
         End If;
 
         SELECT dataset_rating_id
