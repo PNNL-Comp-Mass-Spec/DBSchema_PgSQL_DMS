@@ -23,6 +23,7 @@ CREATE OR REPLACE FUNCTION public.get_dataset_svc_center_use_type(_datasetid int
 **  Date:   06/29/2025 mem - Initial release
 **          07/10/2025 mem - Use requested run start and finish times when the dataset acquisition start/end times are null
 **          08/21/2025 mem - Rename function
+**          02/02/2026 mem - Use an acquisition length of 1 minute for short datasets (e.g. if the acquisition length is 0.15 minutes, round up to 1 minute)
 **
 *****************************************************/
 DECLARE
@@ -96,6 +97,16 @@ BEGIN
                               ELSE _datasetInfo.acq_length_minutes
                          END;
 
+    --------------------------------------------------
+    -- If _acqLengthMinutes is zero, but acq_time_end is greater than acq_time_start (or request_run_finish is greater than request_run_start), treat as a 1 minute acquisition length
+    -- Most likely the acquisition length was short, e.g. 0.15 minutes
+    --------------------------------------------------
+
+    If Coalesce(_acqLengthMinutes, 0) = 0 AND (_datasetInfo.acq_time_end       > _datasetInfo.acq_time_start OR
+                                               _datasetInfo.request_run_finish > _datasetInfo.request_run_start)
+    THEN
+        _acqLengthMinutes := 1;
+    End If;
     ---------------------------------------------------
     -- Determine the service type
     ---------------------------------------------------
