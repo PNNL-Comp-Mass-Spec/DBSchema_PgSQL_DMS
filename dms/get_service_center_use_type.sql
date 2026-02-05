@@ -22,7 +22,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **      102    Peptides: Long Advanced MS           Astral or timsTOF with separation time > 60 minutes
 **      103    Peptides: Long Standard MS           HFX, Lumos, Eclipse, Exploris, or nanoPOTS with separation time > 60 minutes
 **      104    MALDI                                MALDI (run count = hr count); includes timsTOFFlex02_Imaging
-**      110    Peptides: Screening MS               All Orbitraps (including timsTOF_Flex and timsTOF_SCP), separation time <= 5 minutes (ultra fast), or infusion
+**      110    Peptides: Screening MS               All Orbitraps (including timsTOF_SCP), separation time <= 5 minutes (ultra fast), or infusion
 **      111    Lipids                               Lipids
 **      112    Metabolites                          Metabolites
 **      113    GC-MS                                GC-MS
@@ -58,14 +58,14 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **      - If instrument group is Agilent_QQQ, service_type is 113
 **      - If dataset type contains GC or is EI-HMS, service_type is 113
 **      - If dataset type contains MALDI, service_type is 104
-**      - If instrument group contains MALDI or is EMSL_QExactive_Imaging, service_type is 104 (this includes MALDI_timsTOF_Imaging)
+**      - If instrument group contains MALDI or is EMSL_QExactive_Imaging or timsTOF_Flex, service_type is 104 (this includes MALDI_timsTOF_Imaging)
 **      - If sample_type for the separation type is Lipids, service_type is 111
 **      - If sample_type for the separation type is Metabolites, service_type is 112
 **      - If sample_type for the separation type is Glycans, service_type is 103 (long standard peptides)
 **      - If acquisition time is 5 minutes or shorter, type is 110
 **      - If separation_type name or separation group name has "-NanoPot", service_type is 100 or 102, depending on separation time (<= 60 minutes or > 60)
-**      - If instrument group is Astral, timsTOF_Flex, or timsTOF_SCP, and separation time is > 60 minutes, service_type is 102
-**      - If instrument group is Astral, timsTOF_Flex, or timsTOF_SCP, and separation time is <= 60 minutes, service_type is 100
+**      - If instrument group is Astral or timsTOF_SCP, and separation time is > 60 minutes, service_type is 102
+**      - If instrument group is Astral or timsTOF_SCP, and separation time is <= 60 minutes, service_type is 100
 **      - If instrument group is Ascend, Eclipse, Exploris, Lumos, QEHFX, QExactive, VelosOrbi and separation time is > 60 minutes, service_type is 103
 **      - If instrument group is Ascend, Eclipse, Exploris, Lumos, QEHFX, QExactive, VelosOrbi and separation time is <= 60 minutes, service_type is 101
 **      - Otherwise, set service_type to Ambiguous
@@ -122,6 +122,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **          02/02/2026 mem - Treat timsTOF_Flex and timsTOF_SCP the same as Astral (previously, timsTOF_Flex was always service type 104, but now it is 100, 102, or 110)
 **          02/03/2026 mem - Change _acqLengthMinutes to numeric
 **                         - Round acq length minutes to the nearest minute if at least 5 minutes long
+**          02/04/2026 mem - Switch back to always using service type 104 for timsTOF_Flex
 **
 *****************************************************/
 DECLARE
@@ -325,7 +326,7 @@ BEGIN
     End If;
 
     -- Check for a MALDI instrument group (this includes MALDI_timsTOF_Imaging)
-    If _instrumentGroup LIKE '%MALDI%' OR _instrumentGroup = 'EMSL_QExactive_Imaging' Then
+    If _instrumentGroup LIKE '%MALDI%' OR _instrumentGroup IN ('EMSL_QExactive_Imaging', 'timsTOF_Flex') Then
         RETURN 104;       -- MALDI
     End If;
 
