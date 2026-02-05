@@ -19,6 +19,24 @@ CREATE OR REPLACE FUNCTION public.get_dataset_svc_center_use_type(_datasetid int
 **      FROM t_dataset
 **      WHERE dataset_id BETWEEN 1200000 AND 1200100;
 **
+**      -- Find datasets where the defined service_type_id differs from the one returned by this function
+**
+**      SELECT DS.dataset_id,
+**             DS.dataset,
+**             InstName.instrument,
+**             DS.service_type_id,
+**             get_dataset_svc_center_use_type(DS.dataset_id),
+**             DS.acq_length_minutes,
+**             DS.svc_center_report_state_id,
+**             DS.created
+**      FROM t_dataset DS
+**           INNER JOIN t_instrument_name InstName
+**             ON DS.instrument_id = InstName.instrument_id
+**      WHERE DS.created >= CURRENT_TIMESTAMP - Interval '2 months' AND
+**            DS.dataset_type_id <> 100 AND         -- Exclude tracking datasets
+**            DS.service_type_id <> get_dataset_svc_center_use_type(dataset_id)
+**      ORDER BY dataset_id DESC;
+**
 **  Auth:   mem
 **  Date:   06/29/2025 mem - Initial release
 **          07/10/2025 mem - Use requested run start and finish times when the dataset acquisition start/end times are null

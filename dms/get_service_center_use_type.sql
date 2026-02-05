@@ -101,6 +101,24 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **           _sampleTypeName => 'Peptides'
 **      );
 **
+**      -- Note that function get_dataset_svc_center_use_type references this function
+**
+**      SELECT DS.dataset_id,
+**             DS.dataset,
+**             InstName.instrument,
+**             DS.service_type_id,
+**             get_dataset_svc_center_use_type(DS.dataset_id),
+**             DS.acq_length_minutes,
+**             DS.svc_center_report_state_id,
+**             DS.created
+**      FROM t_dataset DS
+**           INNER JOIN t_instrument_name InstName
+**             ON DS.instrument_id = InstName.instrument_id
+**      WHERE DS.created >= CURRENT_TIMESTAMP - Interval '2 months' AND
+**            DS.dataset_type_id <> 100 AND         -- Exclude tracking datasets
+**            DS.service_type_id <> get_dataset_svc_center_use_type(dataset_id)
+**      ORDER BY dataset_id DESC;
+**
 **  Auth:   mem
 **  Date:   06/28/2025 mem - Initial release
 **          07/19/2025 mem - Return service type ID 1 (None) when the dataset type is 'DataFiles' or 'Tracking'
