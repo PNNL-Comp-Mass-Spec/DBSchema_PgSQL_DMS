@@ -48,6 +48,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_reference_compound(IN _compoundid 
 **          01/16/2024 mem - Ported to PostgreSQL
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          02/06/2026 mem - Refactor Excel date conversion into function get_timestamp_from_excel_date()
 **
 *****************************************************/
 DECLARE
@@ -115,7 +116,6 @@ BEGIN
     End If;
 
     BEGIN
-
         ---------------------------------------------------
         -- Validate the inputs
         ---------------------------------------------------
@@ -211,10 +211,8 @@ BEGIN
 
                 If Not _purchaseDateFloat IS NULL Then
                     -- Integer or float based date (likely an Excel conversion artifact)
-                    -- Convert to a timestamp (the base date is December 30, 1899 because Excel erroneously assumes that 1900 is a leap year, see https://learn.microsoft.com/en-us/office/troubleshoot/excel/wrongly-assumes-1900-is-leap-year)
-                    _purchaseDateValue := DATE('1899-12-30') +
-                                          INTERVAL '1 day' * FLOOR(_purchaseDateFloat) +
-                                          INTERVAL '1 sec' * (_purchaseDateFloat - FLOOR(_purchaseDateFloat)) * 3600 * 24;
+                    -- Convert to a timestamp
+                    _purchaseDateValue := get_timestamp_from_excel_date(_purchaseDateFloat);
                 Else
                     RAISE EXCEPTION 'Error, invalid purchase date: %', _purchaseDate;
                 End If;
@@ -265,7 +263,6 @@ BEGIN
             INTO _curContainerID
             FROM t_reference_compound
             WHERE compound_id = _compoundID;
-
         End If;
 
         ---------------------------------------------------
@@ -330,7 +327,6 @@ BEGIN
                 -- Single match found; update _contactUsername
                 _contactUsername := _newUsername;
             End If;
-
         End If;
 
         _logErrors := true;
@@ -340,7 +336,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-
             INSERT INTO t_reference_compound (
                 compound_name,
                 description,
@@ -403,9 +398,7 @@ BEGIN
                                 _finalState   => _containerName,        -- Final State    New container
                                 _callingUser  => _callingUser,
                                 _comment      => 'Reference Compound added');
-
             End If;
-
         End If;
 
         ---------------------------------------------------
@@ -413,7 +406,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'update' Then
-
             UPDATE t_reference_compound
             SET compound_name     = _compoundName,
                 description       = _description,
@@ -451,7 +443,6 @@ BEGIN
                                 _callingUser  => _callingUser,
                                 _comment      => 'Reference Compound updated');
             End If;
-
         End If;
 
     EXCEPTION
@@ -476,7 +467,6 @@ BEGIN
             _returnCode := _sqlState;
         End If;
     END;
-
 END
 $$;
 
