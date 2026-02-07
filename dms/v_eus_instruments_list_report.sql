@@ -12,7 +12,8 @@ CREATE VIEW public.v_eus_instruments_list_report AS
     emslinst.local_instrument_name,
     emslinst.local_category_name,
     emslinst.eus_primary_instrument,
-    emslinst.last_affected
+    emslinst.last_affected,
+    instmap.last_affected AS mapping_updated
    FROM ((public.t_instrument_name dmsinstname
      JOIN public.t_emsl_dms_instrument_mapping instmap ON ((dmsinstname.instrument_id = instmap.dms_instrument_id)))
      RIGHT JOIN public.t_emsl_instruments emslinst ON ((instmap.eus_instrument_id = emslinst.eus_instrument_id)));
