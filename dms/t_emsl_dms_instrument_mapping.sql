@@ -4,7 +4,8 @@
 
 CREATE TABLE public.t_emsl_dms_instrument_mapping (
     eus_instrument_id integer NOT NULL,
-    dms_instrument_id integer NOT NULL
+    dms_instrument_id integer NOT NULL,
+    last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -24,6 +25,12 @@ ALTER TABLE public.t_emsl_dms_instrument_mapping CLUSTER ON pk_t_emsl_dms_instru
 --
 
 CREATE UNIQUE INDEX ix_t_emsl_dms_instrument_mapping_dms_inst_id ON public.t_emsl_dms_instrument_mapping USING btree (dms_instrument_id);
+
+--
+-- Name: t_emsl_dms_instrument_mapping trig_t_emsl_dms_instrument_mapping_after_update; Type: TRIGGER; Schema: public; Owner: d3l243
+--
+
+CREATE TRIGGER trig_t_emsl_dms_instrument_mapping_after_update AFTER UPDATE ON public.t_emsl_dms_instrument_mapping FOR EACH ROW WHEN (((old.eus_instrument_id <> new.eus_instrument_id) OR (old.dms_instrument_id <> new.dms_instrument_id))) EXECUTE FUNCTION public.trigfn_t_emsl_dms_instrument_mapping_after_update();
 
 --
 -- Name: t_emsl_dms_instrument_mapping fk_t_emsl_dms_instrument_mapping_t_emsl_instruments; Type: FK CONSTRAINT; Schema: public; Owner: d3l243
