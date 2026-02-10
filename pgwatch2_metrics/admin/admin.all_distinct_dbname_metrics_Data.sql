@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.6
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 18.1
+-- Dumped by pg_dump version 18.1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -26,6 +26,7 @@ DMS	archiver	2024-04-17 15:08:40.763509-07
 DMS	backends	2024-04-17 15:08:40.768362-07
 DMS	backup_age_pgbackrest	2024-04-17 15:08:40.780148-07
 DMS	bgwriter	2024-04-17 15:08:40.777678-07
+DMS	configuration_changes	2026-02-07 21:43:28.54325-08
 DMS	configured_dbs	2024-04-18 16:21:42.034525-07
 DMS	cpu_load	2024-04-17 15:08:40.774023-07
 DMS	db_size	2024-04-17 15:08:40.781115-07
@@ -64,6 +65,7 @@ DMSDev	cpu_load	2024-04-17 15:08:42.041528-07
 DMSDev	db_size	2024-04-17 15:08:41.094857-07
 DMSDev	db_stats	2024-04-17 15:08:41.631417-07
 DMSDev	index_stats	2024-04-17 15:08:42.44968-07
+DMSDev	object_changes	2026-02-07 21:54:28.618008-08
 DMSDev	sequence_health	2024-04-17 15:08:46.052792-07
 DMSDev	sproc_stats	2024-08-06 22:31:24.397446-07
 DMSDev	stat_statements	2024-04-17 15:08:48.520209-07

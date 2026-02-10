@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.6
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 18.1
+-- Dumped by pg_dump version 18.1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -149,6 +149,7 @@ COPY public.t_emsl_instruments (eus_instrument_id, eus_display_name, eus_instrum
 34332	Fourier-Transform Ion Cyclotron Resonance (FTICR)	Mass Spectrometer: 7T FTICR SciMax01 (2021)	10	\N	\N	2025-11-25 06:16:47.846159	1	0
 35000	Mass Spectrometer: SciMax	Mass Spectrometer: SciMax01	10	\N	\N	2021-11-30 06:15:04	0	0
 35007	Metabolomic Gas Chromatography-Mass Spectrometry (GC-MS)	Mass Spectrometer: Agilent GC-MS 3 (2021)	24	\N	\N	2024-12-05 06:16:46.760634	1	0
+35011	Aerosol Thermal Desorption Gas Chromatography-Mass Spectrometry (TD-GC-MS)\n	Thermal Desorption GC-QTOFMS (2022)\n	\N	\N	\N	2026-02-06 19:15:29.097798	\N	\N
 35015	Proteomic Bottom-up (NanoScale) Liquid Chromatography-Mass Spectrometry (LC-MS)	Mass Spectrometer: TIMS ToF SCP 1 (2023)	24	\N	\N	2025-11-25 06:16:47.846159	1	0
 35022	Inductively Coupled Plasma (ICP-MS) 	Mass Spectrometer: ICP-MS (2023)	10	\N	\N	2024-08-07 06:16:00.891027	1	0
 35024	Liquid Chromatography - Ion Mobility Spectrometry - Mass Spectrometry (LC-IMS-MS)	Mass Spectrometer: IMS 12 Ag-QToF 9 (2023)	10	\N	\N	2026-01-30 06:16:50.156536	1	0
