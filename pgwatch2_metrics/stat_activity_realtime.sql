@@ -2,7 +2,7 @@
 -- Name: stat_activity_realtime; Type: TABLE; Schema: public; Owner: pgwatch2
 --
 
-CREATE UNLOGGED TABLE public.stat_activity_realtime (
+CREATE TABLE public.stat_activity_realtime (
     "time" timestamp with time zone NOT NULL,
     dbname text NOT NULL,
     data jsonb NOT NULL,

@@ -3,8 +3,8 @@
 --
 
 CREATE TABLE public.t_analysis_tool_allowed_instrument_class (
-    analysis_tool_id integer NOT NULL,
-    instrument_class public.citext NOT NULL,
+    analysis_tool_id integer CONSTRAINT t_analysis_tool_allowed_instrument_cl_analysis_tool_id_not_null NOT NULL,
+    instrument_class public.citext CONSTRAINT t_analysis_tool_allowed_instrument_cl_instrument_class_not_null NOT NULL,
     comment public.citext DEFAULT ''::public.citext
 );
 

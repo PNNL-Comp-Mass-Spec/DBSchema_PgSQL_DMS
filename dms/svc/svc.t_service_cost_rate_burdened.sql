@@ -8,12 +8,12 @@ CREATE TABLE svc.t_service_cost_rate_burdened (
     service_type_id smallint NOT NULL,
     base_rate_per_run real DEFAULT 0.0 NOT NULL,
     pdm real DEFAULT 0.0 NOT NULL,
-    general_and_administration real DEFAULT 0.0 NOT NULL,
+    general_and_administration real DEFAULT 0.0 CONSTRAINT t_service_cost_rate_burdene_general_and_administration_not_null NOT NULL,
     safeguards_and_security real DEFAULT 0.0 NOT NULL,
     fee real DEFAULT 0.0 NOT NULL,
     ldrd real DEFAULT 0.0 NOT NULL,
     facilities real DEFAULT 0.0 NOT NULL,
-    total_burdened_rate_per_run real GENERATED ALWAYS AS (((((((((base_rate_per_run + pdm) + general_and_administration) + safeguards_and_security) + fee) + ldrd) + facilities))::numeric(1000,2))::real) STORED NOT NULL
+    total_burdened_rate_per_run real GENERATED ALWAYS AS (((((((((base_rate_per_run + pdm) + general_and_administration) + safeguards_and_security) + fee) + ldrd) + facilities))::numeric(1000,2))::real) STORED CONSTRAINT t_service_cost_rate_burdene_total_burdened_rate_per_ru_not_null NOT NULL
 );
 
 

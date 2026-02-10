@@ -3,10 +3,10 @@
 --
 
 CREATE TABLE public.t_predefined_analysis_scheduling_queue_history (
-    entry_id integer NOT NULL,
-    dataset_id integer NOT NULL,
-    dataset_rating_id smallint NOT NULL,
-    jobs_created integer DEFAULT 0 NOT NULL,
+    entry_id integer CONSTRAINT t_predefined_analysis_scheduling_queue_histor_entry_id_not_null NOT NULL,
+    dataset_id integer CONSTRAINT t_predefined_analysis_scheduling_queue_hist_dataset_id_not_null NOT NULL,
+    dataset_rating_id smallint CONSTRAINT t_predefined_analysis_scheduling_que_dataset_rating_id_not_null NOT NULL,
+    jobs_created integer DEFAULT 0 CONSTRAINT t_predefined_analysis_scheduling_queue_hi_jobs_created_not_null NOT NULL,
     entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 

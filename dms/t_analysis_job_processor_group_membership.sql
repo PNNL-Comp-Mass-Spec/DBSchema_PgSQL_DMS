@@ -5,7 +5,7 @@
 CREATE TABLE public.t_analysis_job_processor_group_membership (
     processor_id integer NOT NULL,
     group_id integer NOT NULL,
-    membership_enabled public.citext DEFAULT 'Y'::bpchar NOT NULL,
+    membership_enabled public.citext DEFAULT 'Y'::bpchar CONSTRAINT t_analysis_job_processor_group_memb_membership_enabled_not_null NOT NULL,
     last_affected timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     entered_by public.citext DEFAULT SESSION_USER,
     CONSTRAINT ck_t_analysis_job_processor_group_membership_enabled CHECK (((membership_enabled OPERATOR(public.=) 'N'::public.citext) OR (membership_enabled OPERATOR(public.=) 'Y'::public.citext)))

@@ -3,8 +3,8 @@
 --
 
 CREATE TABLE public.t_dataset_archive_update_state_name (
-    archive_update_state_id integer NOT NULL,
-    archive_update_state public.citext NOT NULL
+    archive_update_state_id integer CONSTRAINT t_dataset_archive_update_state_archive_update_state_id_not_null NOT NULL,
+    archive_update_state public.citext CONSTRAINT t_dataset_archive_update_state_na_archive_update_state_not_null NOT NULL
 );
 
 

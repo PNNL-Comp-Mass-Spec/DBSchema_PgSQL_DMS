@@ -4,10 +4,10 @@
 
 CREATE TABLE public.t_mass_correction_factors_change_history (
     event_id integer NOT NULL,
-    mass_correction_id integer NOT NULL,
-    mass_correction_tag public.citext NOT NULL,
+    mass_correction_id integer CONSTRAINT t_mass_correction_factors_change_hi_mass_correction_id_not_null NOT NULL,
+    mass_correction_tag public.citext CONSTRAINT t_mass_correction_factors_change_h_mass_correction_tag_not_null NOT NULL,
     description public.citext,
-    monoisotopic_mass double precision NOT NULL,
+    monoisotopic_mass double precision CONSTRAINT t_mass_correction_factors_change_his_monoisotopic_mass_not_null NOT NULL,
     average_mass double precision,
     affected_atom public.citext NOT NULL,
     original_source public.citext,

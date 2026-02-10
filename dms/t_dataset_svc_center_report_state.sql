@@ -3,8 +3,8 @@
 --
 
 CREATE TABLE public.t_dataset_svc_center_report_state (
-    svc_center_report_state_id smallint NOT NULL,
-    svc_center_report_state public.citext NOT NULL,
+    svc_center_report_state_id smallint CONSTRAINT t_dataset_svc_center_report_svc_center_report_state_id_not_null NOT NULL,
+    svc_center_report_state public.citext CONSTRAINT t_dataset_svc_center_report_st_svc_center_report_state_not_null NOT NULL,
     description public.citext DEFAULT ''::public.citext NOT NULL
 );
 

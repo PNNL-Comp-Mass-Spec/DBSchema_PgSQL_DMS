@@ -3,8 +3,8 @@
 --
 
 CREATE TABLE public.t_cached_protein_collection_list_members (
-    protein_collection_list_id integer NOT NULL,
-    protein_collection_name public.citext NOT NULL
+    protein_collection_list_id integer CONSTRAINT t_cached_protein_collectio_protein_collection_list_id_not_null1 NOT NULL,
+    protein_collection_name public.citext CONSTRAINT t_cached_protein_collection_li_protein_collection_name_not_null NOT NULL
 );
 
 

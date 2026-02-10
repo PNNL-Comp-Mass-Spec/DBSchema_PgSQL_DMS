@@ -4,8 +4,8 @@
 
 CREATE TABLE pc.t_archived_output_file_collections_xref (
     entry_id integer NOT NULL,
-    archived_file_id integer NOT NULL,
-    protein_collection_id integer NOT NULL
+    archived_file_id integer CONSTRAINT t_archived_output_file_collections_xr_archived_file_id_not_null NOT NULL,
+    protein_collection_id integer CONSTRAINT t_archived_output_file_collectio_protein_collection_id_not_null NOT NULL
 );
 
 

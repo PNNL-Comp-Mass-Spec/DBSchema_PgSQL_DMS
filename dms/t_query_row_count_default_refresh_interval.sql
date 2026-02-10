@@ -5,7 +5,7 @@
 CREATE TABLE public.t_query_row_count_default_refresh_interval (
     entry_id integer NOT NULL,
     object_name public.citext NOT NULL,
-    refresh_interval_hours numeric DEFAULT 4 NOT NULL,
+    refresh_interval_hours numeric DEFAULT 4 CONSTRAINT t_query_row_count_default_refre_refresh_interval_hours_not_null NOT NULL,
     entered timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 

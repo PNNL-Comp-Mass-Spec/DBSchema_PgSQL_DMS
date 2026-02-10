@@ -3,7 +3,7 @@
 --
 
 CREATE TABLE pc.t_protein_collection_members_cached (
-    protein_collection_id integer NOT NULL,
+    protein_collection_id integer CONSTRAINT t_protein_collection_members_cac_protein_collection_id_not_null NOT NULL,
     reference_id integer NOT NULL,
     protein_name public.citext NOT NULL,
     description public.citext,

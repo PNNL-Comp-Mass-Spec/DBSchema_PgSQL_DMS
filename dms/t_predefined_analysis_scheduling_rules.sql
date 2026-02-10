@@ -4,11 +4,11 @@
 
 CREATE TABLE public.t_predefined_analysis_scheduling_rules (
     rule_id integer NOT NULL,
-    evaluation_order smallint NOT NULL,
-    instrument_class public.citext DEFAULT ''::public.citext NOT NULL,
+    evaluation_order smallint CONSTRAINT t_predefined_analysis_scheduling_rule_evaluation_order_not_null NOT NULL,
+    instrument_class public.citext DEFAULT ''::public.citext CONSTRAINT t_predefined_analysis_scheduling_rule_instrument_class_not_null NOT NULL,
     instrument_name public.citext DEFAULT ''::public.citext NOT NULL,
     dataset_name public.citext DEFAULT ''::public.citext NOT NULL,
-    analysis_tool_name public.citext DEFAULT ''::public.citext NOT NULL,
+    analysis_tool_name public.citext DEFAULT ''::public.citext CONSTRAINT t_predefined_analysis_scheduling_ru_analysis_tool_name_not_null NOT NULL,
     priority integer DEFAULT 3 NOT NULL,
     processor_group_id integer,
     enabled smallint DEFAULT 1 NOT NULL,

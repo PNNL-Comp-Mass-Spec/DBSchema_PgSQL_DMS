@@ -3,8 +3,8 @@
 --
 
 CREATE TABLE public.t_cached_protein_collection_list_map (
-    protein_collection_list_id integer NOT NULL,
-    protein_collection_list public.citext NOT NULL,
+    protein_collection_list_id integer CONSTRAINT t_cached_protein_collection_protein_collection_list_id_not_null NOT NULL,
+    protein_collection_list public.citext CONSTRAINT t_cached_protein_collection_li_protein_collection_list_not_null NOT NULL,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 );
 

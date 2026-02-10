@@ -5,7 +5,7 @@
 CREATE TABLE pc.t_encrypted_collection_passphrases (
     passphrase_id integer NOT NULL,
     passphrase public.citext NOT NULL,
-    protein_collection_id integer NOT NULL
+    protein_collection_id integer CONSTRAINT t_encrypted_collection_passphras_protein_collection_id_not_null NOT NULL
 );
 
 

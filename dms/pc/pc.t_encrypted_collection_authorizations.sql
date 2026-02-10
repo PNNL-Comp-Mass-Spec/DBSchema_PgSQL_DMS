@@ -5,7 +5,7 @@
 CREATE TABLE pc.t_encrypted_collection_authorizations (
     authorization_id integer NOT NULL,
     login_name public.citext NOT NULL,
-    protein_collection_id integer NOT NULL
+    protein_collection_id integer CONSTRAINT t_encrypted_collection_authoriza_protein_collection_id_not_null NOT NULL
 );
 
 

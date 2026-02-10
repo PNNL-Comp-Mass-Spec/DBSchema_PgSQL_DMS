@@ -18,7 +18,7 @@ CREATE TABLE sw.t_step_tools (
     comment public.citext DEFAULT ''::public.citext,
     tag public.citext,
     avg_runtime_minutes real,
-    disable_output_folder_name_override_on_skip smallint DEFAULT 0 NOT NULL,
+    disable_output_folder_name_override_on_skip smallint DEFAULT 0 CONSTRAINT t_step_tools_disable_output_folder_name_override_on_sk_not_null NOT NULL,
     primary_step_tool smallint DEFAULT 0 NOT NULL,
     holdoff_interval_minutes integer DEFAULT 5 NOT NULL
 );

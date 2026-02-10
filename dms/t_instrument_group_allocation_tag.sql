@@ -4,7 +4,7 @@
 
 CREATE TABLE public.t_instrument_group_allocation_tag (
     allocation_tag public.citext NOT NULL,
-    allocation_description public.citext NOT NULL
+    allocation_description public.citext CONSTRAINT t_instrument_group_allocation_t_allocation_description_not_null NOT NULL
 );
 
 
