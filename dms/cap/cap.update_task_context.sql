@@ -63,12 +63,12 @@ BEGIN
     -- Part A: Validate inputs, remove deleted capture task jobs, add new capture task jobs
     BEGIN
         ---------------------------------------------------
-        -- Check if this procedure residues in the DMS development database
+        -- Check if this procedure resides in the DMS development database
         ---------------------------------------------------
 
         _currentDB := current_database();
 
-        If _currentDB = 'dmsdev' Then
+        If _currentDB LIKE 'dmsdev%' Then
             SELECT enabled
             INTO _result
             FROM cap.t_process_step_control

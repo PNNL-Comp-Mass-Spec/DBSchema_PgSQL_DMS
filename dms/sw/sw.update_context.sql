@@ -70,12 +70,12 @@ BEGIN
     -- Part A: Validate inputs, Remove Deleted Jobs, Add New Jobs, Hold/Resume/Reset jobs
     BEGIN
         ---------------------------------------------------
-        -- Check if this procedure residues in the DMS development database
+        -- Check if this procedure resides in the DMS development database
         ---------------------------------------------------
 
         _currentDB := current_database();
 
-        If _currentDB = 'dmsdev' Then
+        If _currentDB LIKE 'dmsdev%' Then
             SELECT enabled
             INTO _result
             FROM sw.t_process_step_control
