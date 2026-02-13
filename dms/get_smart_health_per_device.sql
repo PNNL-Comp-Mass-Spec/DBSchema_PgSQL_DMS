@@ -5,7 +5,6 @@
 CREATE OR REPLACE FUNCTION public.get_smart_health_per_device(OUT device text, OUT retcode integer) RETURNS SETOF record
     LANGUAGE plpython3u
     AS $_$
-
 import subprocess
 ret_list = []
 
@@ -33,7 +32,7 @@ ALTER FUNCTION public.get_smart_health_per_device(OUT device text, OUT retcode i
 -- Name: FUNCTION get_smart_health_per_device(OUT device text, OUT retcode integer); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_smart_health_per_device(OUT device text, OUT retcode integer) IS 'created for pgwatch2';
+COMMENT ON FUNCTION public.get_smart_health_per_device(OUT device text, OUT retcode integer) IS 'created for pgwatch';
 
 --
 -- Name: FUNCTION get_smart_health_per_device(OUT device text, OUT retcode integer); Type: ACL; Schema: public; Owner: d3l243

@@ -18,7 +18,7 @@ ALTER FUNCTION public.get_psutil_mem(OUT total double precision, OUT used double
 -- Name: FUNCTION get_psutil_mem(OUT total double precision, OUT used double precision, OUT free double precision, OUT buff_cache double precision, OUT available double precision, OUT percent double precision, OUT swap_total double precision, OUT swap_used double precision, OUT swap_free double precision, OUT swap_percent double precision); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_psutil_mem(OUT total double precision, OUT used double precision, OUT free double precision, OUT buff_cache double precision, OUT available double precision, OUT percent double precision, OUT swap_total double precision, OUT swap_used double precision, OUT swap_free double precision, OUT swap_percent double precision) IS 'created for pgwatch2';
+COMMENT ON FUNCTION public.get_psutil_mem(OUT total double precision, OUT used double precision, OUT free double precision, OUT buff_cache double precision, OUT available double precision, OUT percent double precision, OUT swap_total double precision, OUT swap_used double precision, OUT swap_free double precision, OUT swap_percent double precision) IS 'created for pgwatch';
 
 --
 -- Name: FUNCTION get_psutil_mem(OUT total double precision, OUT used double precision, OUT free double precision, OUT buff_cache double precision, OUT available double precision, OUT percent double precision, OUT swap_total double precision, OUT swap_used double precision, OUT swap_free double precision, OUT swap_percent double precision); Type: ACL; Schema: public; Owner: d3l243

@@ -61,7 +61,7 @@ ALTER FUNCTION public.get_psutil_disk(OUT dir_or_tablespace text, OUT path text,
 -- Name: FUNCTION get_psutil_disk(OUT dir_or_tablespace text, OUT path text, OUT total double precision, OUT used double precision, OUT free double precision, OUT percent double precision); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_psutil_disk(OUT dir_or_tablespace text, OUT path text, OUT total double precision, OUT used double precision, OUT free double precision, OUT percent double precision) IS 'created for pgwatch2';
+COMMENT ON FUNCTION public.get_psutil_disk(OUT dir_or_tablespace text, OUT path text, OUT total double precision, OUT used double precision, OUT free double precision, OUT percent double precision) IS 'created for pgwatch';
 
 --
 -- Name: FUNCTION get_psutil_disk(OUT dir_or_tablespace text, OUT path text, OUT total double precision, OUT used double precision, OUT free double precision, OUT percent double precision); Type: ACL; Schema: public; Owner: d3l243

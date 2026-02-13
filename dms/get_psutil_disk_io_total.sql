@@ -20,7 +20,7 @@ ALTER FUNCTION public.get_psutil_disk_io_total(OUT read_count double precision, 
 -- Name: FUNCTION get_psutil_disk_io_total(OUT read_count double precision, OUT write_count double precision, OUT read_bytes double precision, OUT write_bytes double precision); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_psutil_disk_io_total(OUT read_count double precision, OUT write_count double precision, OUT read_bytes double precision, OUT write_bytes double precision) IS 'created for pgwatch2';
+COMMENT ON FUNCTION public.get_psutil_disk_io_total(OUT read_count double precision, OUT write_count double precision, OUT read_bytes double precision, OUT write_bytes double precision) IS 'created for pgwatch';
 
 --
 -- Name: FUNCTION get_psutil_disk_io_total(OUT read_count double precision, OUT write_count double precision, OUT read_bytes double precision, OUT write_bytes double precision); Type: ACL; Schema: public; Owner: d3l243

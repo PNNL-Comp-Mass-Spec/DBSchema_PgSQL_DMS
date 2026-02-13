@@ -38,7 +38,7 @@ ALTER FUNCTION public.get_psutil_cpu(OUT cpu_utilization double precision, OUT l
 -- Name: FUNCTION get_psutil_cpu(OUT cpu_utilization double precision, OUT load_1m_norm double precision, OUT load_1m double precision, OUT load_5m_norm double precision, OUT load_5m double precision, OUT "user" double precision, OUT system double precision, OUT idle double precision, OUT iowait double precision, OUT irqs double precision, OUT other double precision); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON FUNCTION public.get_psutil_cpu(OUT cpu_utilization double precision, OUT load_1m_norm double precision, OUT load_1m double precision, OUT load_5m_norm double precision, OUT load_5m double precision, OUT "user" double precision, OUT system double precision, OUT idle double precision, OUT iowait double precision, OUT irqs double precision, OUT other double precision) IS 'created for pgwatch2';
+COMMENT ON FUNCTION public.get_psutil_cpu(OUT cpu_utilization double precision, OUT load_1m_norm double precision, OUT load_1m double precision, OUT load_5m_norm double precision, OUT load_5m double precision, OUT "user" double precision, OUT system double precision, OUT idle double precision, OUT iowait double precision, OUT irqs double precision, OUT other double precision) IS 'created for pgwatch';
 
 --
 -- Name: FUNCTION get_psutil_cpu(OUT cpu_utilization double precision, OUT load_1m_norm double precision, OUT load_1m double precision, OUT load_5m_norm double precision, OUT load_5m double precision, OUT "user" double precision, OUT system double precision, OUT idle double precision, OUT iowait double precision, OUT irqs double precision, OUT other double precision); Type: ACL; Schema: public; Owner: d3l243
