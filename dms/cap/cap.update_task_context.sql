@@ -40,12 +40,14 @@ CREATE OR REPLACE PROCEDURE cap.update_task_context(IN _bypassdms boolean DEFAUL
 **          09/07/2023 mem - Align assignment statements
 **          08/27/2024 mem - Change default value for _loopingUpdateInterval to 10 seconds (previously 5 seconds)
 **          11/18/2024 mem - When calling local_error_handler, set _logErrorsToPublicLogTable to false
+**          02/12/2026 mem - Examine the value of 'add_update_tasks_in_development_database' if updating context in the DMS development database (dmsdev)
 **
 *****************************************************/
 DECLARE
     _statusMessage text;
     _startTime timestamp := CURRENT_TIMESTAMP;
     _result int;
+    _currentDB citext;
     _action text;
     _callingProcName text;
     _currentLocation text := 'Start';
@@ -60,6 +62,24 @@ BEGIN
 
     -- Part A: Validate inputs, remove deleted capture task jobs, add new capture task jobs
     BEGIN
+        ---------------------------------------------------
+        -- Check if this procedure residues in the DMS development database
+        ---------------------------------------------------
+
+        _currentDB := current_database();
+
+        If _currentDB = 'dmsdev' Then
+            SELECT enabled
+            INTO _result
+            FROM cap.t_process_step_control
+            WHERE processing_step_name = 'add_update_tasks_in_development_database';
+
+            If Coalesce(_result, 0) <= 0 Then
+                -- Do not update tasks in the development database, since this can lead to errors due to missing data
+                RAISE INFO 'Exiting procedure update_task_context since running in the development database, and add_update_tasks_in_development_database is not enabled';
+                RETURN;
+            End If;
+        End If;
 
         ---------------------------------------------------
         -- Validate the inputs
@@ -92,7 +112,6 @@ BEGIN
         End If;
 
         If Not _bypassDMS Then
-
             -- See if DMS Updating is disabled in cap.t_process_step_control
 
             SELECT enabled
@@ -194,7 +213,6 @@ BEGIN
                         _returnCode     => _returnCode,     -- Output
                         _loggingEnabled => _loggingEnabled,
                         _infoOnly       => _infoOnly);
-
         End If;
 
         -- Make New Archive Tasks From DMS
@@ -285,7 +303,6 @@ BEGIN
                         _loopingUpdateInterval => _loopingUpdateInterval,
                         _infoOnly              => _infoOnly,
                         _debugMode             => _debugMode);
-
         End If;
 
     EXCEPTION
@@ -483,7 +500,6 @@ BEGIN
         _statusMessage := format('Update context complete: %s seconds elapsed', Extract(epoch from clock_timestamp() - _startTime));
         CALL public.post_log_entry ('Normal', _statusMessage, 'Update_Task_Context', 'cap');
     End If;
-
 END
 $$;
 

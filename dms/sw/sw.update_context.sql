@@ -47,12 +47,14 @@ CREATE OR REPLACE PROCEDURE sw.update_context(IN _bypassdms boolean DEFAULT fals
 **          08/03/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
 **          08/27/2024 mem - Change default value for _loopingUpdateInterval to 10 seconds (previously 5 seconds)
+**          02/12/2026 mem - Examine the value of 'add_update_jobs_in_development_database' if updating context in the DMS development database (dmsdev)
 **
 *****************************************************/
 DECLARE
     _statusMessage text;
     _startTime timestamp := CURRENT_TIMESTAMP;
     _result int;
+    _currentDB citext;
     _action text;
     _callingProcName text;
     _currentLocation text := 'Start';
@@ -67,6 +69,24 @@ BEGIN
 
     -- Part A: Validate inputs, Remove Deleted Jobs, Add New Jobs, Hold/Resume/Reset jobs
     BEGIN
+        ---------------------------------------------------
+        -- Check if this procedure residues in the DMS development database
+        ---------------------------------------------------
+
+        _currentDB := current_database();
+
+        If _currentDB = 'dmsdev' Then
+            SELECT enabled
+            INTO _result
+            FROM sw.t_process_step_control
+            WHERE processing_step_name = 'add_update_jobs_in_development_database';
+
+            If Coalesce(_result, 0) <= 0 Then
+                -- Do not update tasks in the development database, since this can lead to errors due to missing data
+                RAISE INFO 'Exiting procedure update_context since running in the development database, and add_update_jobs_in_development_database is not enabled';
+                RETURN;
+            End If;
+        End If;
 
         ---------------------------------------------------
         -- Validate the inputs
@@ -100,7 +120,6 @@ BEGIN
         End If;
 
         If Not _bypassDMS Then
-
             -- See if DMS Updating is disabled in sw.t_process_step_control
 
             SELECT enabled
@@ -182,7 +201,6 @@ BEGIN
                         _infoOnly              => _infoOnly,
                         _infoLevel             => _infoLevel,
                         _debugMode             => _DebugMode);
-
         End If;
 
     EXCEPTION
@@ -351,7 +369,6 @@ BEGIN
                         _loopingUpdateInterval => _loopingUpdateInterval,
                         _infoOnly              => _infoOnly,
                         _debugMode             => _debugMode);
-
         End If;
 
     EXCEPTION
@@ -595,7 +612,6 @@ BEGIN
         _statusMessage := format('Update context complete: %s seconds elapsed', Extract(epoch from clock_timestamp() - _startTime));
         CALL public.post_log_entry ('Normal', _statusMessage, 'Update_Context', 'sw');
     End If;
-
 END
 $$;
 
