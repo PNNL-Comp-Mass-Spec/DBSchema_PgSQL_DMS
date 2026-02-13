@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.6
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 18.1
+-- Dumped by pg_dump version 18.1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -175,6 +175,7 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 1481	Chlamydia_trachomatis		2016-02-11 13:52:56	Chlamydia trachomatis	C_trachomatis	\\\\gigasax\\DMS_Organism_Files\\Chlamydia_trachomatis\\	http://gigasax/DMS_Organism_Files/Chlamydia_trachomatis/	Bacteria	Prokaryote	Chlamydiae	Chlamydiia	Chlamydiales	Chlamydiaceae	Chlamydia	trachomatis	na	11	0	1	813	813	1
 1192	Chlamydomonas_reinhardtii	\N	2010-09-15 13:16:08	Chlamydomonas reinhardtii	C_reinhardtii	\\\\Gigasax\\DMS_Organism_Files\\Chlamydomonas_reinhardtii\\	http://Gigasax/DMS_Organism_Files/Chlamydomonas_reinhardtii/	Eukaryota	Viridiplantae	Chlorophyta	Chlorophyceae	Chlamydomonadales	Chlamydomonadaceae	Chlamydomonas	reinhardtii	na	1	1	1	3055	3055	1
 1198	Chlorella_NC64A	\N	2010-12-08 09:58:40	Chlorella NC64A	Chlorella_NC64A	\\\\Gigasax\\DMS_Organism_Files\\Chlorella_NC64A\\	http://Gigasax/DMS_Organism_Files/Chlorella_NC64A/	Eukaryota	Viridiplantae	Chlorophyta	Trebouxiophyceae	Chlorellales	Chlorellaceae	Chlorella	NC64A	na	1	1	1	3071	3071	1
+1894	Chlorella_vulgaris		2026-02-11 15:16:10.552109	Chlorella vulgaris (green alga)	C_vulgaris	\\\\gigasax\\DMS_Organism_Files\\Chlorella_vulgaris\\	https://gigasax/DMS_Organism_Files/Chlorella_vulgaris/		Viridiplantae	Chlorophyta	Trebouxiophyceae	Chlorellales	Chlorellaceae	Chlorella	vulgaris	na	0	0	1	3077	3077	1
 1107	Chlorobaculum_tepidum_WT	Chlorobium_tepidum_TLS_RefSeq_uid57897_2014-10-17	2008-10-10 07:12:07	Chlorobaculum tepidum, wild type	C_tepidum_WT	\\\\gigasax\\DMS_Organism_Files\\Chlorobaculum_tepidum_WT\\	http://gigasax/DMS_Organism_Files/Chlorobaculum_tepidum_WT/	Bacteria	Prokaryote	Chlorobi	Chlorobia	Chlorobiales	Chlorobiaceae	Chlorobaculum	tepidum	na	1	0	1	1097	1097	1
 1375	Chlorocebus_sp		2014-04-14 14:17:33	Chlorocebus primates (Vero cell lineage)	Chlorocebus	\\\\gigasax\\DMS_Organism_Files\\Chlorocebus\\	http://gigasax/DMS_Organism_Files/Chlorocebus/	Eukaryota	Metazoa	Chordata	Mammalia	Primates	Cercopithecidae	Chlorocebus	sabaeus	na	1	2	1	60711	60711	1
 1111	Chloroflexus_aurantiacus	Chloroflexus_aurantiacus_J_10_fl_RefSeq_uid57657_2014-08-14	2008-11-14 12:16:08	Chloroflexus aurantiacus	C_aurantiacus	\\\\gigasax\\DMS_Organism_Files\\Chloroflexus_aurantiacus\\	http://gigasax/DMS_Organism_Files/Chloroflexus_aurantiacus/	Bacteria	Prokaryote	Chloroflexi	Chloroflexia	Chloroflexales	Chloroflexaceae	Chloroflexus	aurantiacus	na	0	0	1	1108	1108	1
@@ -906,7 +907,7 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 -- Name: t_organisms_organism_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organisms_organism_id_seq', 1893, true);
+SELECT pg_catalog.setval('public.t_organisms_organism_id_seq', 1894, true);
 
 
 --
