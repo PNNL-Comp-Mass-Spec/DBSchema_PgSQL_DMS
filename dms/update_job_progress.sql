@@ -30,9 +30,12 @@ CREATE OR REPLACE PROCEDURE public.update_job_progress(IN _mostrecentdays intege
 **                         - Set progress to 0 for inactive jobs (state 13)
 **          02/23/2024 mem - Ported to PostgreSQL
 **          10/28/2024 mem - Set progress to 0 for pending jobs (state 20)
+**          02/13/2026 mem - Examine the value of 'add_update_jobs_in_development_database' if updating job progress in the DMS development database (dmsdev)
 **
 *****************************************************/
 DECLARE
+    _currentDB citext;
+    _result int;
     _dateThreshold timestamp;
 
     _formatSpecifier text;
@@ -43,6 +46,25 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
+
+    ---------------------------------------------------
+    -- Check if this procedure resides in the DMS development database
+    ---------------------------------------------------
+
+    _currentDB := current_database();
+
+    If _currentDB LIKE 'dmsdev%' Then
+        SELECT enabled
+        INTO _result
+        FROM sw.t_process_step_control
+        WHERE processing_step_name = 'add_update_jobs_in_development_database';
+
+        If Coalesce(_result, 0) <= 0 Then
+            -- Do not update tasks in the development database, since this can lead to errors due to missing data
+            RAISE INFO 'Exiting procedure update_job_progress since running in the development database, and add_update_jobs_in_development_database is not enabled';
+            RETURN;
+        End If;
+    End If;
 
     -----------------------------------------
     -- Validate the inputs
@@ -90,7 +112,6 @@ BEGIN
             DROP TABLE Tmp_JobsToUpdate;
             RETURN;
         End If;
-
     Else
         If _mostRecentDays <= 0 Then
             INSERT INTO Tmp_JobsToUpdate (Job, State, Progress_Old)
@@ -355,7 +376,6 @@ BEGIN
 
                 RAISE INFO '%', _infoData;
             END LOOP;
-
         End If;
 
         DROP TABLE Tmp_JobsToUpdate;

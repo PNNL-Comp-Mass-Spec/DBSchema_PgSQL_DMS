@@ -43,9 +43,12 @@ CREATE OR REPLACE PROCEDURE public.backfill_pipeline_jobs(IN _infoonly boolean D
 **          08/23/2024 mem - Query tables directly
 **          09/30/2024 mem - Auto change script FragPipe_DataPkg to FragPipe
 **          11/04/2024 mem - Auto change script DiaNN_timsTOF_DataPkg to DiaNN_timsTOF
+**          02/13/2026 mem - Examine the value of 'add_update_jobs_in_development_database' if backfilling jobs in the DMS development database (dmsdev)
 **
 *****************************************************/
 DECLARE
+    _currentDB citext;
+    _result int;
     _jobInfo record;
     _jobsProcessed int := 0;
     _peptideAtlasStagingTask int := 0;
@@ -84,6 +87,25 @@ DECLARE
 BEGIN
     _message := '';
     _returnCode := '';
+
+    ---------------------------------------------------
+    -- Check if this procedure resides in the DMS development database
+    ---------------------------------------------------
+
+    _currentDB := current_database();
+
+    If _currentDB LIKE 'dmsdev%' Then
+        SELECT enabled
+        INTO _result
+        FROM sw.t_process_step_control
+        WHERE processing_step_name = 'add_update_jobs_in_development_database';
+
+        If Coalesce(_result, 0) <= 0 Then
+            -- Do not update tasks in the development database, since this can lead to errors due to missing data
+            RAISE INFO 'Exiting procedure backfill_pipeline_jobs since running in the development database, and add_update_jobs_in_development_database is not enabled';
+            RETURN;
+        End If;
+    End If;
 
     ---------------------------------------------------
     -- Validate the inputs
@@ -126,7 +148,6 @@ BEGIN
     CREATE INDEX IX_Tmp_Job_Backfill_Details ON Tmp_Job_Backfill_Details (Job);
 
     If _infoOnly Then
-
         -- Preview the jobs that would be backfilled
 
         RAISE INFO '';
@@ -216,7 +237,6 @@ BEGIN
 
             RAISE INFO '%', _infoData;
         END LOOP;
-
     End If;
 
     ---------------------------------------------------
@@ -250,11 +270,9 @@ BEGIN
               J.job IS NULL
         ORDER BY PJ.job
     LOOP
-
         _jobStr := _jobInfo.Job::text;
 
         BEGIN
-
             _currentLocation := format('Validate settings required to backfill job %s', _jobStr);
 
             ---------------------------------------------------
@@ -622,11 +640,8 @@ BEGIN
                                 SET folder_name = _storagePathRelative
                                 WHERE dataset_id = _datasetID;
                             End If;
-
                         End If;
-
                     End If;
-
                 End If;
 
                 If _datasetID > 0 Then
@@ -692,11 +707,8 @@ BEGIN
                             _message := format('Error adding DMS Pipeline job %s to t_analysis_job', _jobStr);
                             CALL post_log_entry ('Error', _message, 'Backfill_Pipeline_Jobs');
                         End If;
-
                     End If;
-
                 End If;
-
             End If;
 
         EXCEPTION
@@ -725,7 +737,6 @@ BEGIN
             -- Break out of the for loop
             EXIT;
         End If;
-
     END LOOP;
 
     If _infoOnly Then
@@ -831,7 +842,6 @@ BEGIN
     End If;
 
     BEGIN
-
         ------------------------------------------------
         -- Use a Merge query to update backfilled jobs where Start, Finish, State, or ProcessingTimeMinutes has changed
         -- Do not change a job from State 14 to a State > 4
