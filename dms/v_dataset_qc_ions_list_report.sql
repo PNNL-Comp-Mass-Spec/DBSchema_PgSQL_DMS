@@ -15,6 +15,7 @@ CREATE VIEW public.v_dataset_qc_ions_list_report AS
     ds.comment,
     dsn.dataset_state AS state,
     ds.acq_length_minutes AS acq_length,
+    ds.date_sort_key AS acq_start,
     dtn.dataset_type,
     dl.qc_link
    FROM (((((((public.t_dataset_qc_ions dqi
