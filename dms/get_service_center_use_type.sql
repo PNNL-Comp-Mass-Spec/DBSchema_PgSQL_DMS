@@ -18,7 +18,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **      1      None                                 Not a service center tracked requested run or dataset
 **      25     Ambiguous                            Unable to auto-determine the correct service type
 **      100    Peptides: Short Advanced MS          Astral, nanoPOTS, or timsTOF with separation time <= 60 minutes
-**      101    Peptides: Short Standard MS          HFX, Lumos, Eclipse, or Exploris with separation time <= 60 minutes; all SRM and MRM
+**      101    Peptides: Short Standard MS          HFX, Lumos, Eclipse, or Exploris with separation time <= 60 minutes; all SRM and MRM; separation type LC-Nano-
 **      102    Peptides: Long Advanced MS           Astral or timsTOF with separation time > 60 minutes
 **      103    Peptides: Long Standard MS           HFX, Lumos, Eclipse, Exploris, or nanoPOTS with separation time > 60 minutes
 **      104    MALDI                                MALDI (run count = hr count); includes timsTOFFlex02_Imaging
@@ -63,7 +63,8 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **      - If sample_type for the separation type is Metabolites, service_type is 112
 **      - If sample_type for the separation type is Glycans, service_type is 103 (long standard peptides)
 **      - If acquisition time is 5 minutes or shorter, type is 110
-**      - If separation_type name or separation group name has "-NanoPot", service_type is 100 or 102, depending on separation time (<= 60 minutes or > 60)
+**      - If separation type or separation group has '-NanoPot', service_type is 100 or 102, depending on separation time (<= 60 minutes or > 60)
+**      - If separation type or separation group is 'LC-Nano-Lipidomics' or 'LC-Nano-Metabolomics', service_type is 101
 **      - If instrument group is Astral or timsTOF_SCP, and separation time is > 60 minutes, service_type is 102
 **      - If instrument group is Astral or timsTOF_SCP, and separation time is <= 60 minutes, service_type is 100
 **      - If instrument group is Ascend, Eclipse, Exploris, Lumos, QEHFX, QExactive, VelosOrbi and separation time is > 60 minutes, service_type is 103
@@ -141,6 +142,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **          02/03/2026 mem - Change _acqLengthMinutes to numeric
 **                         - Round acq length minutes to the nearest minute if at least 5 minutes long
 **          02/04/2026 mem - Switch back to always using service type 104 for timsTOF_Flex
+**          02/17/2026 mem - If separation type or separation group is 'LC-Nano-Lipidomics' or 'LC-Nano-Metabolomics', service_type is 101
 **
 *****************************************************/
 DECLARE
@@ -380,6 +382,11 @@ BEGIN
         Else
             RETURN 103;   -- Peptides: Long Standard MS
         End If;
+    End If;
+
+    -- Check for LC-Nano datasets
+    If _separationType IN ('LC-Nano-Lipidomics', 'LC-Nano-Metabolomics') OR _separationGroup IN ('LC-Nano-Lipidomics', 'LC-Nano-Metabolomics') Then
+        RETURN 101;   -- Peptides: Short Standard MS
     End If;
 
     -- Check for Astral, timsTOF_Flex, or timsTOF_SCP datasets
