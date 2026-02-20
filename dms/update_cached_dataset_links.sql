@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE public.update_cached_dataset_links(IN _processingmod
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          10/21/2024 mem - Remove "index.html" from QC Link
 **          02/19/2026 mem - Link to https://dms2.pnl.gov/smaqc/metric instead of https://prismsupport.pnl.gov/smaqc/smaqc/metric
+**                         - Return relative URLs for SMAQC metrics
 **
 *****************************************************/
 DECLARE
@@ -330,12 +331,12 @@ BEGIN
                 END,
             qc_metric_stats = CASE
                 WHEN Experiment SIMILAR TO 'QC[_]Shew%' THEN
-                       format('https://dms2.pnl.gov/smaqc/metric/P_2C/inst/%s/filterDS/QC_Shew', Inst.instrument)
+                       format('smaqc/metric/P_2C/inst/%s/filterDS/QC_Shew', Inst.instrument)
                 WHEN Experiment SIMILAR TO 'QC[_]Mam%'  THEN
-                       format('https://dms2.pnl.gov/smaqc/metric/P_2C/inst/%s/filterDS/QC_Mam', Inst.instrument)
+                       format('smaqc/metric/P_2C/inst/%s/filterDS/QC_Mam', Inst.instrument)
                 WHEN Experiment SIMILAR TO 'TEDDY[_]DISCOVERY%' THEN
-                       format('https://dms2.pnl.gov/smaqc/metric/qcart/inst/%s/filterDS/TEDDY_DISCOVERY', Inst.instrument)
-                ELSE   format('https://dms2.pnl.gov/smaqc/metric/MS2_Count/inst/%s/filterDS/%s', Inst.instrument, Substring(DS.Dataset, 1, 4))
+                       format('smaqc/metric/qcart/inst/%s/filterDS/TEDDY_DISCOVERY', Inst.instrument)
+                ELSE   format('smaqc/metric/MS2_Count/inst/%s/filterDS/%s', Inst.instrument, Substring(DS.Dataset, 1, 4))
                 END,
             update_required = 0,
             last_affected = CURRENT_TIMESTAMP
@@ -416,12 +417,12 @@ BEGIN
                           END AS QC_2D,
                           CASE
                                WHEN Experiment SIMILAR TO 'QC[_]Shew%' THEN
-                                      format('https://dms2.pnl.gov/smaqc/metric/P_2C/inst/%s/filterDS/QC_Shew', Inst.instrument)
+                                      format('smaqc/metric/P_2C/inst/%s/filterDS/QC_Shew', Inst.instrument)
                                WHEN Experiment SIMILAR TO 'QC[_]Mam%'  THEN
-                                      format('https://dms2.pnl.gov/smaqc/metric/P_2C/inst/%s/filterDS/QC_Mam', Inst.instrument)
+                                      format('smaqc/metric/P_2C/inst/%s/filterDS/QC_Mam', Inst.instrument)
                                WHEN Experiment SIMILAR TO 'TEDDY[_]DISCOVERY%' THEN
-                                      format('https://dms2.pnl.gov/smaqc/metric/qcart/inst/%s/filterDS/TEDDY_DISCOVERY', Inst.instrument)
-                               ELSE   format('https://dms2.pnl.gov/smaqc/metric/MS2_Count/inst/%s/filterDS/%s', Inst.instrument, Substring(DS.Dataset, 1, 4))
+                                      format('smaqc/metric/qcart/inst/%s/filterDS/TEDDY_DISCOVERY', Inst.instrument)
+                               ELSE   format('smaqc/metric/MS2_Count/inst/%s/filterDS/%s', Inst.instrument, Substring(DS.Dataset, 1, 4))
                           END AS QC_Metric_Stats
                    FROM t_dataset DS
                        INNER JOIN t_cached_dataset_links DL
