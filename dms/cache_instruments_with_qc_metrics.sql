@@ -11,7 +11,9 @@ CREATE OR REPLACE PROCEDURE public.cache_instruments_with_qc_metrics(IN _infoonl
 **      Cache the names of instruments that have data in table t_dataset_qc
 **
 **      Used by the SMAQC website when it constructs the list of available instruments
-**      https://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/P_2C/inst/VOrbi05/
+**      https://dms2.pnl.gov/smaqc/metric/P_2C/inst/Exploris07/
+**
+**      (prior to February 2026, https://prismsupport.pnl.gov/smaqc/index.php/smaqc/metric/P_2C/inst/Exploris07/)
 **
 **  Arguments:
 **    _infoOnly     When true, preview updates
