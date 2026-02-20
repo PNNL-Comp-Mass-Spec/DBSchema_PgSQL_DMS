@@ -132,7 +132,7 @@ CREATE VIEW public.v_dataset_qc_metrics_detail_report AS
             drn.dataset_rating,
             ds.dataset_rating_id,
             dfp.dataset_folder_path,
-            ('http://prismsupport.pnl.gov/smaqc/index.php/smaqc/instrument/'::text || (instname.instrument)::text) AS qc_metric_stats,
+            ('smaqc/instrument/'::text || (instname.instrument)::text) AS qc_metric_stats,
             dqc.quameter_job,
             public.number_to_string((dqc.xic_wide_frac)::double precision, 3) AS xic_wide_frac,
             public.number_to_string((dqc.xic_fwhm_q1)::double precision, 3) AS xic_fwhm_q1,
