@@ -59,12 +59,12 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **      - If dataset type contains GC or is EI-HMS, service_type is 113
 **      - If dataset type contains MALDI, service_type is 104
 **      - If instrument group contains MALDI or is EMSL_QExactive_Imaging or timsTOF_Flex, service_type is 104 (this includes MALDI_timsTOF_Imaging)
+**      - If separation type or separation group is 'LC-Nano-Lipidomics' or 'LC-Nano-Metabolomics', service_type is 101
 **      - If sample_type for the separation type is Lipids, service_type is 111
 **      - If sample_type for the separation type is Metabolites, service_type is 112
 **      - If sample_type for the separation type is Glycans, service_type is 103 (long standard peptides)
 **      - If acquisition time is 5 minutes or shorter, type is 110
 **      - If separation type or separation group has '-NanoPot', service_type is 100 or 102, depending on separation time (<= 60 minutes or > 60)
-**      - If separation type or separation group is 'LC-Nano-Lipidomics' or 'LC-Nano-Metabolomics', service_type is 101
 **      - If instrument group is Astral or timsTOF_SCP, and separation time is > 60 minutes, service_type is 102
 **      - If instrument group is Astral or timsTOF_SCP, and separation time is <= 60 minutes, service_type is 100
 **      - If instrument group is Ascend, Eclipse, Exploris, Lumos, QEHFX, QExactive, VelosOrbi and separation time is > 60 minutes, service_type is 103
@@ -143,6 +143,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **                         - Round acq length minutes to the nearest minute if at least 5 minutes long
 **          02/04/2026 mem - Switch back to always using service type 104 for timsTOF_Flex
 **          02/17/2026 mem - If separation type or separation group is 'LC-Nano-Lipidomics' or 'LC-Nano-Metabolomics', service_type is 101
+**          02/24/2026 mem - Check for separation type or separation group 'LC-Nano-Lipidomics' or 'LC-Nano-Metabolomics' before checking for sample type "Lipids" or "Metabolites"
 **
 *****************************************************/
 DECLARE
@@ -350,6 +351,11 @@ BEGIN
         RETURN 104;       -- MALDI
     End If;
 
+    -- Check for LC-Nano datasets
+    If _separationType IN ('LC-Nano-Lipidomics', 'LC-Nano-Metabolomics') OR _separationGroup IN ('LC-Nano-Lipidomics', 'LC-Nano-Metabolomics') Then
+        RETURN 101;   -- Peptides: Short Standard MS
+    End If;
+
     -- Check for a lipid sample
     If _sampleType IN ('Lipids') Then
         RETURN 111;       -- Lipids
@@ -382,11 +388,6 @@ BEGIN
         Else
             RETURN 103;   -- Peptides: Long Standard MS
         End If;
-    End If;
-
-    -- Check for LC-Nano datasets
-    If _separationType IN ('LC-Nano-Lipidomics', 'LC-Nano-Metabolomics') OR _separationGroup IN ('LC-Nano-Lipidomics', 'LC-Nano-Metabolomics') Then
-        RETURN 101;   -- Peptides: Short Standard MS
     End If;
 
     -- Check for Astral, timsTOF_Flex, or timsTOF_SCP datasets
