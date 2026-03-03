@@ -60,6 +60,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **      - If dataset type contains MALDI, service_type is 104
 **      - If instrument group contains MALDI or is EMSL_QExactive_Imaging or timsTOF_Flex, service_type is 104 (this includes MALDI_timsTOF_Imaging)
 **      - If separation type or separation group is 'LC-Nano-Lipidomics' or 'LC-Nano-Metabolomics', service_type is 101
+**      - If separation type or separation group is 'LC-metabolomics_Hormones' or 'LC-metabolomics_Oxylipids', service_type is 111 (later in 2026, LC-metabolomics_Oxylipids will be type 101)
 **      - If sample_type for the separation type is Lipids, service_type is 111
 **      - If sample_type for the separation type is Metabolites, service_type is 112
 **      - If sample_type for the separation type is Glycans, service_type is 103 (long standard peptides)
@@ -144,6 +145,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **          02/04/2026 mem - Switch back to always using service type 104 for timsTOF_Flex
 **          02/17/2026 mem - If separation type or separation group is 'LC-Nano-Lipidomics' or 'LC-Nano-Metabolomics', service_type is 101
 **          02/24/2026 mem - Check for separation type or separation group 'LC-Nano-Lipidomics' or 'LC-Nano-Metabolomics' before checking for sample type "Lipids" or "Metabolites"
+**          03/02/2026 mem - If separation type or separation group is 'LC-metabolomics_Hormones' or 'LC-metabolomics_Oxylipids', service_type is 111 (later in 2026, LC-metabolomics_Oxylipids will be type 101)
 **
 *****************************************************/
 DECLARE
@@ -324,6 +326,11 @@ BEGIN
     -- Check for a data package based dataset (which has dataset type 'DataFiles') or a tracking dataset
     If _datasetType IN ('DataFiles', 'Tracking') Then
         RETURN 1;       -- Service type: None
+    End If;
+
+    -- Check for LC-metabolomics datasets
+    If _separationType IN ('LC-metabolomics', 'LC-metabolomics_Oxylipids') OR _separationGroup IN ('LC-metabolomics', 'LC-metabolomics_Oxylipids')  Then
+        RETURN 111;       -- Lipids
     End If;
 
     -- Check for an MRM (aka SRM) dataset
