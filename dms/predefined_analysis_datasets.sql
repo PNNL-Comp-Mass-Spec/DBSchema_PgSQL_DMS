@@ -42,6 +42,7 @@ CREATE OR REPLACE FUNCTION public.predefined_analysis_datasets(_ruleid integer, 
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          10/12/2023 mem - Exit the function if the predefined analysis rule is not found or if it has no filter criteria
 **          12/07/2023 mem - Add support for scan type inclusion or exclusion
+**          03/04/2026 mem - Add missing NOT keyword for the scan type exclusion filter
 **
 *****************************************************/
 DECLARE
@@ -95,7 +96,6 @@ BEGIN
     WHERE predefine_id = _ruleID;
 
     If Not FOUND Then
-
         RETURN QUERY
         SELECT format('Warning: predefined rule ID %s does not exist', _ruleID)::citext AS Dataset,
                0 AS Dataset_ID,
@@ -120,7 +120,6 @@ BEGIN
                ''::citext AS Legacy_FASTA;
 
         RETURN;
-
     End If;
 
 /*
@@ -196,7 +195,7 @@ BEGIN
     End If;
 
     If _predefineInfo.ScanTypeExclCriteria <> '' Then
-        _sqlWhere := format('%s AND (Scan_Types SIMILAR TO ''%s'')', _sqlWhere, _predefineInfo.ScanTypeExclCriteria);
+        _sqlWhere := format('%s AND (NOT Scan_Types SIMILAR TO ''%s'')', _sqlWhere, _predefineInfo.ScanTypeExclCriteria);
     End If;
 
     If _predefineInfo.LabellingInclCriteria <> '' Then
@@ -218,7 +217,6 @@ BEGIN
     _s := '';
 
     If _infoOnly Then
-
         _s := ' SELECT COUNT(ID) AS DatasetCount,'
                      ' MIN(DS_Date) AS Dataset_Date_Min,'
                      ' MAX(DS_Date) AS Dataset_Date_Max'
@@ -293,7 +291,6 @@ BEGIN
     End If;
 
     If _sqlWhere = ' WHERE true' Then
-
         RETURN QUERY
         SELECT format('Warning: predefined rule ID %s does not have any filter criteria and would thus match every dataset', _ruleID)::citext AS Dataset,
                0 AS Dataset_ID,
@@ -344,7 +341,6 @@ BEGIN
     End If;
 
     If _populateTempTable Then
-
         _s := format('CREATE TABLE T_Tmp_PredefinedAnalysisDatasets AS %s', _s);
 
         If _previewSql Then
@@ -358,7 +354,6 @@ BEGIN
 
         CREATE INDEX IX_T_Tmp_PredefinedAnalysisDatasets_Dataset_ID ON T_Tmp_PredefinedAnalysisDatasets (ID);
     End If;
-
 END;
 $$;
 
