@@ -1,8 +1,8 @@
 --
--- Name: get_spectral_library_settings_hash(integer, text, text, real, real, boolean, text, integer, integer, integer, real, real, integer, integer, boolean, text, text, integer, text, boolean); Type: FUNCTION; Schema: public; Owner: d3l243
+-- Name: get_spectral_library_settings_hash(integer, text, text, real, real, boolean, text, integer, integer, integer, real, real, integer, integer, boolean, text, text, integer, text, boolean, boolean); Type: FUNCTION; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_libraryid integer, _proteincollectionlist text DEFAULT ''::text, _organismdbfile text DEFAULT ''::text, _fragmentionmzmin real DEFAULT 0, _fragmentionmzmax real DEFAULT 0, _trimnterminalmet boolean DEFAULT false, _cleavagespecificity text DEFAULT ''::text, _missedcleavages integer DEFAULT 0, _peptidelengthmin integer DEFAULT 0, _peptidelengthmax integer DEFAULT 0, _precursormzmin real DEFAULT 0, _precursormzmax real DEFAULT 0, _precursorchargemin integer DEFAULT 0, _precursorchargemax integer DEFAULT 0, _staticcyscarbamidomethyl boolean DEFAULT false, _staticmods text DEFAULT ''::text, _dynamicmods text DEFAULT ''::text, _maxdynamicmods integer DEFAULT 0, _programversion text DEFAULT ''::text, _showdebug boolean DEFAULT false) RETURNS text
+CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_libraryid integer, _proteincollectionlist text DEFAULT ''::text, _organismdbfile text DEFAULT ''::text, _fragmentionmzmin real DEFAULT 0, _fragmentionmzmax real DEFAULT 0, _trimnterminalmet boolean DEFAULT false, _cleavagespecificity text DEFAULT ''::text, _missedcleavages integer DEFAULT 0, _peptidelengthmin integer DEFAULT 0, _peptidelengthmax integer DEFAULT 0, _precursormzmin real DEFAULT 0, _precursormzmax real DEFAULT 0, _precursorchargemin integer DEFAULT 0, _precursorchargemax integer DEFAULT 0, _staticcyscarbamidomethyl boolean DEFAULT false, _staticmods text DEFAULT ''::text, _dynamicmods text DEFAULT ''::text, _maxdynamicmods integer DEFAULT 0, _programversion text DEFAULT ''::text, _semispecificcleavage boolean DEFAULT false, _showdebug boolean DEFAULT false) RETURNS text
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -33,6 +33,7 @@ CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_libraryid 
 **    _dynamicMods                  Semicolon-separated list of dynamic (variable) mods that DIA-NN will consider
 **    _maxDynamicMods               DIA-NN setting for maximum number of dynamic mods (per peptide)
 **    _programVersion               DIA-NN executable name and major.minor version, e.g. 'DIA-NN_1.9'
+**    _semiSpecificCleavage         DIA-NN setting for enabling semi-specific cleavage, e.g., partially tryptic; only included in the hash if true
 **
 **  Returns:
 **    Computed hash, or an empty string if an error
@@ -50,6 +51,7 @@ CREATE OR REPLACE FUNCTION public.get_spectral_library_settings_hash(_libraryid 
 **          12/11/2023 mem - Remove unnecessary _trimWhitespace argument when calling validate_na_parameter
 **          01/04/2024 mem - Check for empty strings instead of using char_length()
 **          09/03/2024 mem - Add argument _programVersion
+**          03/10/2026 mem - Add argument _semiSpecificCleavage
 **
 *****************************************************/
 DECLARE
@@ -73,7 +75,7 @@ BEGIN
                Precursor_Charge_Min, Precursor_Charge_Max,
                Static_Cys_Carbamidomethyl,
                Static_Mods, Dynamic_Mods,
-               Max_Dynamic_Mods, Program_Version
+               Max_Dynamic_Mods, Program_Version, Semi_Specific_Cleavage
         INTO _proteinCollectionList, _organismDBFile,
              _fragmentIonMzMin, _fragmentIonMzMax,
              _trimNTerminalMet, _cleavageSpecificity, _missedCleavages,
@@ -82,7 +84,7 @@ BEGIN
              _precursorChargeMin, _precursorChargeMax,
              _staticCysCarbamidomethyl,
              _staticMods, _dynamicMods,
-             _maxDynamicMods, _programVersion
+             _maxDynamicMods, _programVersion, _semiSpecificCleavage
         FROM T_Spectral_Library
         WHERE Library_ID = _libraryId;
 
@@ -109,6 +111,7 @@ BEGIN
         _dynamicMods              := Trim(Coalesce(_dynamicMods, ''));
         _maxDynamicMods           := Coalesce(_maxDynamicMods, 0);
         _programVersion           := Trim(Coalesce(_programVersion, ''));
+        _semiSpecificCleavage     := Coalesce(_semiSpecificCleavage, false);
 
         If _proteinCollectionList = '' Then
             _proteinCollectionList := 'na';
@@ -140,7 +143,10 @@ BEGIN
 
     End If;
 
-    _settings := format('%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s',
+    -- Note that when semi-specific cleavage is false, the settings text will end with the program version
+    -- When semi-specific cleavage is true, the settings text will end with 'ProgramVersion_true'
+
+    _settings := format('%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s_%s%s',
                         _settings,
                         _fragmentIonMzMin,
                         _fragmentIonMzMax,
@@ -157,7 +163,8 @@ BEGIN
                         _staticMods,
                         _dynamicMods,
                         _maxDynamicMods,
-                        _programVersion
+                        _programVersion,
+                        CASE WHEN _semiSpecificCleavage THEN '_true' ELSE '' END
                        );
 
     If _showDebug Then
@@ -175,5 +182,5 @@ END
 $$;
 
 
-ALTER FUNCTION public.get_spectral_library_settings_hash(_libraryid integer, _proteincollectionlist text, _organismdbfile text, _fragmentionmzmin real, _fragmentionmzmax real, _trimnterminalmet boolean, _cleavagespecificity text, _missedcleavages integer, _peptidelengthmin integer, _peptidelengthmax integer, _precursormzmin real, _precursormzmax real, _precursorchargemin integer, _precursorchargemax integer, _staticcyscarbamidomethyl boolean, _staticmods text, _dynamicmods text, _maxdynamicmods integer, _programversion text, _showdebug boolean) OWNER TO d3l243;
+ALTER FUNCTION public.get_spectral_library_settings_hash(_libraryid integer, _proteincollectionlist text, _organismdbfile text, _fragmentionmzmin real, _fragmentionmzmax real, _trimnterminalmet boolean, _cleavagespecificity text, _missedcleavages integer, _peptidelengthmin integer, _peptidelengthmax integer, _precursormzmin real, _precursormzmax real, _precursorchargemin integer, _precursorchargemax integer, _staticcyscarbamidomethyl boolean, _staticmods text, _dynamicmods text, _maxdynamicmods integer, _programversion text, _semispecificcleavage boolean, _showdebug boolean) OWNER TO d3l243;
 

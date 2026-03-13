@@ -1,8 +1,8 @@
 --
--- Name: get_spectral_library_id(boolean, integer, text, text, real, real, boolean, text, integer, integer, integer, real, real, integer, integer, boolean, text, text, integer, text, boolean, integer, integer, text, text, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: get_spectral_library_id(boolean, integer, text, text, real, real, boolean, text, integer, integer, integer, real, real, integer, integer, boolean, text, text, integer, text, boolean, boolean, integer, integer, text, text, boolean, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boolean, IN _dmssourcejob integer DEFAULT 0, IN _proteincollectionlist text DEFAULT ''::text, IN _organismdbfile text DEFAULT ''::text, IN _fragmentionmzmin real DEFAULT 0, IN _fragmentionmzmax real DEFAULT 0, IN _trimnterminalmet boolean DEFAULT false, IN _cleavagespecificity text DEFAULT ''::text, IN _missedcleavages integer DEFAULT 0, IN _peptidelengthmin integer DEFAULT 0, IN _peptidelengthmax integer DEFAULT 0, IN _precursormzmin real DEFAULT 0, IN _precursormzmax real DEFAULT 0, IN _precursorchargemin integer DEFAULT 0, IN _precursorchargemax integer DEFAULT 0, IN _staticcyscarbamidomethyl boolean DEFAULT false, IN _staticmods text DEFAULT ''::text, IN _dynamicmods text DEFAULT ''::text, IN _maxdynamicmods integer DEFAULT 0, IN _programversion text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, INOUT _libraryid integer DEFAULT 0, INOUT _librarystateid integer DEFAULT 0, INOUT _libraryname text DEFAULT ''::text, INOUT _storagepath text DEFAULT ''::text, INOUT _sourcejobshouldmakelibrary boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boolean, IN _dmssourcejob integer DEFAULT 0, IN _proteincollectionlist text DEFAULT ''::text, IN _organismdbfile text DEFAULT ''::text, IN _fragmentionmzmin real DEFAULT 0, IN _fragmentionmzmax real DEFAULT 0, IN _trimnterminalmet boolean DEFAULT false, IN _cleavagespecificity text DEFAULT ''::text, IN _missedcleavages integer DEFAULT 0, IN _peptidelengthmin integer DEFAULT 0, IN _peptidelengthmax integer DEFAULT 0, IN _precursormzmin real DEFAULT 0, IN _precursormzmax real DEFAULT 0, IN _precursorchargemin integer DEFAULT 0, IN _precursorchargemax integer DEFAULT 0, IN _staticcyscarbamidomethyl boolean DEFAULT false, IN _staticmods text DEFAULT ''::text, IN _dynamicmods text DEFAULT ''::text, IN _maxdynamicmods integer DEFAULT 0, IN _programversion text DEFAULT ''::text, IN _semispecificcleavage boolean DEFAULT false, IN _infoonly boolean DEFAULT false, INOUT _libraryid integer DEFAULT 0, INOUT _librarystateid integer DEFAULT 0, INOUT _libraryname text DEFAULT ''::text, INOUT _storagepath text DEFAULT ''::text, INOUT _sourcejobshouldmakelibrary boolean DEFAULT false, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **    _dynamicMods                  Semicolon-separated list of dynamic (variable) mods that DIA-NN will consider
 **    _maxDynamicMods               DIA-NN setting for maximum number of dynamic mods (per peptide)
 **    _programVersion               DIA-NN executable name and major.minor version, e.g. 'DIA-NN_1.9'
+**    _semiSpecificCleavage         DIA-NN setting for semi-specific cleavage, e.g., partially tryptic
 **    _infoOnly                     True to look for the spectral library and update _message, but not update T_Spectral_Library if the library is missing (or in state 1)
 **    _libraryId                    Output: spectral library ID if found an existing library, or assigned ID if a new row was added to T_Spectral_Library
 **    _libraryStateId               Output: library state ID
@@ -73,6 +74,7 @@ CREATE OR REPLACE PROCEDURE public.get_spectral_library_id(IN _allowaddnew boole
 **          09/01/2024 mem - Ignore spectrum libaries with state 5 (Inactive)
 **          09/03/2024 mem - Add argument _programVersion
 **          07/07/2025 mem - Use new column names in query
+**          03/10/2026 mem - Add argument _semiSpecificCleavage
 **
 *****************************************************/
 DECLARE
@@ -160,6 +162,7 @@ BEGIN
         _dynamicMods              := Trim(Coalesce(_dynamicMods, ''));
         _maxDynamicMods           := Coalesce(_maxDynamicMods, 0);
         _programVersion           := Trim(Coalesce(_programVersion, ''));
+        _semiSpecificCleavage     := Coalesce(_semiSpecificCleavage, false);
         _infoOnly                 := Coalesce(_infoOnly, false);
 
         _libraryId := 0;
@@ -370,7 +373,8 @@ BEGIN
               Static_Mods                = _staticMods::citext AND
               Dynamic_Mods               = _dynamicMods::citext AND
               Max_Dynamic_Mods           = _maxDynamicMods AND
-              Program_Version            = _programVersion;
+              Program_Version            = _programVersion AND
+              Semi_Specific_Cleavage     = _semiSpecificCleavage;
 
         If FOUND Then
             -- Match Found
@@ -496,6 +500,7 @@ BEGIN
                     _dynamicMods              => _dynamicMods,
                     _maxDynamicMods           => _maxDynamicMods,
                     _programVersion           => _programVersion,
+                    _semiSpecificCleavage     => _semiSpecificCleavage,
                     _showDebug                => false);
 
 
@@ -551,7 +556,7 @@ BEGIN
             Created, Source_Job, Comment,
             Storage_Path, Protein_Collection_List, Organism_DB_File,
             Fragment_Ion_Mz_Min, Fragment_Ion_Mz_Max, Trim_N_Terminal_Met,
-            Cleavage_Specificity, Missed_Cleavages,
+            Cleavage_Specificity, Semi_Specific_Cleavage, Missed_Cleavages,
             Peptide_Length_Min, Peptide_Length_Max,
             Precursor_Mz_Min, Precursor_Mz_Max,
             Precursor_Charge_Min, Precursor_Charge_Max,
@@ -571,6 +576,7 @@ BEGIN
                 _fragmentIonMzMax,
                 _trimNTerminalMet,
                 _cleavageSpecificity,
+                _semiSpecificCleavage,
                 _missedCleavages,
                 _peptideLengthMin,
                 _peptideLengthMax,
@@ -615,5 +621,5 @@ END
 $$;
 
 
-ALTER PROCEDURE public.get_spectral_library_id(IN _allowaddnew boolean, IN _dmssourcejob integer, IN _proteincollectionlist text, IN _organismdbfile text, IN _fragmentionmzmin real, IN _fragmentionmzmax real, IN _trimnterminalmet boolean, IN _cleavagespecificity text, IN _missedcleavages integer, IN _peptidelengthmin integer, IN _peptidelengthmax integer, IN _precursormzmin real, IN _precursormzmax real, IN _precursorchargemin integer, IN _precursorchargemax integer, IN _staticcyscarbamidomethyl boolean, IN _staticmods text, IN _dynamicmods text, IN _maxdynamicmods integer, IN _programversion text, IN _infoonly boolean, INOUT _libraryid integer, INOUT _librarystateid integer, INOUT _libraryname text, INOUT _storagepath text, INOUT _sourcejobshouldmakelibrary boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.get_spectral_library_id(IN _allowaddnew boolean, IN _dmssourcejob integer, IN _proteincollectionlist text, IN _organismdbfile text, IN _fragmentionmzmin real, IN _fragmentionmzmax real, IN _trimnterminalmet boolean, IN _cleavagespecificity text, IN _missedcleavages integer, IN _peptidelengthmin integer, IN _peptidelengthmax integer, IN _precursormzmin real, IN _precursormzmax real, IN _precursorchargemin integer, IN _precursorchargemax integer, IN _staticcyscarbamidomethyl boolean, IN _staticmods text, IN _dynamicmods text, IN _maxdynamicmods integer, IN _programversion text, IN _semispecificcleavage boolean, IN _infoonly boolean, INOUT _libraryid integer, INOUT _librarystateid integer, INOUT _libraryname text, INOUT _storagepath text, INOUT _sourcejobshouldmakelibrary boolean, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
