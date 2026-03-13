@@ -18,6 +18,7 @@ CREATE OR REPLACE PROCEDURE public.retire_stale_lc_columns(IN _infoonly boolean 
 **  Auth:   mem
 **  Date:   01/23/2015
 **          02/22/2024 mem - Ported to PostgreSQL
+**          03/13/2026 mem - Fix bug determining the date of the newest dataset associated with each LC column
 **
 *****************************************************/
 DECLARE
@@ -63,9 +64,9 @@ BEGIN
          INNER JOIN t_dataset DS
            ON LCCol.lc_column_id = DS.lc_column_ID
     WHERE LCCol.column_state_id <> 3 AND
-          LCCol.created < CURRENT_TIMESTAMP - make_interval(months => _usedThresholdMonths) AND
-          DS.created    < CURRENT_TIMESTAMP - make_interval(months => _usedThresholdMonths)
-    GROUP BY LCCol.lc_column_id
+          LCCol.created < CURRENT_TIMESTAMP - make_interval(months => 9)
+    GROUP BY LCCol.lc_column_id, LCCol.lc_column
+    HAVING MAX(DS.created) < CURRENT_TIMESTAMP - make_interval(months => 9)
     ORDER BY LCCol.lc_column_id;
 
     If Not FOUND Then
@@ -76,9 +77,7 @@ BEGIN
     End If;
 
     If _infoOnly Then
-
         -- Populate column Most_Recent_Dataset
-
         UPDATE Tmp_LCColumns
         SET Most_Recent_Dataset = LookupQ.dataset
         FROM (SELECT lc_column_ID,
@@ -94,7 +93,6 @@ BEGIN
               WHERE DatasetRank = 1
              ) LookupQ
         WHERE Tmp_LCColumns.ID = LookupQ.LC_Column_ID;
-
     End If;
 
     -----------------------------------------------------------
@@ -128,7 +126,6 @@ BEGIN
     End If;
 
     If _infoOnly Then
-
         -----------------------------------------------------------
         -- Preview the columns that would be retired
         -----------------------------------------------------------
