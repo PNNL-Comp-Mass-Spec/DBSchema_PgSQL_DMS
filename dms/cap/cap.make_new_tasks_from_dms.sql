@@ -28,6 +28,7 @@ CREATE OR REPLACE PROCEDURE cap.make_new_tasks_from_dms(INOUT _message text DEFA
 **          09/07/2023 mem - Align assignment statements
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          03/13/2026 bcg - Also check if the instrument group is EMSL_IMS for IMSDatasetCapture
 **
 *****************************************************/
 DECLARE
@@ -108,7 +109,7 @@ BEGIN
                 priority
             )
             SELECT CASE
-                       WHEN Src.Instrument_Group = 'IMS' THEN 'IMSDatasetCapture'
+                       WHEN Src.Instrument_Group IN ('IMS', 'EMSL_IMS') THEN 'IMSDatasetCapture'
                        ELSE 'DatasetCapture'
                    END AS script,
                    '' AS comment,
@@ -144,7 +145,7 @@ BEGIN
 
             FOR _previewData IN
                 SELECT CASE
-                           WHEN Src.Instrument_Group = 'IMS' THEN 'IMSDatasetCapture'
+                           WHEN Src.Instrument_Group IN ('IMS', 'EMSL_IMS') THEN 'IMSDatasetCapture'
                            ELSE 'DatasetCapture'
                        END AS Script,
                        Src.Dataset_ID,
