@@ -7,6 +7,7 @@ CREATE VIEW public.v_data_analysis_request_list_report AS
     r.request_name,
     r.analysis_type,
     r.created,
+    r.closed,
     r.estimated_analysis_time_days AS est_analysis_time,
     r.priority,
     ta.attachments AS files,
