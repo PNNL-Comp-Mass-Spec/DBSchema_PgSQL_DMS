@@ -6,7 +6,10 @@ CREATE VIEW public.v_dataset_qc_list_report AS
  SELECT ds.dataset_id AS id,
     ds.dataset,
     (((((spath.url_https)::text || (COALESCE(ds.folder_name, ds.dataset))::text) || '/QC/'::text) || (ds.dataset)::text) || '_BPI_MS.png'::text) AS qc_link,
-    (((((spath.url_https)::text || (COALESCE(ds.folder_name, ds.dataset))::text) || '/QC/'::text) || (ds.dataset)::text) || '_HighAbu_LCMS.png'::text) AS qc_2d,
+        CASE
+            WHEN (ds.scan_count = 1) THEN (((((spath.url_https)::text || (COALESCE(ds.folder_name, ds.dataset))::text) || '/QC/'::text) || (ds.dataset)::text) || '_Scan_1.png'::text)
+            ELSE (((((spath.url_https)::text || (COALESCE(ds.folder_name, ds.dataset))::text) || '/QC/'::text) || (ds.dataset)::text) || '_HighAbu_LCMS.png'::text)
+        END AS qc_2d,
     (((((((spath.url_https)::text || (COALESCE(ds.folder_name, ds.dataset))::text) || '/'::text) || (j.results_folder_name)::text) || '/'::text) || (ds.dataset)::text) || '_HighAbu_LCMS_zoom.png'::text) AS qc_decontools,
     e.experiment,
     c.campaign,
