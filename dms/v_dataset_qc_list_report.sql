@@ -37,7 +37,8 @@ CREATE VIEW public.v_dataset_qc_list_report AS
      JOIN public.t_storage_path spath ON ((spath.storage_path_id = ds.storage_path_id)))
      JOIN public.t_lc_column lc ON ((ds.lc_column_id = lc.lc_column_id)))
      LEFT JOIN public.t_requested_run rr ON ((ds.dataset_id = rr.dataset_id)))
-     LEFT JOIN public.t_analysis_job j ON ((ds.decontools_job_for_qc = j.job)));
+     LEFT JOIN public.t_analysis_job j ON ((ds.decontools_job_for_qc = j.job)))
+  WHERE (lower((e.experiment)::text) <> 'tracking'::text);
 
 
 ALTER VIEW public.v_dataset_qc_list_report OWNER TO d3l243;
