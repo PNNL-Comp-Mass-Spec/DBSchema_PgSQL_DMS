@@ -17,10 +17,10 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **      0      Undefined                            Undefined
 **      1      None                                 Not a service center tracked requested run or dataset
 **      25     Ambiguous                            Unable to auto-determine the correct service type
-**      100    Peptides: Short Advanced MS          Astral, nanoPOTS, or timsTOF with separation time <= 60 minutes
+**      100    Peptides: Short Advanced MS          Astral or timsTOF_SCP with separation time <= 60 minutes; any nanoPOTS sample run on Astral or timsTOF_SCP
 **      101    Peptides: Short Standard MS          HFX, Lumos, Eclipse, or Exploris with separation time <= 60 minutes; all SRM and MRM; separation type LC-Nano-
-**      102    Peptides: Long Advanced MS           Astral or timsTOF with separation time > 60 minutes
-**      103    Peptides: Long Standard MS           HFX, Lumos, Eclipse, Exploris, or nanoPOTS with separation time > 60 minutes
+**      102    Peptides: Long Advanced MS           Astral or timsTOF_SCP with separation time > 60 minutes
+**      103    Peptides: Long Standard MS           HFX, Lumos, Eclipse, or Exploris with separation time > 60 minutes; any nanoPOTS sample not run on Astral or timsTOF_SCP
 **      104    MALDI                                MALDI (run count = hr count); includes timsTOFFlex02_Imaging
 **      110    Peptides: Screening MS               All Orbitraps (including timsTOF_SCP), separation time <= 5 minutes (ultra fast), or infusion
 **      111    Lipids                               Lipids
@@ -146,6 +146,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **          02/17/2026 mem - If separation type or separation group is 'LC-Nano-Lipidomics' or 'LC-Nano-Metabolomics', service_type is 101
 **          02/24/2026 mem - Check for separation type or separation group 'LC-Nano-Lipidomics' or 'LC-Nano-Metabolomics' before checking for sample type "Lipids" or "Metabolites"
 **          03/02/2026 mem - If separation type or separation group is 'LC-metabolomics_Hormones' or 'LC-metabolomics_Oxylipids', service_type is 111 (later in 2026, LC-metabolomics_Oxylipids will be type 101)
+**          03/25/2026 mem - Update logic for nanoPOTS samples to use type 100 for Astral or timsTOF and type 103 for any other instrument
 **
 *****************************************************/
 DECLARE
@@ -388,17 +389,17 @@ BEGIN
         RETURN 110;       -- Peptides: Screening MS
     End If;
 
-    -- Check for NanoPots datasets
+    -- Check for NanoPots datasets (note that 'timsTOF_Flex' datasets were handled above)
     If _separationType LIKE '%NanoPot%' OR _separationGroup LIKE '%NanoPot%' Then
-        If _acqLengthMinutes <= 60 Then
+        If _instrumentGroup LIKE '%Astral%' OR _instrumentGroup LIKE 'timsTOF%' Then
             RETURN 100;   -- Peptides: Short Advanced MS
         Else
             RETURN 103;   -- Peptides: Long Standard MS
         End If;
     End If;
 
-    -- Check for Astral, timsTOF_Flex, or timsTOF_SCP datasets
-    If _instrumentGroup LIKE '%Astral%' OR _instrumentGroup IN ('timsTOF_Flex', 'timsTOF_SCP') Then
+    -- Check for Astral or timsTOF_SCP datasets
+    If _instrumentGroup LIKE '%Astral%' OR _instrumentGroup LIKE 'timsTOF%' Then
         If _acqLengthMinutes <= 60 Then
             RETURN 100;   -- Peptides: Short Advanced MS
         Else
