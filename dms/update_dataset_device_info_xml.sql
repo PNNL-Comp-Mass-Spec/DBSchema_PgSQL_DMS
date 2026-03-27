@@ -65,6 +65,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_device_info_xml(IN _datasetid 
 **          03/03/2024 mem - Trim whitespace when extracting values from XML
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          03/26/2026 mem - Pass _rootElement to get_dataset_details_from_dataset_info_xml
 **
 *****************************************************/
 DECLARE
@@ -147,6 +148,7 @@ BEGIN
 
         CALL public.get_dataset_details_from_dataset_info_xml (
                         _datasetInfoXML,
+                        _rootElement => 'DatasetInfo',
                         _datasetID   => _datasetID,     -- Input/Output
                         _datasetName => _datasetName,   -- Output
                         _message     => _message,       -- Output

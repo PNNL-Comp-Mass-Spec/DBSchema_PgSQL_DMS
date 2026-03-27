@@ -8,7 +8,13 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid in
 /****************************************************
 **
 **  Desc:
-**      Update the information for the dataset specified by _datasetID
+**      Update the dataset info for the dataset specified by _datasetID
+**
+**      Data is stored in the four tables:
+**        T_Dataset_Info
+**        T_Dataset_Scan_Types
+**        T_Dataset_Files
+**        T_Dataset_QC_Ions
 **
 **      If _datasetID is 0, will use the dataset name defined in _datasetInfoXML
 **      If _datasetID is non-zero, will validate that the Dataset Name in the XML corresponds to the dataset ID specified by _datasetID
@@ -123,6 +129,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid in
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          07/10/2025 mem - Call procedure update_dataset_service_type_if_required
+**          03/26/2026 mem - Pass _rootElement to get_dataset_details_from_dataset_info_xml
 **
 *****************************************************/
 DECLARE
@@ -210,6 +217,7 @@ BEGIN
 
         CALL public.get_dataset_details_from_dataset_info_xml (
                         _datasetInfoXML,
+                        _rootElement => 'DatasetInfo',
                         _datasetID   => _datasetID,     -- Input/Output
                         _datasetName => _datasetName,   -- Output
                         _message     => _message,       -- Output
