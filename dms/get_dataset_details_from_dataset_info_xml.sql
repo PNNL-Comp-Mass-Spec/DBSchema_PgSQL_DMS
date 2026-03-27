@@ -1,8 +1,8 @@
 --
--- Name: get_dataset_details_from_dataset_info_xml(xml, integer, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: get_dataset_details_from_dataset_info_xml(xml, text, integer, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN _datasetinfoxml xml, INOUT _datasetid integer DEFAULT 0, INOUT _datasetname text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN _datasetinfoxml xml, IN _rootelement text DEFAULT 'DatasetInfo'::text, INOUT _datasetid integer DEFAULT 0, INOUT _datasetname text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -12,16 +12,25 @@ CREATE OR REPLACE PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN 
 **      If _datasetID is non-zero, validates the dataset ID vs. the dataset name
 **      Otherwise, updates _datasetID based on the dataset name defined in the XML
 **
-**      This procedure is used by procedures update_dataset_file_info_xml and update_dataset_device_info_xml
+**      This procedure is used by procedures update_dataset_file_info_xml, update_dataset_device_info_xml, and update_dataset_nom_stats_xml
 **
-**  Typical XML file contents:
+**  Typical XML file contents for dataset info XML files (with _rootElement = 'DatasetInfo')
 **      <DatasetInfo>
 **        <Dataset>QC_Shew_17_01_Run_2_7Jun18_Oak_18-03-08</Dataset>
 **        ...
 **      </DatasetInfo>
 **
+**  Typical XML file contents for natural organic matter stats XML files (with _rootElement = 'NOMStats')
+**      <NOMStats>
+**        <Dataset>QC_SRFAII_25_01_D_WEOM_r2_54_1_31253</Dataset>
+**        <metrics>
+**      ...
+**        </metrics>
+**      </NOMStats>
+**
 **  Arguments:
 **    _datasetInfoXML   Dataset info, in XML format
+**    _rootElement      Root element name
 **    _datasetID        Input/output: dataset ID
 **    _datasetName      Output: dataset name
 **    _message          Error message, or an empty string if no error
@@ -34,16 +43,27 @@ CREATE OR REPLACE PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN 
 **          06/13/2023 mem - Show a warning if _datasetInfoXML is null
 **          12/08/2023 mem - Select a single column when using If Not Exists()
 **          01/20/2024 mem - Ignore case when resolving dataset name to ID
+**          03/26/2026 mem - Add parameter _rootElement
 **
 *****************************************************/
 DECLARE
+    _xpath text;
     _datasetIDCheck int := 0;
 BEGIN
     _message := '';
     _returnCode := '';
 
-    _datasetID := Coalesce(_datasetID, 0);
+    ---------------------------------------------------
+    -- Validate the inputs
+    ---------------------------------------------------
+
+    _rootElement := Coalesce(_rootElement, 'DatasetInfo');
+    _datasetID   := Coalesce(_datasetID, 0);
     _datasetName := '';
+
+    If Trim(_rootElement) = '' Then
+        _rootElement = 'DatasetInfo';
+    End If;
 
     If _datasetInfoXML Is Null Then
         _message := '_datasetInfoXML is null; unable to continue';
@@ -61,7 +81,12 @@ BEGIN
     -- [1] is used to select the first match (there should only be one matching node, but xpath() returns an array)
     ---------------------------------------------------
 
-    _datasetName := (xpath('//DatasetInfo/Dataset/text()', _datasetInfoXML))[1]::text;
+    -- Construct the XPath to extract the dataset name
+    --   When _rootElement is 'DatasetInfo', use '//DatasetInfo/Dataset/text()'
+    --   When _rootElement is 'NOMStats'   , use '//NOMStats/Dataset/text()'
+
+    _xpath = '//' || _rootElement || '/Dataset/text()';
+    _datasetName := (xpath(_xpath, _datasetInfoXML))[1]::text;
 
     If Coalesce(_datasetName, '') = '' Then
         _message := format('XML in _datasetInfoXML is not in the expected form for DatasetID %s in procedure get_dataset_details_from_dataset_info_xml; could not match /DatasetInfo/Dataset',
@@ -115,16 +140,9 @@ BEGIN
             RETURN;
         End If;
     End If;
-
 END
 $$;
 
 
-ALTER PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN _datasetinfoxml xml, INOUT _datasetid integer, INOUT _datasetname text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
-
---
--- Name: PROCEDURE get_dataset_details_from_dataset_info_xml(IN _datasetinfoxml xml, INOUT _datasetid integer, INOUT _datasetname text, INOUT _message text, INOUT _returncode text); Type: COMMENT; Schema: public; Owner: d3l243
---
-
-COMMENT ON PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN _datasetinfoxml xml, INOUT _datasetid integer, INOUT _datasetname text, INOUT _message text, INOUT _returncode text) IS 'GetDatasetDetailsFromDatasetInfoXML';
+ALTER PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN _datasetinfoxml xml, IN _rootelement text, INOUT _datasetid integer, INOUT _datasetname text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 
