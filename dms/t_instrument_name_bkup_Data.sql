@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.6
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 18.1
+-- Dumped by pg_dump version 18.1
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -121,7 +121,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 175	External_Agilent_QQQ	Agilent_TOF_V2	Agilent_QQQ	3709	3714	fso	Active	Offsite	Agilent triple-quad data acquired offsite	2021-01-19 20:47:37
 185	External_Agilent_QTOF	Agilent_TOF_V2	Agilent_TOF_V2	4073	4079	fso	Active	Offsite	Agilent Q-TOF data acquired offsite	2022-02-25 08:31:43
 195	External_Ascend	LTQ_FT	Ascend	4491	4493	fso	Active	Offsite	Data acquired offsite using a Thermo Ascend mass spec	2023-07-18 12:50:05
-244	External_Astral	LTQ_FT	Astral	4726	4727	fso	Active	Offsite	Thermo TOF/Orbitrap tribrid	2024-02-05 11:21:14
+244	External_Astral	LTQ_FT	Astral	4726	5290	fso	Active	Offsite	Thermo TOF/Orbitrap tribrid	2024-02-05 11:21:14
 164	External_Bruker_timsTOF	BrukerTOF_TDF	timsTOF	3098	3126	fso	Active	Offsite	Data acquired at Bruker	2019-06-11 14:52:16
 176	External_Eclipse	LTQ_FT	Eclipse	3710	4868	fso	Active	Offsite	Orbitrap Eclipse data acquired outside PNNL	2021-01-26 17:09:47
 179	External_Exploris	LTQ_FT	Exploris	3791	4827	fso	Active	Offsite	Data acquired offsite using a Thermo Exploris mass spec	2021-05-05 15:31:49
@@ -187,7 +187,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 229	Lola	Waters_Acquity_LC	Waters_Acquity_LC	4580	4923	secfso	Active	EMSL 1521	Waters Acquity H-Class LC	2023-11-02 17:27:37
 138	Lumos01	LTQ_FT	Lumos	1901	5236	secfso	Active	EMSL 1526	Orbitrap Fusion Lumos, MS:1002732	2015-12-15 16:13:14
 145	Lumos02	LTQ_FT	Lumos	2318	5245	secfso	Active	EMSL 1444	Orbitrap Fusion Lumos, MS:1002732	2017-03-22 15:11:53
-160	Lumos03	LTQ_FT	Lumos	2998	5135	secfso	Broken	EMSL 1401 (storage)	Orbitrap Fusion Lumos, MS:1002732	2019-01-16 16:30:45
+160	Lumos03	LTQ_FT	Lumos	2998	5291	secfso	Active	EMSL 1401 (storage)	Orbitrap Fusion Lumos, MS:1002732	2019-01-16 16:30:45
 92	MIT_Orbi01	LTQ_FT	VelosOrbi	1137	1139	fso	Inactive	MIT - Forest White lab (Massachusets)	MIT Orbitrap Elite or Orbitrap XL	2012-06-05 21:28:14
 238	Magnolia	LCMSNet_LC	LCMSNet_LC	4589	4932	secfso	Active	EMSL 1621	LCMSNet LC with a Shimadzu LC40D infusion pump. Used for LCDatasetCapture tasks.  The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets.	2023-11-06 11:15:48
 201	Maple	Thermo_SII_LC	Thermo_SII_LC	4552	4895	secfso	Active	EMSL 1444	LCMSNet LC with Thermo RSLCnano NCS-3500RS nano/loading pump	2023-10-26 14:37:17

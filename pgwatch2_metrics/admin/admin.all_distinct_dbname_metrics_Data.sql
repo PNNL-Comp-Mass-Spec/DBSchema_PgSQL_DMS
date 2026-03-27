@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 18.1
--- Dumped by pg_dump version 18.1
+-- Dumped from database version 18.3
+-- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -37,7 +37,6 @@ DMS	kpi	2024-04-17 15:08:40.764507-07
 DMS	locks	2024-04-17 15:08:40.761212-07
 DMS	locks_mode	2024-04-17 15:08:40.766247-07
 DMS	object_changes	2024-04-18 16:30:42.082101-07
-DMS	privilege_changes	2026-01-08 16:16:53.682742-08
 DMS	psutil_cpu	2024-04-17 15:08:40.77959-07
 DMS	psutil_disk	2024-04-17 15:08:40.774694-07
 DMS	psutil_disk_io_total	2024-04-17 15:08:40.767207-07

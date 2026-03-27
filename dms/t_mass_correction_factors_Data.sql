@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.6
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 18.3
+-- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -132,6 +132,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1331	CysA311	Probe addition of 311.1052 Da to Cysteine	311.1052	\N	-	PNNL		\N	\N
 1333	CysA326	Probe addition of 326.1161 Da to Cysteine	326.1161	\N	-	PNNL		\N	\N
 1330	CysA95	Probe addition of 95.0371 Da to Cysteine	95.0371	\N	-	PNNL		\N	\N
+1583	CysBromoethylamine	Cysteine modified with 2 bromoethylamine, giving S-(2-aminoethyl) cysteine	43.0422	\N	-	PNNL		\N	H5 C2 N
 1358	CysHvAlk	3C131N15 Cysteine lus iodoacetamide alkyltion	61.0286	\N	-	PNNL		\N	\N
 1514	CysPAT	Alkylation with (2-(2-iodoacetamido)ethyl)phosphonic acid	165.01909	165.084421	-	PNNL		\N	H(8) C(4) N O(4) P
 1153	Cys_EDTI	EDT+Iodo attached to a Cysteine	117.024834	\N	-	UniMod	HCysThiolactone	Cys EDT+Iodo	H(7) C(4) N O S
@@ -476,7 +477,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 -- Name: t_mass_correction_factors_mass_correction_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1582, true);
+SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1583, true);
 
 
 --
