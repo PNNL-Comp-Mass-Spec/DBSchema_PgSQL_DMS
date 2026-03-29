@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 18.1
--- Dumped by pg_dump version 18.1
+-- Dumped from database version 18.3
+-- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -55,6 +55,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 20	AgTOF01	Agilent_TOF	Agilent_TOF	101	124	fso	Inactive	EMSL 1326	Agilent LC/MSD TOF 1	2004-04-06 00:00:00
 37	AgTOF02	Agilent_TOF	Agilent_TOF	1063	1188	fso	Inactive	EMSL 1422	Agilent LC/MSD TOF2	2005-05-04 00:00:00
 107	AgTOF05	Agilent_TOF_V2	Agilent_TOF_V2	1346	2	secfso	Inactive	EMSL 1430	TOF portion of IMS04_AgTOF05	2013-07-22 10:41:59
+265	AgTOF09	Agilent_TOF_V2	Agilent_TOF_V2	5294	2	secfso	Active	EMSL 1426	TOF for SLIM08_AgQTOF10	2026-03-27 15:26:12.170866
 189	AgTOF10	Agilent_TOF_V2	Agilent_TOF_V2	4294	5118	secfso	Active	EMSL 1422	G6230BA TOF purchased by instrument development group	2022-10-21 14:27:28
 135	Agilent_GC_01	Agilent_Ion_Trap	Agilent_GC	1758	2	secfso	Offline	EMSL 1142	GC with TCD	2015-07-07 16:52:47
 59	Agilent_GC_MS_01	Agilent_Ion_Trap	EMSL_Agilent_GC_MS	2627	5264	secfso	Active	EMSL 1401	Agilent single quadrupole GC-MS for metabolomics. 7890A GC coupled to a 5975C inert XL MSD, with a 7683 series injector (G2614A)	2010-07-30 00:00:00
@@ -124,7 +125,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 244	External_Astral	LTQ_FT	Astral	4726	5290	fso	Active	Offsite	Thermo TOF/Orbitrap tribrid	2024-02-05 11:21:14
 164	External_Bruker_timsTOF	BrukerTOF_TDF	timsTOF	3098	3126	fso	Active	Offsite	Data acquired at Bruker	2019-06-11 14:52:16
 176	External_Eclipse	LTQ_FT	Eclipse	3710	4868	fso	Active	Offsite	Orbitrap Eclipse data acquired outside PNNL	2021-01-26 17:09:47
-179	External_Exploris	LTQ_FT	Exploris	3791	4827	fso	Active	Offsite	Data acquired offsite using a Thermo Exploris mass spec	2021-05-05 15:31:49
+179	External_Exploris	LTQ_FT	Exploris	3791	5292	fso	Active	Offsite	Data acquired offsite using a Thermo Exploris mass spec	2021-05-05 15:31:49
 188	External_IMS_AgQTOF	IMS_Agilent_TOF_DotD	IMS	4152	2	fso	Active	Offsite	IMS .d datasets acquired offsite	2022-05-20 09:15:09
 144	External_Illumina	Illumina_Sequencer	Illumina	2238	2240	fso	Inactive	0	RNA sequence data collected onsite or offsite	2016-11-18 15:38:55
 67	External_LTQ	Finnigan_Ion_Trap	LTQ	2539	2538	fso	Inactive	Offsite	LTQ data acquired outside PNNL	2010-08-16 00:00:00
@@ -246,6 +247,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 117	SLIM03_AgTOF06	IMS_Agilent_TOF_UIMF	SLIM	1467	3869	secfso	Inactive	EMSL 1526	IMS with SLIM; AgTOF06 has property tag WD59466	2014-04-07 10:56:27
 156	SLIM04_AgQTOF02	IMS_Agilent_TOF_UIMF	SLIM	2952	3524	secfso	Active	EMSL 1526	WD59517 for AgQTOF02	2019-01-03 18:19:18
 157	SLIM07_AgTOF08	IMS_Agilent_TOF_UIMF	SLIM	2953	4263	secfso	Active	EMSL 1422	WD56643 for AgTOF08; online, but not uploading data to DMS	2019-01-03 18:20:52
+264	SLIM08_AgTOF09	IMS_Agilent_TOF_UIMF	SLIM	5293	2	secfso	Active	EMSL 1426	SLIM with multilayer and ECD	2026-03-27 15:22:52.697484
 198	SLIM09_QExactP06	LTQ_FT	SLIM	4499	4500	fso	Active	EMSL 1426	SLIM instrument connected to QExactP06, brought online in 2023	2023-08-23 16:15:45
 8	SW_TEST_FTICR	Finnigan_FTICR	Other	18	176	secfso	Inactive	n/a	FTICR TEST	2003-04-29 00:00:00
 7	SW_TEST_LCQ	Finnigan_Ion_Trap	LCQ	16	195	fso	Inactive	n/a	LCQ TEST	2003-04-29 00:00:00

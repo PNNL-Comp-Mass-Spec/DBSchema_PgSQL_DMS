@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.6
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 18.3
+-- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -51,17 +51,17 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 35	Eagle	10	Dedicated to IMS capability development 3/9/2010. Configured for extended separations.	2006-09-18 17:01:00
 14	Earth	10		2006-03-13 07:36:00
 76	Einstein	10	ISCO pumps for Direct Infusion of DOM samples	2013-09-10 10:27:00
-94	Elm	2	Thermo/Dionex pump (800 bar) with an ISCO on the low boy.  Short armed pal. LCMSnet controlled.  Small form factor cart, desktop computer	2017-03-03 08:19:00
+94	Elm	10	Thermo/Dionex pump (800 bar) with an ISCO on the low boy.  Short armed pal. LCMSnet controlled.  Small form factor cart, desktop computer	2017-03-03 08:19:00
 129	Evosep01	2	Online Desalting LC	2022-08-31 07:08:00
 127	Evosep02	2	Online Desalting LC	2022-04-05 05:39:00
 27	Falcon	10	LC ISCO Formic, 4 column 10k constant pressure system. The Flagship of our LC fleet.	2006-05-22 08:36:00
 116	Fiji	2	Agilent 1260 Infinity II high flow system, Sampler DEAGQ00605, Pump DEAE800647, Column Heater (1100 Series) DE11123368	2019-08-14 14:11:00
 85	Fir	2	Smaller cart Agilent pumps from Cougar,	2015-05-06 17:11:00
 15	Firefly	2	nanoPOTS autosampler	2006-03-10 16:14:00
-53	Frodo	2	#5 2D Waters NanoAcquity LC, easy conversion to 1D cart.  Serial numbers nBSM:F10NPB868N;nBSM2:F10NPB869N;nSM:F10NPS743M.	2010-09-14 16:53:00
-107	GCQE01	2	Thermo GC Q-Exactive	2017-11-21 14:17:00
+53	Frodo	10	#5 2D Waters NanoAcquity LC, easy conversion to 1D cart.  Serial numbers nBSM:F10NPB868N;nBSM2:F10NPB869N;nSM:F10NPS743M.	2010-09-14 16:53:00
+107	GCQE01	10	Thermo GC Q-Exactive	2017-11-21 14:17:00
 49	Gandalf	2	#4 2D Waters NanoAcquity LC, easy conversion to 1D cart.  Serial numbers nBSM:F10NPB865N;nBSM2:F10NPB866N;nSM:F10NPS742M.	2010-08-23 11:44:00
-52	Gimli	2	#1 2D Waters NanoAcquity LC, easy conversion to 1D cart.  Serial numbers nBSM:E10NPB859N;nSM:L10NPS876M.	2010-08-23 11:30:00
+52	Gimli	10	#1 2D Waters NanoAcquity LC, easy conversion to 1D cart.  Serial numbers nBSM:E10NPB859N;nSM:L10NPS876M.	2010-08-23 11:30:00
 123	Glacier	2	Thermo Vanquish System running Thermo SII	2020-10-13 16:17:00
 16	Griffin	10		2006-03-20 07:30:00
 122	Guam	10	Agilent 1290 Infinity ALS (Autosampler) Model: G1329A Serial: DE64776208, Agilent 1200 Bin Pump Model: G1312A Serial: DE63060488	2020-10-07 14:18:00
@@ -69,7 +69,7 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 28	Hawk	10		2006-04-18 11:06:00
 137	Holly	2	Thermo/Dionex pump (800 bar) with Loading Pump. Long armed pal. LCMSnet controlled. EMSL owned.	2023-08-23 13:27:00
 138	Homer	2	Thermo Vanquish Neo system - Autosampler, Binary Pump, Column Compartment	2023-12-01 16:45:00
-86	Hoopty	2	S&S industries HTP cart for multiple and optimal infusion experiments	2015-08-20 14:00:00
+86	Hoopty	10	S&S industries HTP cart for multiple and optimal infusion experiments	2015-08-20 14:00:00
 64	Iris	10	Manual LC in BSF 1208 for sample prep use	2012-12-10 15:56:00
 97	IronMan	2	Dionex Ultimate 3000 nano RSLC for metallomics	2017-08-30 09:18:00
 60	Jaguar	10	3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2011-04-13 09:55:00
@@ -108,17 +108,17 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 18	Phoenix	10	Installed Eksigent pumps November 2012.	2006-03-13 15:04:00
 63	Pippin	2	NanoAcquity cart acquired from Tox-Refurbished for Global Lipidomics. Serial numbers nBSM:M08NPB528N;nBSM2:A09NPB545N;nSM:A09NPS508M.	2012-11-28 10:53:00
 33	Pluto	10	Manual LC cart	2006-04-05 21:32:00
-58	Polaroid	2	Constant Flow Waters Nano-Acquity (1d only). Serial numbers nBSM:M10NPB053N;nSM:A11NPS920M.	2011-02-19 12:28:00
+58	Polaroid	10	Constant Flow Waters Nano-Acquity (1d only). Serial numbers nBSM:M10NPB053N;nSM:A11NPS920M.	2011-02-19 12:28:00
 81	Precious	2	Waters 1D M-Class nano-Acquity	2015-03-27 14:59:00
 31	Protein_RP	10	This is a manual LC system used for intact protein separations. Comprised of 2 10k-psi ISCO pumps and controller, 10k-psi (1/16" fittings) valves with back-side pressure sealing. Valve configurations; 6 port injection valve, 4 port mobile phase select valve, and 4 port column select valve. Home-made mixer for gradient formation. On/off valve for selecting between mixer purge and splitter column.	2006-03-10 17:37:00
 115	Rage	2	Waters 1D M-Class nano-Acquity	2019-04-22 16:09:00
 80	Rainier	2	Thermo Vanquish System	2015-01-29 17:41:00
-87	RapidFire365-01	2	Agilent RapidFire 365 SPE	2015-11-12 09:48:00
+87	RapidFire365-01	3	Agilent RapidFire 365 SPE	2015-11-12 09:48:00
 19	Raptor	10		2007-06-08 14:17:00
 114	Remus	2	Thermo Dionex Ultimate 3000 with autosampler, gradient pump, loading pump, and column heating / trapping compartment	2019-01-29 08:56:00
 148	Rio	2	Thermo Vanquish Duo Horizon. With two binary pumps, two column compartments and two injectors. High flow.	2025-10-11 20:02:47.003501
 20	Roc	10	Metabolomics Cart	2006-03-10 09:52:00
-67	Rogue	2	Used to be Lion, changed naming convention	2013-01-18 11:14:00
+67	Rogue	10	Used to be Lion, changed naming convention	2013-01-18 11:14:00
 113	Romulus	2	Thermo Dionex Ultimate 3000 with autosampler, gradient pump, loading pump, and column heating / trapping compartment	2019-01-29 08:55:00
 125	Roxanne	2	Waters High-Flow H-class+ Sample Manager-FTN and Quaternary Solvent Manager	2020-11-16 16:45:00
 39	SATURN	10	manual single column LC cart w/ SPE	2009-05-13 13:15:00
@@ -132,7 +132,7 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 117	Tahiti	2	Agilent 1260 Infinity II, Vialsampler G7129C DEAGQ01116, Bin Pump G7112B DEAB00808, Column Heater DEAED14113	2019-08-14 16:34:00
 41	Tambora	10	Agilent cart	2009-10-01 14:24:00
 133	Teton	2	Thermo Vanquish Neo system - Autosampler, Binary Pump, Column Compartment	2022-10-21 14:32:00
-43	Tiger	2	First ARRA NexGen L 3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2010-03-16 12:38:00
+43	Tiger	10	First ARRA NexGen L 3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2010-03-16 12:38:00
 126	Titus	2	Thermo Dionex Ultimate 3000 with autosampler, gradient pump, loading pump, and column heating / trapping compartment	2021-09-13 13:25:00
 128	Tonga	2	Formerly the NMR fractionation LC.  Agilent 1290 Infinity II Pump, Autosampler, Column Heater, UV detector and Fraction collector	2022-06-10 10:58:00
 38	VENUS	10	metal-free, up to 5k psi	2009-02-12 13:00:00
