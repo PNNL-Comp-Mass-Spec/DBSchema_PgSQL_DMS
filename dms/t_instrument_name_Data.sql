@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 18.1
--- Dumped by pg_dump version 18.1
+-- Dumped from database version 18.3
+-- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -52,6 +52,7 @@ COPY public.t_instrument_name (instrument_id, instrument, instrument_class, inst
 79	AgQTOF03	Agilent_TOF_V2	Agilent_TOF_V2	307	2155	secfso	Inactive	EMSL 1430	Agilent QTOF, WD67695		Research	0	0	1	11	2011-02-01 16:58:52	1	\\\\proto-7\\	E:\\	AgQTOF03\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/AgQTOF03	\\\\agate.emsl.pnl.gov\\dmsarch\\AgQTOF03	0	0	1	3	1	f
 70	AgQTOF04	Agilent_TOF_V2	Agilent_TOF_V2	288	1025	fso	Inactive	EMSL 1430	Agilent QTOF		Research	0	0	1	11	2010-11-04 15:01:20	1	\\\\proto-7\\	E:\\	AgQTOF04\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/AgQTOF04	\\\\agate.emsl.pnl.gov\\dmsarch\\AgQTOF04	0	0	1	3	1	f
 122	AgQTOF05	Agilent_TOF_V2	Agilent_TOF_V2	1545	3273	secfso	Inactive	EMSL 1401	Agilent QTOF for Metallomics.		Research	0	0	1	11	2014-05-29 11:20:30	1	\\\\proto-7\\	E:\\	AgQTOF05\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/AgQTOF05	\\\\agate.emsl.pnl.gov\\dmsarch\\AgQTOF05	0	0	1	3	1	f
+265	AgQTOF10	Agilent_TOF_V2	Agilent_TOF_V2	5294	2	secfso	Active	EMSL 1426	TOF for SLIM08_AgQTOF10		Research	0	0	1	11	2026-03-27 15:26:12.170866	1	\\\\proto-5\\	E:\\	AgQTOF10\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/AgQTOF10	\\\\agate.emsl.pnl.gov\\dmsarch\\AgQTOF10	0	0	1	3	1	f
 20	AgTOF01	Agilent_TOF	Agilent_TOF	101	124	fso	Inactive	EMSL 1326	Agilent LC/MSD TOF 1		Research	0	0	1	11	2004-04-06 00:00:00	1	\\\\proto-3\\	G:\\	AgTOF01\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/AgTOF01	\\\\agate.emsl.pnl.gov\\dmsarch\\AgTOF01	0	0	1	3	1	f
 37	AgTOF02	Agilent_TOF	Agilent_TOF	1063	1188	fso	Inactive	EMSL 1422	Agilent LC/MSD TOF2		Research	0	0	1	11	2005-05-04 00:00:00	1	\\\\proto-5\\	H:\\	AgTOF02\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/AgTOF02	\\\\agate.emsl.pnl.gov\\dmsarch\\AgTOF02	0	0	1	3	1	f
 107	AgTOF05	Agilent_TOF_V2	Agilent_TOF_V2	1346	2	secfso	Inactive	EMSL 1430	TOF portion of IMS04_AgTOF05		Research	0	100	1	11	2013-07-22 10:41:59	1	\\\\proto-7\\	G:\\	AgTOF05\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/AgTOF05	\\\\agate.emsl.pnl.gov\\dmsarch\\AgTOF05	0	0	1	3	1	f
@@ -132,7 +133,7 @@ COPY public.t_instrument_name (instrument_id, instrument, instrument_class, inst
 68	External_Orbitrap	LTQ_FT	VelosOrbi	1141	4950	fso	Active	Offsite	Orbitrap data acquired outside PNNL		Offsite	0	0	1	11	2010-08-31 16:55:06	1	\\\\proto-5\\	H:\\	External_Orbitrap\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/External_Orbitrap	\\\\agate.emsl.pnl.gov\\dmsarch\\External_Orbitrap	0	0	1	3	1	f
 177	External_Orbitrap_Fusion	LTQ_FT	VelosOrbi	3712	4031	fso	Active	Offsite	Orbitrap Fusion Lumos data acquired outside PNNL, MS:1002732		Offsite	0	0	1	11	2021-01-28 10:35:08	1	\\\\proto-8\\	I:\\	External_Orbitrap_Fusion	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/External_Orbitrap_Fusion	\\\\adms.emsl.pnl.gov\\dmsarch\\External_Orbitrap_Fusion	0	0	1	3	1	f
 170	External_QEHFX	LTQ_FT	QEHFX	3355	3358	fso	Active	Offsite	Q Exactive HF-X data acquired outside PNNL, MS:1002877		Offsite	0	0	1	11	2020-02-07 15:10:04	1	\\\\proto-8\\	I:\\	External_QEHFX\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/External_QEHFX	\\\\adms.emsl.pnl.gov\\dmsarch\\External_QEHFX	0	0	1	3	1	f
-116	External_QExactive	LTQ_FT	QExactive	1704	4153	fso	Active	Offsite	QExactive data acquired outside PNNL		Offsite	0	0	1	11	2014-04-03 11:04:00	1	\\\\proto-3\\	I:\\	External_QExactive\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/External_QExactive	\\\\agate.emsl.pnl.gov\\dmsarch\\External_QExactive	0	0	1	3	1	f
+116	External_QExactive	LTQ_FT	QExactive	1704	5295	fso	Active	Offsite	QExactive data acquired outside PNNL		Offsite	0	0	1	11	2014-04-03 11:04:00	1	\\\\proto-3\\	I:\\	External_QExactive\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/External_QExactive	\\\\agate.emsl.pnl.gov\\dmsarch\\External_QExactive	0	0	1	3	1	f
 161	External_Thermo_FAIMS	LTQ_FT	Lumos	3047	3360	fso	Inactive	Thermo (San Jose, CA)	External Thermo Lumos with a FAIMS source		Offsite	0	0	1	11	2019-04-15 11:09:32	1	\\\\proto-3\\	H:\\	External_Thermo_FAIMS\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/External_Thermo_FAIMS	\\\\adms.emsl.pnl.gov\\dmsarch\\External_Thermo_FAIMS	0	0	1	3	1	f
 113	External_Waters_TOF	Waters_TOF	Waters_TOF	1392	1395	fso	Inactive	Offsite	Waters QTof data (LC-MS or LC-MSn)		Offsite	0	0	1	11	2013-11-05 15:58:32	1	\\\\proto-5\\	G:\\	External_Waters_TOF\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/External_Waters_TOF	\\\\agate.emsl.pnl.gov\\dmsarch\\External_Waters_TOF	0	0	1	3	1	f
 42	FHCRC_LTQ1	Finnigan_Ion_Trap	LTQ	167	166	fso	Inactive	FHCRC (Seattle, WA)	Fred Hutchinson Cancer Research Center Data	(BDI)	Offsite	0	0	1	11	2005-11-17 00:00:00	0	\N	\N	\N		\N	\N	\N	0	0	1	3	1	f
@@ -246,6 +247,7 @@ COPY public.t_instrument_name (instrument_id, instrument, instrument_class, inst
 117	SLIM03_AgTOF06	IMS_Agilent_TOF_UIMF	SLIM	1467	3869	secfso	Inactive	EMSL 1526	IMS with SLIM; AgTOF06 has property tag WD59466		Research	0	0	1	11	2014-04-07 10:56:27	1	\\\\proto-6\\	H:\\	SLIM03_AgTOF06\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/SLIM03_AgTOF06	\\\\agate.emsl.pnl.gov\\dmsarch\\SLIM03_AgTOF06	0	0	1	3	1	f
 156	SLIM04_AgQTOF02	IMS_Agilent_TOF_UIMF	SLIM	2952	3524	secfso	Active	EMSL 1526	WD59517 for AgQTOF02		Research	0	0	1	11	2019-01-03 18:19:18	1	\\\\proto-6\\	H:\\	SLIM04_AgQTOF02\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/SLIM04_AgQTOF02	\\\\adms.emsl.pnl.gov\\dmsarch\\SLIM04_AgQTOF02	0	0	1	3	1	f
 157	SLIM07_AgTOF08	IMS_Agilent_TOF_UIMF	SLIM	2953	4263	secfso	Active	EMSL 1422	WD56643 for AgTOF08; online, but not uploading data to DMS		Research	0	0	1	11	2019-01-03 18:20:52	1	\\\\proto-6\\	H:\\	SLIM07_AgTOF08\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/SLIM07_AgTOF08	\\\\adms.emsl.pnl.gov\\dmsarch\\SLIM07_AgTOF08	0	0	1	3	1	f
+264	SLIM08_AgQTOF10	IMS_Agilent_TOF_UIMF	SLIM	5293	2	secfso	Active	EMSL 1426	SLIM with multilayer and ECD		Research	0	0	1	11	2026-03-27 15:22:52.697484	1	\\\\proto-5\\	E:\\	SLIM08_AgQTOF10\\	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/SLIM08_AgQTOF10	\\\\agate.emsl.pnl.gov\\dmsarch\\SLIM08_AgQTOF10	0	0	1	3	1	f
 198	SLIM09_QExactP06	LTQ_FT	SLIM	4499	4500	fso	Active	EMSL 1426	SLIM instrument connected to QExactP06, brought online in 2023		Research	0	0	1	11	2023-08-23 16:15:45	1	\\\\proto-8\\	H:\\	SLIM09_QExactP06	pnl.gov	agate.emsl.pnl.gov	/archive/dmsarch/SLIM09_QExactP06	\\\\adms.emsl.pnl.gov\\dmsarch\\SLIM09_QExactP06	0	0	1	3	1	f
 8	SW_TEST_FTICR	Finnigan_FTICR	Other	18	176	secfso	Inactive	n/a	FTICR TEST		QC	0	0	1	11	2003-04-29 00:00:00	0	\N	\N	\N		\N	\N	\N	0	0	1	3	1	f
 7	SW_TEST_LCQ	Finnigan_Ion_Trap	LCQ	16	195	fso	Inactive	n/a	LCQ TEST		QC	0	0	1	11	2003-04-29 00:00:00	0	\N	\N	\N		\N	\N	\N	0	0	1	3	1	f
