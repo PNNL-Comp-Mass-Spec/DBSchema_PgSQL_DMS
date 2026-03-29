@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE cap.handle_dataset_capture_validation_failure(IN _da
 **          09/07/2023 mem - Align assignment statements
 **          01/20/2024 mem - Ignore case when resolving dataset name to ID
 **          12/11/2024 mem - Only call update_dms_file_info_xml if the dataset has an entry in t_dataset_info_xml
+**          03/28/2026 mem - Call cap.update_dms_nom_stats_xml to push data into t_dataset_nom_stats
 **
 *****************************************************/
 DECLARE
@@ -134,6 +135,15 @@ BEGIN
         RAISE INFO '%', _infoMessage;
 
         RETURN;
+    End If;
+
+    If Exists (SELECT dataset_id FROM cap.t_dataset_nom_stats_xml WHERE dataset_id = _datasetID) Then
+        -- Call update_dms_nom_stats_xml to push data into public.t_dataset_nom_stats
+        CALL cap.update_dms_nom_stats_xml (
+                    _datasetID,
+                    _deleteFromTableOnSuccess => true,
+                    _message                  => _message,      -- Output
+                    _returnCode               => _returnCode);  -- Output
     End If;
 
     If Exists (SELECT dataset_id FROM cap.t_dataset_info_xml WHERE dataset_id = _datasetID) Then
