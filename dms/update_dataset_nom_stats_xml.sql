@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_nom_stats_xml(IN _datasetid in
 /****************************************************
 **
 **  Desc:
-**      Update the natural organic stats metrics in table T_Dataset_NOM_Stats for the dataset specified by _datasetID
+**      Update the natural organic stats metrics in table t_dataset_nom_stats for the dataset specified by _datasetID
 **
 **      If _datasetID is 0, will use the dataset name defined in _nomStatsXML
 **      If _datasetID is non-zero, will validate that the Dataset Name in the XML corresponds to the dataset ID specified by _datasetID
@@ -495,10 +495,4 @@ $$;
 
 
 ALTER PROCEDURE public.update_dataset_nom_stats_xml(IN _datasetid integer, IN _nomstatsxml xml, INOUT _message text, INOUT _returncode text, IN _infoonly boolean) OWNER TO d3l243;
-
---
--- Name: PROCEDURE update_dataset_nom_stats_xml(IN _datasetid integer, IN _nomstatsxml xml, INOUT _message text, INOUT _returncode text, IN _infoonly boolean); Type: COMMENT; Schema: public; Owner: d3l243
---
-
-COMMENT ON PROCEDURE public.update_dataset_nom_stats_xml(IN _datasetid integer, IN _nomstatsxml xml, INOUT _message text, INOUT _returncode text, IN _infoonly boolean) IS 'UpdateDatasetFileInfoXML';
 
