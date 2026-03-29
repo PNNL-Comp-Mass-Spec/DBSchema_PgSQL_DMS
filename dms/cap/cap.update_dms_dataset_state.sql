@@ -32,6 +32,7 @@ CREATE OR REPLACE PROCEDURE cap.update_dms_dataset_state(IN _job integer, IN _da
 **          08/17/2021 mem - Remove extra information from Completion messages with warning "Over 10% of the MS/MS spectra have a minimum m/z value larger than the required minimum; reporter ion peaks likely could not be detected"
 **          06/17/2023 mem - Ported to PostgreSQL
 **          09/08/2023 mem - Adjust capitalization of keywords
+**          03/28/2026 mem - Add call to cap.update_dms_nom_stats_xml
 **
 *****************************************************/
 DECLARE
@@ -58,11 +59,19 @@ BEGIN
         If _newJobStateInBroker = 3 Then
             ---------------------------------------------------
             -- Capture task job succeeded
-            --
-            -- Call update_dms_file_info_xml to push the dataset info into public.t_dataset_info
-            -- If a duplicate dataset is found, _returnCode will be 'U5360'
             ---------------------------------------------------
 
+            If Exists (SELECT dataset_id FROM cap.t_dataset_nom_stats_xml WHERE dataset_id = _datasetID) Then
+                -- Call update_dms_nom_stats_xml to push data into public.t_dataset_nom_stats
+                CALL cap.update_dms_nom_stats_xml (
+                            _datasetID,
+                            _deleteFromTableOnSuccess => true,
+                            _message                  => _message,      -- Output
+                            _returnCode               => _returnCode);  -- Output
+            End If;
+
+            -- Call update_dms_file_info_xml to push the dataset info into public.t_dataset_info
+            -- If a duplicate dataset is found, _returnCode will be 'U5360'
             CALL cap.update_dms_file_info_xml (
                         _datasetID,
                         _deleteFromTableOnSuccess => true,
@@ -90,7 +99,6 @@ BEGIN
                                 _message        => _message,        -- Output
                                 _returnCode     => _returnCode,     -- Output
                                 _failureMessage => '');
-
             End If;
         End If;
 

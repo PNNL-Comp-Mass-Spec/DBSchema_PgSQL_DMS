@@ -64,7 +64,7 @@ BEGIN
     End If;
 
     If _infoOnly Then
-        RAISE INFO 'Call public.update_dataset_file_info_xml for DatasetID %', _datasetID;
+        RAISE INFO 'Call public.update_dataset_file_info_xml for Dataset ID %', _datasetID;
     End If;
 
     -- Note that procedure public.update_dataset_file_info_xml will set _returnCode to 'U5360'

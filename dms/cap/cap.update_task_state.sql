@@ -64,6 +64,7 @@ CREATE OR REPLACE PROCEDURE cap.update_task_state(IN _bypassdms boolean DEFAULT 
 **          11/04/2023 mem - When _infoOnly is true, update Finish_New for capture task jobs with state 15 (Skipped)
 **                         - Replace While loop with a For loop
 **          08/27/2024 mem - Change default value for _loopingUpdateInterval to 10 seconds (previously 5 seconds)
+**          03/28/2026 mem - Add comments regarding update_dms_nom_stats_xml and t_dataset_nom_stats
 **
 *****************************************************/
 DECLARE
@@ -375,12 +376,14 @@ BEGIN
 
         ---------------------------------------------------
         -- Make changes to public.t_dataset and/or public.t_dataset_archive if we are enabled to do so
-        -- Procedure update_dms_dataset_state will also call cap.update_dms_file_info_xml to push the data into public.t_dataset_info
+        --
+        -- Procedure cap.update_dms_dataset_state will also call cap.update_dms_file_info_xml to push data into public.t_dataset_info
         -- If a duplicate dataset is found, update_dms_dataset_state will change this capture task job's state to 14 in t_tasks
+        --
+        -- The procedure also calls cap.update_dms_nom_stats_xml to push data into public.t_dataset_nom_stats
         ---------------------------------------------------
 
         If Not _bypassDMS And _jobInfo.Dataset_ID <> 0 Then
-
             If _infoOnly Then
                 RAISE INFO 'Call update_dms_dataset_state Job=%, NewJobState=%', _jobInfo.Job, _jobInfo.NewState;
             Else
@@ -400,7 +403,6 @@ BEGIN
                     CALL public.post_log_entry ('Error', _message, 'Update_Task_State', 'cap');
                 End If;
             End If;
-
         End If;
 
         -- Deprecated in June 2023 since update_dms_prep_state only applies to script 'HPLCSequenceCapture', which was never implemented
@@ -427,7 +429,6 @@ BEGIN
         ---------------------------------------------------
 
         If _jobInfo.NewState In (3, 5) Then
-
             If _infoOnly Then
                 RAISE INFO 'Call copy_task_to_history     Job=%, NewState=%', _jobInfo.Job, _jobInfo.NewState;
             Else
@@ -458,7 +459,6 @@ BEGIN
             -- Break out of the for loop
             EXIT;
         End If;
-
     END LOOP;
 
     If _infoOnly Then

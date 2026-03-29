@@ -39,6 +39,7 @@ CREATE OR REPLACE PROCEDURE cap.update_missed_dms_file_info(IN _deletefromtableo
 **          10/02/2023 mem - Do not include comma delimiter when calling parse_delimited_integer_list for a comma-separated list
 **          01/15/2025 mem - Set _logErrorsToPublicLogTable to false when logging errors
 **          03/31/2025 mem - Show an update summary message
+**          03/28/2026 mem - Also call cap.update_dms_nom_stats_xml
 **
 *****************************************************/
 DECLARE
@@ -121,7 +122,6 @@ BEGIN
               NOT EXISTS (SELECT DS.Dataset_ID
                           FROM public.t_dataset DS
                           WHERE DS.Dataset_ID = cap.t_dataset_info_xml.Dataset_ID);
-
     End If;
 
     --------------------------------------------
@@ -182,7 +182,7 @@ BEGIN
             End If;
 
             If Coalesce(_message, '') = '' Then
-                _logMsg := format('update_dms_file_info_xml returned error code %s for DatasetID %s', _returnCode, _datasetID);
+                _logMsg := format('update_dms_file_info_xml returned error code %s for Dataset ID %s', _returnCode, _datasetID);
             Else
                 _logMsg := format('update_dms_file_info_xml error: %s', _message);
             End If;
@@ -192,6 +192,16 @@ BEGIN
             Else
                 CALL public.post_log_entry (_logMsgType, _logMsg, 'Update_Missed_DMS_File_Info', 'cap', _duplicateEntryHoldoffHours => 22, _logErrorsToPublicLogTable => false);
             End If;
+        End If;
+
+        If Exists (SELECT dataset_id FROM cap.t_dataset_nom_stats_xml WHERE dataset_id = _datasetID) Then
+            -- Call update_dms_nom_stats_xml to push data into public.t_dataset_nom_stats
+            CALL cap.update_dms_nom_stats_xml (
+                        _datasetID,
+                        _deleteFromTableOnSuccess => true,
+                        _message    => _message,        -- Output
+                        _returnCode => _returnCode,     -- Output
+                        _infoOnly   => _infoOnly);
         End If;
 
         _datasetsProcessed := _datasetsProcessed + 1;
