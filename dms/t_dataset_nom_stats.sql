@@ -27,7 +27,28 @@ CREATE TABLE public.t_dataset_nom_stats (
     chloride_cluster_peak_percent real,
     chloride_cluster_intensity_sum real,
     chloride_cluster_intensity_percent real,
-    last_affected timestamp without time zone NOT NULL
+    last_affected timestamp without time zone NOT NULL,
+    nom_annotation_job integer,
+    calibration_points integer,
+    calibration_raw_error_median real,
+    calibration_raw_error_stdev real,
+    calibration_rms real,
+    total_features integer,
+    annotated_features integer,
+    percent_features_annotated real,
+    total_intensity real,
+    annotated_intensity real,
+    percent_intensity_annotated real,
+    assigned_mz_error_rms_ppm real,
+    signed_mean_ppm_error real,
+    mean_ppm_error real,
+    median_ppm_error real,
+    weighted_oc real,
+    weighted_hc real,
+    weighted_nosc real,
+    weighted_aimod real,
+    descriptor_feature_count integer,
+    descriptor_intensity_fraction_percent real
 );
 
 
