@@ -122,6 +122,7 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 108	Create weekly dataset service center report	05 00 * * 6	1	0	t	f	f	\N	\N
 109	Update PNNL projects from warehouse	12 6 * * *	1	0	t	f	f	\N	\N
 110	Remove skipped capture tasks from cap.t_tasks (and related tables) if at least 3 weeks old	39 4 * * 7	1	0	t	f	f	\N	\N
+111	Cache NOM stats instruments	43 1/4 * * *	1	0	t	f	f	\N	\N
 \.
 
 
@@ -129,7 +130,7 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 -- Name: chain_chain_id_seq; Type: SEQUENCE SET; Schema: timetable; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('timetable.chain_chain_id_seq', 110, true);
+SELECT pg_catalog.setval('timetable.chain_chain_id_seq', 111, true);
 
 
 --
