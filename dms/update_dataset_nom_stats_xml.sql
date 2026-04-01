@@ -53,6 +53,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_nom_stats_xml(IN _datasetid in
 **
 **  Auth:   mem
 **  Date:   03/26/2026 mem - Initial version
+**          03/31/2026 mem - Convert NaN values to null
 **
 *****************************************************/
 DECLARE
@@ -249,6 +250,26 @@ BEGIN
 
         UPDATE Tmp_NOM_Stats
         SET Dataset_ID = _datasetID;
+
+        ---------------------------------------------------
+        -- Replace NaN ratio values with Null
+        ---------------------------------------------------
+
+        UPDATE Tmp_NOM_Stats
+        SET Organic_to_Inorganic_Count_Ratio = Null
+        WHERE Organic_to_Inorganic_Count_Ratio = 'NaN'::real;
+
+        UPDATE Tmp_NOM_Stats
+        SET Organic_to_Inorganic_Intensity_Ratio = Null
+        WHERE Organic_to_Inorganic_Intensity_Ratio = 'NaN'::real;
+
+        UPDATE Tmp_NOM_Stats
+        SET C13_to_Cl37_Pair_Ratio = Null
+        WHERE C13_to_Cl37_Pair_Ratio = 'NaN'::real;
+
+        UPDATE Tmp_NOM_Stats
+        SET C13_to_Cl37_Pair_Intensity_Ratio = Null
+        WHERE C13_to_Cl37_Pair_Intensity_Ratio = 'NaN'::real;
 
         If _infoOnly Then
             -----------------------------------------------
