@@ -2,7 +2,7 @@
 -- Name: add_job(text, timetable.cron, text, jsonb, timetable.command_kind, text, integer, boolean, boolean, boolean, boolean, text, boolean); Type: FUNCTION; Schema: timetable; Owner: d3l243
 --
 
-CREATE OR REPLACE FUNCTION timetable.add_job(job_name text, job_schedule timetable.cron, job_command text, job_parameters jsonb DEFAULT NULL::jsonb, job_kind timetable.command_kind DEFAULT 'SQL'::timetable.command_kind, job_client_name text DEFAULT NULL::text, job_max_instances integer DEFAULT NULL::integer, job_live boolean DEFAULT true, job_self_destruct boolean DEFAULT false, job_ignore_errors boolean DEFAULT false, job_exclusive boolean DEFAULT false, job_on_error text DEFAULT NULL::text, _infoonly boolean DEFAULT false) RETURNS bigint
+CREATE OR REPLACE FUNCTION timetable.add_job(job_name text, job_schedule timetable.cron, job_command text, job_parameters jsonb DEFAULT NULL::jsonb, job_kind timetable.command_kind DEFAULT 'SQL'::timetable.command_kind, job_client_name text DEFAULT NULL::text, job_max_instances integer DEFAULT 1, job_live boolean DEFAULT true, job_self_destruct boolean DEFAULT false, job_ignore_errors boolean DEFAULT false, job_exclusive boolean DEFAULT false, job_on_error text DEFAULT NULL::text, _infoonly boolean DEFAULT false) RETURNS bigint
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -61,6 +61,7 @@ CREATE OR REPLACE FUNCTION timetable.add_job(job_name text, job_schedule timetab
 **
 **  Auth:   mem
 **  Date:   03/18/2024 mem - Initial release
+**          03/31/2026 mem - Set the default value for job_max_instances to 1 instead of Null
 **
 *****************************************************/
 DECLARE
@@ -81,7 +82,7 @@ BEGIN
     WITH
         cte_chain (v_chain_id) AS (
             INSERT INTO timetable.chain (chain_name, run_at, max_instances, live, self_destruct, client_name, exclusive_execution, on_error)
-            VALUES (job_name, job_schedule,job_max_instances, job_live, job_self_destruct, job_client_name, job_exclusive, job_on_error)
+            VALUES (job_name, job_schedule, job_max_instances, job_live, job_self_destruct, job_client_name, job_exclusive, job_on_error)
             RETURNING chain_id
         ),
         cte_task(v_task_id) AS (
