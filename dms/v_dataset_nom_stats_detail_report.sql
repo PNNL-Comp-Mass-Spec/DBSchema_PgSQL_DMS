@@ -10,7 +10,7 @@ CREATE VIEW public.v_dataset_nom_stats_detail_report AS
     ds.dataset,
     drn.dataset_rating,
     ds.dataset_rating_id,
-    ('nom/instrument/'::text || (instname.instrument)::text) AS nom_stats,
+    ('nom_stats/instrument/'::text || (instname.instrument)::text) AS nom_stats,
     nomstats.mz_ion_count,
     public.number_to_string((nomstats.mz_median)::double precision, 3) AS mz_median,
     public.number_to_string((nomstats.mz_skew)::double precision, 3) AS mz_skew,
