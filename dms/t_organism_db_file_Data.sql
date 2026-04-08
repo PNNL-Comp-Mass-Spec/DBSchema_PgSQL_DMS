@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.6
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 18.3
+-- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -2692,6 +2692,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 6379	EMSL_51065_LW2_2017_192505_TrypPigBov_2020-07-15.fasta	1681	Lara Audrey Hug <laura.audrey.hug@gmail.com> University of Waterloo\r\n; 4747 duplicates collapsed	1	3019210	516295324	1	742480	2020-07-17 19:19:00	f
 6380	EMSL_51065_LW3_2017_Ga0378408_TrypPigBov_2020-07-16.fasta	1681	Lara Audrey Hug <laura.audrey.hug@gmail.com> University of Waterloo\r\n; 14328 duplicates collapsed	1	9735241	1329040442	1	2.076949e+06	2020-07-17 19:20:00	f
 6381	EMSL_51065_LW4_2017_192502_TrypPigBov_2020-07-15.fasta	1681	Lara Audrey Hug <laura.audrey.hug@gmail.com> University of Waterloo\r\n; 3924duplicates collapsed	1	3916220	620468932	1	908190	2020-07-17 19:21:00	f
+9382	EMSL_60905_Combined_FASTA_Kwame_v2_2025-09-12.fasta	31	From Yuqian Gao	1	248674	77391942	1	99348	2026-03-12 21:26:46.052085	f
 8773	EMSL_60964_Ellenbogen_MAGs_TrypPigBov_2024-12-12.fasta	1849	Prodigal-produced protein translation from dereplicated genes annotated in metagenome assemblies provided by Jared Ellenbogen (Jared.Ellenbogen@colostate.edu)	1	6831406	2095452990	1	3.32288e+06	2024-12-11 21:15:27.235591	f
 8997	EMSL_60964_Ellenbogen_MAGs_TrypPigBov_2024-12-12_25x_01.fasta	1849	Auto-created	0	273473	83817892	1	132970	2024-12-31 11:01:05.670709	f
 8998	EMSL_60964_Ellenbogen_MAGs_TrypPigBov_2024-12-12_25x_02.fasta	1849	Auto-created	0	273031	83817966	1	132921	2024-12-31 11:01:05.692034	f
@@ -2741,6 +2742,17 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 9132	EMSL_60979_Ziels_Marine_Waters_MAGs_TrypPigBov_2025-05-30_5x_3.fasta	1859	Auto-created	0	166903	50959387	1	62935	2025-06-03 10:23:21.822335	f
 9133	EMSL_60979_Ziels_Marine_Waters_MAGs_TrypPigBov_2025-05-30_5x_4.fasta	1859	Auto-created	0	167303	50959449	1	62961	2025-06-03 10:23:21.826843	f
 9134	EMSL_60979_Ziels_Marine_Waters_MAGs_TrypPigBov_2025-05-30_5x_5.fasta	1859	Auto-created	0	166602	50959113	1	62913	2025-06-03 10:23:21.831447	f
+9371	EMSL_61286_Hallam_ORFsParentSamples_TrypPigBov_2026-03-11.fasta	1895	sample matched metagenomes from Hallam Lab, provided by Juan Camilo <juancamilo.santanamartinez@ubc.ca>	1	3208538	871724098	1	1.531031e+06	2026-03-11 13:08:06.264029	f
+9372	EMSL_61286_Hallam_ORFsParentSamples_TrypPigBov_2026-03-11_10x_01.fasta	1895	Auto-created	0	321284	87172172	1	149603	2026-03-11 13:53:04.784546	f
+9373	EMSL_61286_Hallam_ORFsParentSamples_TrypPigBov_2026-03-11_10x_02.fasta	1895	Auto-created	0	321181	87172553	1	149566	2026-03-11 13:53:04.801461	f
+9374	EMSL_61286_Hallam_ORFsParentSamples_TrypPigBov_2026-03-11_10x_03.fasta	1895	Auto-created	0	320624	87172169	1	149532	2026-03-11 13:53:04.806544	f
+9375	EMSL_61286_Hallam_ORFsParentSamples_TrypPigBov_2026-03-11_10x_04.fasta	1895	Auto-created	0	321181	87171959	1	149611	2026-03-11 13:53:04.811672	f
+9376	EMSL_61286_Hallam_ORFsParentSamples_TrypPigBov_2026-03-11_10x_05.fasta	1895	Auto-created	0	320395	87172826	1	149467	2026-03-11 13:53:04.816182	f
+9377	EMSL_61286_Hallam_ORFsParentSamples_TrypPigBov_2026-03-11_10x_06.fasta	1895	Auto-created	0	320084	87172341	1	149302	2026-03-11 13:53:04.820918	f
+9378	EMSL_61286_Hallam_ORFsParentSamples_TrypPigBov_2026-03-11_10x_07.fasta	1895	Auto-created	0	321212	87172585	1	149574	2026-03-11 13:53:04.825927	f
+9379	EMSL_61286_Hallam_ORFsParentSamples_TrypPigBov_2026-03-11_10x_08.fasta	1895	Auto-created	0	320770	87171972	1	149456	2026-03-11 13:53:04.831165	f
+9380	EMSL_61286_Hallam_ORFsParentSamples_TrypPigBov_2026-03-11_10x_09.fasta	1895	Auto-created	0	320679	87172729	1	149444	2026-03-11 13:53:04.83612	f
+9381	EMSL_61286_Hallam_ORFsParentSamples_TrypPigBov_2026-03-11_10x_10.fasta	1895	Auto-created	0	321128	87172792	1	149592	2026-03-11 13:53:04.841686	f
 7732	EUP_60009_Metagenomes_ABBY_Ga0586920_TrypPigBov_2023-06-21.fasta	1788	Metagenome ABBY_070-M-17.5-2-20190702-ga2, sequenced at JGI, provided by Thea Whitman (twhitman@wisc.edu) on FICUS EUP # 60009	1	5614914	979873724	1	1.976302e+06	2023-06-27 12:19:00	f
 7929	EUP_60009_Metagenomes_ABBY_Ga0586920_TrypPigBov_2023-06-21_15x_01.fasta	1788	Auto-created	0	374890	65324637	1	131808	2023-10-19 09:55:00	f
 7930	EUP_60009_Metagenomes_ABBY_Ga0586920_TrypPigBov_2023-06-21_15x_02.fasta	1788	Auto-created	0	374543	65324804	1	131742	2023-10-19 09:55:00	f
@@ -9045,7 +9057,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 -- Name: t_organism_db_file_org_db_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9370, true);
+SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9382, true);
 
 
 --

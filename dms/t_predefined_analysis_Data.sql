@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.6
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 18.3
+-- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -532,7 +532,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 1525	5	50	LTQ_FT									%GlcNAc%								0	0	MASIC_Finnigan	MASIC_OGlcNAc_Fragments_10ppm_0.01DaReporter_2013-11-17.xml	na	1051	na	na	na	2		1	\N	2013-11-18 12:08:08	D3L243	6	1	0	2013-11-18 12:08:08
 1526	89	30	LTQ_FT			phospho_methods		HCC-38_pSTY												0	0	MSGFPlus	MSGFPlus_Tryp_DynSTYPhos_Stat_CysAlk_20ppmParTol.txt	IonTrapDefSettings_DeconMSN_Centroid_Top500.xml	8	na	H_sapiens_UniProt_SPROT_2013-09-18,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		0	Disabled in June 2019 since no datasets in 3 years	2014-01-08 11:16:44	D3L243	90	1	0	2023-05-17 13:37:06
 1527	90	30	LTQ_FT			phospho_methods		MCF-7_pSTY												0	0	MSGFPlus	MSGFPlus_Tryp_DynSTYPhos_Stat_CysAlk_20ppmParTol.txt	IonTrapDefSettings_DeconMSN_Centroid_Top500.xml	8	na	H_sapiens_UniProt_SPROT_2013-09-18,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		0	Superseded by 1574, 1595, and 1604	2014-01-08 11:16:51	D3L243	91	1	0	2023-05-17 13:37:06
-1528	98	15	LTQ_FT			phospho_methods		HCC-38_pSTY						%MSn		DIA%				0	0	SMAQC_MSMS	SMAQC_2014-01-08.xml	na	8	na	na	na	2	SourceJob:Auto{Tool = "MSGFPlus" AND (Settings_File Like "IonTrapDefSettings_DeconMSN%.xml" OR Settings_File Like "IonTrapDefSettings_MSConvert%.xml") AND Param_File = "MSGFPlus_Tryp_DynSTYPhos_Stat_CysAlk_20ppmParTol.txt"}, Job2:Auto{Tool = "MASIC_Finnigan"}	1	Corresponds to MSGFPlus predefine 1526; disabled in June 2019 since no datasets in 3 years	2014-01-08 20:14:34	D3L243	99	1	0	2023-12-09 08:04:56
+1528	98	15	LTQ_FT			phospho_methods		HCC-38_pSTY						%MSn		DIA%				0	0	SMAQC_MSMS	SMAQC_2014-01-08.xml	na	8	na	na	na	2	SourceJob:Auto{Tool = "MSGFPlus" AND (Settings_File Like "IonTrapDefSettings_DeconMSN%.xml" OR Settings_File Like "IonTrapDefSettings_MSConvert%.xml") AND Param_File = "MSGFPlus_Tryp_DynSTYPhos_Stat_CysAlk_20ppmParTol.txt"}, Job2:Auto{Tool = "MASIC_Finnigan"}	0	Corresponds to MSGFPlus predefine 1526; disabled in June 2019 since no datasets in 3 years	2014-01-08 20:14:34	D3L243	99	1	0	2026-03-04 16:26:50.347541
 1529	98	15	LTQ_FT			phospho_methods		MCF-7_pSTY						%MSn						0	0	SMAQC_MSMS	SMAQC_2014-01-08.xml	na	8	na	na	na	2	SourceJob:Auto{Tool = "MSGFPlus" AND (Settings_File Like "IonTrapDefSettings_DeconMSN%.xml" OR Settings_File Like "IonTrapDefSettings_MSConvert%.xml") AND Param_File = "MSGFPlus_Tryp_DynSTYPhos_Stat_CysAlk_20ppmParTol.txt"}, Job2:Auto{Tool = "MASIC_Finnigan"}	0	Corresponds to MSGFPlus predefine 1527; disabled 29-Sep-2016 because Phosphopeptide stats are now generated for every MSGF+ analysis job	2014-01-08 20:14:44	D3L243	99	1	0	2016-09-29 14:19:41
 1530	30	10	LTQ_FT			QC-Shew-Standard		%Intact%												0	0	MSAlign	MSAlign_15ppm_0pt01_FDR_2012-01-03.txt	MSAlign_Standard.xml	4	na	Shewanella_oneidensis_MR1_2010-04-22	seq_direction=forward,filetype=fasta	1		0	\N	2014-01-15 12:09:16	D3L243	31	0	0	2014-10-23 14:39:22
 1531	30	11	LTQ_FT			QC-Standard		%Intact%												0	0	MSAlign	MSAlign_15ppm_0pt01_FDR_2012-01-03.txt	MSAlign_Standard.xml	16	na	Intact_proteinMix_2014-01-15	seq_direction=forward,filetype=fasta	1		0	\N	2014-01-15 17:18:37	D3L243	31	0	0	2014-10-23 14:39:14
@@ -582,7 +582,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 1576	91	41	LTQ_FT	QExact%		MPMP Breast Cancer		MPMP[_]TMT[_]W%					Oct14%	%HCD%						0	0	MSGFPlus_DTARefinery	MSGFPlus_PartTryp_DynMetOx_Stat_CysAlk_TMT_6Plex_20ppmParTol.txt	IonTrapDefSettings_MSConvert_DTARef_StatCysAlk_TMT6plex.xml	8	na	H_sapiens_UniProt_SPROT_2013-09-18,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	2		0	\N	2015-06-29 16:39:10	D3L243	92	1	0	2023-05-17 13:37:07
 1577	91	35	LTQ_FT	QExact%		MPMP Breast Cancer		MPMP[_]TMT[_]pSTY%						%HCD%						0	0	MSGFPlus_DTARefinery	MSGFPlus_PartTryp_DynSTYPhos_Stat_CysAlk_TMT_6Plex_Protocol1_20ppmParTol.txt	IonTrapDefSettings_MSConvert_DTARef_StatCysAlk_TMT6plex_phospho.xml	8	na	H_sapiens_UniProt_SPROT_2013-09-18,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	3		0	\N	2015-06-29 16:44:46	D3L243	92	1	0	2024-07-22 20:09:29
 1578	31	31	LTQ_FT			EMSL_47802_Freitag														0	0	MSPathFinder	MSPF_MetOx_STYPhos_LysMethDiMethTriMeth_NTermAcet_CysTriOx_SingleInternalCleavage_10ppm.txt	MSPF_TopDown_Standard.xml	38	na	Fusarium_graminearum_histone_only_2015-02-18	seq_direction=forward,filetype=fasta	1		1	Supersedes predefine 1559	2015-07-31 11:44:47	D3L243	32	0	0	2015-07-31 11:44:47
-1579	105	10	LTQ_FT			TEDDY Project								%MSn			iTRAQ8			0	0	QC-ART	TEDDY_ITraq_Set1-Set10_2015-11-12.xml	na	8	na	na	na	2	SourceJob:Auto{Tool = "SMAQC_MSMS"}, Job2:Auto{Tool = "MASIC_Finnigan"}	1	\N	2015-11-02 16:30:11	D3L243	106	0	0	2017-09-12 12:23:47
+1579	105	10	LTQ_FT		SLIM%	TEDDY Project								%MSn			iTRAQ8			0	0	QC-ART	TEDDY_ITraq_Set1-Set10_2015-11-12.xml	na	8	na	na	na	2	SourceJob:Auto{Tool = "SMAQC_MSMS"}, Job2:Auto{Tool = "MASIC_Finnigan"}	0	Disabled in 2026 since no datasets in 8 years	2015-11-02 16:30:11	D3L243	106	0	0	2026-03-05 17:43:05.378395
 1580	90	56	LTQ_FT	QExact%		CPTAC		CPTAC[_]OvCaCells[_]TMT%						%HCD%						0	0	MSGFPlus_DTARefinery	MSGFPlus_PartTryp_DynMetOx_Stat_CysAlk_TMT_6Plex_20ppmParTol.txt	IonTrapDefSettings_MSConvert_DTARef_StatCysAlk_TMT6plex.xml	8	na	H_sapiens_NCBI_2011-09-07_Build37_Trypsin,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	2		0	Retired 2017-10-04	2015-11-23 14:43:22	D3L243	92	0	0	2017-10-04 16:18:29
 1581	90	57	LTQ_FT	QExact%		CPTAC		CPTAC[_]OvC%						%HCD%				TMT%		0	0	MSGFPlus_DTARefinery	MSGFPlus_PartTryp_MetOx_StatCysAlk_20ppmParTol.txt	IonTrapDefSettings_MSConvert_DTARef_StatCysAlk.xml	8	na	H_sapiens_NCBI_2011-09-07_Build37_Trypsin,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	2		0	Retired 2017-10-04	2015-11-23 14:44:14	D3L243	92	0	0	2017-10-04 16:18:29
 1582	5	7	LTQ_FT	QExactP02				FSFA-metabolomics												0	0	MASIC_Finnigan	FrackingAmine20160217_LTQ-FT_10ppm_ReporterTol0.01Da_2016-02-18.xml	na	1051	na	na	na	2		1	FrackingFluid samples	2016-02-18 14:12:18	D3L243	6	1	0	2016-04-07 15:10:12
@@ -887,6 +887,10 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 1894	91	57	LTQ_FT	Exploris%		Alzheimer and Parkinson Diseases		Alz_Buch_SMA%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_Stat_CysAlk_TMT_16Plex_20ppmParTol.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_UniProt_SPROT_2023-09-01,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	3		1		2025-11-03 09:56:05.337131	D3L243	92	1	0	2025-11-03 09:56:05.337131
 1895	85	10	LTQ_FT	Astral%		Cancer Moonshot - Framingham		MNST[_]F2[_]SEER%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_NTermAcet_Precursor380-980.txt	DiaNN_Standard.xml	8	na	H_sapiens_UniProt_SPROT_2025-09-30,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	2		1		2025-12-01 19:40:45.503326	D3L243	86	1	0	2025-12-01 19:40:45.503326
 1896	85	14	LTQ_FT	Ascend%				QC_Mam%					%QC_Shew%		DIA%					0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_Stat_CysAlk_Precursor374-949.txt	DiaNN_Standard.xml	24	na	M_musculus_UniProt_SPROT_2023-03-01,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		1	Changed trigger mode to "Before Disposition" in May 2024	2026-01-13 11:19:38.964821	D3L243	86	1	0	2026-01-13 11:26:51.02723
+1897	85	10	LTQ_FT	Astral%		Cancer Moonshot - Framingham		P8A[_]PNNL%SEER%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_NTermAcet_Precursor380-980.txt	DiaNN_Standard.xml	8	na	H_sapiens_UniProt_SPROT_2025-09-30,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	2		1	Similar to predefine 1895, but with a different experiment filter	2026-02-27 14:25:13.449653	D3L243	86	1	0	2026-03-04 16:41:26.363048
+1898	85	13	LTQ_FT	Exploris%		QC-Shew-Standard							%[_]DDA[_]%		%DIA-HCD-HMSn%					0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx.txt	DiaNN_Standard.xml	4	na	Shewanella_oneidensis_MR1_2010-04-22,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		1	Similar to predefine 1880, but for Exploris instruments	2026-03-04 17:00:18.893346	D3L243	86	1	0	2026-03-04 17:00:18.893346
+1899	85	13	LTQ_FT	Eclipse%		QC-Shew-Standard							%[_]DDA[_]%		%DIA-HCD-HMSn%					0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx.txt	DiaNN_Standard.xml	4	na	Shewanella_oneidensis_MR1_2010-04-22,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		1	Similar to predefine 1880, but for Eclipse instruments	2026-03-04 17:00:49.30888	D3L243	86	1	0	2026-03-04 17:00:49.30888
+1900	85	13	LTQ_FT	Lumos%		QC-Shew-Standard							%[_]DDA[_]%		%DIA-HCD-HMSn%					0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx.txt	DiaNN_Standard.xml	4	na	Shewanella_oneidensis_MR1_2010-04-22,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		1	Similar to predefine 1880, but for Lumos instruments	2026-03-04 17:01:30.218235	D3L243	86	1	0	2026-03-04 17:01:30.218235
 \.
 
 
@@ -894,7 +898,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 -- Name: t_predefined_analysis_predefine_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1896, true);
+SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1900, true);
 
 
 --

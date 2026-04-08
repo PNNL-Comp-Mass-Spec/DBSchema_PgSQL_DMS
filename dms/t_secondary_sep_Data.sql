@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.6
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 18.3
+-- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -76,6 +76,7 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 110	LC-Dionex-NanoPot_150min		1	LC-NanoPot_3hr	0	2018-10-19 20:56:42
 108	LC-Dionex-NanoPot_1hr		1	LC-NanoPot_1hr	0	2018-09-04 11:36:14
 118	LC-Dionex-NanoPot_2hr		1	LC-Formic_2hr	1	2020-10-09 11:17:38
+154	LC-Dionex-NanoPot_30min		1	LC-NanoPot_2hr	0	2026-03-24 15:20:52.669124
 38	LC-Eksigent-Formic	Eksigent nanoflow, formic acid	0	LC-Eksigent	1	2010-09-17 16:26:59
 66	LC-Eksigent-Formic_100min	Eksigent nanoflow, formic acid, 100 minute separation	0	LC-Eksigent	1	2012-01-17 08:49:39
 46	LC-Eksigent-Formic_10hr	Eksigent nanoflow, formic acid, 600 minute (10 hr) separation	0	LC-Eksigent	1	2012-11-27 14:48:59
@@ -157,9 +158,9 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 95	LC-Waters-GlcNAc	GlcNAc separations using a Waters LC pump	1	LC-GlcNAc	0	2015-11-15 11:10:50
 99	LC-Waters-HC-Lipids_35min	Waters constant flow,optimized for lipids, 35 minute separation	1	LC-Metabolomics_LipidSoluble	4	2016-08-30 09:26:58
 41	LC-Waters-IntactProtein_200min	Waters constant flow, 200 minute separation, high molecular weight analytes	1	LC-IntactProtein_200min	2	2010-11-30 09:25:31
-131	LC-Waters-Metabolomics-LipidSoluble	Waters system, mobile phase optimized for lipid soluble metabolites. Samples in 2:1 chloroform:methanol before drying down and analyzing, in 9:1 methanol:chloroform after drying down	1	LC-Metabolomics_LipidSoluble	4	2023-04-26 14:38:13
 43	LC-Waters-Metabolomics_LipidSoluble	Waters system, mobile phase optimized for lipid soluble metabolites	1	LC-Metabolomics_LipidSoluble	4	2011-01-12 11:16:13
 123	LC-Waters-Metabolomics_LipidSoluble_25MinGradient	Waters system, mobile phase optimized for lipid soluble metabolites	1	LC-Metabolomics_LipidSoluble	4	2022-10-24 20:26:29
+131	LC-Waters-Metabolomics_LipidSoluble_2to1_Chloroform_Methanol	Waters system, mobile phase optimized for lipid soluble metabolites. Samples in 2:1 chloroform:methanol before drying down and analyzing, in 9:1 methanol:chloroform after drying down	1	LC-Metabolomics_LipidSoluble	4	2023-04-26 14:38:13
 122	LC-Waters-Metabolomics_Sonnenburg	Waters system, gradient optimized for mammalian polar metabolites	1	LC-Metabolomics_Sonnenburg	4	2022-02-16 11:09:19
 42	LC-Waters-Metabolomics_WaterSoluble	Waters system, mobile phase optimized for water soluble metabolites	1	LC-Metabolomics_WaterSoluble	3	2013-01-21 08:58:06
 71	LC-Waters-NH4HCO2_100min	Waters constant flow, 10 mM ammonium bicarbonate, 100 minute separation	1	LC-Waters-NH4HCO2	0	2016-06-15 14:32:59
@@ -169,6 +170,7 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 57	LC-Waters_High_pH	Waters constant flow, high pH	1	LC-Waters_High_pH	1	2012-04-26 12:20:20
 76	LC-Waters_Neutral_pH_100min	Waters constant flow, neutral pH	1	LC-Waters_Neutral	1	2013-12-10 07:16:12
 152	LC-metabolomics_Hormones		1	LC-Metabolomics_Oxylipids	4	2026-01-21 19:21:00
+153	LC-metabolomics_Oxylipids		1	LC-metabolomics_Oxylipids	4	2026-03-06 15:21:13.796118
 64	Prep_HPLC	Prep HPLC separation; see associated Prep_LC_Run entry for column details	1	Other	0	2012-09-21 15:20:20
 24	RPLC_HILIC	Online 2D separation using RPLC then HILIC	0	LC-2D-HILIC	0	2010-01-01 10:12:29
 111	RapidFire-SPE	RapidFire device	1	RapidFire-SPE	0	2018-09-14 20:03:24
