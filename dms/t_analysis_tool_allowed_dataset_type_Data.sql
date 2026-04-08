@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 18.3
+-- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -1495,6 +1495,9 @@ COPY public.t_analysis_tool_allowed_dataset_type (analysis_tool_id, dataset_type
 93	MS-ETD-MSn	
 93	MS-MSn	
 94	IMS-HMS-HMSn	
+95	HMS	
+95	HMS-HMSn	
+95	MALDI-HMS	
 \.
 
 

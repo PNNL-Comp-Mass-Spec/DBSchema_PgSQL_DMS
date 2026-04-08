@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.6
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 18.3
+-- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -32,12 +32,12 @@ COPY public.t_analysis_tool (analysis_tool_id, analysis_tool, tool_base_name, pa
 18	Decon2LS_Agilent	Decon2LS	1010	\\\\gigasax\\DMS_Parameter_Files\\Decon2LS	G:\\DMS_Parameter_Files\\Decon2LS	??	HMMA_Peak	yes	0	(na)	0	N	Old 32-bit DeconTools written in C++	0	0	1
 27	Decon2LS_V2	Decon2LS	1010	\\\\gigasax\\DMS_Parameter_Files\\Decon2LS	G:\\DMS_Parameter_Files\\Decon2LS	??	HMMA_Peak	yes	1	(na)	0	N	Extract deconvolved MS1 scan information	0	0	1
 61	Decon2LS_V2_MzXML	Decon2LS	1010	\\\\gigasax\\DMS_Parameter_Files\\Decon2LS	G:\\DMS_Parameter_Files\\Decon2LS	??	HMMA_Peak	yes	1	(na)	0	N	\N	0	1	1
-92	DiaNN	DiaNN	1035	\\\\gigasax\\DMS_Parameter_Files\\DiaNN	G:\\DMS_Parameter_Files\\DiaNN	DiaNN_Standard.xml	DNN_Peptide_Hit	no	1	\N	1	N	\N	0	1	1
-94	DiaNN_timsTOF	DiaNN	1035	\\\\gigasax\\DMS_Parameter_Files\\DiaNN	G:\\DMS_Parameter_Files\\DiaNN	DiaNN_Standard.xml	DNN_Peptide_Hit	no	1	\N	1	N	\N	0	1	1
+92	DiaNN	DiaNN	1035	\\\\gigasax\\DMS_Parameter_Files\\DiaNN	G:\\DMS_Parameter_Files\\DiaNN	DiaNN_Standard.xml	DNN_Peptide_Hit	no	1	\N	1	Y	\N	0	1	1
+94	DiaNN_timsTOF	DiaNN	1035	\\\\gigasax\\DMS_Parameter_Files\\DiaNN	G:\\DMS_Parameter_Files\\DiaNN	DiaNN_Standard.xml	DNN_Peptide_Hit	no	1	\N	1	Y	\N	0	1	1
 81	Formularity_Bruker	Formularity	1030	\\\\gigasax\\DMS_Parameter_Files\\Formularity	G:\\DMS_Parameter_Files\\Formularity	Formularity_DefSettings.xml	FRM_Search	no	0	(na)	0	N	\N	0	1	1
 87	Formularity_Bruker_Decon	Formularity	1030	\\\\gigasax\\DMS_Parameter_Files\\Formularity	G:\\DMS_Parameter_Files\\Formularity	Formularity_DefSettings.xml	FRM_Search	no	1	\N	0	N	\N	0	1	1
 85	Formularity_Thermo	Formularity	1030	\\\\gigasax\\DMS_Parameter_Files\\Formularity	G:\\DMS_Parameter_Files\\Formularity	Formularity_DefSettings.xml	FRM_Search	no	1	(na)	0	N	\N	0	1	1
-93	FragPipe	FragPipe	1036	\\\\gigasax\\DMS_Parameter_Files\\FragPipe	G:\\DMS_Parameter_Files\\FragPipe	??	MSF_Peptide_Hit	no	1	mzML	1	N	\N	0	1	1
+93	FragPipe	FragPipe	1036	\\\\gigasax\\DMS_Parameter_Files\\FragPipe	G:\\DMS_Parameter_Files\\FragPipe	??	MSF_Peptide_Hit	no	1	mzML	1	Y	\N	0	1	1
 57	Global_Label-Free_AMT_Tag	Broker_Job	1	(na)	(na)	(na)	\N	no	0	(na)	0	N	\N	0	0	0
 66	GlyQ-IQ	GlyQ-IQ	1024	\\\\gigasax\\DMS_Parameter_Files\\GlyQ-IQ	G:\\DMS_Parameter_Files\\GlyQ-IQ	GlyQIQ_HPC.xml	Gly_ID	no	0	(na)	0	N	\N	0	1	1
 2	ICR2LS	ICR2LS	1003	\\\\gigasax\\DMS_Parameter_Files\\ICR2LS	G:\\DMS_Parameter_Files\\ICR2LS	FTICRDefSettings.txt	HMMA_Peak	yes	0	(na)	0	N	\N	0	1	1
@@ -66,7 +66,7 @@ COPY public.t_analysis_tool (analysis_tool_id, analysis_tool, tool_base_name, pa
 59	MSAlign_Histone	MSAlign_Histone	1022	\\\\gigasax\\DMS_Parameter_Files\\MSAlign_Histone	G:\\DMS_Parameter_Files\\MSAlign_Histone	??	MSA_Peptide_Hit	no	0	mzXML	1	N	\N	0	1	1
 23	MSClusterDAT_Gen	MSClusterDAT_Gen	1	\\\\gigasax\\DMS_Parameter_Files\\MSClusterDAT_Gen	G:\\DMS_Parameter_Files\\MSClusterDAT_Gen	MSClusterDAT_ExtractMSn.xml	MSClusterDAT	no	0	(na)	0	N	\N	0	1	0
 47	MSDeconv_Bruker	MSDeconv	1019	\\\\gigasax\\DMS_Parameter_Files\\MSAlign	G:\\DMS_Parameter_Files\\MSAlign	??	MSD_HMMA_Peak	no	0	mzXML	0	N	\N	0	1	0
-88	MSFragger	MSFragger	1033	\\\\gigasax\\DMS_Parameter_Files\\MSFragger	G:\\DMS_Parameter_Files\\MSFragger	??	MSF_Peptide_Hit	no	0	mzML	1	N	\N	0	1	1
+88	MSFragger	MSFragger	1033	\\\\gigasax\\DMS_Parameter_Files\\MSFragger	G:\\DMS_Parameter_Files\\MSFragger	??	MSF_Peptide_Hit	no	0	mzML	1	Y	\N	0	1	1
 36	MSGFPlus	MSGFPlus	1018	\\\\gigasax\\DMS_Parameter_Files\\MSGFPlus	G:\\DMS_Parameter_Files\\MSGFPlus	IonTrapDefSettings.xml	MSG_Peptide_Hit	no	0	Concat_DTA	1	Y	Search MS/MS spectra with MS-GF+	0	1	1
 48	MSGFPlus_Bruker	MSGFPlus	1018	\\\\gigasax\\DMS_Parameter_Files\\MSGFPlus	G:\\DMS_Parameter_Files\\MSGFPlus	MSGFPlus_MzXML_Bruker.xml	MSG_Peptide_Hit	no	0	mzXML	1	Y	\N	0	1	1
 37	MSGFPlus_DTARefinery	MSGFPlus_DTARefinery	1018	\\\\gigasax\\DMS_Parameter_Files\\MSGFPlus	G:\\DMS_Parameter_Files\\MSGFPlus	IonTrapDefSettings_DeconMSN_DTARef_NoMods.xml	MSG_Peptide_Hit	no	0	Concat_DTA	1	Y	Use DTA_Refinery to refine the parent ion masses, then search MS/MS spectra with MS-GF+. Allows you to post-filter the search results with a tight ppm mass error tolerance.	0	1	1
@@ -88,6 +88,7 @@ COPY public.t_analysis_tool (analysis_tool_id, analysis_tool, tool_base_name, pa
 44	MultiAlign_Aggregator	Broker_Job	1	(na)	(na)	(na)	\N	no	0	(na)	0	N	\N	0	0	0
 72	NOMSI	NOMSI	1027	\\\\gigasax\\DMS_Parameter_Files\\NOMSI	G:\\DMS_Parameter_Files\\NOMSI	NOMSI_Malak_Transformations.xml	NOM_Search	no	1	(na)	0	N	\N	0	1	1
 77	NOMSI_MzXML	NOMSI	1027	\\\\gigasax\\DMS_Parameter_Files\\NOMSI	G:\\DMS_Parameter_Files\\NOMSI	NOMSI_Malak_Transformations.xml	NOM_Search	no	1	(na)	0	N	\N	0	1	1
+95	NOM_Annotation	NOM_Annotation	1037	\\\\gigasax\\DMS_Parameter_Files\\NOM_Annotation	G:\\DMS_Parameter_Files\\NOM_Annotation	na	NOM	no	1	(na)	0	N	\N	0	0	1
 28	OMSSA	OMSSA	1016	\\\\gigasax\\DMS_Parameter_Files\\OMSSA	G:\\DMS_Parameter_Files\\OMSSA	OMSSA_IonTrapDefSettings.xml	OM_Peptide_Hit	no	0	Concat_DTA	1	Y	\N	0	1	1
 76	PBF_Gen	PBF_Gen	1	(na)	(na)	(na)	\N	no	1	(na)	0	N	\N	0	1	0
 55	PRIDE_Converter	Broker_Job	1	(na)	(na)	(na)	\N	no	0	(na)	0	N	\N	0	0	0
@@ -101,7 +102,7 @@ COPY public.t_analysis_tool (analysis_tool_id, analysis_tool, tool_base_name, pa
 75	QC-ART	QC-ART	1029	\\\\gigasax\\DMS_Parameter_Files\\QC-ART	G:\\DMS_Parameter_Files\\QC-ART	??	QCA	no	1	(na)	0	N	QC of iTRAQ datasets using SMAQC results	1	0	1
 7	QTOFPek	QTOFPek	1001	\\\\gigasax\\DMS_Parameter_Files\\QTOFPek	G:\\DMS_Parameter_Files\\QTOFPek	QTOFPekDefSettings.txt	HMMA_Peak	yes	0	(na)	0	N	\N	0	1	1
 6	QTOFSequest	Sequest	1000	\\\\gigasax\\DMS_Parameter_Files\\Sequest	G:\\DMS_Parameter_Files\\Sequest	LCQDefSettings.txt	Peptide_Hit	yes	0	(na)	1	Y	\N	0	1	1
-41	SMAQC_MSMS	SMAQC	1020	\\\\gigasax\\DMS_Parameter_Files\\SMAQC	G:\\DMS_Parameter_Files\\SMAQC	??	SQC	no	1	(na)	0	N	Quality metrics analysis	1	0	1
+41	SMAQC_MSMS	SMAQC	1020	\\\\gigasax\\DMS_Parameter_Files\\SMAQC	G:\\DMS_Parameter_Files\\SMAQC	na	SQC	no	1	(na)	0	N	Quality metrics analysis	1	0	1
 1	Sequest	Sequest	1000	\\\\gigasax\\DMS_Parameter_Files\\Sequest	G:\\DMS_Parameter_Files\\Sequest	LCQDefSettings.txt	Peptide_Hit	no	0	Individual_DTA	1	Y	Search MS/MS spectra with Sequest	0	1	1
 29	Sequest_DTARefinery	Sequest_DTARefinery	1000	\\\\gigasax\\DMS_Parameter_Files\\Sequest	G:\\DMS_Parameter_Files\\Sequest	FinniganDefSettings_DeconMSN_DTARef_NoMods.xml	Peptide_Hit	no	0	Individual_DTA	1	Y	Use DTA_Refinery to refine the parent ion masses, then search MS/MS spectra with Sequest.  Allows you to post-filter the search results with a tight ppm mass error tolerance.	0	1	1
 25	Sequest_UseExistingExternalDTA	Sequest	1000	\\\\gigasax\\DMS_Parameter_Files\\Sequest	G:\\DMS_Parameter_Files\\Sequest	LCQDefSettings.txt	Peptide_Hit	no	0	Individual_DTA	1	Y	\N	0	1	1

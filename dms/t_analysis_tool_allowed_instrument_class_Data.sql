@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 18.3
+-- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -250,6 +250,7 @@ COPY public.t_analysis_tool_allowed_instrument_class (analysis_tool_id, instrume
 93	Finnigan_Ion_Trap	
 93	LTQ_FT	
 94	BrukerTOF_TDF	
+95	BrukerFT_BAF	
 \.
 
 

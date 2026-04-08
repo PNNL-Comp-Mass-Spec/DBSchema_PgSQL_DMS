@@ -891,6 +891,11 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 1898	85	13	LTQ_FT	Exploris%		QC-Shew-Standard							%[_]DDA[_]%		%DIA-HCD-HMSn%					0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx.txt	DiaNN_Standard.xml	4	na	Shewanella_oneidensis_MR1_2010-04-22,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		1	Similar to predefine 1880, but for Exploris instruments	2026-03-04 17:00:18.893346	D3L243	86	1	0	2026-03-04 17:00:18.893346
 1899	85	13	LTQ_FT	Eclipse%		QC-Shew-Standard							%[_]DDA[_]%		%DIA-HCD-HMSn%					0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx.txt	DiaNN_Standard.xml	4	na	Shewanella_oneidensis_MR1_2010-04-22,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		1	Similar to predefine 1880, but for Eclipse instruments	2026-03-04 17:00:49.30888	D3L243	86	1	0	2026-03-04 17:00:49.30888
 1900	85	13	LTQ_FT	Lumos%		QC-Shew-Standard							%[_]DDA[_]%		%DIA-HCD-HMSn%					0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx.txt	DiaNN_Standard.xml	4	na	Shewanella_oneidensis_MR1_2010-04-22,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	1		1	Similar to predefine 1880, but for Lumos instruments	2026-03-04 17:01:30.218235	D3L243	86	1	0	2026-03-04 17:01:30.218235
+1901	89	57	LTQ_FT	Eclipse%		HCMI_Organoid		%HCMI[_]Organoid[_]W[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_PartTryp_DynMetOx_Stat_CysAlk_TMT_16Plex_20ppmParTol.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2026-04-06 16:45:28.611343	D3L243	90	1	0	2026-04-06 16:45:28.611343
+1902	89	57	LTQ_FT	Eclipse%		HCMI_Organoid		%HCMI[_]Organoid[_]U[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynMetOx_TMTExclusive_K_Ubiq_Stat_CysAlk_TMT_16Plex_20ppmParTol_PlusOne_IsotopeError.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2026-04-06 16:45:52.601485	D3L243	90	1	0	2026-04-06 16:45:52.601485
+1903	89	57	LTQ_FT	Eclipse%		HCMI_Organoid		%HCMI[_]Organoid[_]P[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynSTYPhos_Stat_CysAlk_TMT_16Plex_Protocol1_20ppmParTol.txt	MzML_StatCysAlk_S_Phospho_Dyn_TY_Phospho_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2026-04-06 16:46:20.486963	D3L243	90	1	0	2026-04-06 16:46:20.486963
+1904	89	57	LTQ_FT	Eclipse%		HCMI_Organoid		%HCMI[_]Organoid[_]A[_]%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_DynMetOx_TMTExclusive_K_Acetyl_K_Carbamyl_N_Deamid_Stat_CysAlk_TMT_16Plex_20ppmParTol_PlusOne_IsotopeError.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01	seq_direction=forward,filetype=fasta	3		1		2026-04-06 16:46:42.591715	D3L243	90	1	0	2026-04-06 16:47:20.482
+1905	15	2	BrukerFT_BAF	SciMax01																0	0	NOM_Annotation	NOM_Annotation_Ref_Mass_Hawkes_neg.params	na	16	na	na	na	3		1		2026-04-06 20:58:16.171824	D3L243	16	1	0	2026-04-06 20:58:16.171824
 \.
 
 
@@ -898,7 +903,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 -- Name: t_predefined_analysis_predefine_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1900, true);
+SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1905, true);
 
 
 --

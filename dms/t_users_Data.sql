@@ -21,7 +21,13 @@ SET row_security = off;
 -- Data for Name: t_users; Type: TABLE DATA; Schema: public; Owner: d3l243
 --
 -- User list has been filtered to only include service accounts or placeholder users, as identified by this query
---   SELECT *
+--   SELECT user_id, username, name, hid, status,
+--          Coalesce(email, '\N') as email,
+--          Coalesce(domain, '\N') as domain,
+--          Coalesce(payroll, '\N') as payroll,
+--          active, update, created,
+--          Coalesce(comment, '\N') as comment,
+--          last_affected
 --   FROM t_users
 --   WHERE Trim(Coalesce(email, '')) = '' AND NOT Status IN ('Inactive', 'Obsolete') OR hid LIKE 'H0909%'
 --   ORDER BY user_id;

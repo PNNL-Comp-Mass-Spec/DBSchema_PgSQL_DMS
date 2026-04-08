@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 18.3
+-- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -48,6 +48,7 @@ COPY public.t_param_file_types (param_file_type_id, param_file_type, primary_too
 1034	MaxQuant	91
 1017	MultiAlign	35
 1027	NOMSI	72
+1037	NOM_Annotation	95
 1016	OMSSA	28
 1026	ProMex	70
 1029	QC-ART	75
