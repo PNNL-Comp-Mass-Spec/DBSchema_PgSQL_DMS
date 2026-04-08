@@ -33,8 +33,8 @@ COPY public.t_users (user_id, username, name, hid, status, email, domain, payrol
 2281	MSDADMIN	MSDADMIN	H0000000	Active	\N	\N	\N	Y	N	2009-01-01 00:00:00.000		\N
 2321	MTSProc	MTSProcessor	MTSProc	Active	\N	PNL	\N	Y	N	2009-09-30 11:20:07.000		2009-09-30 11:20:07.000
 2337	svc-dms	DMS service account	H0000000	Active	\N	\N	\N	Y	N	2010-02-05 12:26:03.000		2010-02-05 12:26:03.000
-3628	pgdms	PostgresAutoUser	H09090912	Inactive		\N	\N	Y	N	2024-08-07 12:43:32.110438		2024-08-07 12:43:32.110438
-3675	eustrim	EMSL EUS TRIM Connector	H0000000	Active		\N	\N	Y	N	2026-01-13 10:13:45.561288	Service account managed by Nathan Tenney and used by L7 to access DMS	2026-01-13 10:13:45.561288
+3628	pgdms	PostgresAutoUser	H09090912	Inactive		\N	\N	Y	N	2024-08-07 12:43:32.110		2024-08-07 12:43:32.110
+3675	eustrim	EMSL EUS TRIM Connector	H0000000	Active		\N	\N	Y	N	2026-01-13 10:13:45.561	Service account managed by Nathan Tenney and used by L7 to access DMS	2026-01-13 10:13:45.561
 \.
 
 
