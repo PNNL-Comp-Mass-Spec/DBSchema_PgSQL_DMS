@@ -1,8 +1,8 @@
 --
--- Name: update_dataset_nom_stats_xml(integer, xml, text, text, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: update_dataset_nom_stats_xml(integer, xml, integer, text, text, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.update_dataset_nom_stats_xml(IN _datasetid integer DEFAULT 0, IN _nomstatsxml xml DEFAULT NULL::xml, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false)
+CREATE OR REPLACE PROCEDURE public.update_dataset_nom_stats_xml(IN _datasetid integer DEFAULT 0, IN _nomstatsxml xml DEFAULT NULL::xml, IN _nomannotationjob integer DEFAULT 0, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -47,6 +47,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_nom_stats_xml(IN _datasetid in
 **  Arguments:
 **    _datasetID            If this value is 0, determines the dataset name using the contents of _nomStatsXML
 **    _nomStatsXML          XML describing the natural organic matter metrics for a single dataset
+**    _nomAnnotationJob     NOM Annotation analysis job number
 **    _message              Status message
 **    _returnCode           Return code
 **    _infoOnly             When true, preview updates
@@ -54,6 +55,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_nom_stats_xml(IN _datasetid in
 **  Auth:   mem
 **  Date:   03/26/2026 mem - Initial version
 **          03/31/2026 mem - Convert NaN values to null
+**          04/06/2026 mem - Add NOM annotation metrics
 **
 *****************************************************/
 DECLARE
@@ -176,7 +178,27 @@ BEGIN
             Chloride_Cluster_Peak_Count           int NULL,
             Chloride_Cluster_Peak_Percent         numeric NULL,
             Chloride_Cluster_Intensity_Sum        numeric NULL,
-            Chloride_Cluster_Intensity_Percent    numeric NULL
+            Chloride_Cluster_Intensity_Percent    numeric NULL,
+            Calibration_Points                    int NULL,
+            Calibration_Raw_Error_Median          numeric NULL,
+            Calibration_Raw_Error_Stdev           numeric NULL,
+            Calibration_RMS                       numeric NULL,
+            Total_Features                        int NULL,
+            Annotated_Features                    int NULL,
+            Percent_Features_Annotated            numeric NULL,
+            Total_Intensity                       numeric NULL,
+            Annotated_Intensity                   numeric NULL,
+            Percent_Intensity_Annotated           numeric NULL,
+            Assigned_Mz_Error_RMS_PPM             numeric NULL,
+            Signed_Mean_PPM_Error                 numeric NULL,
+            Mean_PPM_Error                        numeric NULL,
+            Median_PPM_Error                      numeric NULL,
+            Weighted_OC                           numeric NULL,
+            Weighted_HC                           numeric NULL,
+            Weighted_NOSC                         numeric NULL,
+            Weighted_Aimod                        numeric NULL,
+            Descriptor_Feature_Count              int NULL,
+            Descriptor_Intensity_Fraction_Percent numeric NULL
         );
 
         ---------------------------------------------------
@@ -216,7 +238,27 @@ BEGIN
             Chloride_Cluster_Peak_Count,
             Chloride_Cluster_Peak_Percent,
             Chloride_Cluster_Intensity_Sum,
-            Chloride_Cluster_Intensity_Percent
+            Chloride_Cluster_Intensity_Percent,
+            Calibration_Points,
+            Calibration_Raw_Error_Median,
+            Calibration_Raw_Error_Stdev,
+            Calibration_RMS,
+            Total_Features,
+            Annotated_Features,
+            Percent_Features_Annotated,
+            Total_Intensity,
+            Annotated_Intensity,
+            Percent_Intensity_Annotated,
+            Assigned_Mz_Error_RMS_PPM,
+            Signed_Mean_PPM_Error,
+            Mean_PPM_Error,
+            Median_PPM_Error,
+            Weighted_OC,
+            Weighted_HC,
+            Weighted_NOSC,
+            Weighted_Aimod,
+            Descriptor_Feature_Count,
+            Descriptor_Intensity_Fraction_Percent
         )
         SELECT _datasetID AS DatasetID,
                _datasetName AS Dataset,
@@ -242,7 +284,27 @@ BEGIN
                public.try_cast((xpath('//NOMStats/metrics/intrinsic_chloride_cluster_peak_count/text()',          _nomStatsXML))[1]::text, 0)          AS Chloride_Cluster_Peak_Count,
                public.try_cast((xpath('//NOMStats/metrics/intrinsic_chloride_cluster_peak_percent/text()',        _nomStatsXML))[1]::text, 0::numeric) AS Chloride_Cluster_Peak_Percent,
                public.try_cast((xpath('//NOMStats/metrics/intrinsic_chloride_cluster_intensity_sum/text()',       _nomStatsXML))[1]::text, 0::numeric) AS Chloride_Cluster_Intensity_Sum,
-               public.try_cast((xpath('//NOMStats/metrics/intrinsic_chloride_cluster_intensity_percent/text()',   _nomStatsXML))[1]::text, 0::numeric) AS Chloride_Cluster_Intensity_Percent;
+               public.try_cast((xpath('//NOMStats/metrics/intrinsic_chloride_cluster_intensity_percent/text()',   _nomStatsXML))[1]::text, 0::numeric) AS Chloride_Cluster_Intensity_Percent,
+               public.try_cast((xpath('//NOMStats/metrics/calibration_point_count/text()',                        _nomStatsXML))[1]::text, 0)          AS Calibration_Points,
+               public.try_cast((xpath('//NOMStats/metrics/calibration_raw_error_median_ppm/text()',               _nomStatsXML))[1]::text, 0::numeric) AS Calibration_Raw_Error_Median,
+               public.try_cast((xpath('//NOMStats/metrics/calibration_raw_error_std_ppm/text()',                  _nomStatsXML))[1]::text, 0::numeric) AS Calibration_Raw_Error_Stdev,
+               public.try_cast((xpath('//NOMStats/metrics/calibration_fit_rms_ppm/text()',                        _nomStatsXML))[1]::text, 0::numeric) AS Calibration_RMS,
+               public.try_cast((xpath('//NOMStats/metrics/annotation_feature_total_count/text()',                 _nomStatsXML))[1]::text, 0)          AS Total_Features,
+               public.try_cast((xpath('//NOMStats/metrics/annotation_feature_assigned_count/text()',              _nomStatsXML))[1]::text, 0)          AS Annotated_Features,
+               public.try_cast((xpath('//NOMStats/metrics/annotation_feature_assigned_percent/text()',            _nomStatsXML))[1]::text, 0::numeric) AS Percent_Features_Annotated,
+               public.try_cast((xpath('//NOMStats/metrics/annotation_intensity_total_sum/text()',                 _nomStatsXML))[1]::text, 0::numeric) AS Total_Intensity,
+               public.try_cast((xpath('//NOMStats/metrics/annotation_intensity_assigned_sum/text()',              _nomStatsXML))[1]::text, 0::numeric) AS Annotated_Intensity,
+               public.try_cast((xpath('//NOMStats/metrics/annotation_intensity_assigned_percent/text()',          _nomStatsXML))[1]::text, 0::numeric) AS Percent_Intensity_Annotated,
+               public.try_cast((xpath('//NOMStats/metrics/annotation_mz_error_abs_rms_ppm/text()',                _nomStatsXML))[1]::text, 0::numeric) AS Assigned_Mz_Error_RMS_PPM,
+               public.try_cast((xpath('//NOMStats/metrics/annotation_mz_error_signed_mean_ppm/text()',            _nomStatsXML))[1]::text, 0::numeric) AS Signed_Mean_PPM_Error,
+               public.try_cast((xpath('//NOMStats/metrics/annotation_mz_error_abs_mean_ppm/text()',               _nomStatsXML))[1]::text, 0::numeric) AS Mean_PPM_Error,
+               public.try_cast((xpath('//NOMStats/metrics/annotation_mz_error_abs_median_ppm/text()',             _nomStatsXML))[1]::text, 0::numeric) AS Median_PPM_Error,
+               public.try_cast((xpath('//NOMStats/metrics/annotation_weighted_oc_ratio/text()',                   _nomStatsXML))[1]::text, 0::numeric) AS Weighted_Oc,
+               public.try_cast((xpath('//NOMStats/metrics/annotation_weighted_hc_ratio/text()',                   _nomStatsXML))[1]::text, 0::numeric) AS Weighted_Hc,
+               public.try_cast((xpath('//NOMStats/metrics/annotation_weighted_nosc/text()',                       _nomStatsXML))[1]::text, 0::numeric) AS Weighted_Nosc,
+               public.try_cast((xpath('//NOMStats/metrics/annotation_weighted_ai_mod/text()',                     _nomStatsXML))[1]::text, 0::numeric) AS Weighted_Aimod,
+               public.try_cast((xpath('//NOMStats/metrics/annotation_non_isotopologue_feature_count/text()',              _nomStatsXML))[1]::text, 0)          AS Descriptor_Feature_Count,
+               public.try_cast((xpath('//NOMStats/metrics/annotation_non_isotopologue_intensity_fraction_percent/text()', _nomStatsXML))[1]::text, 0::numeric) AS Descriptor_Intensity_Fraction_Percent;
 
         ---------------------------------------------------
         -- Make sure Dataset_ID is up-to-date in Tmp_NOM_Stats
@@ -393,15 +455,22 @@ BEGIN
         _currentLocation := 'Update t_dataset_nom_stats using a merge';
 
         MERGE INTO t_dataset_nom_stats AS target
-        USING (SELECT dataset_id, mz_ion_count, mz_median, mz_skew, mz_kurtosis,
-                      organic_count, organic_intensity_sum,
-                      inorganic_count, inorganic_intensity_sum,
-                      organic_to_inorganic_count_ratio, organic_to_inorganic_intensity_ratio,
-                      c13_pair_count, c13_pair_intensity_sum, cl37_pair_count, cl37_pair_intensity_sum,
-                      c13_to_cl37_pair_ratio, c13_to_cl37_pair_intensity_ratio,
-                      chloride_cluster_count, chloride_cluster_max_length, chloride_cluster_mean_length,
-                      chloride_cluster_peak_count, chloride_cluster_peak_percent,
-                      chloride_cluster_intensity_sum, chloride_cluster_intensity_percent
+        USING (SELECT Dataset_ID, Dataset_Name, MZ_Ion_Count, MZ_Median, MZ_Skew, MZ_Kurtosis,
+                      Organic_Count, Organic_Intensity_Sum,
+                      Inorganic_Count, Inorganic_Intensity_Sum,
+                      Organic_to_Inorganic_Count_Ratio, Organic_to_Inorganic_Intensity_Ratio,
+                      C13_Pair_Count, C13_Pair_Intensity_Sum,
+                      Cl37_Pair_Count, Cl37_Pair_Intensity_Sum,
+                      C13_to_Cl37_Pair_Ratio, C13_to_Cl37_Pair_Intensity_Ratio,
+                      Chloride_Cluster_Count, Chloride_Cluster_Max_Length, Chloride_Cluster_Mean_Length,
+                      Chloride_Cluster_Peak_Count, Chloride_Cluster_Peak_Percent, Chloride_Cluster_Intensity_Sum, Chloride_Cluster_Intensity_Percent,
+                      _nomAnnotationJob AS NOM_Annotation_Job,
+                      Calibration_Points, Calibration_Raw_Error_Median, Calibration_Raw_Error_Stdev, Calibration_RMS,
+                      Total_Features, Annotated_Features, Percent_Features_Annotated,
+                      Total_Intensity, Annotated_Intensity, Percent_Intensity_Annotated,
+                      Assigned_Mz_Error_RMS_PPM, Signed_Mean_PPM_Error, Mean_PPM_Error, Median_PPM_Error,
+                      Weighted_OC, Weighted_HC, Weighted_NOSC, Weighted_Aimod,
+                      Descriptor_Feature_Count, Descriptor_Intensity_Fraction_Percent
                FROM Tmp_NOM_Stats
               ) AS Source
         ON (target.dataset_id = Source.dataset_id)
@@ -430,6 +499,27 @@ BEGIN
                 chloride_cluster_peak_percent         = Source.chloride_cluster_peak_percent,
                 chloride_cluster_intensity_sum        = Source.chloride_cluster_intensity_sum,
                 chloride_cluster_intensity_percent    = Source.chloride_cluster_intensity_percent,
+                nom_annotation_job                    = Coalesce(Source.nom_annotation_job, target.nom_annotation_job),
+                calibration_points                    = Coalesce(Source.calibration_points, target.calibration_points),
+                calibration_raw_error_median          = Coalesce(Source.calibration_raw_error_median, target.calibration_raw_error_median),
+                calibration_raw_error_stdev           = Coalesce(Source.calibration_raw_error_stdev, target.calibration_raw_error_stdev),
+                calibration_rms                       = Coalesce(Source.calibration_rms, target.calibration_rms),
+                total_features                        = Coalesce(Source.total_features, target.total_features),
+                annotated_features                    = Coalesce(Source.annotated_features, target.annotated_features),
+                percent_features_annotated            = Coalesce(Source.percent_features_annotated, target.percent_features_annotated),
+                total_intensity                       = Coalesce(Source.total_intensity, target.total_intensity),
+                annotated_intensity                   = Coalesce(Source.annotated_intensity, target.annotated_intensity),
+                percent_intensity_annotated           = Coalesce(Source.percent_intensity_annotated, target.percent_intensity_annotated),
+                assigned_mz_error_rms_ppm             = Coalesce(Source.assigned_mz_error_rms_ppm, target.assigned_mz_error_rms_ppm),
+                signed_mean_ppm_error                 = Coalesce(Source.signed_mean_ppm_error, target.signed_mean_ppm_error),
+                mean_ppm_error                        = Coalesce(Source.mean_ppm_error, target.mean_ppm_error),
+                median_ppm_error                      = Coalesce(Source.median_ppm_error, target.median_ppm_error),
+                weighted_oc                           = Coalesce(Source.weighted_oc, target.weighted_oc),
+                weighted_hc                           = Coalesce(Source.weighted_hc, target.weighted_hc),
+                weighted_nosc                         = Coalesce(Source.weighted_nosc, target.weighted_nosc),
+                weighted_aimod                        = Coalesce(Source.weighted_aimod, target.weighted_aimod),
+                descriptor_feature_count              = Coalesce(Source.descriptor_feature_count, target.descriptor_feature_count),
+                descriptor_intensity_fraction_percent = Coalesce(Source.descriptor_intensity_fraction_percent, target.descriptor_intensity_fraction_percent),
                 last_affected                         = CURRENT_TIMESTAMP
         WHEN NOT MATCHED THEN
             INSERT (dataset_id, mz_ion_count, mz_median, mz_skew, mz_kurtosis,
@@ -441,6 +531,13 @@ BEGIN
                     chloride_cluster_count, chloride_cluster_max_length, chloride_cluster_mean_length,
                     chloride_cluster_peak_count, chloride_cluster_peak_percent,
                     chloride_cluster_intensity_sum, chloride_cluster_intensity_percent,
+                    NOM_Annotation_Job,
+                    Calibration_Points, Calibration_Raw_Error_Median, Calibration_Raw_Error_Stdev, Calibration_RMS,
+                    Total_Features, Annotated_Features, Percent_Features_Annotated,
+                    Total_Intensity, Annotated_Intensity, Percent_Intensity_Annotated,
+                    Assigned_Mz_Error_RMS_PPM, Signed_Mean_PPM_Error, Mean_PPM_Error, Median_PPM_Error,
+                    Weighted_OC, Weighted_HC, Weighted_NOSC, Weighted_Aimod,
+                    Descriptor_Feature_Count, Descriptor_Intensity_Fraction_Percent,
                     last_affected)
             VALUES (Source.dataset_id,
                     Source.mz_ion_count,
@@ -466,6 +563,27 @@ BEGIN
                     Source.chloride_cluster_peak_percent,
                     Source.chloride_cluster_intensity_sum,
                     Source.chloride_cluster_intensity_percent,
+                    _nomAnnotationJob,
+                    Source.Calibration_Points,
+                    Source.Calibration_Raw_Error_Median,
+                    Source.Calibration_Raw_Error_Stdev,
+                    Source.Calibration_RMS,
+                    Source.Total_Features,
+                    Source.Annotated_Features,
+                    Source.Percent_Features_Annotated,
+                    Source.Total_Intensity,
+                    Source.Annotated_Intensity,
+                    Source.Percent_Intensity_Annotated,
+                    Source.Assigned_Mz_Error_RMS_PPM,
+                    Source.Signed_Mean_PPM_Error,
+                    Source.Mean_PPM_Error,
+                    Source.Median_PPM_Error,
+                    Source.Weighted_OC,
+                    Source.Weighted_HC,
+                    Source.Weighted_NOSC,
+                    Source.Weighted_Aimod,
+                    Source.Descriptor_Feature_Count,
+                    Source.Descriptor_Intensity_Fraction_Percent,
                     CURRENT_TIMESTAMP
                    );
 
@@ -515,5 +633,5 @@ END
 $$;
 
 
-ALTER PROCEDURE public.update_dataset_nom_stats_xml(IN _datasetid integer, IN _nomstatsxml xml, INOUT _message text, INOUT _returncode text, IN _infoonly boolean) OWNER TO d3l243;
+ALTER PROCEDURE public.update_dataset_nom_stats_xml(IN _datasetid integer, IN _nomstatsxml xml, IN _nomannotationjob integer, INOUT _message text, INOUT _returncode text, IN _infoonly boolean) OWNER TO d3l243;
 
