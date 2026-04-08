@@ -31,7 +31,8 @@ CREATE TABLE public.t_spectral_library (
     max_dynamic_mods smallint DEFAULT 0 NOT NULL,
     program_version public.citext DEFAULT ''::public.citext NOT NULL,
     settings_hash public.citext DEFAULT ''::text NOT NULL,
-    completion_code integer
+    completion_code integer,
+    semi_specific_cleavage boolean DEFAULT false NOT NULL
 );
 
 
