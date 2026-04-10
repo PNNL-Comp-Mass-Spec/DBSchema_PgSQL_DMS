@@ -16,6 +16,11 @@ CREATE OR REPLACE FUNCTION public.get_dataset_instrument_runtime(_startinterval 
 **     _instrument      Instrument name
 **     _options         'Show All', 'No Intervals', 'Intervals Only', or 'Long Intervals'
 **
+**  Example usage:
+**      SELECT *
+**      FROM public.get_dataset_instrument_runtime('2026-01-01', '2026-01-30', 'Ascend01', 'Show All') AS Src
+**      ORDER BY Src.Seq;
+**
 **  Auth:   grk
 **  Date:   05/26/2011 grk - Initial release
 **          12/02/2011 mem - Added several Campaign-related columns: Campaign_ID, Fraction_EMSL_Funded, and Campaign_Proposals

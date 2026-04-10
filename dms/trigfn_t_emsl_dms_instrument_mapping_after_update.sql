@@ -8,7 +8,7 @@ CREATE OR REPLACE FUNCTION public.trigfn_t_emsl_dms_instrument_mapping_after_upd
 /****************************************************
 **
 **  Desc:
-**      Updates last_affected in trigfn_t_emsl_dms_instrument_mapping
+**      Updates last_affected in t_emsl_dms_instrument_mapping
 **
 **  Auth:   mem
 **  Date:   02/02/2026 mem - Initial version
