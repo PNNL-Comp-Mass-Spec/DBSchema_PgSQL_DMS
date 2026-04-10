@@ -22,7 +22,7 @@ CREATE VIEW public.v_service_cost_rate_burdened_list_report AS
    FROM (((svc.t_service_cost_rate cr
      JOIN svc.t_service_type t ON ((t.service_type_id = cr.service_type_id)))
      JOIN svc.t_service_cost_group cg ON ((cg.cost_group_id = cr.cost_group_id)))
-     JOIN svc.t_service_cost_rate_burdened crb ON (((cg.cost_group_id = cr.cost_group_id) AND (t.service_type_id = crb.service_type_id))));
+     JOIN svc.t_service_cost_rate_burdened crb ON (((cg.cost_group_id = crb.cost_group_id) AND (t.service_type_id = crb.service_type_id))));
 
 
 ALTER VIEW public.v_service_cost_rate_burdened_list_report OWNER TO d3l243;
