@@ -130,6 +130,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid in
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          07/10/2025 mem - Call procedure update_dataset_service_type_if_required
 **          03/26/2026 mem - Pass _rootElement to get_dataset_details_from_dataset_info_xml
+**          05/13/2026 mem - When checking for duplicate dataset files, if at least one dataset has allow_duplicates = true, allow the duplicate dataset file
 **
 *****************************************************/
 DECLARE
@@ -508,8 +509,11 @@ BEGIN
 
             If Exists (SELECT Dataset_ID
                        FROM Tmp_Duplicate_Datasets
-                       WHERE MatchingFileCount >= _instrumentFileCount AND
-                             NOT Allow_Duplicates)
+                       WHERE MatchingFileCount >= _instrumentFileCount AND NOT Allow_Duplicates)
+               And Not Exists
+                      (SELECT Dataset_ID
+                       FROM Tmp_Duplicate_Datasets
+                       WHERE MatchingFileCount >= _instrumentFileCount AND Allow_Duplicates)
             Then
                 _currentLocation := 'Duplicate dataset found; determine duplicate dataset ID';
 
@@ -556,7 +560,6 @@ BEGIN
             End If;
 
             If Exists (SELECT Dataset_ID FROM Tmp_Duplicate_Datasets WHERE MatchingFileCount >= _instrumentFileCount AND Allow_Duplicates) Then
-
                 _currentLocation := 'Duplicate dataset found; log warning since Allow_Duplicates is true';
 
                 SELECT Dataset_ID
