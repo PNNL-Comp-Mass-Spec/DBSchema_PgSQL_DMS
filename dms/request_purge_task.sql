@@ -119,6 +119,7 @@ CREATE OR REPLACE PROCEDURE public.request_purge_task(IN _storageservername text
 **          02/01/2023 mem - Use new view names
 **          02/15/2024 mem - Ported to PostgreSQL
 **          08/07/2024 mem - Remove unnecessary commit
+**          05/14/2026 mem - Add semicolon to generated SQL purge view query
 **
 *****************************************************/
 DECLARE
@@ -340,7 +341,7 @@ BEGIN
 
         _sql := format('%s) LookupQ', _sql);
         _sql := format('%s WHERE RowNumVal <= %s', _sql, _previewCount);
-        _sql := format('%s ORDER BY storage_server_name, server_vol, archive_state_id, purge_priority, %s, dataset_id', _sql, _purgeInfo.OrderByCol);
+        _sql := format('%s ORDER BY storage_server_name, server_vol, archive_state_id, purge_priority, %s, dataset_id;', _sql, _purgeInfo.OrderByCol);
 
         If _previewSql Then
             RAISE INFO '%', _sql;
