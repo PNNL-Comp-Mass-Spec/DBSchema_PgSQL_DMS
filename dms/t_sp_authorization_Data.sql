@@ -29,7 +29,7 @@ COPY public.t_sp_authorization (entry_id, procedure_name, login_name, host_name,
 23	*	DMSWebUser	prismweb2_IPv6	2620:0:50f1:118::5fd	t
 26	*	DMSWebUser	prismweb2_IPv6_alt	2620:0:50f1:118::11fd	t
 3	*	DMSWebUser	prismweb3	130.20.225.91	t
-24	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::1199	t
+24	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::399	t
 29	*	DMSWebUser	prismweb3_IPv6_alt	fe80::7c6:db6c:c606:c286	t
 4	*	DMSWebUser	prismwebdev2	130.20.227.157	t
 27	*	DMSWebUser	proto-2	130.20.230.113	f

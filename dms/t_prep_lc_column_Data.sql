@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.6
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 18.3
+-- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -149,13 +149,13 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 1148	Human_Mars_14_100mm_14	Multi Affinity Removal Column	5188-6558	100818123A	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Active	D3M765	Metz Zika Project Use Only! Exp 03/30/2019	2017-04-25 09:46:47
 1149	Human_Mars_14_100mm_15	Multi Affinity Removal Column	5188-6558	100818123J	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Active	D3M765	Metz Zika Project Use Only! Exp 03/30/2019	2017-04-25 09:47:41
 1150	XBridge_017	Waters XBridge	186003943	01813620214603	Waters	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Retired	D3L365	CPTAC Column- See Marina/Tao before use	2017-04-28 10:52:15
-1151	ZORBAX_001	ZORBAX	custom	USDHP01054	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	CPTAC method development / other use - See Marina/Tao before use	2017-04-28 10:57:14
+1151	ZORBAX_001	ZORBAX	custom	USDHP01054	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Retired	D3L365	CPTAC method development / other use - See Marina/Tao before use	2017-04-28 10:57:14
 1152	XBridge_018	Waters XBridge	186003117	01823635612492	Waters	Silica	5 um	C18	4.6 mm	10 mm	250mm	Active	D3J704	Hixson Plant Column- See Kim before use (Passivated on 06/05/2017 by Erika Zink)	2017-06-05 11:02:51
 1153	XBridge_019	Waters XBridge	186003117	01793619533819	Waters	Silica	5 um	C18	4.6 mm	10 mm	250 mm	Active	D3K875	Carrie column. Please ask before using.	2017-06-08 09:13:43
 1154	Human_Mars_14_100mm_16	Multi Affinity Removal Column	5188-6558	100841828B	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Retired	D3M765	AH Project. See Jon Jacobs before using. Exp 04/30/2019	2017-07-28 06:06:57
 1155	Human_IgY14_LC5_05	Seppro IgY14 LC5	S4949-1EA	1002214038	Sigma	IgY	N/A	Ig antibodies	N/A	N/A	N/A	Active	D3M765	See Tao or Weijun before use! 6/30/17. Lot SLBP7519V	2017-08-24 10:52:41
 1156	ZORBAX_002	ZORBAX	custom	USDHP01071	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Retired	D3L365	CPTAC3 UCEC Use Only	2017-09-13 12:01:41
-1157	ZORBAX_003	ZORBAX	custom	USDHP01072	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	CPTAC3 GBM Use Only	2017-09-13 12:02:09
+1157	ZORBAX_003	ZORBAX	custom	USDHP01072	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Retired	D3L365	CPTAC3 GBM Use Only	2017-09-13 12:02:09
 1158	ZORBAX_004	ZORBAX	custom	USDHP01078	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Retired	D3L365	Exclusively for PTRC. POC-P. Piehowski; M. Gritsenko	2017-11-20 10:35:26
 1159	ZORBAX_005	ZORBAX	custom	USDHP01081	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	Exclusively for MoTrPAC - method development and tests. POC-P.Piehowski; M.Gritsenko	2017-12-22 15:27:27
 1160	Human_Mars_14_100mm_17	Multi Affinity Removal Column	5188-6558	100893492A	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Retired	D3L365	TB Project. See Jon Jacobs before using. Exp 12/30/2019	2018-02-16 09:32:06
@@ -174,7 +174,7 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 1173	Human_Mars_14_100mm_21	Multi Affinity Removal Column	5188-6558	101024510B	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Active	D3L365	BRAVE use only (POC - Marina Gritsenko). Exp 06/30/2021	2020-01-24 14:45:22
 1174	Human_Mars_14_100mm_22	Multi Affinity Removal Column	5188-6558	101098188E	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Active	D3M765	See Weijun Qian before using. Resin 0006428887. Exp 01/30/22	2020-07-13 15:11:26
 1175	Human_Mars_14_100mm_23	Multi Affinity Removal Column	5188-6558	101196117P	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Active	D3L365	AH (J. Jacobs). Exp 10/30/2022	2021-01-08 10:54:59
-1176	ZORBAX_008	ZORBAX	custom	USDHP01096	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	Exclusively for MoTrPAC - human study. POC-P.Piehowski; M.Gritsenko	2021-02-17 13:49:47
+1176	ZORBAX_008	ZORBAX	custom	USDHP01096	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Retired	D3L365	Exclusively for MoTrPAC - human study. POC-P.Piehowski; M.Gritsenko	2021-02-17 13:49:47
 1177	Human_Mars_14_100mm_24	Multi Affinity Removal Column	5188-6558	101230463E	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Active	D3L365	NAMRU use only (POC - Marina Gritsenko). Exp 01/30/2023	2021-03-15 15:43:31
 1178	ZORBAX_009	ZORBAX	custom	USDHP01044	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Retired	D3L365	For Clinical Projects; POC-Marina Gritsenko	2021-04-08 15:55:48
 1179	Human_Mars_14_50mm_08	Multi Affinity Removal Column	5188-6557	101254264G	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Active	D3M765	See Tao Liu before using., Exp 4/30/23, Resin 0006551525	2021-06-09 07:46:41
@@ -217,7 +217,7 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 1216	XBridge_023	Waters XBridge	186003117	02493405212488	Waters	Silica	5 um	C18	4.6 mm	10 mm	250 mm	Active	D3M765	Athena's new column. Please ask before using.	2024-09-03 12:45:18.569008
 1217	ZORBAX_015	ZORBAX	custom	USDHP01257	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	For Clinical Projects; POC-Marina Gritsenko	2025-01-29 16:30:27.389084
 1218	ZORBAX_016	ZORBAX	custom	USDHP01256	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	Alz Buchman project	2025-02-17 16:30:30.556229
-1219	ZORBAX_017	ZORBAX	custom	USDHP01278	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	CCDI Organoids work	2026-01-07 15:02:42.905146
+1219	ZORBAX_017	ZORBAX	custom	USDHP01278	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	MoTrPAC Human work	2026-01-07 15:02:42.905146
 \.
 
 
