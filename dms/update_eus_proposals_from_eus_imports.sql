@@ -29,6 +29,7 @@ CREATE OR REPLACE PROCEDURE public.update_eus_proposals_from_eus_imports(INOUT _
 **          05/24/2021 mem - Add new proposal types to T_EUS_Proposal_Type
 **          05/24/2022 mem - Avoid inserting duplicate proposals into T_EUS_Proposals by filtering on id_rank
 **          03/01/2024 mem - Ported to PostgreSQL
+**          07/08/2024 bcg - Added support for NULL in actual_end_date, and use of new estimated_end_date column
 **
 *****************************************************/
 DECLARE
@@ -66,9 +67,10 @@ BEGIN
                       title,
                       proposal_type_display AS Proposal_Type,
                       actual_start_date AS Proposal_Start_Date,
-                      actual_end_date AS Proposal_End_Date,
+                      Coalesce(actual_end_date, estimated_end_date) AS Proposal_End_Date,
                       CASE WHEN actual_start_date > CURRENT_TIMESTAMP THEN 1     -- Proposal start date is later than today; mark it active anyway
-                           WHEN CURRENT_TIMESTAMP BETWEEN Coalesce(actual_start_date, CURRENT_TIMESTAMP) AND actual_end_date + Interval '1 day' THEN 1
+                           WHEN actual_end_date IS NULL THEN 1                   -- Proposal end date is null, which means it has not yet closed (it's just estimated)
+                           WHEN CURRENT_TIMESTAMP BETWEEN Coalesce(actual_start_date, CURRENT_TIMESTAMP) AND Coalesce(actual_end_date, estimated_end_date) + Interval '1 day' THEN 1
                            ELSE 0
                       END AS Active
                FROM V_NEXUS_Import_Proposals

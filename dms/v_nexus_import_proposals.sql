@@ -8,6 +8,7 @@ CREATE VIEW public.v_nexus_import_proposals AS
     proposal_type,
     proposal_type_display,
     actual_start_date,
+    estimated_end_date,
     actual_end_date,
     project_uuid,
     row_number() OVER (PARTITION BY project_id ORDER BY actual_start_date DESC, actual_end_date DESC) AS id_rank

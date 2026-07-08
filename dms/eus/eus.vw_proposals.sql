@@ -8,6 +8,7 @@ CREATE FOREIGN TABLE eus.vw_proposals (
     proposal_type character varying(255),
     proposal_type_display character varying(255),
     actual_start_date date,
+    estimated_end_date date,
     actual_end_date date,
     project_uuid uuid
 )
@@ -30,6 +31,9 @@ ALTER FOREIGN TABLE ONLY eus.vw_proposals ALTER COLUMN proposal_type_display OPT
 );
 ALTER FOREIGN TABLE ONLY eus.vw_proposals ALTER COLUMN actual_start_date OPTIONS (
     column_name 'actual_start_date'
+);
+ALTER FOREIGN TABLE ONLY eus.vw_proposals ALTER COLUMN estimated_end_date OPTIONS (
+    column_name 'estimated_end_date'
 );
 ALTER FOREIGN TABLE ONLY eus.vw_proposals ALTER COLUMN actual_end_date OPTIONS (
     column_name 'actual_end_date'
