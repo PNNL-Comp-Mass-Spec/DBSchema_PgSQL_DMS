@@ -22,7 +22,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **    _comment                      Batch comment
 **    _batchGroupID                 Batch group ID
 **    _batchGroupOrder              Batch group order
-**    _mode                         Mode: 'add', 'update', or 'PreviewAdd'
+**    _mode                         Mode: 'add', 'update', 'PreviewAdd', or 'PreviewUpdate'
 **    _message                      Status message
 **    _returnCode                   Return code
 **    _raiseExceptions              When true, raise an exception if an error is encountered; when false, update _message and _returnCode
@@ -79,6 +79,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run_batch(INOUT _id inte
 **          02/14/2024 mem - Update case statement for error message
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          07/18/2026 mem - Add support for _mode = 'PreviewUpdate'
 **
 *****************************************************/
 DECLARE
@@ -155,7 +156,7 @@ BEGIN
 
         If _mode = '' Then
             RAISE EXCEPTION 'Empty string specified for parameter _mode';
-        ElsIf Not _mode IN ('add', 'update', 'check_add', 'check_update', Lower('PreviewAdd')) Then
+        ElsIf Not _mode IN ('add', 'update', 'check_add', 'check_update', Lower('PreviewAdd'), Lower('PreviewUpdate')) Then
             RAISE EXCEPTION 'Unsupported value for parameter _mode: %', _mode;
         End If;
 
@@ -358,6 +359,18 @@ BEGIN
             RETURN;
         End If;
 
+        If _mode::citext = 'PreviewUpdate' Then
+            SELECT COUNT(*)
+            INTO _countValid
+            FROM Tmp_RequestedRuns;
+
+            _message := format('Would update batch "%s" with %s requested runs', _name, _countValid);
+
+            DROP TABLE Tmp_RequestedRuns;
+            DROP TABLE Tmp_OldBatchIDs;
+            RETURN;
+        End If;
+
         ---------------------------------------------------
         -- Action for add mode
         ---------------------------------------------------
@@ -447,8 +460,7 @@ BEGIN
 
         If _mode In ('add', 'update') Then
             If _id > 0 Then
-                -- Remove any existing references to the batch
-                -- from requested runs
+                -- Remove any existing references to the batch from requested runs
 
                 UPDATE t_requested_run
                 SET batch_id = 0

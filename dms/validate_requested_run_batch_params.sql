@@ -21,7 +21,7 @@ CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batch
 **    _comment                      Batch comment (unused)
 **    _batchGroupID                 Input/Output: batch group ID
 **    _batchGroupOrder              Input/Output: batch group order
-**    _mode                         Mode: 'add' or 'update' or 'PreviewAdd'
+**    _mode                         Mode: 'add', 'update', 'PreviewAdd', or 'PreviewUpdate'
 **    _userID                       Output: user ID corresponding to the owner username
 **    _message                      Status message
 **    _returnCode                   Return code
@@ -45,6 +45,7 @@ CREATE OR REPLACE PROCEDURE public.validate_requested_run_batch_params(IN _batch
 **          01/03/2024 mem - Update warning messages
 **          01/17/2024 mem - Require that requested priority be Normal or High
 **          01/19/2024 mem - Remove _requestedInstrumentGroup and _instrumentGroupToUse since we no longer track instrument group at the batch level
+**          07/17/2026 mem - Add support for _mode = 'PreviewUpdate'
 **
 *****************************************************/
 DECLARE
@@ -118,7 +119,7 @@ BEGIN
 
         -- Cannot update a non-existent entry
 
-        If _mode = 'update' Then
+        If _mode In ('update', Lower('PreviewUpdate')) Then
             If Coalesce(_batchID, 0) = 0 Then
                 _message := 'Cannot update batch; ID must non-zero';
                 _returnCode := 'U5207';
