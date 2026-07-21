@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_runs(IN _experimentgroupid text
 /****************************************************
 **
 **  Desc:
-**      Add a group of entries to the requested run table
+**      Create a set of requested runs for the experiments in an experiment group or for a list of experiment names
 **
 **      Note: either specify an experiment group ID or provide a list of experiment names, but not both
 **
@@ -32,7 +32,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_runs(IN _experimentgroupid text
 **    _vialingConc                  Vialing concentration
 **    _vialingVol                   Vialing volume
 **    _stagingLocation              Staging location
-**    _batchName                    If defined, create a new batch for the newly created requested runs
+**    _batchName                    If defined, create a new batch for the newly created requested runs; if the batch already exists, add the requested runs to the batch provided it is not locked
 **    _batchDescription             Batch description
 **    _batchCompletionDate          Batch completion date
 **    _batchPriority                Batch priority
@@ -87,6 +87,7 @@ CREATE OR REPLACE PROCEDURE public.add_requested_runs(IN _experimentgroupid text
 **          11/27/2023 mem - Do not log errors from validate_requested_run_batch_params() if the return code starts with 'U52' (e.g., 'U5201')
 **          12/16/2023 mem - Ported to PostgreSQL
 **          01/22/2024 mem - Remove deprecated instrument group arguments when calling validate_requested_run_batch_params() and add_update_requested_run_batch()
+**          07/18/2026 mem - Allow adding new requested runs to an existing batch if the batch is not locked
 **
 *****************************************************/
 DECLARE
@@ -114,6 +115,10 @@ DECLARE
     _resolvedInstrumentInfo text;
     _resolvedInstrumentInfoCurrent text;
     _batchID int := 0;
+    _batchLocked citext;
+    _requestedRunBatchMode text;
+    _usingExistingBatch boolean := false;
+    _existingRequestedRuns text := '';
 
     _sqlState text;
     _exceptionMessage text;
@@ -289,11 +294,46 @@ BEGIN
 
         If _batchName <> '' Then
             ---------------------------------------------------
+            -- See if the batch already exists
+            ---------------------------------------------------
+
+            SELECT batch_id, locked
+            INTO _batchID, _batchLocked
+            FROM t_requested_run_batches
+            WHERE batch = _batchName::citext;
+
+            If FOUND Then
+                _usingExistingBatch := true;
+
+                If _batchLocked = 'Yes' Then
+                    _message := format('Cannot add new requested runs to batch %s since it is locked', _batchID);
+                    _returnCode := 'U5209';
+                    _logErrors := false;
+                    RAISE EXCEPTION '%', _message;
+                End If;
+
+                If _mode::citext = 'add' Then
+                    _requestedRunBatchMode := 'update';
+                Else
+                    _requestedRunBatchMode := 'PreviewUpdate';
+                End If;
+
+                SELECT Coalesce(string_agg(request_id::text, ', '), '')
+                INTO _existingRequestedRuns
+                FROM t_requested_run
+                WHERE batch_id = _batchID;
+            Else
+                _batchID := 0;
+                _batchLocked := 'No';
+                _requestedRunBatchMode := _mode;
+            End If;
+
+            ---------------------------------------------------
             -- Validate batch fields
             ---------------------------------------------------
 
             CALL public.validate_requested_run_batch_params (
-                            _batchID                   => 0,
+                            _batchID                   => _batchID,
                             _name                      => _batchName,
                             _description               => _batchDescription,
                             _ownerUsername             => _operatorUsername,
@@ -303,7 +343,7 @@ BEGIN
                             _comment                   => _batchComment,
                             _batchGroupID              => _batchGroupID,
                             _batchGroupOrder           => _batchGroupOrder,
-                            _mode                      => _mode,
+                            _mode                      => _requestedRunBatchMode,
                             _userID                    => _userID,                  -- Output
                             _message                   => _message,                 -- Output
                             _returnCode                => _returnCode);             -- Output
@@ -437,9 +477,12 @@ BEGIN
         End If;
 
         If _batchName <> '' Then
-            If _count <= 1 Then
+            If _count <= 1 And Not _usingExistingBatch Then
                 _message := public.append_to_text(_message, 'Not creating a batch since did not create multiple requested runs');
             Else
+                If _usingExistingBatch Then
+                    _requestedRunList := append_to_text(_existingRequestedRuns, _requestedRunList, _delimiter := ', ');
+                End If;
 
                 -- Auto-create a batch for the new requests
                 CALL public.add_update_requested_run_batch (
@@ -454,7 +497,7 @@ BEGIN
                                _comment                   => _batchComment,
                                _batchGroupID              => null::integer,
                                _batchGroupOrder           => null::integer,
-                               _mode                      => _mode,
+                               _mode                      => _requestedRunBatchMode,
                                _message                   => _msg,              -- Output
                                _returnCode                => _returnCode,       -- Output
                                _raiseExceptions           => false);
@@ -466,8 +509,12 @@ BEGIN
                         _msg := format('Error adding new batch, %s', _msg);
                     End If;
                 Else
-                    If _mode::citext = 'PreviewAdd' Then
+                    If _requestedRunBatchMode = 'PreviewUpdate' Then
+                        _msg := format('Would update batch "%s"', _batchName);
+                    ElsIf _mode::citext = 'PreviewAdd' Then
                         _msg := format('Would create a batch named "%s"', _batchName);
+                    ElsIf _requestedRunBatchMode::citext = 'update' Then
+                        _msg := format('Updated batch %s', _batchName);
                     Else
                         _msg := format('Created batch %s', _batchID);
                     End If;
