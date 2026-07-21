@@ -36,6 +36,25 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate 
 **      CALL create_dataset_svc_center_report (CURRENT_TIMESTAMP::date - Interval '1 day', _dayCount => 365, _infoOnly => true);
 **      CALL create_dataset_svc_center_report ('2024-08-13', 5, _infoOnly => false, _showDebug => true);
 **
+**  View datasets that would be added, filtering by instrument name:
+**      SELECT DS.dataset_id, DS.dataset, inst.instrument, ds.created, E.experiment
+**      FROM t_dataset DS
+**           INNER JOIN t_requested_run RR
+**             ON DS.dataset_id = RR.dataset_id
+**           INNER JOIN t_instrument_name inst
+**             ON DS.instrument_id = inst.instrument_id
+**           INNER JOIN t_experiments E
+**             ON DS.exp_id = E.exp_id
+**      WHERE DS.dataset_state_id = 3 AND                                               -- Dataset state 3: Complete
+**            DS.acq_time_start >= '2026-07-18'::timestamp - make_interval(days => 21) AND
+**            DS.acq_time_start <  '2026-07-18'::timestamp + Interval '1 day' AND
+**            NOT DS.dataset_rating_id IN (-10, -7, -6, -5, -4, -2, -1, 6, 7) AND       -- Dataset rating is not Unreviewed, Rerun (Superseded), Rerun (Good Data) Not Released, No Data, Exclude from Service Center, or Method Development
+**            DS.svc_center_report_state_id = 0 AND                                     -- Service center report state 0: Undefined
+**            DS.service_type_id BETWEEN 100 AND 113 AND                                -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous)
+**            NOT Trim(Coalesce(RR.work_package, '')) IN ('', 'none', 'na', 'n/a', '(lookup)')
+**            AND inst.instrument IN ('Lumos01')
+**      ORDER BY DS.dataset_id;
+**
 **  Auth:   mem
 **  Date:   07/22/2025 mem - Initial release
 **          08/06/2025 mem - Update service type IDs to be between 100 and 113 instead of 2 and 9
