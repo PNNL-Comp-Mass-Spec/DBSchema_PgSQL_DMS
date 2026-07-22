@@ -6,8 +6,9 @@ CREATE VIEW public.v_eus_import_proposals AS
  SELECT project_id AS proposal_id,
     title,
     proposal_type_display AS proposal_type,
-    actual_end_date,
-    actual_start_date
+    actual_start_date,
+    estimated_end_date,
+    actual_end_date
    FROM eus.vw_proposals;
 
 
