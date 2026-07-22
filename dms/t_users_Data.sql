@@ -79,7 +79,6 @@ COPY public.t_users (user_id, username, name, hid, status, email, domain, payrol
 3253	BELL555	Bell, Sheryl L	H0554555	Active	sheryl.bell@pnnl.gov	PNL	\N	Y	Y	2017-05-16 19:17:05	\N	2017-11-14 00:11:11
 2004	D3K044	Belov, Mikhail E	H7734306	Inactive			3K044	N	N	2000-05-31 00:00:00	\N	\N
 2264	D3X050	Brown, Joseph N	H8280448	Inactive	Joseph.Brown@pnnl.gov	PNL	3X050	N	N	2008-07-01 00:00:00	\N	2013-10-31 00:11:10
-3470	BERG465	Berger, Madelyn R	H0862227	Active	madelyn.berger@pnnl.gov	PNL		Y	Y	2021-09-09 11:45:05		2021-09-10 00:11:12
 2005	H1784722	Berger, Scott	H1784722	Inactive	\N	\N	\N	N	N	2001-01-01 00:00:00		\N
 3288	BHAT570	Bhattacharjee, Arunima	H9514344	Active	arunimab@pnnl.gov	PNL	\N	Y	Y	2018-03-20 13:49:19		2018-03-21 00:11:10
 3206	BILB280	Bilbao, Aivett	H2521590	Active	aivett.bilbao@pnnl.gov	PNL	\N	Y	Y	2016-06-10 16:50:05		2022-11-18 00:11:13
@@ -117,6 +116,8 @@ COPY public.t_users (user_id, username, name, hid, status, email, domain, payrol
 2417	HEJI354	He, Jintang	H9187834	Inactive	Jintang.He@pnnl.gov	PNL	\N	N	N	2012-08-08 14:13:21		2016-05-14 17:23:53
 2421	ZHAN371	Zhang, Zhaorui	H7379394	Inactive	Zhaorui.Zhang@pnnl.gov	PNL	\N	N	N	2012-09-17 13:58:56	\N	2014-01-31 00:11:11
 3686	TANA509	Tan, Adam	H5153509	Active	adam.tan@pnnl.gov	PNL	\N	Y	Y	2026-06-04 10:13:50.849653		2026-06-05 00:11:36.814108
+3690	SMAS661	Smasne, Ava	H0563661	Active	ava.smasne@pnnl.gov	PNL	\N	Y	Y	2026-06-18 12:07:26.019173		2026-06-19 00:11:11.38343
+3470	BERG465	Berger, Madelyn	H0862227	Active	madelyn.berger@pnnl.gov	PNL		N	Y	2021-09-09 11:45:05		2026-06-14 00:11:11.368949
 2077	H0021670	Bruemmer, Megan	H0021670	Inactive			\N	N	N	2002-07-12 00:00:00		\N
 2311	BURN764	Burnet, Meagan C	H5443441	Active	Meagan.Burnet@pnnl.gov	PNL	3X764	Y	Y	2009-08-01 00:00:00		2013-08-22 00:11:11
 2283	D3X786	Burnum-Johnson, Kristin E	H0096302	Active	kristin.burnum-johnson@pnnl.gov	PNL	3X786	Y	Y	2009-01-01 00:00:00	\N	\N
@@ -141,7 +142,6 @@ COPY public.t_users (user_id, username, name, hid, status, email, domain, payrol
 3669	NIUS206	Niu, Sining	H0317206	Active	sining.niu@pnnl.gov	PNL	\N	Y	Y	2025-10-03 11:41:43.89349		2025-10-04 00:11:37.930827
 3405	CHAN898	Chang, Christine H	H2015898	Active	christine.chang@pnnl.gov	PNL		Y	Y	2020-04-02 13:42:33		2020-04-03 00:11:11
 2263	D3P302	Chatterton, Jack	H6300375	Inactive			3P302	N	N	2008-06-15 00:00:00		\N
-3674	HAND527	Han, 	H1439527	Active	hdh03@snu.ac.kr	PNL	\N	Y	Y	2025-12-10 14:00:56.089028		2025-12-11 00:11:56.582554
 3354	CHEN881	Chen, Chunlong	H9946904	Active	Chunlong.Chen@pnnl.gov	PNL	\N	Y	Y	2019-05-15 05:42:59		2019-05-16 00:11:10
 3670	MOKA177	Mo, Kai-For	H0930308	Active	Kai-For.Mo@pnnl.gov	PNL	\N	Y	Y	2025-10-06 15:03:53.923456		2025-10-07 00:11:37.934823
 2216	D3P558	Chen, Haobo	H0264926	Inactive	\N	\N	3P558	N	N	2006-07-19 00:00:00		\N
@@ -199,6 +199,7 @@ COPY public.t_users (user_id, username, name, hid, status, email, domain, payrol
 3327	DANC783	Danczak, Robert E (old)	H2887808_x	Obsolete	robert.danczak@pnnl.gov	PNL		N	N	2018-11-19 11:55:55		2023-09-11 00:11:15
 2362	DANN432	Dann, Geoff P	H9038786	Inactive			3X432	N	N	2010-09-16 14:47:07		2013-06-07 14:16:32
 2371	DATT736	Datta, Suchitra	H2698845	Inactive			\N	N	N	2010-11-24 20:15:13		2010-11-24 20:15:13
+3691	HEND685	Henderson, Jessa	H6080685	Active	jessa.henderson@pnnl.gov	PNL	\N	Y	Y	2026-06-19 11:02:40.57778		2026-06-20 00:11:11.390848
 2535	DAUT285	Dautel, Sydney E	H5095945	Inactive	Sydney.Dautel@pnnl.gov	PNL		N	N	2014-12-08 10:43:54		2016-08-14 00:11:15
 3582	DAWA726	Dawar, Pranav	H7223030	Active	pranav.dawar@pnnl.gov	PNL	\N	Y	Y	2023-09-12 13:04:49		2023-09-13 00:11:14
 3421	ZHAN507	Day, Le Z	H2234660	Active	le.day@pnnl.gov	PNL		Y	Y	2020-08-19 16:38:07	Le Zhang Day	2022-07-07 00:11:13
@@ -213,6 +214,7 @@ COPY public.t_users (user_id, username, name, hid, status, email, domain, payrol
 2218	D3P627	Deng, Shuang	H7595236	Active	shuang.deng@pnnl.gov	PNL	3P627	Y	Y	2006-08-31 00:00:00		\N
 3573	DENI021	Denis, Elizabeth H	H9031500	Active	elizabeth.denis@pnnl.gov	PNL	\N	Y	Y	2023-08-24 05:43:55		2023-08-25 00:11:15
 3349	EDER951	Eder, Liz	H3679558	Active	elizabeth.eder@pnnl.gov	PNL		Y	Y	2019-04-15 16:24:01		2025-09-18 00:11:53.566404
+3674	HAND527	Han, 	H1439527	Active	hdh03@snu.ac.kr	PNL	\N	N	Y	2025-12-10 14:00:56.089028		2026-06-21 00:11:11.383699
 2466	DHON338	Dhondt, Ineke	H0538338	Inactive	Ineke.Dhondt@pnnl.gov	PNL	\N	N	N	2013-06-14 11:06:27	\N	2013-06-19 00:11:10
 2304	ddiamond	Diamond, Deborah	H0000001	Inactive	\N	\N	\N	N	N	2009-06-01 00:00:00		2009-06-01 00:00:00
 2425	D3Y481	Chavez, Francisco T	H5106685	Inactive	Francisco.Chavez@pnnl.gov	PNL	3Y481	N	N	2012-10-31 12:49:42	\N	2013-06-02 00:11:11
@@ -230,6 +232,7 @@ COPY public.t_users (user_id, username, name, hid, status, email, domain, payrol
 2444	DUTT164	Dutta, Arnab	H1639908	Inactive	\N	\N	\N	N	N	2013-04-16 14:07:02	\N	2013-04-16 14:07:02
 2182	D3P019	Du, Xiuxia	H6733068	Inactive	xiuxia.du@pnl.gov		3P019	N	N	2006-03-14 00:00:00		\N
 2443	D3L061	Chen, Baowei	H1057212	Inactive	Baowei.Chen@pnnl.gov	PNL	3L061	N	N	2013-03-26 18:05:53		2016-05-14 17:23:53
+3692	AYAL219	Ayala-Ortiz, Christian	H7246219	Active	christian.ayalaortiz@pnnl.gov	PNL	\N	Y	Y	2026-07-10 11:50:27.779127		2026-07-11 00:12:07.303897
 3345	HANS226	Eder, Josie G	H5495210	Active	josie.eder@pnnl.gov	PNL		Y	Y	2019-03-13 13:15:55		2022-03-03 00:11:13
 3413	EDWA533	Edwards, Brian A	H2429119	Active	brian.edwards@pnnl.gov	PNL		Y	Y	2020-06-12 11:23:19		2021-05-25 00:11:14
 3276	EGBE290	Egbert, Rob	H8930504	Active	robert.egbert@pnnl.gov	PNL	\N	Y	Y	2017-11-11 13:01:06		2020-07-18 00:11:11
@@ -1049,7 +1052,7 @@ COPY public.t_users (user_id, username, name, hid, status, email, domain, payrol
 -- Name: t_users_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_users_user_id_seq', 3689, true);
+SELECT pg_catalog.setval('public.t_users_user_id_seq', 3692, true);
 
 
 --

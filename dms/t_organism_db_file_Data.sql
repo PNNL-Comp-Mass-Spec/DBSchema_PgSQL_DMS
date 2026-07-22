@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 18.3
+-- Dumped from database version 18.4
 -- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
@@ -7922,6 +7922,8 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 8164	Sebvebe_JGI_Nuccio_Kaiko_UniProt_TrypPigBov_2024-01-11_5x_3.fasta	1802	Auto-created	0	377755	147433448	1	198696	2024-01-19 17:28:00	f
 8165	Sebvebe_JGI_Nuccio_Kaiko_UniProt_TrypPigBov_2024-01-11_5x_4.fasta	1802	Auto-created	0	378177	147433402	1	198769	2024-01-19 17:28:00	f
 8166	Sebvebe_JGI_Nuccio_Kaiko_UniProt_TrypPigBov_2024-01-11_5x_5.fasta	1802	Auto-created	0	378659	147433432	1	198830	2024-01-19 17:28:00	f
+9383	Serendipita_indica_DSM_11827_GenBank_2021-07-22.fasta	1905	Serendipita indica DSM 11827 (root endophyte fungus) from GCA_910890315.1 at https://www.ncbi.nlm.nih.gov/datasets/genome/?taxon=65672	1	9451	5109068	1	6226	2026-07-21 17:46:45.476236	f
+9384	Serendipita_indica_DSM_11827_UniProt_2026-07-22.fasta	1905	Serendipita indica DSM 11827 (root endophyte fungus) from https://www.uniprot.org/taxonomy/1109443 and https://www.uniprot.org/uniprotkb?query=%28taxonomy_id%3A1109443%29	1	11796	5145418	1	6667	2026-07-21 17:46:45.476236	f
 7728	Shaked_MAG_Revision_TrypPigBov_2023-06-14.fasta	1701	Revision of microbial consortia metagenome/metaproteome assembled at JGI, provided by Coco Koedooder (cocokoedooder@gmail.com)	1	193385	60294399	1	83591	2023-06-15 09:35:00	f
 6910	Shaked_MAG_TrypPigBov_2021-04-23.fasta	1701	Sequences supplied by Nikola Tolic	1	201390	62752345	1	86944	2021-04-24 20:11:00	f
 602	Shew_MR1_GOs_Meso_1.fasta	1059	Shewanella MR-1, plus predicted GOs (clustered) plus Sargasso meso proteins, Part 1	0	1069018	77914458	1	0	2010-07-07 12:29:00	f
@@ -9057,7 +9059,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 -- Name: t_organism_db_file_org_db_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9382, true);
+SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9384, true);
 
 
 --

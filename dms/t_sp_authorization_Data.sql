@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 18.3
+-- Dumped from database version 18.4
 -- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
@@ -31,6 +31,7 @@ COPY public.t_sp_authorization (entry_id, procedure_name, login_name, host_name,
 3	*	DMSWebUser	prismweb3	130.20.225.91	t
 24	*	DMSWebUser	prismweb3_IPv6	2620:0:50f1:118::399	t
 29	*	DMSWebUser	prismweb3_IPv6_alt	fe80::7c6:db6c:c606:c286	t
+36	*	DMSWebUser	prismweb3_IPv6_alt2	2620:0:50f1:118::999	t
 4	*	DMSWebUser	prismwebdev2	130.20.227.157	t
 27	*	DMSWebUser	proto-2	130.20.230.113	f
 28	*	DMSWebUser	proto-2_IPv6	2620:0:50f1:118::193b	f
@@ -51,7 +52,7 @@ COPY public.t_sp_authorization (entry_id, procedure_name, login_name, host_name,
 -- Name: t_sp_authorization_entry_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_sp_authorization_entry_id_seq', 33, true);
+SELECT pg_catalog.setval('public.t_sp_authorization_entry_id_seq', 36, true);
 
 
 --
