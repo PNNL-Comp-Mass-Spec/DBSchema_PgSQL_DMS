@@ -15,6 +15,10 @@ CREATE OR REPLACE PROCEDURE public.validate_wellplate_loading(INOUT _wellplatena
 **      the first row of the plate has wells A01 through A12 and
 **      the last row  of the plate has wells H01 through H12
 **
+**      For 384 well plates,
+**      the first row of the plate has wells A01 through A24 and
+**      the last row  of the plate has wells O01 through O12
+**
 **      Also supports _wellPosition being an integer
 **
 **  Arguments:
@@ -37,6 +41,7 @@ CREATE OR REPLACE PROCEDURE public.validate_wellplate_loading(INOUT _wellplatena
 **          07/09/2024 mem - Use a well index value of 0 if _wellPosition is an empty string
 **          08/21/2024 mem - Add argument _wellPositionIsInteger and allow _wellPosition to be an integer
 **                         - Zero-pad well numbers between 1 and 9
+**          07/28/2026 mem - Add support for 384 well plates
 **
 *****************************************************/
 DECLARE
@@ -45,6 +50,7 @@ DECLARE
     _count int;
     _hits int;
     _wellList text;
+    _wellCount int;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -76,6 +82,15 @@ BEGIN
     End If;
 
     ---------------------------------------------------
+    -- Lookup the number of wells in the wellplate
+    ---------------------------------------------------
+
+    SELECT well_count
+    INTO _wellCount
+    FROM t_wellplates
+    WHERE wellplate = Coalesce(_wellplateName, 'na');
+
+    ---------------------------------------------------
     -- Get wellplate index
     ---------------------------------------------------
 
@@ -97,19 +112,19 @@ BEGIN
             -- Note that function get_well_index() returns 0 if _wellPosition is an empty string or is only a single character
             -- However, if _wellPosition is an integer, get_well_index() returns the integer
 
-            _wellIndex := public.get_well_index(_wellPosition::citext);
+            _wellIndex := public.get_well_index(_wellPosition::citext, _wellCount);
 
             If _wellIndex = 0 Then
-                _message := format('Well position is not valid (%s); should be in the format A4, A04, or C12', _wellPosition);
+                _message := format('Well position is not valid (%s); should be in the format A4, A04, or C12 for %s well plate "%s"', _wellPosition, _wellCount, _wellplateName);
                 _returnCode := 'U5243';
                 RETURN;
             End If;
 
             -- For a 96 well plate, _wellIndex is between 1 and 96
-            -- If _wellIndex is 96 and _totalCount is 1, the sum is 97, which is why the following if statement uses "sum > 97" and not "sum >= 97"
+            -- If _wellIndex is 96 and _totalCount is 1, the sum is 97, which is why the following if statement uses "sum > _wellCount + 1" and not "sum >= _wellCount + 1"
 
-            If _wellIndex + _totalCount > 97 Then
-                _message := 'Wellplate capacity would be exceeded (assuming a 96 well plate)';
+            If _wellIndex + _totalCount > _wellCount + 1 Then
+                _message := format('Wellplate capacity would be exceeded (%s is a %s well plate)', _wellplateName, _wellCount);
                 _returnCode := 'U5244';
                 RETURN;
             End If;
@@ -158,14 +173,13 @@ BEGIN
         INTO _wellList
         FROM t_experiments
         WHERE wellplate = _wellplateName::citext AND
-              public.get_well_index(well) IN (
+              public.get_well_index(well, _wellCount) IN (
                   SELECT wellIndex
                   FROM Tmp_Wells
               );
     End If;
 
     If Coalesce(_wellList, '') <> '' Then
-
         _hits := array_length(string_to_array(_wellList, ','), 1);
 
         _wellList := Substring(_wellList, 0, 256);
