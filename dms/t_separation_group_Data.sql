@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.6
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 18.4
+-- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -52,6 +52,7 @@ LC-Formic_30min		1	1	0	30
 LC-Formic_3hr		1	1	0	180
 LC-Formic_45min		0	0	0	45
 LC-Formic_4hr		1	1	0	240
+LC-Formic_50min_uPAC		1	1	0	50
 LC-Formic_5hr		1	0	0	300
 LC-Formic_80min		0	0	0	80
 LC-Formic_90min		1	1	0	90

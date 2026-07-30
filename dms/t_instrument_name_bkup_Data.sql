@@ -120,7 +120,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 261	ExplorisMSL01	LTQ_FT	Exploris	5088	5388	fso	Active	MSL5 118	Orbitrap Exploris 240, in the Marine Sciences Laboratory in Sequim (WD90136); on LabNET with IP 10.70.57.212; Connected to a Thermo Vanquish Flex LC.	2025-04-09 14:59:34.49121
 258	ExplorisMX01	LTQ_FT	EMSL_Exploris	4865	5389	secfso	Active	EMSL 1130	Orbitrap Exploris MX, owned by EMSL	2024-07-03 15:00:57
 175	External_Agilent_QQQ	Agilent_TOF_V2	Agilent_QQQ	3709	3714	fso	Active	Offsite	Agilent triple-quad data acquired offsite	2021-01-19 20:47:37
-185	External_Agilent_QTOF	Agilent_TOF_V2	Agilent_TOF_V2	4073	4079	fso	Active	Offsite	Agilent Q-TOF data acquired offsite	2022-02-25 08:31:43
+185	External_Agilent_QTOF	Agilent_TOF_V2	Agilent_TOF_V2	4073	5407	fso	Active	Offsite	Agilent Q-TOF data acquired offsite	2022-02-25 08:31:43
 195	External_Ascend	LTQ_FT	Ascend	4491	4493	fso	Active	Offsite	Data acquired offsite using a Thermo Ascend mass spec	2023-07-18 12:50:05
 244	External_Astral	LTQ_FT	Astral	4726	5290	fso	Active	Offsite	Thermo TOF/Orbitrap tribrid	2024-02-05 11:21:14
 164	External_Bruker_timsTOF	BrukerTOF_TDF	timsTOF	3098	3126	fso	Active	Offsite	Data acquired at Bruker	2019-06-11 14:52:16
@@ -273,7 +273,7 @@ COPY public.t_instrument_name_bkup (instrument_id, instrument, instrument_class,
 212	Titus	Thermo_SII_LC	Thermo_SII_LC	4563	4906	secfso	Active	EMSL 1526	Thermo RSLCnano Autosampler and pump	2023-11-01 10:13:27
 235	Trillium	LCMSNet_LC	LCMSNet_LC	4586	4929	secfso	Active	EMSL 1142	LCMSNet LC with a VICI M60 infusion pump. Used for LCDatasetCapture tasks.  The defined auto storage path does not reference an actual server share since this instrument should not be used for datasets.	2023-11-06 11:13:36
 115	UNC_VOrbiETD01	LTQ_FT	VelosOrbi	1444	1445	fso	Inactive	UNC (Chapel Hill, NC)	University of North Carolina LTQ-Velos Orbitrap	2014-03-07 15:39:51
-85	VOrbi05	LTQ_FT	VelosOrbi	1009	5350	secfso	Active	EMSL 1429	LTQ Velos with an LTQ Orbitrap Velos (no ETD), MS:1001742	2011-06-02 11:20:25
+85	VOrbi05	LTQ_FT	VelosOrbi	1009	5406	secfso	Active	EMSL 1429	LTQ Velos with an LTQ Orbitrap Velos (no ETD), MS:1001742	2011-06-02 11:20:25
 58	VOrbiETD01	LTQ_FT	VelosOrbi	257	3857	secfso	Inactive	EMSL 1444	LTQ Velos Pro with an LTQ Orbitrap Velos Pro (supports ETD); for MassIVE, use LTQ Orbitrap Velos, MS:1001742	2009-08-10 00:00:00
 60	VOrbiETD02	LTQ_FT	VelosOrbi	261	5116	secfso	Inactive	EMSL 1444	LTQ Velos with Orbitrap Elite (upgraded from an Orbitrap in October 2013); for MassIVE, use LTQ Orbitrap Velos, MS:1001742	2009-12-10 00:00:00
 61	VOrbiETD03	LTQ_FT	VelosOrbi	263	4133	secfso	Inactive	EMSL 1526	LTQ Velos with an LTQ Orbitrap Velos (supports ETD); for MassIVE, use LTQ Orbitrap Velos, MS:1001742	2010-01-06 00:00:00

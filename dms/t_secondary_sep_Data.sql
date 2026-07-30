@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 18.3
+-- Dumped from database version 18.4
 -- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
@@ -115,6 +115,7 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 143	LC-Neo-Formic_10Min	Neo, formic acid, 10 min separation	1	LC-Formic_10min	1	2024-05-30 10:29:32
 127	LC-Neo-Formic_1hr	Neo, formic acid, 1 hour separation	1	LC-Formic_1hr	1	2022-12-20 12:46:10
 144	LC-Neo-Formic_20Min	Neo, formic acid, 20 Min separation	1	LC-Formic_20min	1	2024-05-30 10:30:01
+155	LC-Neo-Formic_29SPD_50min_uPACPlus	Neo, formic acid, 32.7 Min separation, 25min data Acquisition.	1	LC-Formic_50min_uPAC	1	2026-07-22 10:34:50.839979
 128	LC-Neo-Formic_2hr	Neo, formic acid, 2 hour separation	1	LC-Formic_2hr	1	2022-12-20 12:46:28
 148	LC-Neo-Formic_30Min_50SPD	Neo, formic acid, 28 Min separation, 22min data Acquisition.	1	LC-Formic_30min	1	2025-01-07 09:52:20.017138
 145	LC-Neo-Formic_30min	Neo LC, formic acid, 30 minute separation	1	LC-Formic_30min	1	2024-05-30 10:33:58
