@@ -1,8 +1,8 @@
 --
--- Name: add_update_wellplate(text, text, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: add_update_wellplate(text, text, integer, text, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.add_update_wellplate(INOUT _wellplatename text, IN _description text, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.add_update_wellplate(INOUT _wellplatename text, IN _description text, IN _wellcount integer, IN _mode text DEFAULT 'add'::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _callinguser text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -13,6 +13,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_wellplate(INOUT _wellplatename tex
 **  Arguments:
 **    _wellplateName    Wellplate name
 **    _description      Description
+**    _wellCount        Number of wells in the plate: 24, 96, or 384
 **    _mode             Mode: 'add', 'update', or 'assure'
 **    _message          Status message
 **    _returnCode       Return code
@@ -27,6 +28,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_wellplate(INOUT _wellplatename tex
 **          01/03/2024 mem - Update warning messages
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
+**          07/28/2026 mem - Add parameter _wellCount
 **
 *****************************************************/
 DECLARE
@@ -72,15 +74,19 @@ BEGIN
     End If;
 
     ---------------------------------------------------
-    -- Optionally generate name
+    -- Validate the parameters
     ---------------------------------------------------
 
     _wellplateName := Trim(Coalesce(_wellplateName, ''));
     _description   := Trim(Coalesce(_description, ''));
+    _wellCount     := Coalesce(_wellCount, 0);
     _mode          := Trim(Lower(Coalesce(_mode, '')));
 
-    If Lower(_wellplateName) = '(generate name)' Then
+    ---------------------------------------------------
+    -- Optionally generate name
+    ---------------------------------------------------
 
+    If Lower(_wellplateName) = '(generate name)' Then
         SELECT MAX(wellplate_id) + 1
         INTO _idx
         FROM t_wellplates;
@@ -90,6 +96,22 @@ BEGIN
         End If;
 
         _wellplateName := format('WP-%s', _idx);
+    End If;
+
+    If _wellplateName = 'na' Then
+        If _wellCount <> 0 Then
+            _message := 'Well count must be 0 for the "na" wellplate';
+            RAISE WARNING '%', _message;
+
+            _returnCode := 'U5201';
+            RETURN;
+        End If;
+    ElsIf Not _wellCount IN (24, 96, 384) Then
+        _message := format('Well count must be 24, 96, or 384, not "%s"', _wellCount);
+        RAISE WARNING '%', _message;
+
+        _returnCode := 'U5202';
+        RETURN;
     End If;
 
     ---------------------------------------------------
@@ -119,7 +141,7 @@ BEGIN
         _message := format('Cannot update: wellplate "%s" does not exist', _wellplateName);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5201';
+        _returnCode := 'U5203';
         RETURN;
     End If;
 
@@ -131,7 +153,7 @@ BEGIN
         _message := format('Cannot add: wellplate "%s" already exists', _wellplateName);
         RAISE WARNING '%', _message;
 
-        _returnCode := 'U5202';
+        _returnCode := 'U5204';
         RETURN;
     End If;
 
@@ -140,15 +162,15 @@ BEGIN
     ---------------------------------------------------
 
     If _mode = 'add' Then
-
         INSERT INTO t_wellplates (
             wellplate,
-            description
+            description,
+            well_count
         ) VALUES (
             _wellplateName,
-            _description
+            _description,
+            _wellCount
         );
-
     End If;
 
     ---------------------------------------------------
@@ -156,23 +178,22 @@ BEGIN
     ---------------------------------------------------
 
     If _mode = 'update' Then
-
         UPDATE t_wellplates
         SET wellplate   = _wellplateName,
-            description = _description
+            description = _description,
+            well_count  = _wellCount
         WHERE wellplate::citext = _wellplateName;
-
     End If;
 
 END
 $$;
 
 
-ALTER PROCEDURE public.add_update_wellplate(INOUT _wellplatename text, IN _description text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
+ALTER PROCEDURE public.add_update_wellplate(INOUT _wellplatename text, IN _description text, IN _wellcount integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE add_update_wellplate(INOUT _wellplatename text, IN _description text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE add_update_wellplate(INOUT _wellplatename text, IN _description text, IN _wellcount integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.add_update_wellplate(INOUT _wellplatename text, IN _description text, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateWellplate';
+COMMENT ON PROCEDURE public.add_update_wellplate(INOUT _wellplatename text, IN _description text, IN _wellcount integer, IN _mode text, INOUT _message text, INOUT _returncode text, IN _callinguser text) IS 'AddUpdateWellplate';
 

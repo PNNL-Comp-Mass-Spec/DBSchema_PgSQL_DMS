@@ -6,6 +6,7 @@ CREATE VIEW public.v_wellplate_entry AS
  SELECT wellplate_id AS id,
     wellplate,
     description,
+    well_count,
     created
    FROM public.t_wellplates;
 

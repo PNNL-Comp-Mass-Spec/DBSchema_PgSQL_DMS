@@ -7,6 +7,8 @@ CREATE TABLE public.t_wellplates (
     wellplate public.citext NOT NULL,
     description public.citext,
     created timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    well_count integer DEFAULT 96 NOT NULL,
+    CONSTRAINT ck_t_wellplates_well_count CHECK ((well_count = ANY (ARRAY[0, 24, 96, 384]))),
     CONSTRAINT ck_t_wellplates_wellplate_name_whitespace CHECK ((public.has_whitespace_chars((wellplate)::text, true) = false))
 );
 
