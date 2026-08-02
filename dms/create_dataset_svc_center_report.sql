@@ -75,6 +75,7 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate 
 **                         - Assure that start date is no earlier than 2025-10-01 (the official start date of the service center)
 **          10/29/2025 mem - Round transaction units for MALDI datasets to the nearest tenth of an hour
 **          02/03/2026 mem - Change acq_length_minutes to numeric
+**          08/01/2026 mem - Allow acq_length_minutes to be zero, since MALDI datasets can be very short (e.g. https://dms2.pnl.gov/dataset/show/mix_set2_0_F9_MS)
 **
 *****************************************************/
 DECLARE
@@ -340,7 +341,7 @@ BEGIN
                dataset,
                service_type_id,
                svc_center_report_state_id,
-               CASE WHEN acq_time_start IS NULL OR acq_length_minutes <= 0
+               CASE WHEN acq_time_start IS NULL
                     THEN Coalesce(req_run_acq_length_minutes, 0)
                     ELSE acq_length_minutes
                END,
