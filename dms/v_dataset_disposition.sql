@@ -11,6 +11,10 @@ CREATE VIEW public.v_dataset_disposition AS
     lcc.cart_name AS lc_cart,
     rr.batch_id AS batch,
     rr.work_package,
+        CASE
+            WHEN (rr.work_package OPERATOR(public.=) ANY (ARRAY['none'::public.citext, ''::public.citext])) THEN ''::public.citext
+            ELSE COALESCE(cc.activation_state_name, 'Invalid'::public.citext)
+        END AS wp_state,
     drn.dataset_rating AS rating,
     ds.comment,
     dsn.dataset_state AS state,
@@ -20,13 +24,14 @@ CREATE VIEW public.v_dataset_disposition AS
     rr.request_id AS request,
     ds.operator_username AS operator,
     ds.created
-   FROM (((public.t_lc_cart lcc
+   FROM ((((public.t_lc_cart lcc
      JOIN public.t_requested_run rr ON ((lcc.cart_id = rr.cart_id)))
      RIGHT JOIN (((public.t_dataset_state_name dsn
      JOIN public.t_dataset ds ON ((dsn.dataset_state_id = ds.dataset_state_id)))
      JOIN public.t_instrument_name instname ON ((ds.instrument_id = instname.instrument_id)))
      JOIN public.t_dataset_rating_name drn ON ((ds.dataset_rating_id = drn.dataset_rating_id))) ON ((rr.dataset_id = ds.dataset_id)))
      JOIN public.t_storage_path spath ON ((spath.storage_path_id = ds.storage_path_id)))
+     LEFT JOIN public.v_charge_code_status cc ON ((rr.work_package OPERATOR(public.=) cc.charge_code)))
   WHERE (ds.dataset_rating_id = '-10'::integer);
 
 

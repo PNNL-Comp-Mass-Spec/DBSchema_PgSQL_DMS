@@ -10,6 +10,7 @@ CREATE VIEW public.v_dataset_disposition_lite AS
     lc_cart,
     batch,
     work_package,
+    wp_state,
     rating,
     comment,
     state,
