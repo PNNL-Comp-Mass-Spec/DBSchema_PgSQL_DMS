@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.6
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 18.4
+-- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -56,8 +56,9 @@ COPY public.t_material_freezers (freezer_id, freezer, freezer_tag, comment, stat
 45	-80 BSF2222A	2222A	BSL1 freezer; Stirling Ultracold, model SU780XLE, property WD86042, serial 21090-16573	Active
 44	-80 BSF2222B	2222B	BSL2 freezer; Stirling Ultracold, model SU780XLE, property WD85409, serial 18101-12398	Active
 66	-80 BSF2240A	2240A	Stirling Ultracold, model SU780XLE, serial 23110-23027	Active
-27	-80 BSF2240A_Old	2240A_Old	Eppendorf / New Brunswick U700, model U9280-0000, serial F700DN600956	Active
-28	-80 BSF2240B	2240B	Stirling Ultracold, model SU780UE, property WD56562, serial 1602.01948	Active
+27	-80 BSF2240A_Old	2240A_Old	Eppendorf / New Brunswick U700, model U9280-0000, serial F700DN600956	Inactive
+28	-80 BSF2240B	2240B	Stirling Ultracold, model VAULT100, property WD104993, serial 26040-2001	Active
+78	-80 BSF2240B_Old	2240B_Old	Stirling Ultracold, model SU780UE, property WD56562, serial 1602.01948, replaced July/August 2026	Inactive
 33	-80 BSF2240C	2240C	Eppendorf / New Brunswick U700, model U101 -86 Innova, serial F101EN030856	Active
 50	-80 EMSL1310A	1310A	Thermo Scientific TSX ULT, model TSX40086A, property TBD, serial 1125683801220420	Active
 72	-80 EMSL1350Denali	1350D	USDA -80C freezer in 1350 service corridor for long term storage; Stirling Ultracold model: SU780XLE, property tag WD104326. serial number 24020-23429	Active
@@ -84,7 +85,7 @@ COPY public.t_material_freezers (freezer_id, freezer, freezer_tag, comment, stat
 -- Name: t_material_freezers_freezer_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_material_freezers_freezer_id_seq', 76, true);
+SELECT pg_catalog.setval('public.t_material_freezers_freezer_id_seq', 78, true);
 
 
 --
