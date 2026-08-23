@@ -74,6 +74,7 @@ CREATE OR REPLACE PROCEDURE public.update_requested_run_assignments(IN _mode tex
 **          03/12/2024 mem - Show the message returned by verify_sp_authorized() when the user is not authorized to use this procedure
 **          06/23/2024 mem - When verify_sp_authorized() returns false, wrap the Commit statement in an exception handler
 **          02/17/2025 mem - Add support for requested run state 'Holding'
+**          08/22/2026 mem - If an instrument is assigned, update service center use type for each requested run
 **
 *****************************************************/
 DECLARE
@@ -156,7 +157,6 @@ BEGIN
     End If;
 
     BEGIN
-
         -- Uncomment to log the values of the procedure arguments in T_Log_Entries
         --
         -- _msg := format('Procedure called with _mode=%s, _newValue=%s, _reqRunIDList=%s',
@@ -214,7 +214,6 @@ BEGIN
         End If;
 
         If _mode::citext In ('instrumentGroup', 'instrumentGroupIgnoreType') Then
-
             ---------------------------------------------------
             -- Validate the instrument group
             -- Note that as of 6/26/2013 mode 'instrument' does not appear to be used by the DMS website
@@ -254,7 +253,6 @@ BEGIN
             End If;
 
             If _mode::citext = 'instrumentGroup' Then
-
                 ---------------------------------------------------
                 -- Make sure the dataset type defined for each of the requested runs
                 -- is appropriate for instrument group _newInstrumentGroup
@@ -270,7 +268,6 @@ BEGIN
                     _logErrors := false;
                     RAISE EXCEPTION '%', _message;
                 End If;
-
             End If;
 
             ---------------------------------------------------
@@ -296,7 +293,6 @@ BEGIN
                      ) UnionQ;
 
                 If _instrumentGroupCount > 1 Then
-
                     SELECT string_agg(InstGroup, ', ' ORDER BY InstGroup)
                     INTO _instrumentGroups
                     FROM (SELECT DISTINCT RR.instrument_group AS InstGroup
@@ -335,15 +331,12 @@ BEGIN
                     _logErrors := false;
                     _returnCode := 'U5203';
                     RAISE EXCEPTION '%', _message;
-
                 End If;
-
             END LOOP;
 
         End If;
 
         If _mode::citext = 'assignedInstrument' Then
-
             -- Note that only active requested runs can have an instrument assigned to them
 
             If Coalesce(_newValue, '') = '' Then
@@ -452,11 +445,22 @@ BEGIN
                     End If;
                 End If;
 
+                ---------------------------------------------------
+                -- Update service center use type (column service_type_id) for each requested run
+                ---------------------------------------------------
+
+                FOR _requestID IN
+                    SELECT RequestID
+                    FROM Tmp_RequestIDs
+                    ORDER BY RequestID
+                LOOP
+                    CALL public.update_requested_run_service_type_if_required (_requestID);
+                END LOOP;
+
             End If;
         End If;
 
         If _mode::citext = 'separationGroup' Then
-
             ---------------------------------------------------
             -- Validate the separation group
             -- Mode 'separationGroup' is used by http://dms2.pnl.gov/requested_run_admin/report
@@ -488,11 +492,9 @@ BEGIN
                 _returnCode := 'U5206';
                 RAISE EXCEPTION 'Invalid separation group: "%" does not exist', _newValue;
             End If;
-
         End If;
 
         If _mode::citext = 'datasetType' Then
-
             ---------------------------------------------------
             -- Validate the dataset type
             -- Mode 'datasetType' is used by http://dms2.pnl.gov/requested_run_admin/report
@@ -524,7 +526,6 @@ BEGIN
         -------------------------------------------------
 
         If _mode::citext = 'priority' Then
-
             -- Get priority numerical value (use 0 if _newValue is not an integer)
 
             _pri := public.try_cast(_newValue, 0);
@@ -541,11 +542,9 @@ BEGIN
 
             _message := format('Set the priority to %s for %s requested %s',
                                 _pri, _updateCount, public.check_plural(_updateCount, 'run', 'runs'));
-
         End If;
 
         If _mode::citext In ('instrumentGroup', 'instrumentGroupIgnoreType') Then
-
             UPDATE t_requested_run RR
             SET instrument_group = _newInstrumentGroup
             FROM Tmp_RequestIDs
@@ -555,11 +554,9 @@ BEGIN
 
             _message := format('Changed the instrument group to %s for %s requested %s',
                                 _newInstrumentGroup, _updateCount, public.check_plural(_updateCount, 'run', 'runs'));
-
         End If;
 
         If _mode::citext = 'assignedInstrument' Then
-
             UPDATE t_requested_run RR
             SET queue_instrument_id = CASE WHEN _newQueueState > 1 THEN _newAssignedInstrumentID ELSE queue_instrument_id END,
                 queue_state = _newQueueState,
@@ -591,7 +588,6 @@ BEGIN
         End If;
 
         If _mode::citext = 'separationGroup' Then
-
             UPDATE t_requested_run RR
             SET separation_group = _newSeparationGroup
             FROM Tmp_RequestIDs
@@ -604,7 +600,6 @@ BEGIN
         End If;
 
         If _mode::citext = 'datasetType' Then
-
             UPDATE t_requested_run RR
             SET request_type_id = _newDatasetTypeID
             FROM Tmp_RequestIDs
@@ -617,7 +612,6 @@ BEGIN
         End If;
 
         If _mode::citext In ('instrumentGroup', 'instrumentGroupIgnoreType', 'assignedInstrument', 'separationGroup') Then
-
             ---------------------------------------------------
             -- Update stats in T_Cached_Requested_Run_Batch_Stats
             ---------------------------------------------------
@@ -642,11 +636,9 @@ BEGIN
                 END LOOP;
 
             End If;
-
         End If;
 
         If _mode = 'delete' Then
-
             -- Step through the entries in Tmp_RequestIDs and delete each
 
             FOR _requestID IN
@@ -654,7 +646,6 @@ BEGIN
                 FROM Tmp_RequestIDs
                 ORDER BY RequestID
             LOOP
-
                 CALL public.delete_requested_run (
                                     _requestID,
                                     _skipDatasetCheck => false,
@@ -677,7 +668,6 @@ BEGIN
             END LOOP;
 
             _message := format('Deleted %s requested %s', _countDeleted, public.check_plural(_countDeleted, 'run', 'runs'));
-
         End If;
 
     EXCEPTION
