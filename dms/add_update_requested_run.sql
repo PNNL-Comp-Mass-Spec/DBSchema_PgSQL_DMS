@@ -160,6 +160,7 @@ CREATE OR REPLACE PROCEDURE public.add_update_requested_run(IN _requestname text
 **          07/19/2025 mem - Raise an exception if _mode is undefined or unsupported
 **          07/29/2025 mem - When work package is updated, also update svc.t_service_use for any rows where report_state_id is 1 or 2
 **          08/20/2025 mem - Reference schema svc instead of cc
+**          08/22/2026 mem - Update service center use type by calling update_requested_run_service_type_if_required
 **
 *****************************************************/
 DECLARE
@@ -946,7 +947,6 @@ BEGIN
         ---------------------------------------------------
 
         If _mode = 'add' Then
-
             INSERT INTO t_requested_run (
                 request_name,
                 requester_username,
@@ -1043,6 +1043,8 @@ BEGIN
                                 _returnCode => _returnCode);    -- Output
             End If;
 
+            -- Update the service center use type (column service_type_id)
+            CALL public.update_requested_run_service_type_if_required (_requestID);
         End If;
 
         ---------------------------------------------------
@@ -1110,6 +1112,9 @@ BEGIN
                 _msg := format('Removed request %s from batch %s', _requestID, _currentBatch);
                 _message := public.append_to_text(_message, _msg);
             End If;
+
+            -- Update the service center use type (column service_type_id)
+            CALL public.update_requested_run_service_type_if_required (_requestID);
 
             If _datasetID > 0 And _oldWorkPackage <> _workPackage Then
                 ---------------------------------------------------
