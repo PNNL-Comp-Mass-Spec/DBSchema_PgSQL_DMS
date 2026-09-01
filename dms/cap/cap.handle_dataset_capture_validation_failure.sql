@@ -78,7 +78,6 @@ BEGIN
             RAISE INFO '%', _message;
             RETURN;
         End If;
-
     Else
         -----------------------------------------
         -- Lookup the dataset ID
@@ -118,7 +117,6 @@ BEGIN
     End If;
 
     If _infoOnly Then
-
         _message := format('Mark dataset as bad: %s (%s)', _comment, _datasetName);
         RAISE INFO '%', _message;
 
@@ -193,7 +191,6 @@ BEGIN
                         _message    => _message,        -- Output
                         _returnCode => _returnCode);    -- Output
     End If;
-
 END
 $$;
 
