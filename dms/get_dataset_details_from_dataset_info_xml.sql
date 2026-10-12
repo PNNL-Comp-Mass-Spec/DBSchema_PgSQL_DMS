@@ -2,7 +2,7 @@
 -- Name: get_dataset_details_from_dataset_info_xml(xml, text, integer, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN _datasetinfoxml xml, IN _rootelement text DEFAULT 'DatasetInfo'::text, INOUT _datasetid integer DEFAULT 0, INOUT _datasetname text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN _datasetinfoxml xml, IN _rootelement text DEFAULT 'DatasetInfo'::text, _sourceTable text DEFAULT '', INOUT _datasetid integer DEFAULT 0, INOUT _datasetname text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -31,6 +31,7 @@ CREATE OR REPLACE PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN 
 **  Arguments:
 **    _datasetInfoXML   Dataset info, in XML format
 **    _rootElement      Root element name
+**    _sourceTable      Table that the calling procedure obtained the XML from; empty string if this procedure is being called from an application (e.g. the capture task manager)
 **    _datasetID        Input/output: dataset ID
 **    _datasetName      Output: dataset name
 **    _message          Error message, or an empty string if no error
@@ -43,12 +44,14 @@ CREATE OR REPLACE PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN 
 **          06/13/2023 mem - Show a warning if _datasetInfoXML is null
 **          12/08/2023 mem - Select a single column when using If Not Exists()
 **          01/20/2024 mem - Ignore case when resolving dataset name to ID
-**          03/26/2026 mem - Add parameter _rootElement
+**          03/26/2026 mem - Add parameter _rootElement, since this procedure is now called from update_dataset_device_info_xml and update_dataset_nom_stats_xml
+**          10/01/2026 mem - Add parameter _sourceTable and include the table name in warning messages
 **
 *****************************************************/
 DECLARE
     _xpath text;
     _datasetIDCheck int := 0;
+    _messageAddon text;
 BEGIN
     _message := '';
     _returnCode := '';
@@ -58,6 +61,7 @@ BEGIN
     ---------------------------------------------------
 
     _rootElement := Coalesce(_rootElement, 'DatasetInfo');
+    _sourceTable := Coalesce(_sourceTable, '');
     _datasetID   := Coalesce(_datasetID, 0);
     _datasetName := '';
 
@@ -71,6 +75,12 @@ BEGIN
 
         _returnCode := 'U5200';
         RETURN;
+    End If;
+
+    If Trim(_sourceTable) = '' Then
+        _messageAddon := '';
+    Else
+        _messageAddon := format('; inspect XML in table %s', _sourceTable);
     End If;
 
     ---------------------------------------------------
@@ -89,8 +99,8 @@ BEGIN
     _datasetName := (xpath(_xpath, _datasetInfoXML))[1]::text;
 
     If Coalesce(_datasetName, '') = '' Then
-        _message := format('XML in _datasetInfoXML is not in the expected form for DatasetID %s in procedure get_dataset_details_from_dataset_info_xml; could not match /DatasetInfo/Dataset',
-                           _datasetID);
+        _message := format('XML in _datasetInfoXML is not in the expected form for DatasetID %s in procedure get_dataset_details_from_dataset_info_xml; could not match "//%s/Dataset/"%s',
+                           _datasetID, _rootElement, _messageAddon);
 
         _returnCode := 'U5201';
         RETURN;
@@ -107,7 +117,7 @@ BEGIN
         WHERE DS.dataset = _datasetName::citext;
 
         If Not FOUND Then
-            _message := format('Dataset "%s" not found in table t_dataset by procedure get_dataset_details_from_dataset_info_xml', _datasetName);
+            _message := format('Dataset "%s" not found in table t_dataset by procedure get_dataset_details_from_dataset_info_xml%s', _datasetName, _messageAddon);
             _returnCode := 'U5202';
             RETURN;
         End If;
@@ -116,7 +126,7 @@ BEGIN
 
         -- Validate that _datasetID exists in t_dataset
         If Not Exists (SELECT dataset_id FROM t_dataset WHERE dataset_id = _datasetID) Then
-            _message := format('Dataset ID %s not found in table t_dataset by procedure get_dataset_details_from_dataset_info_xml', _datasetID);
+            _message := format('Dataset ID %s not found in table t_dataset by procedure get_dataset_details_from_dataset_info_xml%s', _datasetID, _messageAddon);
             _returnCode := 'U5203';
             RETURN;
         End If;
@@ -127,14 +137,14 @@ BEGIN
         WHERE DS.dataset = _datasetName::citext;
 
         If Not FOUND Then
-            _message := format('Dataset "%s" not found in table t_dataset by procedure get_dataset_details_from_dataset_info_xml', _datasetName);
+            _message := format('Dataset "%s" not found in table t_dataset by procedure get_dataset_details_from_dataset_info_xml%s', _datasetName, _messageAddon);
             _returnCode := 'U5204';
             RETURN;
         End If;
 
         If _datasetIDCheck <> _datasetID Then
-            _message := format('Dataset ID values for dataset %s do not match; expecting %s but procedure param _datasetID is %s',
-                                _datasetName, _datasetIDCheck, _datasetID);
+            _message := format('Dataset ID values for dataset %s do not match; expecting %s but procedure param _datasetID is %s%s',
+                               _datasetName, _datasetIDCheck, _datasetID, _messageAddon);
 
             _returnCode := 'U5205';
             RETURN;

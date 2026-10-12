@@ -33,6 +33,7 @@ CREATE OR REPLACE PROCEDURE cap.update_dms_file_info_xml(IN _datasetid integer, 
 **          08/09/2018 mem - Set Ignore to true when the return code from public.update_dataset_file_info_xml is 53600 (aka 'U5360')
 **          06/14/2023 mem - Ported to PostgreSQL
 **          09/07/2023 mem - Align assignment statements
+**          10/01/2026 mem - Pass the source table name to update_dataset_file_info_xml
 **
 *****************************************************/
 DECLARE
@@ -73,9 +74,10 @@ BEGIN
     CALL public.update_dataset_file_info_xml (
                     _datasetID,
                     _datasetInfoXML,
-                    _message    => _message,        -- Output
-                    _returnCode => _returnCode,     -- Output
-                    _infoOnly   => _infoOnly);
+                    _sourceTable => 'cap.t_dataset_info_xml',
+                    _message     => _message,        -- Output
+                    _returnCode  => _returnCode,     -- Output
+                    _infoOnly    => _infoOnly);
 
     If _returnCode = ''      And Not _infoOnly And _deleteFromTableOnSuccess Then
         DELETE FROM cap.t_dataset_info_xml
@@ -87,7 +89,6 @@ BEGIN
         SET ignore = true
         WHERE dataset_id = _datasetID;
     End If;
-
 END
 $$;
 

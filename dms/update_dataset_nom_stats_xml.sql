@@ -56,6 +56,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_nom_stats_xml(IN _datasetid in
 **  Date:   03/26/2026 mem - Initial version
 **          03/31/2026 mem - Convert NaN values to null
 **          04/06/2026 mem - Add NOM annotation metrics
+**          10/01/2026 mem - Pass an empty string as the source table name when calling update_dataset_file_info_xml
 **
 *****************************************************/
 DECLARE
@@ -131,6 +132,7 @@ BEGIN
         CALL public.get_dataset_details_from_dataset_info_xml (
                         _datasetInfoXML => _nomStatsXML,
                         _rootElement    => 'NOMStats',
+                        _sourceTable    => '',
                         _datasetID      => _datasetID,     -- Input/Output
                         _datasetName    => _datasetName,   -- Output
                         _message        => _message,       -- Output

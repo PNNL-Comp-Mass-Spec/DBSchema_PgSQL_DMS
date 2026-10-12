@@ -2,7 +2,7 @@
 -- Name: update_dataset_file_info_xml(integer, xml, text, text, boolean, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid integer DEFAULT 0, IN _datasetinfoxml xml DEFAULT NULL::xml, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, IN _validatedatasettype boolean DEFAULT true)
+CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid integer DEFAULT 0, IN _datasetinfoxml xml DEFAULT NULL::xml, _sourceTable text DEFAULT '', INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, IN _validatedatasettype boolean DEFAULT true)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -83,6 +83,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid in
 **  Arguments:
 **    _datasetID            If this value is 0, determines the dataset name using the contents of _datasetInfoXML
 **    _datasetInfoXML       XML describing the properties of a single dataset
+**    _sourceTable          Table that the calling procedure obtained the XML from; empty string if this procedure is being called from an application (e.g. the capture task manager)
 **    _message              Status message
 **    _returnCode           Return code
 **    _infoOnly             When true, preview updates
@@ -131,6 +132,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid in
 **          07/10/2025 mem - Call procedure update_dataset_service_type_if_required
 **          03/26/2026 mem - Pass _rootElement to get_dataset_details_from_dataset_info_xml
 **          05/13/2026 mem - When checking for duplicate dataset files, if at least one dataset has allow_duplicates = true, allow the duplicate dataset file
+**          10/01/2026 mem - Pass _sourceTable to get_dataset_details_from_dataset_info_xml
 **
 *****************************************************/
 DECLARE
@@ -219,6 +221,7 @@ BEGIN
         CALL public.get_dataset_details_from_dataset_info_xml (
                         _datasetInfoXML,
                         _rootElement => 'DatasetInfo',
+                        _sourceTable => _sourceTable,
                         _datasetID   => _datasetID,     -- Input/Output
                         _datasetName => _datasetName,   -- Output
                         _message     => _message,       -- Output
