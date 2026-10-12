@@ -17,12 +17,16 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **      0      Undefined                            Undefined
 **      1      None                                 Not a service center tracked requested run or dataset
 **      25     Ambiguous                            Unable to auto-determine the correct service type
-**      100    Peptides: Short Advanced MS          Astral or timsTOF_SCP with separation time <= 60 minutes; any nanoPOTS sample run on Astral or timsTOF_SCP
+**      100    Peptides: Advanced MS                Astral or timsTOF_SCP; any nanoPOTS sample run on Astral or timsTOF_SCP (in FY26 this was Peptides: Short Advanced MS)
 **      101    Peptides: Short Standard MS          HFX, Lumos, Eclipse, or Exploris with separation time <= 60 minutes; all SRM and MRM; separation type LC-Nano-
-**      102    Peptides: Long Advanced MS           Astral or timsTOF_SCP with separation time > 60 minutes
 **      103    Peptides: Long Standard MS           HFX, Lumos, Eclipse, or Exploris with separation time > 60 minutes; any nanoPOTS sample not run on Astral or timsTOF_SCP
 **      104    MALDI                                MALDI (run count = hr count); includes timsTOFFlex02_Imaging
 **      110    Peptides: Screening MS               All Orbitraps (including timsTOF_SCP), separation time <= 5 minutes (ultra fast), or infusion
+**      113    GC-MS                                GC-MS
+**      114    Lipids and Metabolites               Lipids and Metabolites
+**
+**      Discontinued in FY27:
+**      102    Peptides: Long Advanced MS           Astral or timsTOF_SCP with separation time > 60 minutes
 **      111    Lipids                               Lipids
 **      112    Metabolites                          Metabolites
 **      113    GC-MS                                GC-MS
@@ -65,9 +69,8 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **      - If sample_type for the separation type is Metabolites, service_type is 112
 **      - If sample_type for the separation type is Glycans, service_type is 103 (long standard peptides)
 **      - If acquisition time is 5 minutes or shorter, type is 110
-**      - If separation type or separation group has '-NanoPot', service_type is 100 or 102, depending on separation time (<= 60 minutes or > 60)
-**      - If instrument group is Astral or timsTOF_SCP, and separation time is > 60 minutes, service_type is 102
-**      - If instrument group is Astral or timsTOF_SCP, and separation time is <= 60 minutes, service_type is 100
+**      - If separation type or separation group has '-NanoPot', service_type is 100
+**      - If instrument group is Astral or timsTOF_SCP, service_type is 100
 **      - If instrument group is Ascend, Eclipse, Exploris, Lumos, QEHFX, QExactive, VelosOrbi and separation time is > 60 minutes, service_type is 103
 **      - If instrument group is Ascend, Eclipse, Exploris, Lumos, QEHFX, QExactive, VelosOrbi and separation time is <= 60 minutes, service_type is 101
 **      - Otherwise, set service_type to Ambiguous
@@ -147,6 +150,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **          02/24/2026 mem - Check for separation type or separation group 'LC-Nano-Lipidomics' or 'LC-Nano-Metabolomics' before checking for sample type "Lipids" or "Metabolites"
 **          03/02/2026 mem - If separation type or separation group is 'LC-metabolomics_Hormones' or 'LC-metabolomics_Oxylipids', service_type is 111 (later in 2026, LC-metabolomics_Oxylipids will be type 101)
 **          03/25/2026 mem - Update logic for nanoPOTS samples to use type 100 for Astral or timsTOF and type 103 for any other instrument
+**          09/29/2026 mem - Remove type 102 and instead treat matching datasets as type 100 (Peptides: Advanced MS)
 **
 *****************************************************/
 DECLARE
@@ -400,11 +404,7 @@ BEGIN
 
     -- Check for Astral or timsTOF_SCP datasets
     If _instrumentGroup LIKE '%Astral%' OR _instrumentGroup LIKE 'timsTOF%' Then
-        If _acqLengthMinutes <= 60 Then
-            RETURN 100;   -- Peptides: Short Advanced MS
-        Else
-            RETURN 102;   -- Peptides: Long Advanced MS
-        End If;
+        RETURN 100;   -- Peptides: Advanced MS
     End If;
 
     -- Check for an unrecognized timsTOF instrument group
