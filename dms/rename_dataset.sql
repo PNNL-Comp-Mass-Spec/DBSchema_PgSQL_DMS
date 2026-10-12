@@ -72,6 +72,7 @@ CREATE OR REPLACE PROCEDURE public.rename_dataset(IN _datasetnameold text DEFAUL
 **          03/14/2025 mem - Query tables directly instead of using view V_Requested_Run_List_Report_2
 **                         - Include "echo" at the start of status lines to make copy/paste into a batch file easier
 **          05/16/2025 mem - Replace ">" with "-to-" in echo statements to prevent the text from being redirected to a file
+**          09/25/2026 mem - Coalesce null Dataset ID and Requested Run IDs to 0
 **
 *****************************************************/
 DECLARE
@@ -248,13 +249,13 @@ BEGIN
         End If;
     End If;
 
-    If _datasetID = 0 Then
+    If Coalesce(_datasetID) = 0 Then
         _message := format('Dataset not found using either the old name or the new name (%s or %s)', _datasetNameOld, _datasetNameNew);
         RAISE WARNING '%', _message;
         RETURN;
     End If;
 
-    If _newRequestedRunID = 0 Then
+    If Coalesce(_newRequestedRunID, 0) = 0 Then
         _message := 'Specify the new requested run ID using _newRequestedRunID (must be active); use -1 to leave the requested run ID unchanged';
         RAISE WARNING '%', _message;
         RETURN;
