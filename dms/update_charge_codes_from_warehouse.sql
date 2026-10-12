@@ -38,6 +38,7 @@ CREATE OR REPLACE PROCEDURE public.update_charge_codes_from_warehouse(IN _infoon
 **          05/20/2024 mem - Use parameter names when calling function charge_code_activation_state()
 **          08/28/2025 mem - Pass inactive_date to function charge_code_activation_state()
 **                         - Change the charge code activation state to "Inactive" (state 3, 4, or 5) if the Inactive_Date is in the past, even if Deactivated is 'N'
+**          10/06/2026 mem - Use a 10 year window when querying VW_PUB_CHARGE_CODE (previously 2 years)
 **
 *****************************************************/
 DECLARE
@@ -220,7 +221,7 @@ BEGIN
                    CC."CHARGE_CD" NOT LIKE 'V%'
                   )
                   OR
-                  (CC."SETUP_DATE" >= CURRENT_TIMESTAMP - Interval '2 years' AND    -- Filter out charge codes created over 2 years ago
+                  (CC."SETUP_DATE" >= CURRENT_TIMESTAMP - Interval '10 years' AND   -- Filter out charge codes created over 6 years ago
                    CC."RESP_HID" IN (                                               -- Filter on charge codes where the Responsible person is an active DMS user; this includes codes with auth_amt = 0
                           SELECT hid_number
                           FROM t_users
