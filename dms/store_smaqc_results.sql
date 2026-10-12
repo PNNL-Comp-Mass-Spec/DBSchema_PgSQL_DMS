@@ -80,7 +80,7 @@ BEGIN
         Dataset_ID int NULL,
         Dataset_Name citext NOT NULL,
         SMAQC_Job int NULL,             -- Analysis job used to generate the SMAQC results
-        PSM_Source_Job int NULL         -- MS_GF+ or X!Tandem job whose results were used by SMAQDC
+        PSM_Source_Job int NULL         -- MS_GF+ or X!Tandem job whose results were used by SMAQC
     );
 
     CREATE TEMP TABLE Tmp_Measurements (
