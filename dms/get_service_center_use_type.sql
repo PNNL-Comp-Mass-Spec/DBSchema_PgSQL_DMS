@@ -29,7 +29,6 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **      102    Peptides: Long Advanced MS           Astral or timsTOF_SCP with separation time > 60 minutes
 **      111    Lipids                               Lipids
 **      112    Metabolites                          Metabolites
-**      113    GC-MS                                GC-MS
 **
 **  Arguments:
 **    _datasetName              Dataset name (ignored if an empty string)
@@ -151,6 +150,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **          03/02/2026 mem - If separation type or separation group is 'LC-metabolomics_Hormones' or 'LC-metabolomics_Oxylipids', service_type is 111 (later in 2026, LC-metabolomics_Oxylipids will be type 101)
 **          03/25/2026 mem - Update logic for nanoPOTS samples to use type 100 for Astral or timsTOF and type 103 for any other instrument
 **          09/29/2026 mem - Remove type 102 and instead treat matching datasets as type 100 (Peptides: Advanced MS)
+**                         - Treat Lipids and Metabolites as type 114, disabling types 111 (Lipids) and 112 (Metabolites)
 **
 *****************************************************/
 DECLARE
@@ -335,7 +335,7 @@ BEGIN
 
     -- Check for LC-metabolomics datasets
     If _separationType IN ('LC-metabolomics', 'LC-metabolomics_Oxylipids') OR _separationGroup IN ('LC-metabolomics', 'LC-metabolomics_Oxylipids')  Then
-        RETURN 111;       -- Lipids
+        RETURN 114;       -- Lipids
     End If;
 
     -- Check for an MRM (aka SRM) dataset
@@ -370,12 +370,12 @@ BEGIN
 
     -- Check for a lipid sample
     If _sampleType IN ('Lipids') Then
-        RETURN 111;       -- Lipids
+        RETURN 114;       -- Lipids
     End If;
 
     -- Check for a metabolite sample
     If _sampleType IN ('Metabolites') Then
-        RETURN 112;       -- Metabolites
+        RETURN 114;       -- Metabolites
     End If;
 
     -- Check for a glycan sample
