@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 18.4
+-- Dumped from database version 18.6
 -- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
@@ -121,6 +121,8 @@ COPY public.t_secondary_sep (separation_type_id, separation_type, comment, activ
 145	LC-Neo-Formic_30min	Neo LC, formic acid, 30 minute separation	1	LC-Formic_30min	1	2024-05-30 10:33:58
 129	LC-Neo-Formic_3hr	Neo, formic acid, 3 hour separation	1	LC-Formic_3hr	1	2022-12-20 12:46:45
 147	LC-Neo-Formic_70SPD_20Min	Neo, formic acid, 20 min separation	1	LC-Formic_20min	1	2024-10-07 16:14:53.335849
+156	LC-Neo-Formic_7Min	Neo, formic acid, 7 Min separation	1	LC-Formic_7min	1	2026-08-26 13:07:39.189729
+157	LC-Neo-Formic_80SPD_15min_uPAC	Neo, formic acid, 15.5 Min separation, 16min data Acquisition.	1	LC-Formic_15min_uPAC	1	2026-09-08 11:58:57.933402
 126	LC-Neo-Formic_90min	Neo, formic acid, 90 minute separation	1	LC-Formic_90min	1	2022-12-20 12:45:52
 7	LC-ORNL-Standard	Datasets acquired at Oak Ridge National Lab	0	Other	0	2004-09-27 16:26:09
 124	LC-PCR-Tube_2hr	LC-PCR-Tube_2hr	1	LC-PCR-Tube	1	2022-11-15 08:29:27

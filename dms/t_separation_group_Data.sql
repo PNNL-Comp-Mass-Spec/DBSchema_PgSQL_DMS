@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 18.4
+-- Dumped from database version 18.6
 -- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
@@ -44,6 +44,7 @@ LC-Formic_100min		0	0	0	100
 LC-Formic_10min		1	1	0	10
 LC-Formic_150min		1	1	0	150
 LC-Formic_15min		1	1	0	15
+LC-Formic_15min_uPAC		1	1	0	30
 LC-Formic_1hr		1	1	0	60
 LC-Formic_20min		1	1	0	20
 LC-Formic_20min_70SPD	Trap and Elute	1	1	0	20
@@ -54,6 +55,7 @@ LC-Formic_45min		0	0	0	45
 LC-Formic_4hr		1	1	0	240
 LC-Formic_50min_uPAC		1	1	0	50
 LC-Formic_5hr		1	0	0	300
+LC-Formic_7min		1	1	0	7
 LC-Formic_80min		0	0	0	80
 LC-Formic_90min		1	1	0	90
 LC-GlcNAc		1	1	0	0

@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 18.4
+-- Dumped from database version 18.6
 -- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
@@ -26,7 +26,7 @@ DMS	archiver	2024-04-17 15:08:40.763509-07
 DMS	backends	2024-04-17 15:08:40.768362-07
 DMS	backup_age_pgbackrest	2024-04-17 15:08:40.780148-07
 DMS	bgwriter	2024-04-17 15:08:40.777678-07
-DMS	configuration_changes	2026-02-07 21:43:28.54325-08
+DMS	configuration_changes	2026-09-03 12:10:09.608768-07
 DMS	configured_dbs	2024-04-18 16:21:42.034525-07
 DMS	cpu_load	2024-04-17 15:08:40.774023-07
 DMS	db_size	2024-04-17 15:08:40.781115-07
@@ -37,6 +37,7 @@ DMS	kpi	2024-04-17 15:08:40.764507-07
 DMS	locks	2024-04-17 15:08:40.761212-07
 DMS	locks_mode	2024-04-17 15:08:40.766247-07
 DMS	object_changes	2024-04-18 16:30:42.082101-07
+DMS	privilege_changes	2026-10-10 18:16:44.712314-07
 DMS	psutil_cpu	2024-04-17 15:08:40.77959-07
 DMS	psutil_disk	2024-04-17 15:08:40.774694-07
 DMS	psutil_disk_io_total	2024-04-17 15:08:40.767207-07
@@ -53,7 +54,7 @@ DMS	stat_ssl	2024-04-17 15:08:40.77885-07
 DMS	stat_statements	2024-04-17 15:08:40.769258-07
 DMS	stat_statements_calls	2024-04-17 15:08:40.783376-07
 DMS	table_bloat_approx_summary_sql	2024-04-17 15:08:40.778586-07
-DMS	table_changes	2026-05-14 18:19:23.82889-07
+DMS	table_changes	2026-10-01 13:08:42.756488-07
 DMS	table_io_stats	2024-04-17 15:08:40.770959-07
 DMS	table_stats	2024-04-17 15:08:40.773181-07
 DMS	wal	2024-04-17 15:08:40.765536-07

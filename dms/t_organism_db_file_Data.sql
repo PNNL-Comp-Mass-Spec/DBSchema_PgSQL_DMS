@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 18.4
+-- Dumped from database version 18.6
 -- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
@@ -22,6 +22,7 @@ SET row_security = off;
 --
 
 COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, description, active, num_proteins, num_residues, valid, file_size_kb, created, is_decoy) FROM stdin;
+9440	61179_Allen_MAG_proteins_plus_Zea_Mays_UP000007305_and_Contaminants_2026-09-23.fasta	1908	Proteins derived from metagenome sequencing of arbuscular mycorrhizal fungi (AMF) soil microbial communities for EMSL project 61179, plus zea mays (corn) and contaminants. Protein sequences have been deduplicated.	1	613519	166144195	1	179308	2026-09-23 17:11:10.243227	f
 8051	AAR_TrypPigBov_2023-11-09.fasta	1798	Combined transcriptome FASTA files for AAR samples provided by Hugh Mitchell (PNNL)	1	81552	12181449	1	16278	2023-11-09 18:42:00	f
 241	AG_Proteins_2003-09-17.fasta	8		0	127	69329	1	91	2003-09-17 12:11:00	f
 8048	ASVs_NearestGenomes_TrypPigBov_2023-10-27.fasta	1798	Combined nearest genomes FASTA files provided by Zachary Johnson (PNNL)	1	81393	25088661	1	33699	2023-10-28 12:58:00	f
@@ -2666,6 +2667,58 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 6085	EMSL_50285_Fendorf_JGI_ga0364927_TryPigBov_2020-07-02_15x_13.fasta	31	Auto-created	0	96208	11065718	1	16807	2020-07-03 09:51:00	f
 6086	EMSL_50285_Fendorf_JGI_ga0364927_TryPigBov_2020-07-02_15x_14.fasta	31	Auto-created	0	96161	11065071	1	16802	2020-07-03 09:51:00	f
 6087	EMSL_50285_Fendorf_JGI_ga0364927_TryPigBov_2020-07-02_15x_15.fasta	31	Auto-created	0	96090	11065299	1	16795	2020-07-03 09:51:00	f
+9385	EMSL_50356_CLC_Combined_PROKKA_2026-08-25.fasta	1631	Prepared by combining CLC_Archaea_PROKKA_08142019.faa (1.32K bytes), CLC_Bacteria_PROKKA_08132019.faa (75.42M bytes), CLC_Eukaryota_PROKKA_08142019.faa (7.32M bytes), CLC_Unclassified_PROKKA_08142019.faa, and BSC_strict45_candidates_no_rRNA_tRNA_ITS_6frame_translation_2026-08-18.fasta; 268 duplicates collapsed. Provided by Stephen Callister, Erik Horn (erik@olemiss.edu), and Jason Stajich (jason.stajich@ucr.edu).	1	317617	80660308	1	104095	2026-08-25 11:49:00	t
+9412	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_01.fasta	1631	Auto-created	0	12613	3226201	1	4158	2026-08-26 12:44:55.439984	f
+9413	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_02.fasta	1631	Auto-created	0	12474	3226239	1	4148	2026-08-26 12:44:55.449787	f
+9414	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_03.fasta	1631	Auto-created	0	12745	3226825	1	4168	2026-08-26 12:44:55.454415	f
+9415	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_04.fasta	1631	Auto-created	0	12633	3226810	1	4158	2026-08-26 12:44:55.458777	f
+9416	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_05.fasta	1631	Auto-created	0	12853	3226177	1	4174	2026-08-26 12:44:55.462951	f
+9417	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_06.fasta	1631	Auto-created	0	12844	3226781	1	4174	2026-08-26 12:44:55.467266	f
+9418	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_07.fasta	1631	Auto-created	0	12716	3226233	1	4162	2026-08-26 12:44:55.471621	f
+9419	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_08.fasta	1631	Auto-created	0	12649	3226838	1	4161	2026-08-26 12:44:55.475917	f
+9420	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_09.fasta	1631	Auto-created	0	12689	3226892	1	4163	2026-08-26 12:44:55.479831	f
+9421	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_10.fasta	1631	Auto-created	0	12600	3226169	1	4155	2026-08-26 12:44:55.484224	f
+9422	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_11.fasta	1631	Auto-created	0	12739	3226239	1	4167	2026-08-26 12:44:55.488719	f
+9423	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_12.fasta	1631	Auto-created	0	12794	3226222	1	4169	2026-08-26 12:44:55.493224	f
+9424	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_13.fasta	1631	Auto-created	0	12746	3226436	1	4168	2026-08-26 12:44:55.498011	f
+9425	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_14.fasta	1631	Auto-created	0	12721	3226863	1	4166	2026-08-26 12:44:55.502747	f
+9426	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_15.fasta	1631	Auto-created	0	12571	3226419	1	4154	2026-08-26 12:44:55.507519	f
+9427	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_16.fasta	1631	Auto-created	0	12692	3226283	1	4163	2026-08-26 12:44:55.512322	f
+9428	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_17.fasta	1631	Auto-created	0	12866	3226254	1	4176	2026-08-26 12:44:55.517117	f
+9429	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_18.fasta	1631	Auto-created	0	12744	3226243	1	4165	2026-08-26 12:44:55.521793	f
+9430	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_19.fasta	1631	Auto-created	0	12592	3226475	1	4154	2026-08-26 12:44:55.526729	f
+9431	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_20.fasta	1631	Auto-created	0	12744	3226486	1	4169	2026-08-26 12:44:55.531818	f
+9432	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_21.fasta	1631	Auto-created	0	12652	3226447	1	4160	2026-08-26 12:44:55.536916	f
+9433	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_22.fasta	1631	Auto-created	0	12697	3226236	1	4162	2026-08-26 12:44:55.541887	f
+9434	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_23.fasta	1631	Auto-created	0	12640	3226235	1	4161	2026-08-26 12:44:55.54684	f
+9435	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_24.fasta	1631	Auto-created	0	12824	3226074	1	4172	2026-08-26 12:44:55.551893	f
+9436	EMSL_50356_CLC_Combined_PROKKA_2026-08-25_25x_25.fasta	1631	Auto-created	0	12779	3226231	1	4169	2026-08-26 12:44:55.556945	f
+9386	EMSL_50356_LAC_Combined_PROKKA_2026-08-25.fasta	1631	Prepared by combining LAC_Archaea_PROKKA_08142019.faa (0.84K bytes), LAC_Bacteria_PROKKA_08142019.faa (80.02M bytes), LAC_Eukaryota_PROKKA_08142019.faa (46.51K bytes), LAC_Unclassified_PROKKA_08142019.faa (2.43M bytes), LAC_Viruses_PROKKA_08142019.faa (1.13K bytes), and BSC_strict45_candidates_no_rRNA_tRNA_ITS_6frame_translation_2026-08-18.fasta; 155 duplicates collapsed. Provided by Stephen Callister, Erik Horn (erik@olemiss.edu), and Jason Stajich (jason.stajich@ucr.edu).	1	244110	74334631	1	92765	2026-08-25 11:49:00	t
+9387	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_01.fasta	1631	Auto-created	0	9665	2973127	1	3702	2026-08-26 12:44:44.818082	f
+9388	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_02.fasta	1631	Auto-created	0	9777	2973223	1	3710	2026-08-26 12:44:44.828109	f
+9389	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_03.fasta	1631	Auto-created	0	9696	2973210	1	3706	2026-08-26 12:44:44.834117	f
+9390	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_04.fasta	1631	Auto-created	0	9819	2973238	1	3713	2026-08-26 12:44:44.839689	f
+9391	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_05.fasta	1631	Auto-created	0	9760	2973396	1	3711	2026-08-26 12:44:44.845141	f
+9392	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_06.fasta	1631	Auto-created	0	9759	2973847	1	3708	2026-08-26 12:44:44.850633	f
+9393	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_07.fasta	1631	Auto-created	0	9834	2973259	1	3717	2026-08-26 12:44:44.856709	f
+9394	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_08.fasta	1631	Auto-created	0	9765	2973217	1	3712	2026-08-26 12:44:44.862826	f
+9395	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_09.fasta	1631	Auto-created	0	9636	2973821	1	3702	2026-08-26 12:44:44.954144	f
+9396	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_10.fasta	1631	Auto-created	0	9624	2973410	1	3701	2026-08-26 12:44:44.962661	f
+9397	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_11.fasta	1631	Auto-created	0	9779	2973841	1	3711	2026-08-26 12:44:44.967696	f
+9398	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_12.fasta	1631	Auto-created	0	9853	2973812	1	3718	2026-08-26 12:44:44.972596	f
+9399	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_13.fasta	1631	Auto-created	0	9714	2973119	1	3706	2026-08-26 12:44:44.977626	f
+9400	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_14.fasta	1631	Auto-created	0	9786	2973797	1	3713	2026-08-26 12:44:44.982641	f
+9401	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_15.fasta	1631	Auto-created	0	9737	2973368	1	3709	2026-08-26 12:44:44.987774	f
+9402	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_16.fasta	1631	Auto-created	0	9907	2973884	1	3721	2026-08-26 12:44:44.992948	f
+9403	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_17.fasta	1631	Auto-created	0	9779	2973204	1	3712	2026-08-26 12:44:44.997932	f
+9404	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_18.fasta	1631	Auto-created	0	9779	2973185	1	3712	2026-08-26 12:44:45.002866	f
+9405	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_19.fasta	1631	Auto-created	0	9649	2973189	1	3703	2026-08-26 12:44:45.007886	f
+9406	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_20.fasta	1631	Auto-created	0	9796	2973262	1	3714	2026-08-26 12:44:45.012815	f
+9407	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_21.fasta	1631	Auto-created	0	9786	2973243	1	3711	2026-08-26 12:44:45.017786	f
+9408	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_22.fasta	1631	Auto-created	0	9872	2973142	1	3717	2026-08-26 12:44:45.022782	f
+9409	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_23.fasta	1631	Auto-created	0	9815	2973222	1	3716	2026-08-26 12:44:45.027816	f
+9410	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_24.fasta	1631	Auto-created	0	9702	2973428	1	3705	2026-08-26 12:44:45.032826	f
+9411	EMSL_50356_LAC_Combined_PROKKA_2026-08-25_25x_25.fasta	1631	Auto-created	0	9821	2973187	1	3716	2026-08-26 12:44:45.037785	f
 6376	EMSL_51065_Hug_Biofilm_192503_TrypPigBov_2020-07-13.fasta	1681	Lara Audrey Hug <laura.audrey.hug@gmail.com> University of Waterloo\r\n; 5192 duplicates collapsed	1	1419566	268251043	1	373382	2020-07-17 19:15:00	f
 6382	EMSL_51065_Hug_Biofilm_192503_TrypPigBov_2020-07-13_5x_1.fasta	1681	Auto-created	0	283108	53650199	1	72888	2020-07-22 18:32:00	f
 6383	EMSL_51065_Hug_Biofilm_192503_TrypPigBov_2020-07-13_5x_2.fasta	1681	Auto-created	0	283866	53650080	1	72921	2020-07-22 18:32:00	f
@@ -6075,6 +6128,9 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 446	M_Musculus_2005-08-15_IPI_reversed.fasta	24		0	46557	20343358	1	27112	2005-12-06 10:00:00	f
 493	M_Musculus_2005-12-08_NCBI.fasta	24		0	58794	23916285	1	29349	2006-01-26 10:54:00	f
 527	M_Musculus_IPI_2006-07-25_ExcerptWQ_2006_08_15_FwdAndRev.fasta	24	Created by Matt for Weijun	0	18340	4304678	1	5845	2006-08-16 13:08:00	f
+9438	M_musculus_gut_microbiome_50pct_identity_2026-09-01.fasta	24	Mouse gut microbiome clustered at 90% amino acid identity; from https://www.ebi.ac.uk/metagenomics/genome-catalogues/mouse-gut-v1-0 via Yuqian Gao	1	2559039	700393667	1	822219	2026-09-01 16:03:47.683138	f
+9439	M_musculus_gut_microbiome_50pct_identity_2026-09-01_decoy.fasta	24	Decoy version of M_musculus_gut_microbiome_50pct_identity_2026-09-01.fasta (auto-created)	1	5118078	1400787334	1	1.654433e+06	2026-09-03 17:55:55.219711	t
+9437	M_musculus_gut_microbiome_90pct_identity_2026-08-27.fasta	24	Mouse gut microbiome clustered at 90% amino acid identity; from https://www.ebi.ac.uk/metagenomics/genome-catalogues/mouse-gut-v1-0 via Yuqian Gao	1	8038712	2422918719	1	2.828641e+06	2026-08-27 19:39:16.873965	f
 485	Macaque_NIDAvirtual_2005-12-2+H_sapiens_IPI_2005-04-04.fasta	1031		0	69722	33352281	1	40333	2005-12-02 16:08:00	f
 484	Macaque_NIDAvirtual_2005-12-2.fasta	1031		0	20561	10843709	1	11679	2005-12-02 00:00:00	f
 196	Masto7_2002-06-12.fasta	16		0	1	14	1	1	2002-06-12 15:08:00	f
@@ -9059,7 +9115,7 @@ COPY public.t_organism_db_file (org_db_file_id, file_name, organism_id, descript
 -- Name: t_organism_db_file_org_db_file_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9384, true);
+SELECT pg_catalog.setval('public.t_organism_db_file_org_db_file_id_seq', 9440, true);
 
 
 --

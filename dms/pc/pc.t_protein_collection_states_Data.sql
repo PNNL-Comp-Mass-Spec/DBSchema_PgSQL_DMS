@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.2
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 18.6
+-- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -29,6 +29,7 @@ COPY pc.t_protein_collection_states (collection_state_id, state, description) FR
 4	Retired	no longer used for analyses; kept for legacy reasons
 5	Proteins_Deleted	protein names, descriptions, and sequences have been deleted from the database, and we do not have the corresponding FASTA file
 6	Offline	protein names and sequences are no longer in the database; contact an admin to restore this protein collection using the FASTA file
+7	Converted_to_FASTA	The proteins in the original protein collection are now in a standalone FASTA file
 \.
 
 

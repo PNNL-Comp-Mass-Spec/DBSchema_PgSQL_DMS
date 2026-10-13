@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 18.4
+-- Dumped from database version 18.6
 -- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
@@ -67,11 +67,11 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 122	Guam	10	Agilent 1290 Infinity ALS (Autosampler) Model: G1329A Serial: DE64776208, Agilent 1200 Bin Pump Model: G1312A Serial: DE63060488	2020-10-07 14:18:00
 48	Harrier	10	4 Column Phospho Cart	2010-09-23 13:51:00
 28	Hawk	10		2006-04-18 11:06:00
-137	Holly	2	Thermo/Dionex pump (800 bar) with Loading Pump. Long armed pal. LCMSnet controlled. EMSL owned.	2023-08-23 13:27:00
+137	Holly	10	Thermo/Dionex pump (800 bar) with Loading Pump. Long armed pal. LCMSnet controlled. EMSL owned. Pump Transferred to Ironman and LC "parted" out in August 2026	2023-08-23 13:27:00
 138	Homer	2	Thermo Vanquish Neo system - Autosampler, Binary Pump, Column Compartment	2023-12-01 16:45:00
 86	Hoopty	10	S&S industries HTP cart for multiple and optimal infusion experiments	2015-08-20 14:00:00
 64	Iris	10	Manual LC in BSF 1208 for sample prep use	2012-12-10 15:56:00
-97	IronMan	2	Dionex Ultimate 3000 nano RSLC for metallomics	2017-08-30 09:18:00
+97	IronMan	2	Dionex Ultimate 3000 nano RSLC for metallomics. Second pump added (from Holly) in August 2026	2017-08-30 09:18:00
 60	Jaguar	10	3 Agilent Pumps (2 nano and 1 cap) 8 Two Position Valves and 4 Multi-Position valves, PAL	2011-04-13 09:55:00
 147	Jolene	2	Waters high flow LC, was in 1215 on benchtop with old instrument, now in use for lipid and metabolite work.	2025-06-11 13:19:25.82875
 109	Juniper	10	Thermo/Dionex pump (800 bar). Long armed pal. LCMSnet controlled. Small form factor cart, laptop computer	2018-03-02 17:53:00
@@ -89,6 +89,7 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 95	Magnolia	2	Micro-flow infusion cart	2017-03-15 12:15:00
 136	Maple	2	Thermo/Dionex pump (800 bar) with Loading Pump. Long armed pal. LCMSnet controlled. EMSL owned.	2023-08-23 13:27:00
 139	Marge	2	Thermo Vanquish Neo system - Autosampler, Binary Pump, Column Compartment	2024-01-12 12:06:00
+151	Maverick	2	Thermo Vanquish Amplify - Received September 2026. ,	2026-09-29 10:58:46.103712
 42	Mazama	10	Agilent Cart	2009-09-29 16:10:00
 72	Merry	2	Waters 2DLC commercial system	2013-03-01 09:15:00
 66	Methow	10	Eksigent pumps. Used to be Phoenix	2013-01-15 18:09:00
@@ -149,7 +150,7 @@ COPY public.t_lc_cart (cart_id, cart_name, cart_state_id, cart_description, crea
 -- Name: t_lc_cart_cart_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_lc_cart_cart_id_seq', 150, true);
+SELECT pg_catalog.setval('public.t_lc_cart_cart_id_seq', 151, true);
 
 
 --

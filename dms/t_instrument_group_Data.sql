@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 17.6
--- Dumped by pg_dump version 17.2
+-- Dumped from database version 18.6
+-- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -43,6 +43,7 @@ EMSL_Agilent_GC_MS	Metabolomics		1	18	GC	1	1	\N
 EMSL_Bruker_FTMS	Research		1	1	FT	1	1	\N
 EMSL_Eclipse	LC-HMS with MS/MS		1	13	ORB	1	1	\N
 EMSL_Exploris	LC-HMS with MS/MS; optionally HCD		1	5	ORB	1	1	\N
+EMSL_Exploris_Frac	Requested runs with LC-MicroHpH, LC-MicroSCX, LC-NanoHpH, etc.		1	5	ORB	0	1	EMSL_Exploris
 EMSL_GC_QExactive	Metabolomics	\N	1	41	ORB	1	1	\N
 EMSL_IMS	Ion-mobility LC-IMS-MS		1	6	IMS	1	1	\N
 EMSL_MALDI_Imaging	MALDI Imaging		1	26	MAL	1	1	\N

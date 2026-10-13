@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 18.3
+-- Dumped from database version 18.6
 -- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
@@ -351,6 +351,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 1207	PMA	Phenyl mercuric acetate modification of thiols	278.0019	\N	-	PNNL		Phenyl mercuric acetate	\N
 1377	PUP	Pupylation	243.085526	243.21674	-	UniMod	pupylation	\N	H(13) C(9) N(3) O(5)
 1280	PYITC	PYITC (+C6H4N2S1) of primary amines	136.0095	\N	-			\N	\N
+1584	ParaN3	Azido group at the para position of para-azido phenylalanine (superfolder GFP)	41.001392	\N	-	PNNL		\N	H(-1) N(3)
 1410	Pentose	Pentose	132.0422568	\N	-	PNNL	Pentose	Pentose	H(8) C(5) O(4)
 1003	PhIATD0	PhIAT d0	490.174225	490.7034	-	UniMod	EDT-iodoacetyl-PEO-biotin	PhIATD0	H(34) C(20) N(4) O(4) S(3)
 1004	PhIATD4	PhIAT d4	494.1993	494.7281	-	PNNL		PhIATD4	\N
@@ -477,7 +478,7 @@ COPY public.t_mass_correction_factors (mass_correction_id, mass_correction_tag, 
 -- Name: t_mass_correction_factors_mass_correction_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1583, true);
+SELECT pg_catalog.setval('public.t_mass_correction_factors_mass_correction_id_seq', 1584, true);
 
 
 --

@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 18.4
+-- Dumped from database version 18.6
 -- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
@@ -169,7 +169,7 @@ COPY public.t_prep_lc_column (prep_column_id, prep_column, mfg_name, mfg_model, 
 1168	ZORBAX_006	ZORBAX	custom	USDHP01097	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Retired	D3L365	Exclusively for MoTrPAC - animal study. POC-P.Piehowski; M.Gritsenko	2019-02-21 15:57:16
 1169	Human_Mars_14_100mm_19	Multi Affinity Removal Column	5188-6558	100992440C	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Active	D3M765	Zika project. See Tom Metz before using. Resin 0006401415. Exp 11/30/20	2019-05-01 11:56:05
 1170	Human_Mars_14_100mm_20	Multi Affinity Removal Column	5188-6558	100992440D	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Active	D3M765	Zika project. See Tom Metz before using. Resin 0006401415. Exp 11/30/20	2019-05-01 11:56:19
-1171	ZORBAX_007	ZORBAX	custom	USDHP01132	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Active	D3L365	Vlad's Exclusive. POC-Marina Gritsenko	2019-06-21 16:21:02
+1171	ZORBAX_007	ZORBAX	custom	USDHP01132	Agilent	Silica	3.5 um	C18	4.6 mm	10 mm	250mm	Retired	D3L365	Vlad's Exclusive. POC-Marina Gritsenko	2019-06-21 16:21:02
 1172	Human_Mars_14_50mm_07	Multi Affinity Removal Column	5188-6557	101024331Q	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	50 mm	Retired	D3M765	See Weijun before using., Exp 6/30/21, Resin 0006428887	2019-10-23 08:03:37
 1173	Human_Mars_14_100mm_21	Multi Affinity Removal Column	5188-6558	101024510B	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Active	D3L365	BRAVE use only (POC - Marina Gritsenko). Exp 06/30/2021	2020-01-24 14:45:22
 1174	Human_Mars_14_100mm_22	Multi Affinity Removal Column	5188-6558	101098188E	Agilent	Antibodies	n/a	Antibodies	n/a	4.6	100 mm	Active	D3M765	See Weijun Qian before using. Resin 0006428887. Exp 01/30/22	2020-07-13 15:11:26
