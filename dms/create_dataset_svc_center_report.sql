@@ -14,7 +14,7 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate 
 **      - Dataset state 3 (Complete)
 **      - Acquisition start time on or before the end date (acquired any time on the end date)
 **      - Service center report state of 2 (Need to submit to service center) or 4 (Need to refund to service center)
-**      - Service type ID between 100 and 113
+**      - Service type ID between 100 and 114
 **      - Dataset rating is not -10, -7, -6, -5, -4, -2, -1, 6, or 7 (Unreviewed, Rerun, Not Released, No Data, Exclude from Service Center, or Method Development)
 **
 **      Added datasets will have their service center report state changed to 3 (Submitting to service center) or 5 (Refunded to service center)
@@ -50,7 +50,7 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate 
 **            DS.acq_time_start <  '2026-07-18'::timestamp + Interval '1 day' AND
 **            NOT DS.dataset_rating_id IN (-10, -7, -6, -5, -4, -2, -1, 6, 7) AND       -- Dataset rating is not Unreviewed, Rerun (Superseded), Rerun (Good Data) Not Released, No Data, Exclude from Service Center, or Method Development
 **            DS.svc_center_report_state_id = 0 AND                                     -- Service center report state 0: Undefined
-**            DS.service_type_id BETWEEN 100 AND 113 AND                                -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous)
+**            DS.service_type_id BETWEEN 100 AND 114 AND                                -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous)
 **            NOT Trim(Coalesce(RR.work_package, '')) IN ('', 'none', 'na', 'n/a', '(lookup)')
 **            AND inst.instrument IN ('Lumos01')
 **      ORDER BY DS.dataset_id;
@@ -76,6 +76,8 @@ CREATE OR REPLACE PROCEDURE public.create_dataset_svc_center_report(IN _enddate 
 **          10/29/2025 mem - Round transaction units for MALDI datasets to the nearest tenth of an hour
 **          02/03/2026 mem - Change acq_length_minutes to numeric
 **          08/01/2026 mem - Allow acq_length_minutes to be zero, since MALDI datasets can be very short (e.g. https://dms2.pnl.gov/dataset/show/mix_set2_0_F9_MS)
+**          10/09/2026 mem - Table t_service_cost_rate now has 7 service types per cost group
+**                         - Update service type IDs to be between 100 and 114
 **
 *****************************************************/
 DECLARE
@@ -225,8 +227,8 @@ BEGIN
         FROM svc.t_service_cost_rate
         WHERE cost_group_id = _costGroupID;
 
-        If _serviceTypeIDs <> 9 Then
-            _message := format('Table svc.t_service_cost_rate has %s service type IDs, but it should have 9; unable to proceed', _serviceTypeIDs);
+        If _serviceTypeIDs <> 7 Then
+            _message := format('Table svc.t_service_cost_rate has %s service type IDs, but it should have 7; unable to proceed', _serviceTypeIDs);
             RAISE WARNING '%', _infoOnly;
 
             If Not _infoOnly Then
@@ -235,8 +237,8 @@ BEGIN
 
             _returnCode = 'U5202';
             RETURN;
-        ElsIf _minServiceTypeID <> 100 Or _maxServiceTypeID <> 113 Then
-            _message := format('Service type IDs in svc.t_service_cost_rate span %s to %s, but they should be 100 to 113; unable to proceed', _minServiceTypeID, _maxServiceTypeID);
+        ElsIf _minServiceTypeID <> 100 Or _maxServiceTypeID <> 114 Then
+            _message := format('Service type IDs in svc.t_service_cost_rate span %s to %s, but they should be 100 to 114; unable to proceed', _minServiceTypeID, _maxServiceTypeID);
             RAISE WARNING '%', _infoOnly;
 
             If Not _infoOnly Then
@@ -269,7 +271,7 @@ BEGIN
                   DS.acq_time_start <  _beginningOfNextDay AND
                   NOT DS.dataset_rating_id IN (-10, -7, -6, -5, -4, -2, -1, 6, 7) AND       -- Dataset rating is not Unreviewed, Rerun (Superseded), Rerun (Good Data) Not Released, No Data, Exclude from Service Center, or Method Development
                   DS.svc_center_report_state_id = 0 AND                                     -- Service center report state 0: Undefined
-                  DS.service_type_id BETWEEN 100 AND 113 AND                                -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous)
+                  DS.service_type_id BETWEEN 100 AND 114 AND                                -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous)
                   NOT Trim(Coalesce(RR.work_package, '')) IN ('', 'none', 'na', 'n/a', '(lookup)');
             --
             GET DIAGNOSTICS _datasetCount = ROW_COUNT;
@@ -292,7 +294,7 @@ BEGIN
                         DS.acq_time_start <  _beginningOfNextDay AND
                         NOT DS.dataset_rating_id IN (-10, -7, -6, -5, -4, -2, -1, 6, 7) AND     -- Dataset rating is not Unreviewed, Rerun (Superseded), Rerun (Good Data) Not Released, No Data, Exclude from Service Center, or Method Development
                         DS.svc_center_report_state_id = 0 AND                                   -- Service center report state 0: Undefined
-                        DS.service_type_id BETWEEN 100 AND 113 AND                              -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous); limit to the range of valid IDs, for safety
+                        DS.service_type_id BETWEEN 100 AND 114 AND                              -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous); limit to the range of valid IDs, for safety
                         NOT Trim(Coalesce(RR.work_package, '')) IN ('', 'none', 'na', 'n/a', '(lookup)')
                   ) FilterQ
             WHERE t_dataset.dataset_id = FilterQ.dataset_id;
