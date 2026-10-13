@@ -1,8 +1,8 @@
 --
--- Name: update_dataset_file_info_xml(integer, xml, text, text, boolean, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: update_dataset_file_info_xml(integer, xml, text, text, text, boolean, boolean); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid integer DEFAULT 0, IN _datasetinfoxml xml DEFAULT NULL::xml, _sourceTable text DEFAULT '', INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, IN _validatedatasettype boolean DEFAULT true)
+CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid integer DEFAULT 0, IN _datasetinfoxml xml DEFAULT NULL::xml, IN _sourcetable text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text, IN _infoonly boolean DEFAULT false, IN _validatedatasettype boolean DEFAULT true)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -1186,11 +1186,11 @@ END
 $$;
 
 
-ALTER PROCEDURE public.update_dataset_file_info_xml(IN _datasetid integer, IN _datasetinfoxml xml, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _validatedatasettype boolean) OWNER TO d3l243;
+ALTER PROCEDURE public.update_dataset_file_info_xml(IN _datasetid integer, IN _datasetinfoxml xml, IN _sourcetable text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _validatedatasettype boolean) OWNER TO d3l243;
 
 --
--- Name: PROCEDURE update_dataset_file_info_xml(IN _datasetid integer, IN _datasetinfoxml xml, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _validatedatasettype boolean); Type: COMMENT; Schema: public; Owner: d3l243
+-- Name: PROCEDURE update_dataset_file_info_xml(IN _datasetid integer, IN _datasetinfoxml xml, IN _sourcetable text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _validatedatasettype boolean); Type: COMMENT; Schema: public; Owner: d3l243
 --
 
-COMMENT ON PROCEDURE public.update_dataset_file_info_xml(IN _datasetid integer, IN _datasetinfoxml xml, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _validatedatasettype boolean) IS 'UpdateDatasetFileInfoXML';
+COMMENT ON PROCEDURE public.update_dataset_file_info_xml(IN _datasetid integer, IN _datasetinfoxml xml, IN _sourcetable text, INOUT _message text, INOUT _returncode text, IN _infoonly boolean, IN _validatedatasettype boolean) IS 'UpdateDatasetFileInfoXML';
 

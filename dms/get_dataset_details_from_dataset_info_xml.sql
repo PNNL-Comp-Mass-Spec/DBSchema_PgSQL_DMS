@@ -1,8 +1,8 @@
 --
--- Name: get_dataset_details_from_dataset_info_xml(xml, text, integer, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
+-- Name: get_dataset_details_from_dataset_info_xml(xml, text, text, integer, text, text, text); Type: PROCEDURE; Schema: public; Owner: d3l243
 --
 
-CREATE OR REPLACE PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN _datasetinfoxml xml, IN _rootelement text DEFAULT 'DatasetInfo'::text, _sourceTable text DEFAULT '', INOUT _datasetid integer DEFAULT 0, INOUT _datasetname text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
+CREATE OR REPLACE PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN _datasetinfoxml xml, IN _rootelement text DEFAULT 'DatasetInfo'::text, IN _sourcetable text DEFAULT ''::text, INOUT _datasetid integer DEFAULT 0, INOUT _datasetname text DEFAULT ''::text, INOUT _message text DEFAULT ''::text, INOUT _returncode text DEFAULT ''::text)
     LANGUAGE plpgsql
     AS $$
 /****************************************************
@@ -154,5 +154,5 @@ END
 $$;
 
 
-ALTER PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN _datasetinfoxml xml, IN _rootelement text, INOUT _datasetid integer, INOUT _datasetname text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
+ALTER PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN _datasetinfoxml xml, IN _rootelement text, IN _sourcetable text, INOUT _datasetid integer, INOUT _datasetname text, INOUT _message text, INOUT _returncode text) OWNER TO d3l243;
 

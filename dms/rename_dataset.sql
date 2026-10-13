@@ -249,7 +249,7 @@ BEGIN
         End If;
     End If;
 
-    If Coalesce(_datasetID) = 0 Then
+    If Coalesce(_datasetID, 0) = 0 Then
         _message := format('Dataset not found using either the old name or the new name (%s or %s)', _datasetNameOld, _datasetNameNew);
         RAISE WARNING '%', _message;
         RETURN;
