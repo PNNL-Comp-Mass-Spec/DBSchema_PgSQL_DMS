@@ -6,7 +6,8 @@ CREATE TABLE svc.t_service_type (
     service_type_id smallint NOT NULL,
     service_type public.citext NOT NULL,
     service_description public.citext DEFAULT ''::public.citext NOT NULL,
-    abbreviation public.citext DEFAULT ''::public.citext NOT NULL
+    abbreviation public.citext DEFAULT ''::public.citext NOT NULL,
+    active smallint DEFAULT 1 NOT NULL
 );
 
 

@@ -6,7 +6,8 @@ CREATE VIEW public.v_service_center_use_type_list_report AS
  SELECT service_type_id,
     service_type,
     service_description,
-    abbreviation
+    abbreviation,
+    active
    FROM svc.t_service_type;
 
 
