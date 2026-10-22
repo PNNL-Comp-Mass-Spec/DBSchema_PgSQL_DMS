@@ -611,6 +611,7 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 1132	Opitutaceae_bacterium_TAV2	Opitutaceae_bacterium_TAV2_NCBI_2015-01-06	2009-03-31 16:43:52	Opitutaceae bacterium TAV2	O_bacterium_TAV2	\\\\gigasax\\DMS_Organism_Files\\Opitutaceae_bacterium_TAV2\\	http://gigasax/DMS_Organism_Files/Opitutaceae_bacterium_TAV2/	Bacteria	Prokaryote	Verrucomicrobia	Opitutae	Opitutales	Opitutaceae	Opitutus	bacterium	TAV2	11	0	1	178440	178440	1
 1336	Opitutaceae_bacterium_TAV5	Opitutaceae_bacterium_TAV5_Genbank_2014-09-24	2013-09-04 12:44:00	Opitutaceae bacterium TAV5	O_bacterium_TAV5	\\\\gigasax\\dms_organism_Files\\Opitutaceae_bacterium_TAV5\\	http://gigasax/dms_organism_Files/Opitutaceae_bacterium_TAV5/	Bacteria	Prokaryote	Verrucomicrobia	Opitutae	Opitutales	Opitutaceae	Opitutus	Opitutaceae bacterium TAV5	TAV5	11	0	1	794903	794903	1
 1065	Oregon_Seawater_MicrobialCommunity		2007-10-15 09:59:55	Bacterial community from Oregon Coast	OR_Community	\\\\gigasax\\DMS_Organism_Files\\Seawater_MicrobialCommunity\\	http://gigasax/DMS_Organism_Files/Seawater_MicrobialCommunity/	Bacteria	Prokaryote	Community	na	na	na	na	na	na	0	0	1	48479	48479	1
+1909	Orthohantavirus		2026-10-15 17:30:15.416252	Sin Nombre orthohantavirus (Sin Nombre virus, SNV)	Orthohantavirus	\\\\gigasax\\DMS_Organism_Files\\Orthohantavirus\\	https://gigasax/DMS_Organism_Files/Orthohantavirus/	Viruses	Orthornavirae	Negarnaviricota	Bunyaviricetes	Elliovirales	Hantaviridae	Orthohantavirus	sinnombreense	na	0	0	1	1980442	3052499	1
 1013	Orthopoxvirus_monkeypox	M_mulatta_ensembl_2010-11-15	2005-05-23 16:14:23	Monkeypox virus	Monkeypox_virus	\\\\gigasax\\DMS_Organism_Files\\Orthopoxvirus_monkeypox\\	http://gigasax/DMS_Organism_Files/Orthopoxvirus_monkeypox/	Viruses			None	None	Poxviridae	Orthopoxvirus	Monkeypox virus		1	0	1	10244	10244	1
 1004	Orthopoxvirus_vaccinia		2004-09-22 11:12:07	Vaccinia Virus	Vaccinia	\\\\gigasax\\DMS_Organism_Files\\Orthopoxvirus_vaccinia\\	http://gigasax/DMS_Organism_Files/Orthopoxvirus_vaccinia/	Viruses			None	None	Poxviridae	Orthopoxvirus	Vaccinia virus		1	0	1	10245	10245	1
 28	Oryctolagus_cuniculus	O_cuniculus_UniProt_TrEMBL_2021-03-07	2003-08-18 00:00:00	Oryctolagus cuniculus (Domestic Rabbit)	O_cuniculus	\\\\gigasax\\DMS_Organism_Files\\Oryctolagus_cuniculus\\	http://gigasax/DMS_Organism_Files/Oryctolagus_cuniculus/	Eukaryota	Metazoa	Chordata	Mammalia	Lagomorpha	Leporidae	Oryctolagus	cuniculus	na	1	2	1	9986	9986	1
@@ -921,7 +922,7 @@ COPY public.t_organisms (organism_id, organism, organism_db_name, created, descr
 -- Name: t_organisms_organism_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_organisms_organism_id_seq', 1908, true);
+SELECT pg_catalog.setval('public.t_organisms_organism_id_seq', 1909, true);
 
 
 --

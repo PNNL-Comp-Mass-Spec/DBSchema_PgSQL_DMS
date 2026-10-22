@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 18.3
+-- Dumped from database version 18.6
 -- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
@@ -62,7 +62,7 @@ COPY timetable.chain (chain_id, chain_name, run_at, max_instances, timeout, live
 47	Synchronize analysis job requests with jobs	12 18 * * *	1	0	t	f	f	\N	\N
 48	Update bionet host status	42 0/6 * * *	1	0	t	f	f	\N	\N
 49	Update cached analysis job state name and tool name	3 22 * * 1,3,5	1	0	t	f	f	\N	\N
-50	Update cached dataset folder paths, mode 0	* * * * *	1	0	t	f	f	\N	\N
+50	Update cached dataset folder paths, mode 0	* * * * *	1	45000	t	f	f	\N	\N
 51	Update cached dataset folder paths, mode 1	0/20 * * * *	1	0	t	f	f	\N	\N
 52	Update cached dataset folder paths, mode 2	17 * * * *	1	0	t	f	f	\N	\N
 53	Update cached dataset folder paths, mode 3	38 16 * * 6	1	0	t	f	f	\N	\N
