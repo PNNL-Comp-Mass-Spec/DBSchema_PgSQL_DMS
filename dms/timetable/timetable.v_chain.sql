@@ -9,7 +9,7 @@ CREATE VIEW timetable.v_chain AS
     c.live,
     i.interval_description,
     c.max_instances,
-    c.timeout,
+    c.timeout AS timeout_msec,
     c.self_destruct,
     c.exclusive_execution
    FROM (timetable.chain c
