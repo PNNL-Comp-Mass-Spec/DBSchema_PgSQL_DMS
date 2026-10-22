@@ -12,7 +12,7 @@ CREATE OR REPLACE PROCEDURE public.get_dataset_details_from_dataset_info_xml(IN 
 **      If _datasetID is non-zero, validates the dataset ID vs. the dataset name
 **      Otherwise, updates _datasetID based on the dataset name defined in the XML
 **
-**      This procedure is used by procedures update_dataset_file_info_xml, update_dataset_device_info_xml, and update_dataset_nom_stats_xml
+**      This procedure is used by procedures update_dataset_file_info_xml, update_dataset_device_info_xml, update_dataset_nom_stats_xml, and update_dataset_acq_log_messages
 **
 **  Typical XML file contents for dataset info XML files (with _rootElement = 'DatasetInfo')
 **      <DatasetInfo>
