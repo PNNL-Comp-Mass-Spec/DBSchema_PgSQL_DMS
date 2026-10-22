@@ -133,6 +133,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_file_info_xml(IN _datasetid in
 **          03/26/2026 mem - Pass _rootElement to get_dataset_details_from_dataset_info_xml
 **          05/13/2026 mem - When checking for duplicate dataset files, if at least one dataset has allow_duplicates = true, allow the duplicate dataset file
 **          10/01/2026 mem - Pass _sourceTable to get_dataset_details_from_dataset_info_xml
+**          10/20/2026 mem - Remove unnecessary checks on _infoOnly when it is guaranteed to be false
 **
 *****************************************************/
 DECLARE
@@ -142,7 +143,6 @@ DECLARE
     _authorized boolean;
 
     _datasetName text;
-    _datasetIDCheck int;
     _startTime text;
     _endTime text;
     _acqTimeStart timestamp;
@@ -1091,7 +1091,7 @@ BEGIN
                             _datasetID,
                             _message    => _message,        -- Output
                             _returncode => _returncode,     -- Output
-                            _infoOnly   => _infoOnly);
+                            _infoOnly   => false);
         End If;
 
         -----------------------------------------------
@@ -1118,13 +1118,7 @@ BEGIN
 
             _message := format('%s; return code = %s', _message, _returnCode);
 
-            If Not _infoOnly Then
-                CALL post_log_entry ('Error', _message, 'Update_Dataset_File_Info_XML');
-            End If;
-        End If;
-
-        If Trim(Coalesce(_message, '')) <> '' And _infoOnly Then
-            RAISE INFO '%', _message;
+            CALL post_log_entry ('Error', _message, 'Update_Dataset_File_Info_XML');
         End If;
 
         -----------------------------------------------
@@ -1135,7 +1129,7 @@ BEGIN
 
         CALL update_dataset_service_type_if_required (
                 _datasetID        => _datasetID,
-                _infoOnly         => _infoOnly,
+                _infoOnly         => false,
                 _logDebugMessages => false);
 
         ---------------------------------------------------
@@ -1150,9 +1144,7 @@ BEGIN
             _usageMessage := format('Dataset: %s', _datasetName);
         End If;
 
-        If Not _infoOnly Then
-            CALL post_usage_log_entry ('update_dataset_file_info_xml', _usageMessage);
-        End If;
+        CALL post_usage_log_entry ('update_dataset_file_info_xml', _usageMessage);
 
         DROP TABLE Tmp_DS_Info;
         DROP TABLE Tmp_Scan_Types;
