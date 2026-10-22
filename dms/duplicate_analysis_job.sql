@@ -10,6 +10,9 @@ CREATE OR REPLACE PROCEDURE public.duplicate_analysis_job(IN _job integer, IN _n
 **  Desc:
 **      Duplicate an analysis job by calling add_update_analysis_job
 **
+**      See also procedure clone_analysis_jobs which can clone multiple analysis jobs, optionally changing the parameter file, settings file, and/or protein collection list
+**      The limitation of clone_analysis_jobs is that the source jobs must all have the same parameter file and settings file
+**
 **  Arguments:
 **    _job                      Job number to copy
 **    _newComment               New job comment; use old comment if blank
@@ -19,6 +22,9 @@ CREATE OR REPLACE PROCEDURE public.duplicate_analysis_job(IN _job integer, IN _n
 **    _infoOnly                 When true, preview the job that wouuld be created
 **    _message                  Status message
 **    _returnCode               Return code
+**
+**  Example Usage:
+**      CALL duplicate_analysis_job(2620206, _newComment => 'Test of TopPIC 2.1.0', _appendOldJobToComment => true, _infoOnly => true);
 **
 **  Auth:   mem
 **  Date:   01/20/2016 mem - Initial version
@@ -129,7 +135,7 @@ BEGIN
         RAISE INFO 'Special Processing:    %', _jobInfo.SpecialProcessing;
         RAISE INFO 'Propagation Mode:      %', _propagationMode;
         RAISE INFO '';
-End If;
+    End If;
 
     -- Call the procedure to create/preview the job creation
 
@@ -168,9 +174,7 @@ End If;
 
             RAISE WARNING '%', _message;
         End If;
-
     End If;
-
 END
 $$;
 

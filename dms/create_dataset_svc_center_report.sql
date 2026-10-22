@@ -271,7 +271,7 @@ BEGIN
                   DS.acq_time_start <  _beginningOfNextDay AND
                   NOT DS.dataset_rating_id IN (-10, -7, -6, -5, -4, -2, -1, 6, 7) AND       -- Dataset rating is not Unreviewed, Rerun (Superseded), Rerun (Good Data) Not Released, No Data, Exclude from Service Center, or Method Development
                   DS.svc_center_report_state_id = 0 AND                                     -- Service center report state 0: Undefined
-                  DS.service_type_id BETWEEN 100 AND 114 AND                                -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous)
+                  DS.service_type_id BETWEEN 100 AND 114 AND                                -- Servce type ID not 0 (Undefined), 1 (None), or 25 (Ambiguous); limit to the range of valid IDs, for safety
                   NOT Trim(Coalesce(RR.work_package, '')) IN ('', 'none', 'na', 'n/a', '(lookup)');
             --
             GET DIAGNOSTICS _datasetCount = ROW_COUNT;

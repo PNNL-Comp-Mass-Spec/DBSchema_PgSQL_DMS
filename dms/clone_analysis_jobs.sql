@@ -8,8 +8,7 @@ CREATE OR REPLACE PROCEDURE public.clone_analysis_jobs(IN _sourcejobs text, IN _
 /****************************************************
 **
 **  Desc:
-**      Clone a series of related analysis jobs to create new jobs with a
-**      new parameter file, new settings file, and/or new protein collection list
+**      Clone a series of related analysis jobs to create new jobs with a new parameter file, new settings file, and/or new protein collection list
 **
 **      The source jobs must all have the same parameter file and settings file (this is a safety feature)
 **      The source jobs do not have to use the same protein collection
@@ -17,17 +16,27 @@ CREATE OR REPLACE PROCEDURE public.clone_analysis_jobs(IN _sourcejobs text, IN _
 **      If _newProteinCollectionList is empty, each new job will have the same protein collection as the old job
 **      If _newProteinCollectionList is not empty, all new jobs will have the same protein collection
 **
+**      See also procedure duplicate_analysis_job, which can duplicate a single analysis job
+**
 **  Arguments:
 **    _sourceJobs                   Comma-separated list of jobs to copy
 **    _newParamFileName             New parameter file to use (empty string to use source job's parameter file)
 **    _newSettingsFileName          New settings file to use  (empty string to use source job's settings file)
 **    _newProteinCollectionList     New protein collection to use (if empty, use the same protein collection as the old job)
 **    _supersedeOldJob              When true, change the state of old jobs to 14
-**    _updateOldJobComment          When true, add the new job number to the old job comment
+**    _updateOldJobComment          When true, add the new job number to the old job comment (as 'Superseded by job 0000' or 'Compare to job 0000')
 **    _allowDuplicateJob            When true, allow the new jobs to be duplicates of the old jobs (useful for testing a new version of a tool or updated .UIMF)
 **    _infoOnly                     When true, preview updates
 **    _message                      Status message
 **    _returnCode                   Return code
+**
+**  Example Usage:
+**      CALL clone_analysis_jobs(
+**          _sourceJobs =>       '2528400, 2528401, 2528402, 2528403',
+**          _newParamFileName => 'FragPipe_Tryp_Dyn_MetOx_ProtNTermAcet_Stat_CysAlk_20ppmParTol.workflow',
+**          _updateOldJobComment => true,
+**          _allowDuplicateJob => true,
+**          _infoOnly => true);
 **
 **  Auth:   mem
 **  Date:   07/12/2016 mem - Initial version
@@ -66,7 +75,6 @@ BEGIN
     _returnCode := '';
 
     BEGIN
-
         -----------------------------------------
         -- Validate the inputs
         -----------------------------------------
@@ -692,9 +700,9 @@ BEGIN
         If _supersedeOldJob Or _updateOldJobComment Then
 
             If _supersedeOldJob Then
-                _action := 'superseded by job';
+                _action := 'Superseded by job';
             Else
-                _action := 'compare to job';
+                _action := 'Compare to job';
             End If;
 
             UPDATE t_analysis_job Target
