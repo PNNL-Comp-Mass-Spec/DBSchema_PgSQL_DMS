@@ -36,6 +36,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_acq_log_messages(IN _datasetid
 **  Date:   10/20/2026 mem - Initial version
 **          10/21/2026 mem - Remove messages that we do not want to store in the database
 **          10/22/2026 mem - Condense "spray instability" messages
+**          10/23/2026 mem - Append acquisition log messages to the dataset's comment
 **
 *****************************************************/
 DECLARE
@@ -45,7 +46,6 @@ DECLARE
     _authorized boolean;
 
     _datasetName text;
-    _comparisonDate date;
     _usageMessage text;
 
     _formatSpecifier text;
@@ -195,7 +195,7 @@ BEGIN
             _currentLocation := 'Preview data';
 
             RAISE INFO '';
-            RAISE INFO 'Acquisition Log Messages for Dataset ID %: %', _datasetID, _datasetName;
+            RAISE INFO 'Acquisition log messages for Dataset ID %: %', _datasetID, _datasetName;
             RAISE INFO '';
 
             _formatSpecifier := '%-12s %-17s %-16s %-16s %-30s ';
@@ -336,6 +336,14 @@ BEGIN
                           FROM Tmp_Acq_Log_Messages Source
                           WHERE target.msg_type = Source.msg_type and
                                 target.message  = Source.message);
+
+        ---------------------------------------------------
+        -- Log SP usage
+        ---------------------------------------------------
+
+        _currentLocation := 'Append the messages to the dataset''s comment';
+
+        CALL append_dataset_acq_log_messages_to_comment (_datasetID, _infoOnly => false);
 
         ---------------------------------------------------
         -- Log SP usage
