@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 18.4
+-- Dumped from database version 18.6
 -- Dumped by pg_dump version 18.3
 
 SET statement_timeout = 0;
@@ -898,6 +898,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 1905	15	2	BrukerFT_BAF	SciMax01																0	0	NOM_Annotation	NOM_Annotation_Ref_Mass_Hawkes_neg.params	na	16	na	na	na	3		1		2026-04-06 20:58:16.171824	D3L243	16	1	0	2026-04-06 20:58:16.171824
 1906	85	10	LTQ_FT	Astral%		CCDI		CCDI[_]AML[_]%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_NTermAcet_Precursor380-980.txt	DiaNN_Standard.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01,iRT_Fusion	seq_direction=forward,filetype=fasta	2		1		2026-04-20 17:57:53.861543	D3L243	86	1	0	2026-04-20 17:58:15.211773
 1907	91	57	LTQ_FT	Exploris%		Alzheimer and Parkinson Diseases		HyunSik_Amg_plex%									TMT18			0	0	MSGFPlus_MzML	MSGFPlus_Tryp_Stat_CysAlk_TMT_16Plex_20ppmParTol.txt	IonTrapDefSettings_MzML_StatCysAlk_16plexTMT.xml	8	na	H_sapiens_UniProt_SPROT_2023-09-01,Tryp_Pig_Bov	seq_direction=forward,filetype=fasta	3		1		2026-07-13 09:13:24.1194	D3L243	92	1	0	2026-07-13 09:13:24.1194
+1908	85	10	LTQ_FT	Astral%		CPTAC4		CPTAC[_]AML[_]UMich%												0	0	DiaNN	DiaNN_Tryp_Dyn_MetOx_NTermAcet_Precursor380-980.txt	DiaNN_Standard.xml	8	na	H_sapiens_Ensembl_rel108_GRCh42_MaxQuant_Contams_2022-10-01,iRT_Fusion	seq_direction=forward,filetype=fasta	2		1		2026-10-23 19:09:40.799873	D3L243	86	1	0	2026-10-23 19:09:40.799873
 \.
 
 
@@ -905,7 +906,7 @@ COPY public.t_predefined_analysis (predefine_id, predefine_level, predefine_sequ
 -- Name: t_predefined_analysis_predefine_id_seq; Type: SEQUENCE SET; Schema: public; Owner: d3l243
 --
 
-SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1907, true);
+SELECT pg_catalog.setval('public.t_predefined_analysis_predefine_id_seq', 1908, true);
 
 
 --
