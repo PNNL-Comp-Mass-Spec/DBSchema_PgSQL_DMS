@@ -35,6 +35,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_acq_log_messages(IN _datasetid
 **  Auth:   mem
 **  Date:   10/20/2026 mem - Initial version
 **          10/21/2026 mem - Remove messages that we do not want to store in the database
+**          10/22/2026 mem - Condense "spray instability" messages
 **
 *****************************************************/
 DECLARE
@@ -262,6 +263,29 @@ BEGIN
                   ) OR
               message LIKE 'Info : MS acquisition end. Accumulated MS size%' OR
               message LIKE 'Warning%Sequence counter matches again%';
+
+        -----------------------------------------------
+        -- Only keep the first and last instance of 'Possible spray instability was detected' messages
+        -----------------------------------------------
+
+        _currentLocation := 'Condense "Possible spray instability was detected" messages';
+
+        DELETE FROM Tmp_Acq_Log_Messages target
+        WHERE message LIKE 'Possible spray instability was detected%'
+              AND NOT EXISTS (
+               SELECT 1
+               FROM ( SELECT dataset_id, msg_type, min(message) as message
+                      FROM Tmp_Acq_Log_Messages Source
+                      WHERE message LIKE 'Possible spray instability was detected%'
+                      GROUP BY dataset_id, msg_type
+                      UNION
+                      SELECT dataset_id, msg_type, max(message) as message
+                      FROM Tmp_Acq_Log_Messages
+                      WHERE message LIKE 'Possible spray instability was detected%'
+                      GROUP BY dataset_id, msg_type
+                    ) AS FilterQ
+               WHERE target.msg_type = FilterQ.msg_type and
+                     target.message  = FilterQ.message);
 
         -----------------------------------------------
         -- Add/update t_dataset_acq_messages using a merge statement
