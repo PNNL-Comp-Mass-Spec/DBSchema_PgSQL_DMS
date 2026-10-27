@@ -151,6 +151,7 @@ CREATE OR REPLACE FUNCTION public.get_service_center_use_type(_datasetname text,
 **          03/25/2026 mem - Update logic for nanoPOTS samples to use type 100 for Astral or timsTOF and type 103 for any other instrument
 **          09/29/2026 mem - Remove type 102 and instead treat matching datasets as type 100 (Peptides: Advanced MS)
 **                         - Treat Lipids and Metabolites as type 114, disabling types 111 (Lipids) and 112 (Metabolites)
+**          10/27/2026 mem - Use service type ID 110 for separation group/type 'ISO_HILIC_5min'
 **
 *****************************************************/
 DECLARE
@@ -366,6 +367,11 @@ BEGIN
     -- Check for LC-Nano datasets
     If _separationType IN ('LC-Nano-Lipidomics', 'LC-Nano-Metabolomics') OR _separationGroup IN ('LC-Nano-Lipidomics', 'LC-Nano-Metabolomics') Then
         RETURN 101;   -- Peptides: Short Standard MS
+    End If;
+
+    -- Check for ISO_HILIC_5min datasets
+    If _separationType IN ('ISO_HILIC_5min') OR _separationGroup IN ('ISO_HILIC_5min') Then
+        RETURN 110;   -- Peptides: Screening MS
     End If;
 
     -- Check for a lipid sample
