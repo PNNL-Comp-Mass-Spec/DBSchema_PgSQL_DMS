@@ -37,6 +37,7 @@ CREATE OR REPLACE PROCEDURE public.update_dataset_acq_log_messages(IN _datasetid
 **          10/21/2026 mem - Remove messages that we do not want to store in the database
 **          10/22/2026 mem - Condense "spray instability" messages
 **          10/23/2026 mem - Append acquisition log messages to the dataset's comment
+**          10/26/2026 mem - Exclude "spray instability" messages
 **
 *****************************************************/
 DECLARE
@@ -250,6 +251,7 @@ BEGIN
 
         DELETE FROM Tmp_Acq_Log_Messages
         WHERE message LIKE 'Warning%Ambient temperature change%' OR
+              message LIKE 'Possible spray instability was detected%' OR
               message IN (
                   'Info : Info: Performance - Affected: Mass Calibration (negative) - Default Values',
                   'Info : Info: Performance - Affected: System Calibration (negative) - Default Values',
@@ -263,29 +265,6 @@ BEGIN
                   ) OR
               message LIKE 'Info : MS acquisition end. Accumulated MS size%' OR
               message LIKE 'Warning%Sequence counter matches again%';
-
-        -----------------------------------------------
-        -- Only keep the first and last instance of 'Possible spray instability was detected' messages
-        -----------------------------------------------
-
-        _currentLocation := 'Condense "Possible spray instability was detected" messages';
-
-        DELETE FROM Tmp_Acq_Log_Messages target
-        WHERE message LIKE 'Possible spray instability was detected%'
-              AND NOT EXISTS (
-               SELECT 1
-               FROM ( SELECT dataset_id, msg_type, min(message) as message
-                      FROM Tmp_Acq_Log_Messages Source
-                      WHERE message LIKE 'Possible spray instability was detected%'
-                      GROUP BY dataset_id, msg_type
-                      UNION
-                      SELECT dataset_id, msg_type, max(message) as message
-                      FROM Tmp_Acq_Log_Messages
-                      WHERE message LIKE 'Possible spray instability was detected%'
-                      GROUP BY dataset_id, msg_type
-                    ) AS FilterQ
-               WHERE target.msg_type = FilterQ.msg_type and
-                     target.message  = FilterQ.message);
 
         -----------------------------------------------
         -- Add/update t_dataset_acq_messages using a merge statement
@@ -341,9 +320,13 @@ BEGIN
         -- Log SP usage
         ---------------------------------------------------
 
-        _currentLocation := 'Append the messages to the dataset''s comment';
+        _currentLocation := 'Append an acquisition log message notice to the dataset''s comment';
 
-        CALL append_dataset_acq_log_messages_to_comment (_datasetID, _infoOnly => false);
+        CALL append_dataset_acq_log_messages_to_comment (
+            _datasetID,
+            _message    => _message,        -- Output
+            _returnCode => _returnCode,     -- Output
+            _infoOnly   => false);
 
         ---------------------------------------------------
         -- Log SP usage
