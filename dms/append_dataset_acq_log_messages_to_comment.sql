@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.append_dataset_acq_log_messages_to_comment(IN
 /****************************************************
 **
 **  Desc:
-**      Append the dataset's acquisition log messages to the dataset's comment
+**      Append an acquisition log message notice to the dataset's comment
 **
 **  Arguments:
 **    _datasetID            Dataset ID
@@ -18,6 +18,8 @@ CREATE OR REPLACE PROCEDURE public.append_dataset_acq_log_messages_to_comment(IN
 **
 **  Auth:   mem
 **  Date:   10/23/2026 mem - Initial version
+**          10/26/2026 mem - Do not include the actual acq log message in the comment; only show a generic note
+**                         - Rename temporary table to avoid a conflict with calling procedure update_dataset_acq_log_messages
 **
 *****************************************************/
 DECLARE
@@ -25,8 +27,8 @@ DECLARE
     _datasetComment text;
 
     _messageCount int;
-    _messages text := '';
-    _messageInfo record;
+    _messageTypes text := '';
+    _messageNotice text;
 
     _currentLocation text := 'Start';
     _sqlState text;
@@ -76,18 +78,18 @@ BEGIN
         -- Create a temporary table to hold the data
         -----------------------------------------------------------
 
-        CREATE TEMP TABLE Tmp_Acq_Log_Messages (
+        CREATE TEMP TABLE Tmp_Selected_Acq_Log_Messages (
             Msg_Type text not null,
             Message text not null
         );
 
         -----------------------------------------------------------
-        -- Obtain the first five acquisition log messages for each category, then concatenate
+        -- Obtain the first five acquisition log messages for each category, then generate the generic notice
         -----------------------------------------------------------
 
         _currentLocation := 'Look for acquisition log messages';
 
-        INSERT INTO Tmp_Acq_Log_Messages (msg_type, message)
+        INSERT INTO Tmp_Selected_Acq_Log_Messages (msg_type, message)
         SELECT msg_type, message
         FROM (SELECT msg_type, message
               FROM t_dataset_acq_messages
@@ -119,50 +121,47 @@ BEGIN
         If Not FOUND Then
             RAISE INFO 'Dataset ID % does not have any acquisition log messages in t_dataset_acq_messages; nothing to do for %', _datasetID, _datasetName;
 
-            DROP TABLE Tmp_Acq_Log_Messages;
+            DROP TABLE Tmp_Selected_Acq_Log_Messages;
             RETURN;
         End If;
+
+        SELECT string_agg(Msg_Type, ', ' ORDER BY Msg_Type)
+        INTO _messageTypes
+        FROM (
+            SELECT Msg_Type
+            FROM Tmp_Selected_Acq_Log_Messages LogMsgs
+            GROUP BY Msg_Type
+             ) MsgTypes;
 
         SELECT COUNT(DISTINCT message)
         INTO _messageCount
-        FROM Tmp_Acq_Log_Messages;
+        FROM Tmp_Selected_Acq_Log_Messages;
 
-        FOR _messageInfo IN
-            SELECT LogMsgs.Msg_Type AS MsgType,
-                   LogMsgs.Message  AS Message
-            FROM Tmp_Acq_Log_Messages LogMsgs
-        LOOP
-            _messages := append_to_text(_messages,
-                                        format('%s, %s', _messageInfo.MsgType, Trim(regexp_replace(_messageInfo.Message, '\n', ''))),
-                                        _addDuplicateText => false);
-        END LOOP;
+        If _messageCount > 1 Then
+            _messageNotice := format('%s: %s', 'Acquisition log messages present', _messageTypes);
+        Else
+            _messageNotice := format('%s: %s', 'Acquisition log message present', _messageTypes);
+        End If;
 
         If _infoOnly Then
             RAISE INFO '';
-            RAISE INFO 'Acquisition log messages for Dataset ID % (%)', _datasetID, _datasetName;
-            RAISE INFO '%', _messages;
+            RAISE INFO '% (Dataset ID %, %)', _messageNotice, _datasetID, _datasetName;
 
-            DROP TABLE Tmp_Acq_Log_Messages;
+            DROP TABLE Tmp_Selected_Acq_Log_Messages;
             RETURN;
         End If;
 
-        If _messageCount > 1 Then
-            _messages := format('%s: %s', 'Acquisition log messages', _messages);
-        Else
-            _messages := format('%s: %s', 'Acquisition log message', _messages);
-        End If;
-
         -----------------------------------------------
-        -- Append the messages to the dataset's comment, then update the database
+        -- Append the message notice to the dataset's comment, then update the database
         -----------------------------------------------
 
-        _datasetComment := append_to_text(_datasetComment, _messages, _addDuplicateText => false);
+        _datasetComment := append_to_text(_datasetComment, _messageNotice, _addDuplicateText => false);
 
         UPDATE t_dataset
         SET comment = _datasetComment
         WHERE dataset_id = _datasetID;
 
-        DROP TABLE Tmp_Acq_Log_Messages;
+        DROP TABLE Tmp_Selected_Acq_Log_Messages;
 
     EXCEPTION
         WHEN OTHERS THEN
@@ -180,7 +179,7 @@ BEGIN
             _returnCode := _sqlState;
         End If;
 
-        DROP TABLE IF EXISTS Tmp_Acq_Log_Messages;
+        DROP TABLE IF EXISTS Tmp_Selected_Acq_Log_Messages;
     END;
 END
 $$;
