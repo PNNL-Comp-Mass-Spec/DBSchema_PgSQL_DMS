@@ -28,6 +28,7 @@ CREATE OR REPLACE FUNCTION public.append_to_text(_basetext text, _addnltext text
 **          09/08/2023 mem - Adjust capitalization of keywords
 **          09/11/2023 mem - Adjust capitalization of keywords
 **          08/17/2025 mem - Do not append the delimiter if _addnlText starts with the delimiter
+**          10/27/2026 mem - When the delimiter does not start with a space, if _baseText ends in a period, remove the period
 **
 *****************************************************/
 DECLARE
@@ -51,6 +52,12 @@ BEGIN
         If _updatedText = '' Then
             _updatedText := _addnlText;
         Else
+            If _updatedText Similar To '%. *' And Not _delimiter Like ' %' Then
+                -- The text ends in a period and the delimiter is not a space
+                -- Remove the period to avoid text of the form "Had to rerun, LC issues.; No PNG files were created"
+                _updatedText := Left(_updatedText, char_length(_updatedText) - 1);
+            End If;
+
             If char_length(Trim(_delimiter)) > 0 And RTrim(_updatedText) Like '%' || RTrim(_delimiter) Then
                 -- The text already ends with the delimiter, though we may need to add a space
                 If _delimiter Like '% ' And Not _updatedText Like '% ' Then
