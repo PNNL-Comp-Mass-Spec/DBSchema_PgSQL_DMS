@@ -8,7 +8,7 @@ CREATE OR REPLACE PROCEDURE public.append_dataset_acq_log_messages_to_comment(IN
 /****************************************************
 **
 **  Desc:
-**      Append an acquisition log message notice to the dataset's comment
+**      If a dataset has any acquisition log messages, add a notice to the dataset's comment, e.g. Acquisition log message present: Warning
 **
 **  Arguments:
 **    _datasetID            Dataset ID
@@ -20,6 +20,7 @@ CREATE OR REPLACE PROCEDURE public.append_dataset_acq_log_messages_to_comment(IN
 **  Date:   10/23/2026 mem - Initial version
 **          10/26/2026 mem - Do not include the actual acq log message in the comment; only show a generic note
 **                         - Rename temporary table to avoid a conflict with calling procedure update_dataset_acq_log_messages
+**          10/27/2026 mem - Actually include dataset ID in warning message
 **
 *****************************************************/
 DECLARE
@@ -67,7 +68,7 @@ BEGIN
         WHERE dataset_id = _datasetID;
 
         If Not FOUND Then
-            _message := 'Dataset ID % not found in t_dataset; unable to continue';
+            _message := format('Dataset ID %s not found in t_dataset; unable to continue', _datasetID);
             RAISE WARNING '%', _message;
 
             _returnCode := '5202';
