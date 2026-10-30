@@ -34,6 +34,27 @@ CREATE OR REPLACE PROCEDURE public.add_analysis_job_group(IN _datasetlist text, 
 **    _returnCode                   Return code
 **    _callingUser                  Username of the calling user
 **
+**  Example Usage:
+**      CALL add_analysis_job_group (
+**           _datasetList              => 'QC_MAM_25_01_200SPD_02_25ng_Todd_29Oct26_9677, QC_MAM_25_01_200SPD_01_25ng_Todd_29Oct26_9677',
+**           _priority                 => 3,
+**           _toolName                 => 'DiaNN',
+**           _paramFileName            => 'DiaNN_Tryp_Dyn_MetOx_NTermAcet_Stat_CysAlk_Precursor400-900.txt',
+**           _settingsFileName         => 'DiaNN_Standard.xml',
+**           _organismDBName           => 'na',
+**           _organismName             => 'Mus_musculus',
+**           _protCollNameList         => 'M_musculus_UniProt_SPROT_2023-03-01,Tryp_Pig_Bov',
+**           _protCollOptionsList      => 'seq_direction=forward,filetype=fasta',
+**           _ownerUsername            => 'D3L243',
+**           _comment                  => '',
+**           _specialProcessing        => '',
+**           _requestID                => 36873,
+**           _dataPackageID            => 7892,
+**           _associatedProcessorGroup => '',
+**           _propagationMode          => 'Export',
+**           _removeDatasetsWithJobs   => 'Y',
+**           _mode                     => 'preview');
+**
 **  Auth:   grk
 **  Date:   01/29/2004
 **          04/01/2004 grk - Fixed error return
@@ -124,6 +145,7 @@ CREATE OR REPLACE PROCEDURE public.add_analysis_job_group(IN _datasetlist text, 
 **          10/29/2024 mem - Call set_max_active_jobs_for_request() if _requestID is greater than 1
 **          11/05/2024 mem - Add support for tool DiaNN_timsTOF
 **          02/15/2025 mem - Set update_required to 1 in t_cached_dataset_stats
+**          10/29/2026 mem - Customize message shown when previewing job creation for a data package
 **
 *****************************************************/
 DECLARE
@@ -457,7 +479,6 @@ BEGIN
             GET DIAGNOSTICS _datasetCountToRemove = ROW_COUNT;
 
             If _datasetCountToRemove > 0 Then
-
                 -- Remove datasets from list that have existing jobs
 
                 DELETE FROM Tmp_DatasetInfo
@@ -804,14 +825,16 @@ BEGIN
                 End If;
 
                 _message := format('Created aggregation job %s for', _pipelineJob);
-
             ElsIf _returnCode = '' Then
                 _message := 'Would create an aggregation job for';
-
             End If;
 
             If _returnCode = '' Then
-                _message := format('%s %s %s', _message, _jobCountToBeCreated, public.check_plural(_jobCountToBeCreated, 'dataset', 'datasets'));
+                If _dataPackageID > 0 Then
+                    _message := format('%s data package %s', _message, _dataPackageID);
+                Else
+                    _message := format('%s %s %s', _message, _jobCountToBeCreated, public.check_plural(_jobCountToBeCreated, 'dataset', 'datasets'));
+                End If;
             End If;
 
             DROP TABLE Tmp_DatasetInfo;
@@ -824,7 +847,6 @@ BEGIN
         End If;
 
         If _mode = 'add' Then
-
             If _jobCountToBeCreated = 0 And _datasetCountToRemove > 0 Then
                 RAISE EXCEPTION 'No jobs were made for request % because there were existing jobs for all datasets in the list', _requestID;
             End If;
